@@ -1,0 +1,7 @@
+/target/
+/.settings/
+/.classpath
+/.project
+/.DS_Store
+siebre-cloud-basic.iml
+/bin/
