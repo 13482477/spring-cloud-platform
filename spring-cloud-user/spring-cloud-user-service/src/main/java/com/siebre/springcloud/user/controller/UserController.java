@@ -11,6 +11,8 @@ import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 public class UserController {
 	
@@ -22,6 +24,7 @@ public class UserController {
 	@Autowired
 	private Registration registration;
 	
+	@ApiOperation(value = "获取用户列表", notes = "第一个测试API")  
 	@RequestMapping(value = "/index")
 	public String index() {
 		
