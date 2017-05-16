@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -189,5 +190,20 @@ public class DynamicSqlSessionTemplate implements SqlSession {
 			}
 			return result;
 		}
+	}
+
+	@Override
+	public <T> Cursor<T> selectCursor(String arg0) {
+		return this.sqlSessionProxy.selectCursor(arg0);
+	}
+
+	@Override
+	public <T> Cursor<T> selectCursor(String arg0, Object arg1) {
+		return this.sqlSessionProxy.selectCursor(arg0, arg1);
+	}
+
+	@Override
+	public <T> Cursor<T> selectCursor(String arg0, Object arg1, RowBounds arg2) {
+		return this.sqlSessionProxy.selectCursor(arg0, arg1, arg2);
 	}
 }
