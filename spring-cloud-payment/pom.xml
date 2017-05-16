@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.siebre.springcloud</groupId>
+		<groupId>com.siebre</groupId>
 		<artifactId>spring-cloud-platform</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>spring-cloud-user</artifactId>
+	<artifactId>spring-cloud-payment</artifactId>
 	<packaging>pom</packaging>
 	<modules>
-		<module>spring-cloud-user-api</module>
-		<module>spring-cloud-user-service</module>
+		<module>spring-cloud-payment-api</module>
+		<module>spring-cloud-payment-service</module>
 	</modules>
 </project>

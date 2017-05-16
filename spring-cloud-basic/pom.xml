@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>spring-cloud-basic</artifactId>
 	<parent>
-		<groupId>com.siebre.springcloud</groupId>
+		<groupId>com.siebre</groupId>
 		<artifactId>spring-cloud-platform</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
