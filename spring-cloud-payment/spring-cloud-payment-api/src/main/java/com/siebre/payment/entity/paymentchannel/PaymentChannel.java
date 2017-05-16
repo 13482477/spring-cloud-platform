@@ -3,7 +3,6 @@ package com.siebre.payment.entity.paymentchannel;
 import java.util.Date;
 
 import com.siebre.basic.model.BaseObject;
-import com.siebre.payment.entity.enums.PaymentChannelStatus;
 
 /**
  * 支付渠道
@@ -33,11 +32,6 @@ public class PaymentChannel extends BaseObject {
      * 图标地址
      */
     private String iconUrl;
-
-    /**
-     * 渠道状态
-     */
-    private PaymentChannelStatus status;
 
     /**
      * 是否支持退款
@@ -173,14 +167,6 @@ public class PaymentChannel extends BaseObject {
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
     }
-
-	public PaymentChannelStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(PaymentChannelStatus status) {
-		this.status = status;
-	}
 
 	public String getPaymentGatewayUrl() {
 		return paymentGatewayUrl;
