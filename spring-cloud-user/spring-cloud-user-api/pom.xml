@@ -6,4 +6,12 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>spring-cloud-user-api</artifactId>
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.siebre.springcloud</groupId>
+			<artifactId>spring-cloud-basic</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 </project>
