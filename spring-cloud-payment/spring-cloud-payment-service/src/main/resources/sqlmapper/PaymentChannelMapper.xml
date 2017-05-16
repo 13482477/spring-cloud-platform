@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.siebre.springcloud.paymentchannel.mapper.PaymentChannelMapper">
+<mapper namespace="com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper">
 	<resultMap id="BaseResultMap" type="com.siebre.payment.entity.paymentchannel.PaymentChannel">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="channel_name" property="channelName" jdbcType="VARCHAR" />
