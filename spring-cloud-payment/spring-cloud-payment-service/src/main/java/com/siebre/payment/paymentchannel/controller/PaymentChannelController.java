@@ -9,6 +9,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.ApiOperation;
@@ -25,7 +26,7 @@ public class PaymentChannelController {
 	private Registration registration;
 	
 	@ApiOperation(value = "获取用户列表", notes = "第一个测试API")  
-	@RequestMapping(value = "/index")
+	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String index() {
 		
 		List<ServiceInstance> serviceInstances = discoveryClient.getInstances(this.registration.getServiceId());

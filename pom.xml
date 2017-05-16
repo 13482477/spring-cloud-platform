@@ -130,6 +130,8 @@
 		<module>spring-cloud-eureka</module>
 		<module>spring-cloud-basic</module>
 		<module>spring-cloud-payment</module>
+		<module>spring-cloud-admin</module>
+		<module>spring-boot-admin</module>
 	</modules>
 
 	<build>
