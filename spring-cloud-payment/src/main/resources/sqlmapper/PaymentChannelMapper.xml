@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper">
+<mapper namespace="com.siebre.payment.mapper.paymentchannel.PaymentChannelMapper">
 	<resultMap id="BaseResultMap" type="com.siebre.payment.entity.paymentchannel.PaymentChannel">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="channel_name" property="channelName" jdbcType="VARCHAR" />
@@ -19,9 +19,6 @@
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
 		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
 		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
-		<result column="payment_gateway_url" property="paymentGatewayUrl" jdbcType="VARCHAR" />
-		<result column="payment_callback_url" property="paymentCallbackUrl" jdbcType="VARCHAR" />
-		<result column="payment_return_page_url" property="paymentReturnPageUrl" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id,
@@ -38,9 +35,6 @@
 		end_date,
 		payee_account,
 		remark,
-		payment_gateway_url,
-		payment_callback_url,
-		payment_return_page_url,
 		create_user,
 		create_date,
 		update_user,

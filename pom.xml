@@ -137,6 +137,8 @@
 		<module>spring-cloud-payment</module>
 		<module>spring-cloud-admin</module>
 		<module>spring-boot-admin</module>
+		<module>spring-cloud-user</module>
+		<module>spring-cloud-message-demo</module>
 	</modules>
 
 	<build>

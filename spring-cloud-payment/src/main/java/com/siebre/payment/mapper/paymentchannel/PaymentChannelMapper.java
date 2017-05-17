@@ -1,4 +1,4 @@
-package com.siebre.payment.paymentchannel.mapper;
+package com.siebre.payment.mapper.paymentchannel;
 
 import java.util.List;
 

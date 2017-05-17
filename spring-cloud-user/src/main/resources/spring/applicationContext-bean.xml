@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
 
-	<context:component-scan base-package="com.siebre.payment" />
+	<context:component-scan base-package="com.siebre.user" />
 	<context:property-placeholder properties-ref="propertiesConfig" order="3" />
 	
 	<bean id="propertiesConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">

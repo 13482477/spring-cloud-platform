@@ -9,7 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.siebre.payment.entity.paymentchannel.PaymentChannel;
-import com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper;
+import com.siebre.payment.mapper.paymentchannel.PaymentChannelMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { 
