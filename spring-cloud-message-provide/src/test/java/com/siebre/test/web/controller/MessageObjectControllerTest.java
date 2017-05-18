@@ -1,0 +1,50 @@
+package com.siebre.test.web.controller;
+
+import static org.mockito.Mockito.*;
+
+import java.util.Date;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import com.siebre.messagedemo.entity.MessageObject;
+import com.siebre.messagedemo.service.messageobject.MessageObjectService;
+import com.siebre.test.base.WebMockConfig;
+
+public class MessageObjectControllerTest extends WebMockConfig {
+	
+	@Autowired
+	private WebApplicationContext webApplicationContext;
+	
+	@InjectMocks
+	private MessageObjectService messageObjectService;
+	
+	@Before
+	public void before() {
+		this.messageObjectService = mock(MessageObjectService.class);
+		MessageObject messageObject = new MessageObject();
+		messageObject.setId(new Long(1));
+		messageObject.setCurrentDate(new Date());
+		messageObject.setDescription("你好你好你好");
+		when(this.messageObjectService.get(new Long(1))).thenReturn(messageObject);
+	}
+	
+	@Test
+	public void listTest() throws Exception {
+		MockMvc mvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+		MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/api/v1/messageObject/1").accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andReturn();
+		result.getResponse().getContentAsString();
+	}
+
+}
