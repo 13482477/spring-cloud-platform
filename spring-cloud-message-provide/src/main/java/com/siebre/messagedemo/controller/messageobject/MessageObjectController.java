@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.web.WebResult;
-import com.siebre.messagedemo.entity.messageobject.MessageObject;
+import com.siebre.messagedemo.entity.MessageObject;
 import com.siebre.messagedemo.remoteservice.MessageObjectRemoteService;
 
 import io.swagger.annotations.Api;

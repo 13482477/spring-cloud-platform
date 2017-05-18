@@ -14,14 +14,14 @@
 			<property name="suppressAllComments" value="true" />
 		</commentGenerator>
 		<!-- 生发环境数据库配置:修改配置 -->
-		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.168.18.158:3306/siebre-merchant2?useSSL=false" userId="root" password="1qaz@WSX">
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.168.18.158:3306/siebre-message-demo?useSSL=false" userId="root" password="1qaz@WSX">
 		</jdbcConnection>
 		<javaTypeResolver>
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>
 		
 		<!-- 持久化对象：targetPackage：修改包名 targetProject：修改项目名 或 去除 -->
-		<javaModelGenerator targetPackage="com.siebre.merchant.entity" targetProject="src/main/java">
+		<javaModelGenerator targetPackage="com.siebre.messagedemo.entity" targetProject="src/main/java">
 			<property name="enableSubPackages" value="true" />
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
@@ -31,12 +31,12 @@
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 		<!-- 数据访问对象xml实现:targetPackage：修改包名 targetProject：修改项目名 或 去除 -->
-		<javaClientGenerator type="XMLMAPPER" targetPackage="com.siebre.merchant.mapper" targetProject="src/main/java">
+		<javaClientGenerator type="XMLMAPPER" targetPackage="com.siebre.messagedemo.mapper" targetProject="src/main/java">
 			<property name="enableSubPackages" value="true" />
 		</javaClientGenerator>
 		<!-- 表转代码：tableName：修改表名 -->
 		<table 
-			tableName="mer_application_interface" 
+			tableName="message_object" 
 			selectByExampleQueryId="false"
 			enableCountByExample="false" 
 			enableUpdateByExample="false" 
@@ -46,152 +46,7 @@
 			enableSelectByPrimaryKey="true"
 			enableUpdateByPrimaryKey="true" 
 			enableDeleteByPrimaryKey="true"
-			domainObjectName="ApplicationInterface"
-			>
-			<columnOverride column="status" javaType="com.siebre.merchant.entity.enums.InterfaceStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" ></columnOverride>
-		</table>
-		<table 
-			tableName="mer_basic_info" 
-			selectByExampleQueryId="false"
-			enableCountByExample="false" 
-			enableUpdateByExample="false" 
-			enableDeleteByExample="false" 
-			enableSelectByExample="false" 
-			enableInsert="true" 
-			enableSelectByPrimaryKey="true"
-			enableUpdateByPrimaryKey="true" 
-			enableDeleteByPrimaryKey="true"
-			domainObjectName="BasicInfo"
-			>
-		</table>
-		<table 
-			tableName="mer_billing_account" 
-			selectByExampleQueryId="false"
-			enableCountByExample="false" 
-			enableUpdateByExample="false" 
-			enableDeleteByExample="false" 
-			enableSelectByExample="false" 
-			enableInsert="true" 
-			enableSelectByPrimaryKey="true"
-			enableUpdateByPrimaryKey="true" 
-			enableDeleteByPrimaryKey="true"
-			domainObjectName="BillingAccount"
-			>
-		</table>
-		<table 
-			tableName="mer_billing_account_detail" 
-			selectByExampleQueryId="false"
-			enableCountByExample="false" 
-			enableUpdateByExample="false" 
-			enableDeleteByExample="false" 
-			enableSelectByExample="false" 
-			enableInsert="true" 
-			enableSelectByPrimaryKey="true"
-			enableUpdateByPrimaryKey="true" 
-			enableDeleteByPrimaryKey="true"
-			domainObjectName="BillingAccountDetail"
-			>
-			<columnOverride column="transaction_type" javaType="com.siebre.merchant.entity.enums.TransactionType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" ></columnOverride>
-		</table>
-		<table 
-			tableName="mer_business_application" 
-			selectByExampleQueryId="false"
-			enableCountByExample="false" 
-			enableUpdateByExample="false" 
-			enableDeleteByExample="false" 
-			enableSelectByExample="false" 
-			enableInsert="true" 
-			enableSelectByPrimaryKey="true"
-			enableUpdateByPrimaryKey="true" 
-			enableDeleteByPrimaryKey="true"
-			domainObjectName="BussinessApplication"
-			>
-			<columnOverride column="approved_status" javaType="com.siebre.merchant.entity.enums.ApprovedStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" ></columnOverride>
-		</table>
-		<table 
-			tableName="mer_business_type" 
-			selectByExampleQueryId="false"
-			enableCountByExample="false" 
-			enableUpdateByExample="false" 
-			enableDeleteByExample="false" 
-			enableSelectByExample="false" 
-			enableInsert="true" 
-			enableSelectByPrimaryKey="true"
-			enableUpdateByPrimaryKey="true" 
-			enableDeleteByPrimaryKey="true"
-			domainObjectName="BusinessType"
-			>
-		</table>
-		<table 
-			tableName="mer_develoy_account" 
-			selectByExampleQueryId="false"
-			enableCountByExample="false" 
-			enableUpdateByExample="false" 
-			enableDeleteByExample="false" 
-			enableSelectByExample="false" 
-			enableInsert="true" 
-			enableSelectByPrimaryKey="true"
-			enableUpdateByPrimaryKey="true" 
-			enableDeleteByPrimaryKey="true"
-			domainObjectName="DeveloyAccount"
-			>
-		</table>
-		<table 
-			tableName="mer_login_account" 
-			selectByExampleQueryId="false"
-			enableCountByExample="false" 
-			enableUpdateByExample="false" 
-			enableDeleteByExample="false" 
-			enableSelectByExample="false" 
-			enableInsert="true" 
-			enableSelectByPrimaryKey="true"
-			enableUpdateByPrimaryKey="true" 
-			enableDeleteByPrimaryKey="true"
-			domainObjectName="LoginAccount"
-			>
-			<columnOverride column="account_type" javaType="com.siebre.merchant.entity.enums.LoginAccountType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" ></columnOverride>
-		</table>
-		<table 
-			tableName="mer_merchant" 
-			selectByExampleQueryId="false"
-			enableCountByExample="false" 
-			enableUpdateByExample="false" 
-			enableDeleteByExample="false" 
-			enableSelectByExample="false" 
-			enableInsert="true" 
-			enableSelectByPrimaryKey="true"
-			enableUpdateByPrimaryKey="true" 
-			enableDeleteByPrimaryKey="true"
-			domainObjectName="Merchant"
-			>
-			<columnOverride column="status" javaType="com.siebre.merchant.entity.enums.MerchantStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" ></columnOverride>
-		</table>
-		<table 
-			tableName="mer_role" 
-			selectByExampleQueryId="false"
-			enableCountByExample="false" 
-			enableUpdateByExample="false" 
-			enableDeleteByExample="false" 
-			enableSelectByExample="false" 
-			enableInsert="true" 
-			enableSelectByPrimaryKey="true"
-			enableUpdateByPrimaryKey="true" 
-			enableDeleteByPrimaryKey="true"
-			domainObjectName="Role"
-			>
-		</table>
-		<table 
-			tableName="mer_security_info" 
-			selectByExampleQueryId="false"
-			enableCountByExample="false" 
-			enableUpdateByExample="false" 
-			enableDeleteByExample="false" 
-			enableSelectByExample="false" 
-			enableInsert="true" 
-			enableSelectByPrimaryKey="true"
-			enableUpdateByPrimaryKey="true" 
-			enableDeleteByPrimaryKey="true"
-			domainObjectName="SecurityInfo"
+			domainObjectName="MessageObject"
 			>
 		</table>
 	</context>

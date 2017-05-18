@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.siebre.basic.web.WebResult;
-import com.siebre.messagedemo.entity.messageobject.MessageObject;
+import com.siebre.messagedemo.entity.MessageObject;
 
 @FeignClient("SPRING-CLOUD-MESSAGE-DEMO")
 public interface MessageObjectRemoteService {

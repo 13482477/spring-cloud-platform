@@ -1,4 +1,4 @@
-package com.siebre.messagedemo.entity.messageobject;
+package com.siebre.messagedemo.entity;
 
 import java.util.Date;
 
