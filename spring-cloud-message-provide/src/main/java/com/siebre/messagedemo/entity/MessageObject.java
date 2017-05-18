@@ -3,35 +3,33 @@ package com.siebre.messagedemo.entity;
 import java.util.Date;
 
 public class MessageObject {
-	
-	private Long id;
-	
-	private Date currentDate;
-	
-	private String description;
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
+    private Date currentDate;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    private String description;
 
-	public Date getCurrentDate() {
-		return currentDate;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setCurrentDate(Date currentDate) {
-		this.currentDate = currentDate;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public Date getCurrentDate() {
+        return currentDate;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setCurrentDate(Date currentDate) {
+        this.currentDate = currentDate;
+    }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description == null ? null : description.trim();
+    }
 }

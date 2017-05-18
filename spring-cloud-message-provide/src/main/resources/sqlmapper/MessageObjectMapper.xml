@@ -1,71 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.siebre.messagedemo.mapper.MessageObjectMapper">
-  <resultMap id="BaseResultMap" type="com.siebre.messagedemo.entity.MessageObject">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="current_date" jdbcType="TIMESTAMP" property="currentDate" />
-    <result column="description" jdbcType="VARCHAR" property="description" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    id, current_date, description
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from message_object
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from message_object
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" parameterType="com.siebre.messagedemo.entity.MessageObject">
-    insert into message_object (id, current_date, description
-      )
-    values (#{id,jdbcType=INTEGER}, #{currentDate,jdbcType=TIMESTAMP}, #{description,jdbcType=VARCHAR}
-      )
-  </insert>
-  <insert id="insertSelective" parameterType="com.siebre.messagedemo.entity.MessageObject">
-    insert into message_object
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="currentDate != null">
-        current_date,
-      </if>
-      <if test="description != null">
-        description,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="currentDate != null">
-        #{currentDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="description != null">
-        #{description,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.messagedemo.entity.MessageObject">
-    update message_object
-    <set>
-      <if test="currentDate != null">
-        current_date = #{currentDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="description != null">
-        description = #{description,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.siebre.messagedemo.entity.MessageObject">
-    update message_object
-    set current_date = #{currentDate,jdbcType=TIMESTAMP},
-      description = #{description,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+	<resultMap id="BaseResultMap" type="com.siebre.messagedemo.entity.MessageObject">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="current_date" jdbcType="TIMESTAMP" property="currentDate" />
+		<result column="description" jdbcType="VARCHAR" property="description" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, `current_date`, description
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from message_object
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from message_object
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.siebre.messagedemo.entity.MessageObject">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into message_object (`current_date`, description)
+		values (#{currentDate,jdbcType=TIMESTAMP}, #{description,jdbcType=VARCHAR})
+	</insert>
+	<!-- 
+	<insert id="insert" parameterType="com.siebre.messagedemo.entity.MessageObject" useGeneratedKeys="true" keyProperty="id">
+		insert into message_object (id, `current_date`, description
+		)
+		values
+		(#{id,jdbcType=BIGINT}, #{currentDate,jdbcType=TIMESTAMP}, #{description,jdbcType=VARCHAR}
+		)
+	</insert>
+	 -->
+	<insert id="insertSelective" parameterType="com.siebre.messagedemo.entity.MessageObject" useGeneratedKeys="true" keyProperty="id">
+		insert into message_object
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="currentDate != null">
+				`current_date`,
+			</if>
+			<if test="description != null">
+				description,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="currentDate != null">
+				#{currentDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.messagedemo.entity.MessageObject">
+		update message_object
+		<set>
+			<if test="currentDate != null">
+				`current_date` = #{currentDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="description != null">
+				description = #{description,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.siebre.messagedemo.entity.MessageObject">
+		update message_object
+		set `current_date` = #{currentDate,jdbcType=TIMESTAMP},
+		description = #{description,jdbcType=VARCHAR}
+		where id =
+		#{id,jdbcType=BIGINT}
+	</update>
+	<select id="selectByQuery" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from message_object
+	</select>
 </mapper>

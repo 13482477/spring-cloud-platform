@@ -1,17 +1,26 @@
 package com.siebre.messagedemo.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import com.siebre.basic.query.PageInfo;
 import com.siebre.messagedemo.entity.MessageObject;
 
+@Repository
 public interface MessageObjectMapper {
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Long id);
 
     int insert(MessageObject record);
 
     int insertSelective(MessageObject record);
 
-    MessageObject selectByPrimaryKey(Integer id);
+    MessageObject selectByPrimaryKey(Long id);
 
     int updateByPrimaryKeySelective(MessageObject record);
 
     int updateByPrimaryKey(MessageObject record);
+    
+    List<MessageObject> selectByQuery(@Param("pageInfo")PageInfo pageInfo);
 }

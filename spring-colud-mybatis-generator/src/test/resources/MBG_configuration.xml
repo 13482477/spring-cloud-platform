@@ -41,13 +41,14 @@
 			enableCountByExample="false" 
 			enableUpdateByExample="false" 
 			enableDeleteByExample="false" 
-			enableSelectByExample="false" 
+			enableSelectByExample="false"
 			enableInsert="true" 
 			enableSelectByPrimaryKey="true"
 			enableUpdateByPrimaryKey="true" 
 			enableDeleteByPrimaryKey="true"
 			domainObjectName="MessageObject"
 			>
+			<generatedKey column="id" sqlStatement="MySql" identity="true"/>
 		</table>
 	</context>
 </generatorConfiguration>
