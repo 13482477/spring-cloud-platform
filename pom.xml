@@ -134,11 +134,8 @@
 	<modules>
 		<module>spring-cloud-eureka</module>
 		<module>spring-cloud-basic</module>
-		<module>spring-cloud-payment</module>
-		<module>spring-cloud-admin</module>
 		<module>spring-boot-admin</module>
-		<module>spring-cloud-user</module>
-		<module>spring-cloud-message-demo</module>
+		<module>spring-cloud-message-provide</module>
 	</modules>
 
 	<build>
