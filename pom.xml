@@ -132,6 +132,7 @@
 		<module>spring-cloud-payment</module>
 		<module>spring-cloud-admin</module>
 		<module>spring-boot-admin</module>
+		<module>spring.cloud.sleuth</module>
 	</modules>
 
 	<build>

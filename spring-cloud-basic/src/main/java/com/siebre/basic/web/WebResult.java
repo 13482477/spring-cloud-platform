@@ -2,6 +2,8 @@ package com.siebre.basic.web;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.siebre.basic.query.PageInfo;
 
 public class WebResult<T> implements Serializable {
@@ -12,6 +14,7 @@ public class WebResult<T> implements Serializable {
 
 	private String returnMessage;
 
+	@JsonInclude(Include.NON_NULL)
 	private PageInfo pageInfo;
 
 	private T data;
