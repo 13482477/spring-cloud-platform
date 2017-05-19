@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.siebre</groupId>
 		<artifactId>spring-cloud-platform</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0.RELEASE</version>
 	</parent>
 	<artifactId>spring-cloud-message-provide</artifactId>
 
@@ -11,7 +11,7 @@
 		<dependency>
 			<groupId>com.siebre</groupId>
 			<artifactId>spring-cloud-basic</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.0.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
