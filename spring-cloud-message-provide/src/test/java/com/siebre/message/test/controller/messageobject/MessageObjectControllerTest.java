@@ -1,4 +1,4 @@
-package com.siebre.message.test.controller;
+package com.siebre.message.test.controller.messageobject;
 
 import org.junit.Test;
 import org.mockito.InjectMocks;
