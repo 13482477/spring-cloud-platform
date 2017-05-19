@@ -1,4 +1,4 @@
-package com.siebre.test.base;
+package com.siebre.message.test.base;
 
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
