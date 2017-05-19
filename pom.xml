@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.siebre</groupId>
 	<artifactId>spring-cloud-platform</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 
 	<parent>
@@ -168,4 +168,17 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<name>Siebre Release Repository</name>
+			<url>http://nexus.siebre.com:8888/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Siebre Snapshot Repository</name>
+			<url>http://nexus.siebre.com:8888/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
