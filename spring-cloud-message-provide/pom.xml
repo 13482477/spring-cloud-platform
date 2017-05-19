@@ -5,7 +5,7 @@
 		<artifactId>spring-cloud-platform</artifactId>
 		<version>1.0.0.RELEASE</version>
 	</parent>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.1.RELEASE</version>
 	<artifactId>spring-cloud-message-provide</artifactId>
 
 	<dependencies>
@@ -89,4 +89,111 @@
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
 	</dependencies>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources/env/${env}</directory>
+				<targetPath>${project.build.outputDirectory}</targetPath>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>appassembler-maven-plugin</artifactId>
+				<version>1.10</version>
+				<configuration>
+					<repositoryLayout>flat</repositoryLayout>
+					<repositoryName>lib</repositoryName>
+					<configurationDirectory>conf</configurationDirectory>
+					<copyConfigurationDirectory>true</copyConfigurationDirectory>
+					<configurationSourceDirectory>src/main/resources/env/${env}</configurationSourceDirectory>
+					<includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+					<target>${project.build.directory}</target>
+					<daemons>
+						<daemon>
+							<id>${project.name}</id>
+							<mainClass>com.siebre.Application</mainClass>
+							<platforms>
+								<platform>jsw</platform>
+							</platforms>
+							<wrapperLogFile>logs/${project.name}.log</wrapperLogFile>
+							<generatorConfigurations>
+								<generatorConfiguration>
+									<generator>jsw</generator>
+									<includes>
+										<include>macosx-universal-64</include>
+										<include>linux-x86-32</include>
+										<include>linux-x86-64</include>
+										<include>windows-x86-32</include>
+										<include>windows-x86-64</include>
+									</includes>
+									<configuration>
+										<property>
+											<name>configuration.directory.in.classpath.first</name>
+											<value>conf</value>
+										</property>
+										<property>
+											<name>set.default.REPO_DIR</name>
+											<value>lib</value>
+										</property>
+										<property>
+											<name>wrapper.ping.timeout</name>
+											<value>300</value>
+										</property>
+										<property>
+											<name>wrapper.startup.timeout</name>
+											<value>300</value>
+										</property>
+									</configuration>
+								</generatorConfiguration>
+							</generatorConfigurations>
+							<jvmSettings>
+								<initialMemorySize>256M</initialMemorySize>
+								<maxMemorySize>512M</maxMemorySize>
+								<extraArguments>
+									<extraArgument>-server</extraArgument>
+								</extraArguments>
+							</jvmSettings>
+						</daemon>
+					</daemons>
+				</configuration>
+				<executions>
+					<execution>
+						<id>generate-jsw-scripts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>generate-daemons</goal>
+							<goal>create-repository</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<descriptor>assembly/bin.xml</descriptor>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
