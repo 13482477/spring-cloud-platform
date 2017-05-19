@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.siebre.basic.web.WebResult;
 import com.siebre.messagedemo.entity.MessageObject;
 
-@FeignClient("SPRING-CLOUD-MESSAGE-DEMO")
+@FeignClient(value = "SPRING-CLOUD-MESSAGE-DEMO", fallback = MessageObjectFallback.class)
 public interface MessageObjectRemoteService {
 	
 	@RequestMapping(value = "/api/v1/messageObject/list", method = RequestMethod.GET)
