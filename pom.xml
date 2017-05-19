@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.siebre</groupId>
 	<artifactId>spring-cloud-platform</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0.RELEASE</version>
 	<packaging>pom</packaging>
 
 	<parent>
@@ -23,6 +23,11 @@
 				<version>Dalston.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-log4j</artifactId>
+				<version>1.3.8.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>io.springfox</groupId>
@@ -129,10 +134,9 @@
 	<modules>
 		<module>spring-cloud-eureka</module>
 		<module>spring-cloud-basic</module>
-		<module>spring-cloud-payment</module>
-		<module>spring-cloud-admin</module>
 		<module>spring-boot-admin</module>
 		<module>spring.cloud.sleuth</module>
+		<module>spring-cloud-message-provide</module>
 	</modules>
 
 	<build>
@@ -163,6 +167,26 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<name>Siebre Release Repository</name>
+			<url>http://nexus.siebre.com:8888/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Siebre Snapshot Repository</name>
+			<url>http://nexus.siebre.com:8888/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
