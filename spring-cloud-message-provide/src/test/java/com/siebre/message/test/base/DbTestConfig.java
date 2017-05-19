@@ -9,8 +9,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = {
         "classpath:spring/applicationContext-bean.xml",
         "classpath:spring/applicationContext-jdbc.xml",
-//        "classpath:spring/applicationContext-rabbit.xml",
-//        "classpath:spring/applicationContext-redis.xml",
 })
 @Rollback(true)
 public class DbTestConfig {

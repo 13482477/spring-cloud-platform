@@ -11,10 +11,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.siebre.message.test.base.WebMockConfig;
+import com.siebre.message.test.base.WebApplicationMockConfig;
 import com.siebre.messagedemo.service.messageobject.MessageObjectService;
 
-public class MessageObjectControllerTest extends WebMockConfig {
+public class MessageObjectControllerTest extends WebApplicationMockConfig {
 	
 	@Autowired
 	private WebApplicationContext webApplicationContext;
