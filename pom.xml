@@ -135,6 +135,7 @@
 		<module>spring-cloud-eureka</module>
 		<module>spring-cloud-basic</module>
 		<module>spring-boot-admin</module>
+		<module>spring.cloud.sleuth</module>
 		<module>spring-cloud-message-provide</module>
 	</modules>
 
