@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.siebre.basic.web.WebResult;
 import com.siebre.messageconsumer.entity.MessageObject;
 
-@FeignClient(value = "SPRING-CLOUD-MESSAGE-DEMO", fallback = MessageObjectFallback.class)
+@FeignClient(value = "SPRING-CLOUD-MESSAGE-PROVIDER")
 public interface MessageObjectRemoteService {
 	
 	@RequestMapping(value = "/api/v1/messageObject/list", method = RequestMethod.GET)
@@ -19,6 +19,11 @@ public interface MessageObjectRemoteService {
 			@RequestParam("limit") int limit, 
 			@RequestParam("sortField") String sortField, 
 			@RequestParam("order") String order
+			);
+	
+	@RequestMapping(value = "/api/v1/messageObject/{id}", method = RequestMethod.GET)
+	public WebResult<MessageObject> findById(
+			@RequestParam("id") long id 
 			);
 
 }

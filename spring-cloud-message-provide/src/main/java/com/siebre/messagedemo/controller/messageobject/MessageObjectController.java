@@ -2,6 +2,8 @@ package com.siebre.messagedemo.controller.messageobject;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +26,8 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @Api(tags = {"MessageObjectController"})
 public class MessageObjectController {
+	
+	private Logger logger = LoggerFactory.getLogger(MessageObjectController.class);
 	
 	@Autowired
 	private MessageObjectService messageObjectService;
@@ -48,6 +52,7 @@ public class MessageObjectController {
 	@RequestMapping(path = "/api/v1/messageObject/{id}", method = { RequestMethod.GET })
 	@ResponseBody
 	public WebResult<MessageObject> findById(@PathVariable Long id) {
+		logger.info("--------call find by id---------");
 		MessageObject messageObject = this.messageObjectService.get(id);
 		return WebResult.<MessageObject>builder().returnCode("200").data(messageObject).returnMessage("成功获取数据").build();
 	}
