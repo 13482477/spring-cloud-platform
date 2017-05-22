@@ -19,9 +19,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.siebre.message.test.base.MockitoTestConfig;
-import com.siebre.messageconsumer.controller.messageobject.MessageObjectController;
-import com.siebre.messageconsumer.entity.MessageObject;
-import com.siebre.messageconsumer.service.messageobject.MessageObjectService;
+import com.siebre.messagedemo.controller.messageobject.MessageObjectController;
+import com.siebre.messagedemo.entity.MessageObject;
+import com.siebre.messagedemo.service.messageobject.MessageObjectService;
 
 public class MessageObjectController2Test extends MockitoTestConfig {
 	
