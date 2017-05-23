@@ -1,4 +1,4 @@
-package com.siebre.spring.cloud.sleuth;
+package com.siebre;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,10 +8,10 @@ import org.springframework.cloud.sleuth.zipkin.stream.EnableZipkinStreamServer;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableZipkinStreamServer
-public class ZipkinServerApplication {
+public class Application {
 	
 	public static void main(String[] args) throws Exception {
-		SpringApplication.run(ZipkinServerApplication.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 	
 }
