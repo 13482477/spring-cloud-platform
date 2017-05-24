@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.mapper.paymentway.PaymentWayMapper">
+	<resultMap id="BaseResultMap" type="com.siebre.payment.entity.paymentway.PaymentWay">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="app_id" property="appId" jdbcType="VARCHAR" />
+		<result column="encryption_mode" property="encryptionMode" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="payment_gateway_url" property="paymentGatewayUrl" jdbcType="VARCHAR" />
+		<result column="payment_callback_url" property="paymentCallbackUrl" jdbcType="VARCHAR" />
+		<result column="payment_return_page_url" property="paymentReturnPageUrl" jdbcType="VARCHAR" />
+		<result column="secret_key" property="secretKey" jdbcType="VARCHAR" />
+		<result column="public_key" property="publicKey" jdbcType="VARCHAR" />
+		<result column="credit_path" property="creditPath" jdbcType="VARCHAR" />
+		<result column="credit_key" property="creditKey" jdbcType="VARCHAR" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="create_date" property="createDate" jdbcType="VARCHAR" />
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+		<result column="update_date" property="updateDate" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="PaymentWayResultMap" type="com.siebre.payment.entity.paymentway.PaymentWay" extends="BaseResultMap">
+		<association property="paymentChannel" javaType="com.siebre.payment.entity.paymentchannel.PaymentChannel" notNullColumn="id" columnPrefix="paymentChannel_" >
+			<id column="id" property="id" jdbcType="BIGINT" />
+			<result column="channel_name" property="channelName" jdbcType="VARCHAR" />
+			<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+			<result column="merchant_code" property="merchantCode" jdbcType="VARCHAR" />
+			<result column="icon_url" property="iconUrl" jdbcType="VARCHAR" />
+			<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+			<result column="support_refunded" property="supportRefunded" jdbcType="BOOLEAN" />
+			<result column="contract_number" property="contractNumber" jdbcType="VARCHAR" />
+			<result column="contract_start_date" property="contractStartDate" jdbcType="TIMESTAMP" />
+			<result column="contract_end_date" property="contractEndDate" jdbcType="TIMESTAMP" />
+			<result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
+			<result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+			<result column="payee_account" property="payeeAccount" jdbcType="VARCHAR" />
+			<result column="remark" property="remark" jdbcType="VARCHAR" />
+			<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+			<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+			<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+			<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+			<result column="payment_gateway_url" property="paymentGatewayUrl" jdbcType="VARCHAR" />
+			<result column="payment_callback_url" property="paymentCallbackUrl" jdbcType="VARCHAR" />
+			<result column="payment_return_page_url" property="paymentReturnPageUrl" jdbcType="VARCHAR" />
+		</association>
+		<collection property="paymentInterfaces" javaType="com.siebre.payment.entity.paymentinterface.PaymentInterface" columnPrefix="paymentInterface_" notNullColumn="id">
+			<id column="id" property="id" jdbcType="BIGINT" />
+			<result column="payment_way_id" property="paymentWayId" jdbcType="BIGINT" />
+			<result column="interface_name" property="interfaceName" jdbcType="VARCHAR" />
+			<result column="interface_code" property="interfaceCode" jdbcType="VARCHAR" />
+			<result column="request_url" property="requestUrl" jdbcType="VARCHAR" />
+			<result column="callback_url" property="callbackUrl" jdbcType="VARCHAR" />
+			<result column="return_page_url" property="returnPageUrl" jdbcType="VARCHAR" />
+			<result column="payment_interface_type" property="paymentInterfaceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+			<result column="handler_bean_name" property="handlerBeanName" jdbcType="VARCHAR" />
+		</collection>
+	</resultMap>
+	<sql id="Base_Column_List">
+		pmt_payment_way.id                                          id,                       
+		pmt_payment_way.payment_channel_id                          payment_channel_id,
+		pmt_payment_way.name                                        name,                     
+		pmt_payment_way.code                                        code,                     
+		pmt_payment_way.app_id                                      app_id,                   
+		pmt_payment_way.encryption_mode                             encryption_mode,          
+		pmt_payment_way.payment_gateway_url                         payment_gateway_url,      
+		pmt_payment_way.payment_callback_url                        payment_callback_url,     
+		pmt_payment_way.payment_return_page_url                     payment_return_page_url,  
+		pmt_payment_way.secret_key                     				secret_key,
+		pmt_payment_way.public_key                     				public_key,
+		pmt_payment_way.credit_path                     			credit_path,
+		pmt_payment_way.credit_key                     				credit_key,
+		pmt_payment_way.create_user                                 create_user,              
+		pmt_payment_way.create_date                                 create_date,              
+		pmt_payment_way.update_user                                 update_user,              
+		pmt_payment_way.update_date                                 update_date               
+	</sql>
+	<sql id="PaymentChannel_Column_List">
+		pmt_payment_channel.id                                      paymentChannel_id,                      
+		pmt_payment_channel.channel_name                            paymentChannel_channel_name,            
+		pmt_payment_channel.channel_code                            paymentChannel_channel_code,            
+		pmt_payment_channel.merchant_code                           paymentChannel_merchant_code,           
+		pmt_payment_channel.icon_url                                paymentChannel_icon_url,                
+		pmt_payment_channel.status                                  paymentChannel_status,                  
+		pmt_payment_channel.support_refunded                        paymentChannel_support_refunded,        
+		pmt_payment_channel.contract_number                          paymentChannel_contract_number,         
+		pmt_payment_channel.contract_start_date                     paymentChannel_contract_start_date,     
+		pmt_payment_channel.contract_end_date                       paymentChannel_contract_end_date,       
+		pmt_payment_channel.start_date                              paymentChannel_start_date,              
+		pmt_payment_channel.end_date                                paymentChannel_end_date,                
+		pmt_payment_channel.payee_account                           paymentChannel_payee_account,           
+		pmt_payment_channel.remark                                  paymentChannel_remark,                  
+		pmt_payment_channel.payment_gateway_url                     paymentChannel_payment_gateway_url,     
+		pmt_payment_channel.payment_callback_url                    paymentChannel_payment_callback_url,    
+		pmt_payment_channel.payment_return_page_url                 paymentChannel_payment_return_page_url, 
+		pmt_payment_channel.create_user                             paymentChannel_create_user,             
+		pmt_payment_channel.create_date                             paymentChannel_create_date,             
+		pmt_payment_channel.update_user                             paymentChannel_update_user,             
+		pmt_payment_channel.update_date                             paymentChannel_update_date              
+	</sql>
+	<sql id="PaymentInterface_Column_List">
+		pmt_payment_interface.id                                    paymentInterface_id,                     
+		pmt_payment_interface.payment_way_id                        paymentInterface_payment_way_id,         
+		pmt_payment_interface.interface_name                        paymentInterface_interface_name,         
+		pmt_payment_interface.interface_code                        paymentInterface_interface_code,         
+		pmt_payment_interface.request_url                           paymentInterface_request_url,            
+		pmt_payment_interface.callback_url                          paymentInterface_callback_url,
+		pmt_payment_interface.return_page_url                       paymentInterface_return_page_url,
+		pmt_payment_interface.payment_interface_type                paymentInterface_payment_interface_type,
+		pmt_payment_interface.handler_bean_name                     paymentInterface_handler_bean_name       
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+			<include refid="Base_Column_List" />
+		from
+			pmt_payment_way
+		where
+			id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from
+			pmt_payment_way
+		where
+			id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.siebre.payment.entity.paymentway.PaymentWay" useGeneratedKeys="true" keyProperty="id">
+		insert into pmt_payment_way (
+			id,
+			payment_channel_id,
+			name,
+			code,
+			app_id,
+			encryption_mode,
+			payment_gateway_url,
+			payment_callback_url,
+			payment_return_page_url,
+			secret_key,
+			public_key,
+			credit_path,
+			credit_key,
+			create_user,
+			create_date,
+			update_user,
+			update_date
+		)
+		values (
+			#{id,jdbcType=BIGINT},
+			#{paymentChannelId,jdbcType=BIGINT},
+			#{merchantCode,jdbcType=VARCHAR},
+			#{name,jdbcType=VARCHAR},
+			#{code,jdbcType=VARCHAR},
+			#{appId,jdbcType=VARCHAR},
+			#{encryptionMode,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			#{paymentGatewayUrl,jdbcType=VARCHAR},
+			#{paymentCallbackUrl,jdbcType=VARCHAR},
+			#{paymentReturnPageUrl,jdbcType=VARCHAR},
+			#{secretKey,jdbcType=VARCHAR},
+			#{publicKey,jdbcType=VARCHAR},
+			#{creditPath,jdbcType=VARCHAR},
+			#{creditKey,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createDate,jdbcType=VARCHAR},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateDate,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.siebre.payment.entity.paymentway.PaymentWay" useGeneratedKeys="true" keyProperty="id">
+		insert into 
+			pmt_payment_way
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="paymentChannelId != null">
+				payment_channel_id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="code != null">
+				code,
+			</if>
+			<if test="appId != null">
+				app_id,
+			</if>
+			<if test="encryptionMode != null">
+				encryption_mode,
+			</if>
+			<if test="paymentGatewayUrl != null">
+				payment_gateway_url,
+			</if>
+			<if test="paymentCallbackUrl != null">
+				payment_callback_url,
+			</if>
+			<if test="paymentReturnPageUrl != null">
+				payment_return_page_url,
+			</if>
+			<if test="secretKey != null">
+				secret_key,
+			</if>
+			<if test="publicKey != null">
+				public_key,
+			</if>
+			<if test="creditPath != null">
+				credit_path,
+			</if>
+			<if test="creditKey != null">
+				credit_key,
+			</if>
+			<if test="createUser != null">
+				create_user,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="updateUser != null">
+				update_user,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="paymentChannelId != null">
+				#{paymentChannelId,jdbcType=BIGINT},
+			</if>
+            <if test="merchantCode != null">
+                #{merchantCode,jdbcType=VARCHAR},
+            </if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="appId != null">
+				#{appId,jdbcType=VARCHAR},
+			</if>
+			<if test="encryptionMode != null">
+				#{encryptionMode,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
+			<if test="paymentGatewayUrl != null">
+				#{paymentGatewayUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentCallbackUrl != null">
+				#{paymentCallbackUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentReturnPageUrl != null">
+				#{paymentReturnPageUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="secretKey != null">
+				#{secretKey,jdbcType=VARCHAR},
+			</if>
+			<if test="publicKey != null">
+				#{publicKey,jdbcType=VARCHAR},
+			</if>
+			<if test="creditPath != null">
+				#{creditPath,jdbcType=VARCHAR},
+			</if>
+			<if test="creditKey != null">
+				#{creditKey,jdbcType=VARCHAR},
+			</if>
+			<if test="createUser != null">
+				#{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=VARCHAR},
+			</if>
+			<if test="updateUser != null">
+				#{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.entity.paymentway.PaymentWay">
+		update pmt_payment_way
+		<set>
+			<if test="paymentChannelId != null">
+				payment_channel_id = #{paymentChannelId,jdbcType=BIGINT},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				code = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="appId != null">
+				app_id = #{appId,jdbcType=VARCHAR},
+			</if>
+			<if test="encryptionMode != null">
+				encryption_mode = #{encryptionMode,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
+			<if test="paymentGatewayUrl != null">
+				payment_gateway_url = #{paymentGatewayUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentCallbackUrl != null">
+				payment_callback_url = #{paymentCallbackUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentReturnPageUrl != null">
+				payment_return_page_url = #{paymentReturnPageUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="secretKey != null">
+				secret_key = #{secretKey,jdbcType=VARCHAR},
+			</if>
+			<if test="publicKey != null">
+				public_key = #{publicKey,jdbcType=VARCHAR},
+			</if>
+			<if test="creditPath != null">
+				credit_path = #{creditPath,jdbcType=VARCHAR},
+			</if>
+			<if test="creditKey != null">
+				credit_key = #{creditKey,jdbcType=VARCHAR},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=VARCHAR},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where 
+			id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.entity.paymentway.PaymentWay">
+		update 
+			pmt_payment_way
+		set 
+			payment_channel_id = #{paymentChannelId,jdbcType=BIGINT},
+			name = #{name,jdbcType=VARCHAR},
+			code = #{code,jdbcType=VARCHAR},
+			app_id = #{appId,jdbcType=VARCHAR},
+			encryption_mode = #{encryptionMode,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			payment_gateway_url = #{paymentGatewayUrl,jdbcType=VARCHAR},
+			payment_callback_url = #{paymentCallbackUrl,jdbcType=VARCHAR},
+			payment_return_page_url = #{paymentReturnPageUrl,jdbcType=VARCHAR},
+			secret_key = #{secretKey,jdbcType=VARCHAR},
+			public_key = #{publicKey,jdbcType=VARCHAR},
+			credit_path = #{creditPath,jdbcType=VARCHAR},
+			credit_key = #{creditKey,jdbcType=VARCHAR},
+			create_user = #{createUser,jdbcType=VARCHAR},
+			create_date = #{createDate,jdbcType=VARCHAR},
+			update_user = #{updateUser,jdbcType=VARCHAR},
+			update_date = #{updateDate,jdbcType=VARCHAR}
+		where 
+			id = #{id,jdbcType=BIGINT}
+	</update>
+	<select id="getPaymentWayByCode" resultMap="PaymentWayResultMap" parameterType="java.lang.String">
+		select
+			<include refid="Base_Column_List" />,
+			<include refid="PaymentChannel_Column_List" />,
+			<include refid="PaymentInterface_Column_List" />
+		from 
+			pmt_payment_way
+		left join
+			pmt_payment_interface on pmt_payment_interface.payment_way_id = pmt_payment_way.id
+		left join
+			pmt_payment_channel on pmt_payment_way.payment_channel_id = pmt_payment_channel.id
+		where 
+			pmt_payment_way.code = #{payWayCode,jdbcType=VARCHAR}
+	</select>
+	<select id="getPaymentWayByChannelId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from
+		pmt_payment_way
+		where
+		payment_channel_id = #{channelId,jdbcType=BIGINT}
+	</select>
+</mapper>

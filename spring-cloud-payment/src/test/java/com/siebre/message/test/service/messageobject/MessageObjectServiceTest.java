@@ -12,9 +12,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.siebre.message.test.base.MockitoTestConfig;
-import com.siebre.messagedemo.entity.MessageObject;
-import com.siebre.messagedemo.mapper.MessageObjectMapper;
-import com.siebre.messagedemo.service.messageobject.MessageObjectService;
+import com.siebre.payment.entity.MessageObject;
+import com.siebre.payment.mapper.MessageObjectMapper;
+import com.siebre.payment.service.messageobject.MessageObjectService;
 
 public class MessageObjectServiceTest extends MockitoTestConfig{
 	

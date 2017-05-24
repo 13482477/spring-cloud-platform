@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.mapper.paymentorderitem.PaymentOrderItemMapper" >
+  <resultMap id="BaseResultMap" type="com.siebre.payment.entity.paymentorderitem.PaymentOrderItem" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT" />
+    <result column="application_number" property="applicationNumber" jdbcType="VARCHAR" />
+    <result column="police_number" property="policeNumber" jdbcType="VARCHAR" />
+    <result column="insured_amount" property="insuredAmount" jdbcType="DECIMAL" />
+    <result column="premium" property="premium" jdbcType="DECIMAL" />
+    <result column="applicant_id" property="applicantId" jdbcType="BIGINT" />
+    <result column="product_name" property="productName" jdbcType="VARCHAR" />
+    <result column="insured_person_id" property="insuredPersonId" jdbcType="BIGINT" />
+    <result column="same_person" property="samePerson" jdbcType="VARCHAR" />
+    <result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
+    <result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+    <association property="applicant" javaType="com.siebre.payment.entity.paymentorderitem.PolicyRole" notNullColumn="id" columnPrefix="applicant_" >
+      <id column="id" property="id" jdbcType="BIGINT" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="gender" property="gender" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+      <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR" />
+      <result column="email" property="email" jdbcType="VARCHAR" />
+      <result column="birthday" property="birthday" jdbcType="DATE" />
+      <result column="certificate_type" property="certificateType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+      <result column="certificate_number" property="certificateNumber" jdbcType="VARCHAR" />
+      <result column="policy_role_type" property="policyRoleType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+      <result column="beneficiary" property="beneficiary" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+    </association>
+    <association property="insuredPerson" javaType="com.siebre.payment.entity.paymentorderitem.PolicyRole" notNullColumn="id" columnPrefix="insured_person_" >
+      <id column="id" property="id" jdbcType="BIGINT" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="gender" property="gender" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+      <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR" />
+      <result column="email" property="email" jdbcType="VARCHAR" />
+      <result column="birthday" property="birthday" jdbcType="DATE" />
+      <result column="certificate_type" property="certificateType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+      <result column="certificate_number" property="certificateNumber" jdbcType="VARCHAR" />
+      <result column="policy_role_type" property="policyRoleType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+      <result column="beneficiary" property="beneficiary" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+    </association>
+    <collection property="libilities" javaType="com.siebre.payment.entity.paymentorderitem.PolicyLibility" columnPrefix="libilities_" notNullColumn="id">
+      <id column="id" property="id" jdbcType="BIGINT" />
+      <result column="order_item_id" property="orderItemId" jdbcType="BIGINT" />
+      <result column="libility_name" property="libilityName" jdbcType="VARCHAR" />
+      <result column="insured_amount" property="insuredAmount" jdbcType="DECIMAL" />
+      <result column="premium" property="premium" jdbcType="DECIMAL" />
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id,
+    payment_order_id,
+    application_number,
+    police_number,
+    insured_amount,
+    premium,
+    applicant_id,
+    insured_person_id,
+    product_name,
+    same_person,
+    start_date, end_date
+  </sql>
+
+  <sql id="resultMap_Column_List" >
+    pmt_payment_order_item.id,
+    pmt_payment_order_item.payment_order_id,
+    pmt_payment_order_item.application_number,
+    pmt_payment_order_item.police_number,
+    pmt_payment_order_item.insured_amount,
+    pmt_payment_order_item.premium,
+    pmt_payment_order_item.applicant_id,
+    pmt_payment_order_item.insured_person_id,
+    pmt_payment_order_item.product_name,
+    pmt_payment_order_item.same_person,
+    pmt_payment_order_item.start_date,
+    pmt_payment_order_item.end_date,
+
+    applicant.id                       applicant_id,
+    applicant.name                     applicant_name,
+    applicant.gender                   applicant_gender,
+    applicant.phone_number             applicant_phone_number,
+    applicant.email                    applicant_email,
+    applicant.birthday                 applicant_birthday,
+    applicant.certificate_type         applicant_certificate_type,
+    applicant.certificate_number       applicant_certificate_number,
+    applicant.policy_role_type         applicant_policy_role_type,
+    applicant.beneficiary              applicant_beneficiary,
+
+    insuredPerson.id                       insured_person_id,
+    insuredPerson.name                     insured_person_name,
+    insuredPerson.gender                   insured_person_gender,
+    insuredPerson.phone_number             insured_person_phone_number,
+    insuredPerson.email                    insured_person_email,
+    insuredPerson.birthday                 insured_person_birthday,
+    insuredPerson.certificate_type         insured_person_certificate_type,
+    insuredPerson.certificate_number       insured_person_certificate_number,
+    insuredPerson.policy_role_type         insured_person_policy_role_type,
+    insuredPerson.beneficiary              insured_person_beneficiary,
+
+    pmt_policy_libility.id                   libilities_id,
+    pmt_policy_libility.order_item_id        libilities_order_item_id,
+    pmt_policy_libility.libility_name        libilities_libility_name,
+    pmt_policy_libility.insured_amount       libilities_insured_amount,
+    pmt_policy_libility.premium              libilities_premium
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+      <include refid="resultMap_Column_List" />
+    from pmt_payment_order_item
+    left join pmt_policy_role applicant on pmt_payment_order_item.applicant_id = applicant.id
+    left join pmt_policy_role insuredPerson on pmt_payment_order_item.insured_person_id = insuredPerson.id
+    left join pmt_policy_libility on pmt_payment_order_item.id = pmt_policy_libility.order_item_id
+    where pmt_payment_order_item.id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from pmt_payment_order_item
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.siebre.payment.entity.paymentorderitem.PaymentOrderItem" useGeneratedKeys="true" keyProperty="id">
+    insert into pmt_payment_order_item (id, payment_order_id, application_number,
+    police_number, insured_amount, premium,
+    applicant_id, insured_person_id, product_name,
+    same_person, start_date, end_date
+    )
+    values (#{id,jdbcType=BIGINT}, #{paymentOrderId,jdbcType=BIGINT}, #{applicationNumber,jdbcType=VARCHAR},
+    #{policeNumber,jdbcType=VARCHAR}, #{insuredAmount,jdbcType=DECIMAL}, #{premium,jdbcType=DECIMAL},
+    #{applicantId,jdbcType=BIGINT}, #{insuredPersonId,jdbcType=BIGINT}, #{productName,jdbcType=VARCHAR},
+    #{samePerson,jdbcType=VARCHAR}, #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}
+    )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.siebre.payment.entity.paymentorderitem.PaymentOrderItem" useGeneratedKeys="true" keyProperty="id">
+    insert into pmt_payment_order_item
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="paymentOrderId != null" >
+        payment_order_id,
+      </if>
+      <if test="applicationNumber != null" >
+        application_number,
+      </if>
+      <if test="policeNumber != null" >
+        police_number,
+      </if>
+      <if test="insuredAmount != null" >
+        insured_amount,
+      </if>
+      <if test="premium != null" >
+        premium,
+      </if>
+      <if test="applicantId != null" >
+        applicant_id,
+      </if>
+      <if test="insuredPersonId != null" >
+        insured_person_id,
+      </if>
+      <if test="productName != null" >
+        product_name,
+      </if>
+      <if test="samePerson != null" >
+        same_person,
+      </if>
+      <if test="startDate != null" >
+        start_date,
+      </if>
+      <if test="endDate != null" >
+        end_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="paymentOrderId != null" >
+        #{paymentOrderId,jdbcType=BIGINT},
+      </if>
+      <if test="applicationNumber != null" >
+        #{applicationNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="policeNumber != null" >
+        #{policeNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="insuredAmount != null" >
+        #{insuredAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="premium != null" >
+        #{premium,jdbcType=DECIMAL},
+      </if>
+      <if test="applicantId != null" >
+        #{applicantId,jdbcType=BIGINT},
+      </if>
+      <if test="insuredPersonId != null" >
+        #{insuredPersonId,jdbcType=BIGINT},
+      </if>
+      <if test="productName != null" >
+        #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="samePerson != null" >
+        #{samePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null" >
+        #{startDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.entity.paymentorderitem.PaymentOrderItem" >
+    update pmt_payment_order_item
+    <set >
+      <if test="paymentOrderId != null" >
+        payment_order_id = #{paymentOrderId,jdbcType=BIGINT},
+      </if>
+      <if test="applicationNumber != null" >
+        application_number = #{applicationNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="policeNumber != null" >
+        police_number = #{policeNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="insuredAmount != null" >
+        insured_amount = #{insuredAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="premium != null" >
+        premium = #{premium,jdbcType=DECIMAL},
+      </if>
+      <if test="applicantId != null" >
+        applicant_id = #{applicantId,jdbcType=BIGINT},
+      </if>
+      <if test="insuredPersonId != null" >
+        insured_person_id = #{insuredPersonId,jdbcType=BIGINT},
+      </if>
+      <if test="productName != null" >
+        product_name = #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="samePerson != null" >
+        same_person = #{samePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null" >
+        start_date = #{startDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null" >
+        end_date = #{endDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.entity.paymentorderitem.PaymentOrderItem" >
+    update pmt_payment_order_item
+    set payment_order_id = #{paymentOrderId,jdbcType=BIGINT},
+    application_number = #{applicationNumber,jdbcType=VARCHAR},
+    police_number = #{policeNumber,jdbcType=VARCHAR},
+    insured_amount = #{insuredAmount,jdbcType=DECIMAL},
+    premium = #{premium,jdbcType=DECIMAL},
+    applicant_id = #{applicantId,jdbcType=BIGINT},
+    insured_person_id = #{insuredPersonId,jdbcType=BIGINT},
+    product_name = #{productName,jdbcType=VARCHAR},
+    same_person = #{samePerson,jdbcType=VARCHAR},
+    start_date = #{startDate,jdbcType=TIMESTAMP},
+    end_date = #{endDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectByPaymentOrderId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="resultMap_Column_List" />
+    from pmt_payment_order_item
+    left join pmt_policy_role applicant on pmt_payment_order_item.applicant_id = applicant.id
+    left join pmt_policy_role insuredPerson on pmt_payment_order_item.insured_person_id = insuredPerson.id
+    left join pmt_policy_libility on pmt_payment_order_item.id = pmt_policy_libility.order_item_id
+    where pmt_payment_order_item.payment_order_id = #{id,jdbcType=BIGINT}
+  </select>
+</mapper>

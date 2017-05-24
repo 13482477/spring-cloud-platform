@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.mapper.serialnumber.SerialNumberMapper">
+	<!--auto generated Code -->
+	<resultMap id="AllColumnMap" type="com.siebre.payment.entity.serialnumber.SerialNumber">
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="prefix" property="prefix" />
+		<result column="length" property="length" />
+		<result column="step" property="step" />
+		<result column="date_fill" property="dateFill" />
+		<result column="cache_step" property="cacheStep" />
+	</resultMap>
+
+	<!--auto generated Code -->
+	<sql id="all_column">
+		`id`,
+		`name`,
+		`prefix`,
+		`length`,
+		`step`,
+		`date_fill`,
+		`cache_step`
+	</sql>
+
+	<!--auto generated Code -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
+		INSERT INTO serial_number (
+		`name`,
+		`prefix`,
+		`length`,
+		`step`,
+		`date_fill`,
+		`cache_step`
+		) VALUES (
+		#{pojo.name},
+		#{pojo.prefix},
+		#{pojo.length},
+		#{pojo.step},
+		#{pojo.dateFill},
+		#{pojo.cacheStep}
+		)
+	</insert>
+
+	<!--auto generated Code -->
+	<insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
+		INSERT INTO serial_number
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.name!=null"> `name`,</if>
+			<if test="pojo.prefix!=null"> `prefix`,</if>
+			<if test="pojo.length!=null"> `length`,</if>
+			<if test="pojo.step!=null"> `step`,</if>
+			<if test="pojo.dateFill!=null"> `date_fill`,</if>
+			<if test="pojo.cacheStep!=null"> `cache_step`,</if>
+		</trim>
+		VALUES
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pojo.name!=null">#{pojo.name},</if>
+			<if test="pojo.prefix!=null">#{pojo.prefix},</if>
+			<if test="pojo.length!=null">#{pojo.length},</if>
+			<if test="pojo.step!=null">#{pojo.step},</if>
+			<if test="pojo.dateFill!=null">#{pojo.dateFill},</if>
+			<if test="pojo.cacheStep!=null">#{pojo.cacheStep},</if>
+		</trim>
+	</insert>
+
+	<!--auto generated Code -->
+	<insert id="insertList">
+		INSERT INTO serial_number (
+		<include refid="all_column" />
+		)VALUES
+		<foreach collection="pojos" item="pojo" index="index" separator=",">
+			(
+			#{pojo.name},
+			#{pojo.prefix},
+			#{pojo.length},
+			#{pojo.step},
+			#{pojo.dateFill},
+			#{pojo.cacheStep}
+			)
+		</foreach>
+	</insert>
+
+	<!--auto generated Code -->
+	<update id="update">
+		UPDATE serial_number
+		<set>
+			<if test="pojo.id != null"> `id` = #{pojo.id}, </if>
+			<if test="pojo.name != null"> `name` = #{pojo.name}, </if>
+			<if test="pojo.prefix != null"> `prefix` = #{pojo.prefix}, </if>
+			<if test="pojo.length != null"> `length` = #{pojo.length}, </if>
+			<if test="pojo.step != null"> `step` = #{pojo.step}, </if>
+			<if test="pojo.dateFill != null"> `date_fill` = #{pojo.dateFill}, </if>
+			<if test="pojo.cacheStep != null"> `cache_step` = #{pojo.cacheStep} </if>
+		</set>
+		where
+			id = #{pojo.id}
+	</update>
+
+	<select id="selectAll" resultMap="AllColumnMap">
+		select
+			<include refid="all_column" />
+		from 
+			sys_serial_instance
+	</select>
+	
+	<select id="nextValue" resultType="java.lang.String">
+		select seq_nextval(#{serialName});
+	</select>
+</mapper>
+

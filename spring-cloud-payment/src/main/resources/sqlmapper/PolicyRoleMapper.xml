@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.mapper.paymentorderitem.PolicyRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.siebre.payment.entity.paymentorderitem.PolicyRole" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="gender" property="gender" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+    <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="birthday" property="birthday" jdbcType="DATE" />
+    <result column="certificate_type" property="certificateType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+    <result column="certificate_number" property="certificateNumber" jdbcType="VARCHAR" />
+    <result column="policy_role_type" property="policyRoleType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+    <result column="beneficiary" property="beneficiary" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,
+    name,
+    gender,
+    phone_number,
+    email,
+    birthday,
+    certificate_type,
+    certificate_number,
+    policy_role_type,
+    beneficiary
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from pmt_policy_role
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from pmt_policy_role
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.siebre.payment.entity.paymentorderitem.PolicyRole" useGeneratedKeys="true" keyProperty="id">
+    insert into pmt_policy_role (id, name, gender, 
+      phone_number, email, birthday, 
+      certificate_type, certificate_number, policy_role_type, 
+      beneficiary
+      )
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{gender,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      #{phoneNumber,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{birthday,jdbcType=DATE}, 
+      #{certificateType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler}, #{certificateNumber,jdbcType=VARCHAR}, #{policyRoleType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      #{beneficiary,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.siebre.payment.entity.paymentorderitem.PolicyRole" useGeneratedKeys="true" keyProperty="id">
+    insert into pmt_policy_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="gender != null" >
+        gender,
+      </if>
+      <if test="phoneNumber != null" >
+        phone_number,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="birthday != null" >
+        birthday,
+      </if>
+      <if test="certificateType != null" >
+        certificate_type,
+      </if>
+      <if test="certificateNumber != null" >
+        certificate_number,
+      </if>
+      <if test="policyRoleType != null" >
+        policy_role_type,
+      </if>
+      <if test="beneficiary != null" >
+        beneficiary,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        #{gender,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      </if>
+      <if test="phoneNumber != null" >
+        #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null" >
+        #{birthday,jdbcType=DATE},
+      </if>
+      <if test="certificateType != null" >
+        #{certificateType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      </if>
+      <if test="certificateNumber != null" >
+        #{certificateNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="policyRoleType != null" >
+        #{policyRoleType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      </if>
+      <if test="beneficiary != null" >
+        #{beneficiary,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.entity.paymentorderitem.PolicyRole" >
+    update pmt_policy_role
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        gender = #{gender,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      </if>
+      <if test="phoneNumber != null" >
+        phone_number = #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null" >
+        birthday = #{birthday,jdbcType=DATE},
+      </if>
+      <if test="certificateType != null" >
+        certificate_type = #{certificateType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      </if>
+      <if test="certificateNumber != null" >
+        certificate_number = #{certificateNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="policyRoleType != null" >
+        policy_role_type = #{policyRoleType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      </if>
+      <if test="beneficiary != null" >
+        beneficiary = #{beneficiary,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.entity.paymentorderitem.PolicyRole" >
+    update pmt_policy_role
+    set name = #{name,jdbcType=VARCHAR},
+      gender = #{gender,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      phone_number = #{phoneNumber,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      birthday = #{birthday,jdbcType=DATE},
+      certificate_type = #{certificateType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      certificate_number = #{certificateNumber,jdbcType=VARCHAR},
+      policy_role_type = #{policyRoleType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      beneficiary = #{beneficiary,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

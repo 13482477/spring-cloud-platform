@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.mapper.paymentchannel.PaymentChannelMapper">
+	<resultMap id="BaseResultMap" type="com.siebre.payment.entity.paymentchannel.PaymentChannel">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="channel_name" property="channelName" jdbcType="VARCHAR" />
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+		<result column="merchant_code" property="merchantCode" jdbcType="VARCHAR" />
+		<result column="icon_url" property="iconUrl" jdbcType="VARCHAR" />
+		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="support_refunded" property="supportRefunded" jdbcType="BOOLEAN" />
+		<result column="contract_number" property="contractNumber" jdbcType="VARCHAR" />
+		<result column="contract_start_date" property="contractStartDate" jdbcType="TIMESTAMP" />
+		<result column="contract_end_date" property="contractEndDate" jdbcType="TIMESTAMP" />
+		<result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
+		<result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+		<result column="payee_account" property="payeeAccount" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<result column="payment_gateway_url" property="paymentGatewayUrl" jdbcType="VARCHAR" />
+		<result column="payment_callback_url" property="paymentCallbackUrl" jdbcType="VARCHAR" />
+		<result column="payment_return_page_url" property="paymentReturnPageUrl" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id,
+		channel_name,
+		channel_code,
+		merchant_code,
+		icon_url,
+		status,
+		support_refunded,
+		contract_number,
+		contract_start_date,
+		contract_end_date,
+		start_date,
+		end_date,
+		payee_account,
+		remark,
+		payment_gateway_url,
+		payment_callback_url,
+		payment_return_page_url,
+		create_user,
+		create_date,
+		update_user,
+		update_date
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+			<include refid="Base_Column_List" />
+		from
+			pmt_payment_channel
+		where
+			id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from 
+			pmt_payment_channel
+		where
+			id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.siebre.payment.entity.paymentchannel.PaymentChannel" useGeneratedKeys="true" keyProperty="id">
+		insert into pmt_payment_channel (
+			<include refid="Base_Column_List" />
+		)
+		values (
+			#{id,jdbcType=BIGINT},
+			#{channelName,jdbcType=VARCHAR},
+			#{channelCode,jdbcType=VARCHAR},
+			#{merchantCode,jdbcType=VARCHAR},
+			#{iconUrl,jdbcType=VARCHAR},
+			#{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			#{supportRefunded,jdbcType=BOOLEAN},
+			#{contractNumber,jdbcType=VARCHAR},
+			#{contractStartDate,jdbcType=TIMESTAMP},
+			#{contractEndDate,jdbcType=TIMESTAMP},
+			#{startDate,jdbcType=TIMESTAMP},
+			#{endDate,jdbcType=TIMESTAMP},
+			#{payeeAccount,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR},
+			#{paymentGatewayUrl,jdbcType=VARCHAR},
+			#{paymentCallbackUrl,jdbcType=VARCHAR},
+			#{paymentReturnPageUrl,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createDate,jdbcType=TIMESTAMP},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateDate,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.siebre.payment.entity.paymentchannel.PaymentChannel"  useGeneratedKeys="true" keyProperty="id">
+		insert into pmt_payment_channel
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="channelName != null">
+				channel_name,
+			</if>
+			<if test="channelCode != null">
+				channel_code,
+			</if>
+			<if test="merchantCode != null">
+				merchant_code,
+			</if>
+			<if test="iconUrl != null">
+				icon_url,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="supportRefunded != null">
+				support_refunded,
+			</if>
+			<if test="contractNumber != null">
+				contract_number,
+			</if>
+			<if test="contractStartDate != null">
+				contract_start_date,
+			</if>
+			<if test="contractEndDate != null">
+				contract_end_date,
+			</if>
+			<if test="startDate != null">
+				start_date,
+			</if>
+			<if test="endDate != null">
+				end_date,
+			</if>
+			<if test="payeeAccount != null">
+				payee_account,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="paymentGatewayUrl != null">
+				payment_gateway_url,
+			</if>
+			<if test="paymentCallbackUrl != null">
+				payment_callback_url,
+			</if>
+			<if test="paymentReturnPageUrl != null">
+				payment_return_page_url,
+			</if>
+			<if test="createUser != null">
+				create_user,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="updateUser != null">
+				update_user,
+			</if>
+			<if test="updateDate != null">
+				update_date
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="channelName != null">
+				#{channelName,jdbcType=VARCHAR},
+			</if>
+			<if test="channelCode != null">
+				#{channelCode,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantCode != null">
+				#{merchantCode,jdbcType=VARCHAR},
+			</if>
+			<if test="iconUrl != null">
+				#{iconUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="supportRefunded != null">
+				#{supportRefunded,jdbcType=BIT},
+			</if>
+			<if test="contractNumber != null">
+				#{contractNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="contractStartDate != null">
+				#{contractStartDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="contractEndDate != null">
+				#{contractEndDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="startDate != null">
+				#{startDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endDate != null">
+				#{endDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="payeeAccount != null">
+				#{payeeAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentGatewayUrl != null">
+				#{paymentGatewayUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentCallbackUrl != null">
+				#{paymentCallbackUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentReturnPageUrl != null">
+				#{paymentReturnPageUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="createUser != null">
+				#{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				#{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.entity.paymentchannel.PaymentChannel">
+		update pmt_payment_channel
+		<set>
+			<if test="channelName != null">
+				channel_name = #{channelName,jdbcType=VARCHAR},
+			</if>
+			<if test="channelCode != null">
+				channel_code = #{channelCode,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantCode != null">
+				merchantCode = #{merchantCode,jdbcType=VARCHAR},
+			</if>
+			<if test="iconUrl != null">
+				icon_url = #{iconUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
+			<if test="supportRefunded != null">
+				support_refunded = #{supportRefunded,jdbcType=BOOLEAN},
+			</if>
+			<if test="contractNumber != null">
+				contract_number = #{contractNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="contractStartDate != null">
+				contract_start_date = #{contractStartDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="contractEndDate != null">
+				contract_end_date = #{contractEndDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="startDate != null">
+				start_date = #{startDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endDate != null">
+				end_date = #{endDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="payeeAccount != null">
+				payee_account = #{payeeAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="paymentGatewayUrl != null">
+				payment_gateway_url = #{paymentGatewayUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentCallbackUrl != null">
+				paymentCallbackUrl = #{paymentCallbackUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentReturnPageUrl != null">
+				payment_return_page_url = #{paymentReturnPageUrl,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where 
+			id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.entity.paymentchannel.PaymentChannel">
+		update 
+			pmt_payment_channel
+		set 
+			channel_name = #{channelName,jdbcType=VARCHAR},
+			channel_code = #{channelCode,jdbcType=VARCHAR},
+			merchant_code = #{merchantCode,jdbcType=VARCHAR},
+			icon_url = #{iconUrl,jdbcType=VARCHAR},
+			status = #{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			support_refunded = #{supportRefunded,jdbcType=BOOLEAN},
+			contract_number = #{contractNumber,jdbcType=VARCHAR},
+			contract_start_date = #{contractStartDate,jdbcType=TIMESTAMP},
+			contract_end_date = #{contractEndDate,jdbcType=TIMESTAMP},
+			start_date = #{startDate,jdbcType=TIMESTAMP},
+			end_date = #{endDate,jdbcType=TIMESTAMP},
+			payee_account = #{payeeAccount,jdbcType=VARCHAR},
+			remark = #{remark,jdbcType=VARCHAR},
+			payment_gateway_url = #{paymentGatewayUrl,jdbcType=VARCHAR},
+			payment_callback_url = #{paymentCallbackUrl,jdbcType=VARCHAR},
+			payment_return_page_url = #{paymentReturnPageUrl,jdbcType=VARCHAR},
+			create_user = #{createUser,jdbcType=VARCHAR},
+			create_date = #{createDate,jdbcType=TIMESTAMP},
+			update_user = #{updateUser,jdbcType=VARCHAR},
+			update_date = #{updateDate,jdbcType=TIMESTAMP},
+		where 
+			id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<select id="selectByChannelCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+			<include refid="Base_Column_List" />
+		from 
+			pmt_payment_channel
+		where 
+			channel_code = #{channelCode,jdbcType=VARCHAR}
+	</select>
+
+
+	<select id="selectAll" resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from 
+			pmt_payment_channel
+		where 
+			1=1
+		order by 
+			id asc
+	</select>
+	
+	<select id="selectAllByPage" resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from 
+			pmt_payment_channel
+		where 
+			1=1
+	</select>
+
+</mapper>

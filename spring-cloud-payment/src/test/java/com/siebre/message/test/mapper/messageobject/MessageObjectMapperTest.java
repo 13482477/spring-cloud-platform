@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.siebre.message.test.base.DbTestConfig;
-import com.siebre.messagedemo.entity.MessageObject;
-import com.siebre.messagedemo.mapper.MessageObjectMapper;
+import com.siebre.payment.entity.MessageObject;
+import com.siebre.payment.mapper.MessageObjectMapper;
 
 public class MessageObjectMapperTest extends DbTestConfig {
 	

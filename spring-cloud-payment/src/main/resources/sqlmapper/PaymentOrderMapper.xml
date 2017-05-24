@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.mapper.paymentorder.PaymentOrderMapper">
+	<resultMap id="BaseResultMap" type="com.siebre.payment.entity.paymentorder.PaymentOrder">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
+		<result column="total_insured_amount" property="totalInsuredAmount" jdbcType="DECIMAL" />
+		<result column="total_premium" property="totalPremium" jdbcType="DECIMAL" />
+		<result column="business_plantform" property="businessPlantform" jdbcType="INTEGER" />
+		<result column="payment_client" property="paymentClient" jdbcType="INTEGER" />
+		<result column="return_trade_no" property="returnTradeNo" jdbcType="VARCHAR" />
+		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="check_status" property="checkStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
+		<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="refund_status" property="refundStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
+		<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
+		<association property="paymentChannel" javaType="com.siebre.payment.entity.paymentchannel.PaymentChannel" columnPrefix="paymentChannel_">
+			<result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
+		</association>
+	</resultMap>
+
+	<resultMap id="selectByOrderNumberResultMap" type="com.siebre.payment.entity.paymentorder.PaymentOrder">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
+		<result column="total_insured_amount" property="totalInsuredAmount" jdbcType="DECIMAL" />
+		<result column="total_premium" property="totalPremium" jdbcType="DECIMAL" />
+		<result column="business_plantform" property="businessPlantform" jdbcType="INTEGER" />
+		<result column="payment_client" property="paymentClient" jdbcType="INTEGER" />
+		<result column="return_trade_no" property="returnTradeNo" jdbcType="VARCHAR" />
+		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
+		<result column="check_status" property="checkStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="refund_status" property="refundStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
+		<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
+		<collection property="paymentOrderItems" notNullColumn="id" javaType="com.siebre.payment.entity.paymentorderitem.PaymentOrderItem" columnPrefix="paymentOrderItem_">
+			<id column="id" property="id" jdbcType="BIGINT" />
+			<result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT" />
+			<result column="application_number" property="applicationNumber" jdbcType="VARCHAR" />
+			<result column="police_number" property="policeNumber" jdbcType="VARCHAR" />
+			<result column="insured_amount" property="insuredAmount" jdbcType="DECIMAL" />
+			<result column="premium" property="premium" jdbcType="DECIMAL" />
+			<result column="applicant_id" property="applicantId" jdbcType="BIGINT" />
+			<result column="insured_person_id" property="insuredPersonId" jdbcType="BIGINT" />
+			<result column="product_name" property="productName" jdbcType="VARCHAR" />
+			<result column="same_person" property="samePerson" jdbcType="VARCHAR" />
+			<result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
+			<result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+		</collection>
+		<collection property="paymentTransactions" notNullColumn="id" javaType="com.siebre.payment.entity.paymenttransaction.PaymentTransaction" columnPrefix="paymentTransaction_">
+			<id column="id" property="id" jdbcType="BIGINT" />
+			<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
+			<result column="payment_way_id" property="paymentWayId" jdbcType="BIGINT" />
+			<result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT" />
+			<result column="internal_transaction_number" property="internalTransactionNumber" jdbcType="VARCHAR" />
+			<result column="external_transaction_number" property="externalTransactionNumber" jdbcType="VARCHAR" />
+			<result column="payment_amount" property="paymentAmount" jdbcType="DECIMAL" />
+			<result column="payment_status" property="paymentStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+			<result column="transaction_message_id" property="transactionMessageId" jdbcType="VARCHAR" />
+			<result column="payee_account" property="payeeAccount" jdbcType="VARCHAR" />
+			<result column="payment_accout" property="paymentAccout" jdbcType="VARCHAR" />
+			<result column="interface_type" property="interfaceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+			<result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+			<association property="paymentChannel" javaType="com.siebre.payment.entity.paymentchannel.PaymentChannel">
+				<result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
+			</association>
+			<association property="paymentWay" javaType="com.siebre.payment.entity.paymentway.PaymentWay">
+				<result column="name" property="name" jdbcType="VARCHAR"/>
+			</association>
+		</collection>
+	</resultMap>
+
+	<sql id="paymentOrderTransaction">
+		pmt_payment_order.id,
+		pmt_payment_order.order_number,
+		pmt_payment_order.total_insured_amount,
+		pmt_payment_order.total_premium,
+		pmt_payment_order.business_plantform,
+		pmt_payment_order.payment_client,
+		pmt_payment_order.return_trade_no,
+		pmt_payment_order.status,
+		pmt_payment_order.check_status,
+		pmt_payment_order.payment_terminal_type,
+		pmt_payment_order.payment_channel_id,
+		pmt_payment_order.create_time,
+		pmt_payment_order.refund_status,
+		pmt_payment_order.refund_amount,
+		pmt_payment_order.payment_way_code,
+		pmt_payment_order_item.id paymentOrderItem_id,
+		pmt_payment_order_item.payment_order_id paymentOrderItem_payment_order_id,
+		pmt_payment_order_item.application_number paymentOrderItem_application_number,
+		pmt_payment_order_item.police_number paymentOrderItem_police_number,
+		pmt_payment_order_item.insured_amount paymentOrderItem_insured_amount,
+		pmt_payment_order_item.premium paymentOrderItem_premium,
+		pmt_payment_order_item.applicant_id paymentOrderItem_applicant_id,
+		pmt_payment_order_item.insured_person_id paymentOrderItem_insured_person_id,
+		pmt_payment_order_item.product_name paymentOrderItem_product_name,
+		pmt_payment_order_item.same_person paymentOrderItem_same_person,
+		pmt_payment_order_item.start_date paymentOrderItem_start_date,
+		pmt_payment_order_item.end_date paymentOrderItem_end_date,
+		pmt_payment_transaction.id paymentTransaction_id,
+		pmt_payment_transaction.payment_channel_id paymentTransaction_payment_channel_id,
+		pmt_payment_transaction.payment_way_id paymentTransaction_payment_way_id,
+		pmt_payment_transaction.payment_order_id paymentTransaction_payment_order_id,
+		pmt_payment_transaction.internal_transaction_number paymentTransaction_internal_transaction_number,
+		pmt_payment_transaction.external_transaction_number paymentTransaction_external_transaction_number,
+		pmt_payment_transaction.payment_amount paymentTransaction_payment_amount,
+		pmt_payment_transaction.payment_status paymentTransaction_payment_status,
+		pmt_payment_transaction.transaction_message_id paymentTransaction_transaction_message_id,
+		pmt_payment_transaction.payee_account paymentTransaction_payee_account,
+		pmt_payment_transaction.payment_accout paymentTransaction_payment_accout,
+		pmt_payment_transaction.interface_type paymentTransaction_interface_type,
+		pmt_payment_transaction.create_date paymentTransaction_create_date,
+		pmt_payment_channel.channel_name paymentTransaction_channel_name,
+		pmt_payment_way.name paymentTransaction_name
+	</sql>
+
+
+	<sql id="Base_Column_List">
+		id, order_number, total_insured_amount, total_premium, business_plantform, payment_client,
+		return_trade_no, status,check_status, payment_terminal_type, payment_channel_id,create_time,refund_status,refund_amount,payment_way_code
+	</sql>
+
+	<sql id="colnum_for_page">
+		pmt_payment_order.id,
+		pmt_payment_order.order_number,
+		pmt_payment_order.total_insured_amount,
+		pmt_payment_order.total_premium,
+		pmt_payment_order.business_plantform,
+		pmt_payment_order.payment_client,
+		pmt_payment_order.return_trade_no,
+		pmt_payment_order.status,
+		pmt_payment_order.check_status,
+		pmt_payment_order.payment_terminal_type,
+		pmt_payment_order.payment_channel_id,
+		pmt_payment_order.create_time,
+		pmt_payment_order.refund_status,
+		pmt_payment_order.refund_amount,
+		pmt_payment_order.payment_way_code,
+		pmt_payment_channel.channel_name paymentChannel_channel_name
+	</sql>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from pmt_payment_order
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from pmt_payment_order
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+
+	<insert id="insert" parameterType="com.siebre.payment.entity.paymentorder.PaymentOrder" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		pmt_payment_order (
+		order_number,
+		total_insured_amount,
+		total_premium,
+		business_plantform,
+		payment_client,
+		return_trade_no,
+		status,
+		check_status,
+		payment_terminal_type,
+		payment_channel_id,
+		create_time,
+		refund_amount,
+		payment_way_code,
+		refund_status
+		)
+		values (
+		#{orderNumber,jdbcType=VARCHAR},
+		#{totalInsuredAmount,jdbcType=DECIMAL},
+		#{totalPremium,jdbcType=DECIMAL},
+		#{businessPlantform,jdbcType=INTEGER},
+		#{paymentClient,jdbcType=INTEGER},
+		#{returnTradeNo,jdbcType=VARCHAR},
+		#{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		#{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		#{paymentTerminalType,jdbcType=INTEGER},
+		#{paymentChannelId,jdbcType=BIGINT},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{refundAmount,jdbcType=DECIMAL},
+		#{paymentWayCode,jdbcType=VARCHAR},
+		#{refundStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.siebre.payment.entity.paymentorder.PaymentOrder" useGeneratedKeys="true" keyProperty="id">
+		insert into pmt_payment_order
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="orderNumber != null">
+				order_number,
+			</if>
+			<if test="totalInsuredAmount != null">
+				total_insured_amount,
+			</if>
+			<if test="totalPremium != null">
+				total_premium,
+			</if>
+			<if test="businessPlantform != null">
+				business_plantform,
+			</if>
+			<if test="paymentClient != null">
+				payment_client,
+			</if>
+			<if test="returnTradeNo != null">
+				return_trade_no,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="checkStatus != null">
+				check_status,
+			</if>
+			<if test="paymentTerminalType != null">
+				payment_terminal_type,
+			</if>
+			<if test="paymentChannelId != null">
+				payment_channel_id,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="refundAmount!=null">
+				refund_amount,
+			</if>
+			<if test="paymentWayCode!=null">
+				payment_way_code,
+			</if>
+			<if test="refundStatus!=null">
+				refund_status,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="orderNumber != null">
+				#{orderNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="totalInsuredAmount != null">
+				#{totalInsuredAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalPremium != null">
+				#{totalPremium,jdbcType=DECIMAL},
+			</if>
+			<if test="businessPlantform != null">
+				#{businessPlantform,jdbcType=INTEGER},
+			</if>
+			<if test="paymentClient != null">
+				#{paymentClient,jdbcType=INTEGER},
+			</if>
+			<if test="returnTradeNo != null">
+				#{returnTradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
+			<if test="checkStatus != null">
+				#{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
+			<if test="paymentTerminalType != null">
+				#{paymentTerminalType,jdbcType=INTEGER},
+			</if>
+			<if test="paymentChannelId != null">
+				#{paymentChannelId,jdbcType=BIGINT},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="refundAmount!=null">
+				#{refundAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="paymentWayCode!=null">
+				#{paymentWayCode,jdbcType=VARCHAR},
+			</if>
+			<if test="refundStatus!=null">
+				#{refundStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.entity.paymentorder.PaymentOrder">
+		update pmt_payment_order
+		<set>
+			<if test="orderNumber != null">
+				order_number = #{orderNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="totalInsuredAmount != null">
+				total_insured_amount = #{totalInsuredAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalPremium != null">
+				total_premium = #{totalPremium,jdbcType=DECIMAL},
+			</if>
+			<if test="businessPlantform != null">
+				business_plantform = #{businessPlantform,jdbcType=INTEGER},
+			</if>
+			<if test="paymentClient != null">
+				payment_client = #{paymentClient,jdbcType=INTEGER},
+			</if>
+			<if test="returnTradeNo != null">
+				return_trade_no = #{returnTradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
+			<if test="checkStatus != null">
+				check_status = #{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
+			<if test="paymentTerminalType != null">
+				payment_terminal_type = #{paymentTerminalType,jdbcType=INTEGER},
+			</if>
+			<if test="paymentChannelId != null">
+				payment_channel_id = #{paymentChannelId,jdbcType=BIGINT},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=VARCHAR},
+			</if>
+			<if test="refundAmount!=null">
+				refund_amount = #{refundAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="paymentWayCode!=null">
+				payment_way_code = #{paymentWayCode,jdbcType=VARCHAR},
+			</if>
+			<if test="refundStatus!=null">
+				refund_status = #{refundStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.entity.paymentorder.PaymentOrder">
+		update pmt_payment_order
+		set order_number = #{orderNumber,jdbcType=VARCHAR},
+		total_insured_amount = #{totalInsuredAmount,jdbcType=DECIMAL},
+		total_premium = #{totalPremium,jdbcType=DECIMAL},
+		business_plantform = #{businessPlantform,jdbcType=INTEGER},
+		payment_client = #{paymentClient,jdbcType=INTEGER},
+		return_trade_no = #{returnTradeNo,jdbcType=VARCHAR},
+		status = #{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		check_status = #{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		payment_terminal_type = #{paymentTerminalType,jdbcType=INTEGER},
+		payment_channel_id = #{paymentChannelId,jdbcType=BIGINT},
+		create_time = #{createTime,jdbcType=VARCHAR},
+		refund_amount = #{refundAmount,jdbcType=INTEGER},
+		payment_way_code = #{paymentWayCode,jdbcType=VARCHAR},
+		refund_status = #{refundStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateOrderStatusToClose">
+		update pmt_payment_order
+		set status = 4
+		where
+			status != 3
+		and
+			order_number=#{orderNumber}
+	</update>
+
+	<select id="selectByOrderNumberleftjoin" resultMap="selectByOrderNumberResultMap" parameterType="java.lang.String">
+		select
+		<include refid="paymentOrderTransaction"/>
+		from pmt_payment_order
+		left join
+		pmt_payment_order_item on pmt_payment_order_item.payment_order_id = pmt_payment_order.id
+		left join
+		pmt_payment_transaction on pmt_payment_transaction.payment_order_id = pmt_payment_order.id
+		left join
+		pmt_payment_channel on pmt_payment_transaction.payment_channel_id = pmt_payment_channel.id
+		LEFT JOIN
+		pmt_payment_way on pmt_payment_transaction.payment_way_id = pmt_payment_way.id
+		where
+		order_number = #{orderNumber,jdbcType=VARCHAR}
+	</select>
+
+
+	<select id="selectByOrderNumber" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from pmt_payment_order
+		where order_number = #{orderNumber,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectOrderByPage" resultMap="BaseResultMap">
+		select
+			<include refid="colnum_for_page"/>
+		from
+			pmt_payment_order
+		left join
+			pmt_payment_channel on pmt_payment_order.payment_channel_id = pmt_payment_channel.id
+		WHERE 1 = 1
+		<if test="orderNumber != null and orderNumber != ''">
+			and pmt_payment_order.order_number = #{orderNumber,jdbcType=VARCHAR}
+		</if>
+		<if test="status != null">
+			and pmt_payment_order.status = #{status.value}
+		</if>
+		<if test="channelName != null">
+			and pmt_payment_channel.channel_name = #{channelName,jdbcType=VARCHAR}
+		</if>
+		<if test="startDate != null">
+			and pmt_payment_order.create_time &gt; #{startDate,jdbcType=VARCHAR}
+		</if>
+		<if test="endDate != null">
+			and pmt_payment_order.create_time &lt; #{endDate,jdbcType=VARCHAR}
+		</if>
+		order by
+		pmt_payment_order.create_time desc
+	</select>
+
+	<select id="selectOrderJoinTransaction" resultMap="selectByOrderNumberResultMap">
+		select
+			<include refid="paymentOrderTransaction"/>
+		from 
+			pmt_payment_order
+		left join
+			pmt_payment_order_item on pmt_payment_order_item.payment_order_id = pmt_payment_order.id
+		left join
+			pmt_payment_transaction on pmt_payment_transaction.payment_order_id = pmt_payment_order.id
+		left join
+			pmt_payment_channel on pmt_payment_transaction.payment_channel_id = pmt_payment_channel.id
+		LEFT JOIN
+			pmt_payment_way on pmt_payment_transaction.payment_way_id = pmt_payment_way.id
+		where 1=1
+		<if test="orderNumber!=null and orderNumber!=''">
+			and pmt_payment_order.order_number = #{orderNumber,jdbcType=VARCHAR}
+		</if>
+		<if test="applicationNumber!=null and applicationNumber!=''">
+			and pmt_payment_order_item.application_number = #{applicationNumber,jdbcType=VARCHAR}
+		</if>
+		<if test="status!=null">
+			and pmt_payment_transaction.payment_status = #{status.value}
+		</if>
+		order by
+		pmt_payment_order.create_time desc
+	</select>
+
+
+	<select id="selectOrderSummery" resultType="map">
+		SELECT paymentOrder.status,count(*) from
+		pty_payment_order paymentOrder
+		LEFT JOIN pty_payment_order_item paymentItem on paymentOrder.id=paymentItem.payment_order_id
+		LEFT JOIN pty_payment_transaction t on t.payment_order_id = paymentOrder.id
+		where 1=1
+		<if test="orderNumber!=null and orderNumber!=''">
+			paymentOrder.order_number =#{orderNumber}
+		</if>
+		GROUP BY paymentOrder.status
+	</select>
+	
+	<select id="getSuccessedPaymentAmount" resultType="java.math.BigDecimal">
+		select 
+			sum(total_premium)
+		from 
+			pmt_payment_order
+		where
+			status = ${@com.siebre.payment.entity.enums.PaymentOrderPayStatus@PAID.value}
+	</select>
+	<select id="getSeccuessedPaymentCount" resultType="java.lang.Integer">
+		select 
+			count(*)
+		from 
+			pmt_payment_order
+		where
+			status = ${@com.siebre.payment.entity.enums.PaymentOrderPayStatus@PAID.value}
+	</select>
+	<select id="getFaildPaymentAmount" resultType="java.math.BigDecimal">
+		select 
+			sum(total_premium)
+		from 
+			pmt_payment_order
+		where
+			status = ${@com.siebre.payment.entity.enums.PaymentOrderPayStatus@PAYERROR.value}
+	</select>
+	<select id="getFaildPaymentCount" resultType="java.lang.Integer">
+		select 
+			count(*)
+		from 
+			pmt_payment_order
+		where
+			status = ${@com.siebre.payment.entity.enums.PaymentOrderPayStatus@PAYERROR.value}
+	</select>
+	<select id="getCount" resultType="java.lang.Integer">
+		select 
+			count(*)
+		from 
+			pmt_payment_order
+	</select>
+	
+	<select id="getTotalAmountByDateRange" resultType="java.math.BigDecimal">
+		select 
+			sum(total_premium)
+		from 
+			pmt_payment_order
+		where 
+			1 = 1
+			and create_time >= #{startDate}
+			and create_time <![CDATA[ < ]]> #{endDate}   
+	</select>
+	
+	<select id="getChannelSuccessedCount" resultType="java.util.HashMap">
+		select 
+			count(*) count, 
+			payment_channel_id paymentChannelId 
+		from 
+			pmt_payment_order 
+		where 
+			payment_channel_id is not null and status = 3
+		group by 
+			payment_channel_id;
+	</select>
+	
+	<select id="getChannelSuccessedAmount" resultType="java.util.HashMap">
+		select 
+			sum(total_premium) totalAmount, 
+			payment_channel_id paymentChannelId
+		from 
+			pmt_payment_order 
+		where
+			1 = 1 
+			and payment_channel_id is not null 
+			and status = 3
+		group by 
+			payment_channel_id;
+	</select>
+
+	<select id="getPaymentWayCount" resultType="java.util.HashMap">
+		select 
+			count(*) count, 
+			payment_way_code paymentWayCode
+		from 
+			pmt_payment_order 
+		where
+			1 = 1 
+			and payment_way_code is not null 
+			and status = #{status.value}
+		group by 
+			payment_way_code;
+	</select>
+	
+	
+	<resultMap id="countPaymentChannelTransactionMap" type="com.siebre.payment.vo.statistics.PaymentChannelTransactionVo">
+		<id column="paymentChannelId" property="channelId" jdbcType="BIGINT" />
+		<result column="paymentChannelName" property="channelName" jdbcType="VARCHAR" />
+		<result column="successCount" property="successCount" jdbcType="INTEGER" />
+		<result column="successAmount" property="successAmount" jdbcType="DECIMAL" />
+		<result column="faildCount" property="faildCount" jdbcType="INTEGER" />
+		<result column="faildAmount" property="faildAmount" jdbcType="DECIMAL" />
+		<result column="conversionRate" property="conversionRate" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<select id="countPaymentChannelTransaction" resultMap="countPaymentChannelTransactionMap">
+	select
+		paymentChannel.id	paymentChannelId,
+		paymentChannel.channel_name paymentChannelName,
+	    ifnull(table1.successCount, 0) successCount,
+	    ifnull(table1.successAmount, 0) successAmount,
+	    ifnull(table2.faildCount, 0) faildCount,
+	    ifnull(table2.faildAmount, 0) faildAmount,
+	    ifnull(table3.totalCount, 0) totalCount,
+		ifnull(round((successCount * 100 / totalCount) , 2), 0) conversionRate
+	from
+		pmt_payment_channel paymentChannel left join 
+		(
+		select
+			payment_channel_id,
+			count(*) successCount,
+			sum(total_premium) successAmount
+		from 
+			pmt_payment_order
+		where
+			payment_channel_id is not null
+		    and status = 3
+		group by 
+			payment_channel_id
+		) table1 
+		on paymentChannel.id = table1.payment_channel_id
+	left join 
+		(select
+			payment_channel_id,
+			count(*) faildCount,
+			sum(total_premium) faildAmount
+		from 
+			pmt_payment_order
+		where
+			payment_channel_id is not null
+		    and status = 5
+		group by 
+			payment_channel_id
+		) table2
+		on paymentChannel.id = table2.payment_channel_id
+	left join
+		(
+		select 
+			payment_channel_id ,
+			count(*) totalCount
+		from
+			pmt_payment_order
+		group by
+			payment_channel_id
+		) table3
+		on paymentChannel.id = table3.payment_channel_id
+	</select>
+	
+</mapper>
