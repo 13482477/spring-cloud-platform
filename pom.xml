@@ -139,7 +139,6 @@
 		<module>spring-cloud-sleuth</module>
 		<module>spring-cloud-message-provide</module>
 		<module>spring-cloud-message-consumer</module>
-		<module>demo</module>
 	</modules>
 
 	<build>
