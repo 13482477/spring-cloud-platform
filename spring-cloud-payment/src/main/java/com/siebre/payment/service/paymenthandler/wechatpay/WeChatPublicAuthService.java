@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.siebre.payment.entity.paymentway.PaymentWay;
-import com.siebre.payment.gateway.http.HttpTookit;
 import com.siebre.payment.service.paymenthandler.wechatpay.sdk.WeChatConfig;
 import com.siebre.payment.service.paymentway.PaymentWayService;
+import com.siebre.payment.utils.http.HttpTookit;
 
 /**
  * @author Huang Tianci

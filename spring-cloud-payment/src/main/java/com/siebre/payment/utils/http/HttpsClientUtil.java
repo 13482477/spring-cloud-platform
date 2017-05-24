@@ -1,4 +1,4 @@
-package com.siebre.payment.gateway.http;
+package com.siebre.payment.utils.http;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

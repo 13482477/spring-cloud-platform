@@ -10,11 +10,11 @@ import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.entity.paymentinterface.PaymentInterface;
 import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
 import com.siebre.payment.entity.paymentway.PaymentWay;
-import com.siebre.payment.gateway.http.HttpTookit;
 import com.siebre.payment.service.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
 import com.siebre.payment.service.paymenthandler.unionpay.sdk.UnionPayUtil;
 import com.siebre.payment.serviceinterface.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.serviceinterface.paymenthandler.paymentquery.PaymentQueryResponse;
+import com.siebre.payment.utils.http.HttpTookit;
 
 /**
  * Created by AdamTang on 2017/4/22.

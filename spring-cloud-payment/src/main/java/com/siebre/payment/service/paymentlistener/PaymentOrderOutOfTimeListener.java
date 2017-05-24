@@ -1,14 +1,14 @@
 package com.siebre.payment.service.paymentlistener;
 
-import com.rabbitmq.client.Channel;
-import com.siebre.payment.service.paymentorder.PaymentOrderService;
-import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.ChannelAwareMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.rabbitmq.client.Channel;
+import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
 
 /**
  * Created by AdamTang on 2017/4/11.

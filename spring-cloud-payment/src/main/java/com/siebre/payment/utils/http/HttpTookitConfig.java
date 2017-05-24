@@ -4,7 +4,7 @@
  * Description: 
  *
  */
-package com.siebre.payment.gateway.http;
+package com.siebre.payment.utils.http;
 
 import java.util.HashMap;
 import java.util.Map;

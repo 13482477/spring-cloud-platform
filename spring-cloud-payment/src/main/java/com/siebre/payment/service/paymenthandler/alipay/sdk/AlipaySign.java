@@ -12,7 +12,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.siebre.payment.gateway.http.HttpTookit;
+import com.siebre.payment.utils.http.HttpTookit;
 import com.siebre.payment.utils.keypair.RSA;
 
 /**

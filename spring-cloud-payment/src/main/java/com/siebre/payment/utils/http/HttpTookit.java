@@ -1,4 +1,4 @@
-package com.siebre.payment.gateway.http;
+package com.siebre.payment.utils.http;
 
 import static org.apache.http.HttpStatus.SC_OK;
 

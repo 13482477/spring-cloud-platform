@@ -1,7 +1,7 @@
 package com.siebre.payment.service.paymenthandler.baofoo.sdk;
 
 import com.siebre.basic.utils.JsonUtil;
-import com.siebre.payment.gateway.http.HttpTookit;
+import com.siebre.payment.utils.http.HttpTookit;
 import com.siebre.payment.utils.messageconvert.ConvertToXML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
