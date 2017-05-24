@@ -1,8 +1,6 @@
 package com.siebre.payment.restful.paymentgateway.query;
 
-import java.io.Serializable;
-
-public class PaymentOrderQueryRequest implements Serializable {
+public class PaymentOrderQueryRequest {
 
     private String orderNumber;
 

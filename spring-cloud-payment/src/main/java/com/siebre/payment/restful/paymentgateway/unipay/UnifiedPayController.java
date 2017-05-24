@@ -17,7 +17,6 @@ import com.siebre.basic.applicationcontext.SpringContextUtil;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.paymentinterface.PaymentInterface;
 import com.siebre.payment.entity.paymentway.PaymentWay;
-import com.siebre.payment.restful.basic.BaseController;
 import com.siebre.payment.service.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.service.paymenthandler.wechatpay.WeChatPublicAuthService;
 import com.siebre.payment.service.paymentway.PaymentWayService;
@@ -25,7 +24,7 @@ import com.siebre.payment.serviceinterface.paymenthandler.payment.PaymentRequest
 import com.siebre.payment.serviceinterface.paymenthandler.payment.PaymentResponse;
 
 @RestController
-public class UnifiedPayController extends BaseController {
+public class UnifiedPayController {
 
     @Autowired
     private PaymentWayService paymentWayService;
@@ -41,7 +40,7 @@ public class UnifiedPayController extends BaseController {
     	paymentRequest.setPaymentWayCode(unipayRequest.getPayWayCode());
     	paymentRequest.setOrderNumber(unipayRequest.getOrderNumber());
     	paymentRequest.setPaymentOrderItems(unipayRequest.getPaymentOrderItems());
-    	paymentRequest.setIp(this.getIpAddress(request));
+    	paymentRequest.setIp(null);
         paymentRequest.setOpenid(unipayRequest.getOpenid());
     	
     	PaymentInterface paymentInterface = this.paymentWayService.getPaymentInterface(paymentRequest.getPaymentWayCode(), PaymentInterfaceType.PAY);

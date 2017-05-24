@@ -1,12 +1,15 @@
 package com.siebre.payment.restful.paymentgateway.query;
 
-import com.siebre.payment.restful.basic.BaseController;
-import com.siebre.payment.service.queryapplication.QueryApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.siebre.payment.service.queryapplication.QueryApplicationService;
 
 @RestController
-public class PaymentQueryController extends BaseController {
+public class PaymentQueryController {
 
     @Autowired
     private QueryApplicationService queryApplicationService;
@@ -16,8 +19,7 @@ public class PaymentQueryController extends BaseController {
      * @param orderNumber
      * @return
      */
-	@RequestMapping(value = "/paymentGateway/query", method = {RequestMethod.GET})
-    @ResponseBody
+	@RequestMapping(value = "/api/v1/paymentGateway/query", method = {RequestMethod.GET})
     public PaymentOrderQueryResponse payQuery(@RequestParam("orderNumber") String orderNumber) throws Exception {
         PaymentOrderQueryRequest request = new PaymentOrderQueryRequest();
         request.setOrderNumber(orderNumber);

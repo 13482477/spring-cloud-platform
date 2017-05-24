@@ -1,13 +1,7 @@
 package com.siebre.payment.restful.paymentgateway.refund;
 
-import com.siebre.payment.entity.enums.RefundApplicationStatus;
-import com.siebre.payment.entity.refundapplication.RefundApplication;
-import com.siebre.payment.restful.basic.BaseController;
-import com.siebre.payment.service.paymentroute.PaymentRefundRouteService;
-import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
-import com.siebre.payment.service.refundapplication.RefundApplicationService;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentrefund.PaymentRefundRequest;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentrefund.PaymentRefundResponse;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
+import com.siebre.payment.entity.enums.RefundApplicationStatus;
+import com.siebre.payment.entity.refundapplication.RefundApplication;
+import com.siebre.payment.service.paymentroute.PaymentRefundRouteService;
+import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
+import com.siebre.payment.service.refundapplication.RefundApplicationService;
+import com.siebre.payment.serviceinterface.paymenthandler.paymentrefund.PaymentRefundRequest;
+import com.siebre.payment.serviceinterface.paymenthandler.paymentrefund.PaymentRefundResponse;
 
 /**
  * Created by AdamTang on 2017/4/22.
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
  * 对外开放退款申请接口
  */
 @Controller
-public class RefundApplicationController extends BaseController {
+public class RefundApplicationController {
 
     @Autowired
     private RefundApplicationService refundApplicationService;
