@@ -139,7 +139,9 @@
 		<module>spring-cloud-sleuth</module>
 		<module>spring-cloud-message-provide</module>
 		<module>spring-cloud-message-consumer</module>
-	</modules>
+		<module>spring-cloud-payment</module>
+    <module>spring-cloud-admin</module>
+  </modules>
 
 	<build>
 		<plugins>
