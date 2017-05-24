@@ -1,16 +1,12 @@
 package com.siebre.payment.restful.paymentgateway.query;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.siebre.payment.restful.basic.BaseController;
 import com.siebre.payment.service.queryapplication.QueryApplicationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class PaymentQueryController {
+public class PaymentQueryController extends BaseController {
 
     @Autowired
     private QueryApplicationService queryApplicationService;
