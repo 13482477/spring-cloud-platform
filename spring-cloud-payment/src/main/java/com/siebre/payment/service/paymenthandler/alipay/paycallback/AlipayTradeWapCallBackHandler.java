@@ -1,11 +1,12 @@
-package com.siebre.payment.service.paymenthandler.alipay.pay.callback;
+package com.siebre.payment.service.paymenthandler.alipay.paycallback;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.siebre.payment.entity.paymentinterface.PaymentInterface;
 import com.siebre.payment.entity.paymentway.PaymentWay;
 import com.siebre.payment.service.paymenthandler.alipay.sdk.AlipayConfig;
-import com.siebre.payment.service.paymenthandler.basic.payment.callback.AbstractPaymentCallBackHandler;
+import com.siebre.payment.service.paymenthandler.basic.paymentcallback.AbstractPaymentCallBackHandler;
+
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;

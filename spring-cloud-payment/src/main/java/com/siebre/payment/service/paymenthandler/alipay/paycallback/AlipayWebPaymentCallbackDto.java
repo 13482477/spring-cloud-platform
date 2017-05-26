@@ -1,4 +1,4 @@
-package com.siebre.payment.service.paymenthandler.alipay.pay.callback;
+package com.siebre.payment.service.paymenthandler.alipay.paycallback;
 
 import java.util.HashMap;
 

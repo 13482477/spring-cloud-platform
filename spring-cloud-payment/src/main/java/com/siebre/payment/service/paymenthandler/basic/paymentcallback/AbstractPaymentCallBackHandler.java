@@ -1,4 +1,4 @@
-package com.siebre.payment.service.paymenthandler.basic.payment.callback;
+package com.siebre.payment.service.paymenthandler.basic.paymentcallback;
 
 import com.siebre.payment.entity.paymentinterface.PaymentInterface;
 import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
