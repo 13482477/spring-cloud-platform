@@ -16,13 +16,12 @@ import com.siebre.payment.entity.paymentorder.PaymentOrder;
 import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
 import com.siebre.payment.entity.paymentway.PaymentWay;
 import com.siebre.payment.mapper.paymentorder.PaymentOrderMapper;
+import com.siebre.payment.service.paymenthandler.payment.PaymentRequest;
+import com.siebre.payment.service.paymenthandler.payment.PaymentResponse;
 import com.siebre.payment.service.paymentorder.PaymentOrderOutOfTimeService;
 import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
 import com.siebre.payment.service.paymentway.PaymentWayService;
 import com.siebre.payment.service.serialnumber.SerialNumberService;
-import com.siebre.payment.serviceinterface.paymenthandler.PaymentInterfaceComponent;
-import com.siebre.payment.serviceinterface.paymenthandler.payment.PaymentRequest;
-import com.siebre.payment.serviceinterface.paymenthandler.payment.PaymentResponse;
 
 /**
  * 支付组件

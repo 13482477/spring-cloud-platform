@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.service.ServiceResult;
+import com.siebre.payment.controller.paymentgateway.order.PaymentOrderRequest;
+import com.siebre.payment.controller.paymentgateway.order.PaymentOrderResponse;
 import com.siebre.payment.entity.enums.PaymentOrderCheckStatus;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
@@ -33,8 +35,6 @@ import com.siebre.payment.mapper.paymentorder.PaymentOrderMapper;
 import com.siebre.payment.mapper.paymentorderitem.PaymentOrderItemMapper;
 import com.siebre.payment.mapper.paymentorderitem.PolicyLibilityMapper;
 import com.siebre.payment.mapper.paymentorderitem.PolicyRoleMapper;
-import com.siebre.payment.restful.paymentgateway.order.PaymentOrderRequest;
-import com.siebre.payment.restful.paymentgateway.order.PaymentOrderResponse;
 import com.siebre.payment.service.serialnumber.SerialNumberService;
 import com.siebre.payment.vo.statistics.PaymentChannelTransactionVo;
 import com.siebre.payment.vo.unionpayment.DonutVo;

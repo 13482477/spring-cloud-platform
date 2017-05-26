@@ -13,8 +13,8 @@ import com.siebre.payment.entity.paymentway.PaymentWay;
 import com.siebre.payment.service.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.service.paymenthandler.alipay.sdk.AlipaySign;
 import com.siebre.payment.service.paymenthandler.basic.payment.AbstractPaymentComponent;
-import com.siebre.payment.serviceinterface.paymenthandler.payment.PaymentRequest;
-import com.siebre.payment.serviceinterface.paymenthandler.payment.PaymentResponse;
+import com.siebre.payment.service.paymenthandler.payment.PaymentRequest;
+import com.siebre.payment.service.paymenthandler.payment.PaymentResponse;
 
 /**
  * 支付宝--即时到账

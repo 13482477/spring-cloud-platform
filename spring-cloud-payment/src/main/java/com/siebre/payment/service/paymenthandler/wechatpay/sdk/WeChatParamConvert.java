@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
 import com.siebre.payment.entity.paymentway.PaymentWay;
-import com.siebre.payment.serviceinterface.paymenthandler.payment.PaymentRequest;
+import com.siebre.payment.service.paymenthandler.payment.PaymentRequest;
 
 public class WeChatParamConvert {
 

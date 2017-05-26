@@ -11,9 +11,9 @@ import com.siebre.payment.entity.paymentinterface.PaymentInterface;
 import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
 import com.siebre.payment.entity.paymentway.PaymentWay;
 import com.siebre.payment.service.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
+import com.siebre.payment.service.paymenthandler.paymentquery.PaymentQueryRequest;
+import com.siebre.payment.service.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.service.paymenthandler.unionpay.sdk.UnionPayUtil;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentquery.PaymentQueryRequest;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.utils.http.HttpTookit;
 
 /**

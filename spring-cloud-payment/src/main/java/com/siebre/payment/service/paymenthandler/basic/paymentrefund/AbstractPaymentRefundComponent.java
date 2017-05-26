@@ -15,10 +15,10 @@ import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
 import com.siebre.payment.entity.paymentway.PaymentWay;
 import com.siebre.payment.entity.refundapplication.RefundApplication;
 import com.siebre.payment.mapper.serialnumber.SerialNumberMapper;
+import com.siebre.payment.service.paymenthandler.basic.payment.PaymentInterfaceComponent;
+import com.siebre.payment.service.paymenthandler.paymentrefund.PaymentRefundRequest;
+import com.siebre.payment.service.paymenthandler.paymentrefund.PaymentRefundResponse;
 import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
-import com.siebre.payment.serviceinterface.paymenthandler.PaymentInterfaceComponent;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentrefund.PaymentRefundRequest;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentrefund.PaymentRefundResponse;
 
 public abstract class AbstractPaymentRefundComponent implements PaymentInterfaceComponent<PaymentRefundRequest, PaymentRefundResponse> {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());

@@ -16,9 +16,9 @@ import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
 import com.siebre.payment.entity.paymentway.PaymentWay;
 import com.siebre.payment.entity.refundapplication.RefundApplication;
 import com.siebre.payment.service.paymenthandler.basic.paymentrefund.AbstractPaymentRefundComponent;
+import com.siebre.payment.service.paymenthandler.paymentrefund.PaymentRefundRequest;
+import com.siebre.payment.service.paymenthandler.paymentrefund.PaymentRefundResponse;
 import com.siebre.payment.service.paymenthandler.unionpay.sdk.UnionPayUtil;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentrefund.PaymentRefundRequest;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentrefund.PaymentRefundResponse;
 import com.siebre.payment.utils.http.HttpTookit;
 
 /**

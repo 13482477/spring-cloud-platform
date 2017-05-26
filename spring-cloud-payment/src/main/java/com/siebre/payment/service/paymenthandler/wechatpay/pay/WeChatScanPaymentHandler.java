@@ -15,8 +15,8 @@ import com.siebre.payment.entity.paymentorder.PaymentOrder;
 import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
 import com.siebre.payment.entity.paymentway.PaymentWay;
 import com.siebre.payment.service.paymenthandler.basic.payment.AbstractPaymentComponent;
-import com.siebre.payment.serviceinterface.paymenthandler.payment.PaymentRequest;
-import com.siebre.payment.serviceinterface.paymenthandler.payment.PaymentResponse;
+import com.siebre.payment.service.paymenthandler.payment.PaymentRequest;
+import com.siebre.payment.service.paymenthandler.payment.PaymentResponse;
 import com.siebre.payment.utils.http.HttpTookit;
 import com.siebre.payment.utils.messageconvert.ConvertToXML;
 

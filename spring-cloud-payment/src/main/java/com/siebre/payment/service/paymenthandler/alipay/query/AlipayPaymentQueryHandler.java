@@ -17,8 +17,8 @@ import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
 import com.siebre.payment.entity.paymentway.PaymentWay;
 import com.siebre.payment.service.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.service.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentquery.PaymentQueryRequest;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentquery.PaymentQueryResponse;
+import com.siebre.payment.service.paymenthandler.paymentquery.PaymentQueryRequest;
+import com.siebre.payment.service.paymenthandler.paymentquery.PaymentQueryResponse;
 
 /**
  * Created by AdamTang on 2017/4/26.

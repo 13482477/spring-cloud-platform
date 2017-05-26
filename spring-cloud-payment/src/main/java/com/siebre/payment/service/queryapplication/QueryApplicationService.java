@@ -7,18 +7,18 @@ import org.springframework.stereotype.Service;
 
 import com.siebre.basic.applicationcontext.SpringContextUtil;
 import com.siebre.basic.service.ServiceResult;
+import com.siebre.payment.controller.paymentgateway.query.PaymentOrderQueryRequest;
+import com.siebre.payment.controller.paymentgateway.query.PaymentOrderQueryResponse;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.paymentchannel.PaymentChannel;
 import com.siebre.payment.entity.paymentinterface.PaymentInterface;
 import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
 import com.siebre.payment.entity.paymentway.PaymentWay;
-import com.siebre.payment.restful.paymentgateway.query.PaymentOrderQueryRequest;
-import com.siebre.payment.restful.paymentgateway.query.PaymentOrderQueryResponse;
 import com.siebre.payment.service.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
+import com.siebre.payment.service.paymenthandler.paymentquery.PaymentQueryRequest;
+import com.siebre.payment.service.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
 import com.siebre.payment.service.paymentway.PaymentWayService;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentquery.PaymentQueryRequest;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentquery.PaymentQueryResponse;
 
 /**
  * @author Huang Tianci

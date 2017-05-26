@@ -22,8 +22,8 @@ import com.siebre.payment.entity.paymentway.PaymentWay;
 import com.siebre.payment.entity.refundapplication.RefundApplication;
 import com.siebre.payment.service.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.service.paymenthandler.basic.paymentrefund.AbstractPaymentRefundComponent;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentrefund.PaymentRefundRequest;
-import com.siebre.payment.serviceinterface.paymenthandler.paymentrefund.PaymentRefundResponse;
+import com.siebre.payment.service.paymenthandler.paymentrefund.PaymentRefundRequest;
+import com.siebre.payment.service.paymenthandler.paymentrefund.PaymentRefundResponse;
 
 /**
  * Created by AdamTang on 2017/4/24.
