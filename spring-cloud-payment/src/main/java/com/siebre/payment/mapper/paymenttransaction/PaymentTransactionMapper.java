@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.siebre.basic.query.PageInfo;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
-import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
+import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 
 @Repository
 public interface PaymentTransactionMapper {

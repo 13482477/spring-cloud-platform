@@ -7,9 +7,9 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
-import com.siebre.payment.entity.paymentinterface.PaymentInterface;
-import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
-import com.siebre.payment.entity.paymentway.PaymentWay;
+import com.siebre.payment.paymentinterface.entity.PaymentInterface;
+import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.service.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
 import com.siebre.payment.service.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.service.paymenthandler.paymentquery.PaymentQueryResponse;

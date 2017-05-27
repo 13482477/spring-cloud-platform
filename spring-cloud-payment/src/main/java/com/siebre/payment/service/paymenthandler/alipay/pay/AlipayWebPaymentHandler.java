@@ -7,9 +7,9 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import com.siebre.payment.entity.enums.EncryptionMode;
-import com.siebre.payment.entity.paymentorder.PaymentOrder;
-import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
-import com.siebre.payment.entity.paymentway.PaymentWay;
+import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.service.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.service.paymenthandler.alipay.sdk.AlipaySign;
 import com.siebre.payment.service.paymenthandler.basic.payment.AbstractPaymentComponent;

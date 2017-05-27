@@ -14,14 +14,14 @@
 			<property name="suppressAllComments" value="true" />
 		</commentGenerator>
 		<!-- 生发环境数据库配置:修改配置 -->
-		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.168.18.158:3306/siebre-message-demo?useSSL=false" userId="root" password="1qaz@WSX">
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.168.18.158:3306/siebre-payment?useSSL=false" userId="root" password="1qaz@WSX">
 		</jdbcConnection>
 		<javaTypeResolver>
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>
 		
 		<!-- 持久化对象：targetPackage：修改包名 targetProject：修改项目名 或 去除 -->
-		<javaModelGenerator targetPackage="com.siebre.messagedemo.entity" targetProject="src/main/java">
+		<javaModelGenerator targetPackage="com.siebre.payment.entity" targetProject="src/main/java">
 			<property name="enableSubPackages" value="true" />
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
@@ -31,12 +31,12 @@
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 		<!-- 数据访问对象xml实现:targetPackage：修改包名 targetProject：修改项目名 或 去除 -->
-		<javaClientGenerator type="XMLMAPPER" targetPackage="com.siebre.messagedemo.mapper" targetProject="src/main/java">
+		<javaClientGenerator type="XMLMAPPER" targetPackage="com.siebre.payment.mapper" targetProject="src/main/java">
 			<property name="enableSubPackages" value="true" />
 		</javaClientGenerator>
 		<!-- 表转代码：tableName：修改表名 -->
 		<table 
-			tableName="message_object" 
+			tableName="pmt_payment_channel" 
 			selectByExampleQueryId="false"
 			enableCountByExample="false" 
 			enableUpdateByExample="false" 
@@ -46,7 +46,170 @@
 			enableSelectByPrimaryKey="true"
 			enableUpdateByPrimaryKey="true" 
 			enableDeleteByPrimaryKey="true"
-			domainObjectName="MessageObject"
+			domainObjectName="PaymentChannel"
+			>
+			<generatedKey column="id" sqlStatement="MySql" identity="true"/>
+			<columnOverride column="status" javaType="com.siebre.payment.entity.enums.PaymentChannelStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+		</table>
+		<table 
+			tableName="pmt_payment_interface" 
+			selectByExampleQueryId="false"
+			enableCountByExample="false" 
+			enableUpdateByExample="false" 
+			enableDeleteByExample="false" 
+			enableSelectByExample="false"
+			enableInsert="true" 
+			enableSelectByPrimaryKey="true"
+			enableUpdateByPrimaryKey="true" 
+			enableDeleteByPrimaryKey="true"
+			domainObjectName="PaymentInterface"
+			>
+			<generatedKey column="id" sqlStatement="MySql" identity="true"/>
+			<columnOverride column="payment_interface_type" javaType="com.siebre.payment.entity.enums.PaymentInterfaceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+		</table>
+		<table 
+			tableName="pmt_payment_order" 
+			selectByExampleQueryId="false"
+			enableCountByExample="false" 
+			enableUpdateByExample="false" 
+			enableDeleteByExample="false" 
+			enableSelectByExample="false"
+			enableInsert="true" 
+			enableSelectByPrimaryKey="true"
+			enableUpdateByPrimaryKey="true" 
+			enableDeleteByPrimaryKey="true"
+			domainObjectName="PaymentInterface"
+			>
+			<generatedKey column="id" sqlStatement="MySql" identity="true"/>
+			<columnOverride column="status" javaType="com.siebre.payment.entity.enums.PaymentOrderPayStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+			<columnOverride column="check_status" javaType="com.siebre.payment.entity.enums.PaymentOrderCheckStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+			<columnOverride column="refund_status" javaType="com.siebre.payment.entity.enums.PaymentOrderRefundStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+		</table>
+		<table 
+			tableName="pmt_payment_order_item" 
+			selectByExampleQueryId="false"
+			enableCountByExample="false" 
+			enableUpdateByExample="false" 
+			enableDeleteByExample="false" 
+			enableSelectByExample="false"
+			enableInsert="true" 
+			enableSelectByPrimaryKey="true"
+			enableUpdateByPrimaryKey="true" 
+			enableDeleteByPrimaryKey="true"
+			domainObjectName="PaymentOrderItem"
+			>
+			<generatedKey column="id" sqlStatement="MySql" identity="true"/>
+		</table>
+		<table 
+			tableName="pmt_payment_transaction" 
+			selectByExampleQueryId="false"
+			enableCountByExample="false" 
+			enableUpdateByExample="false" 
+			enableDeleteByExample="false" 
+			enableSelectByExample="false"
+			enableInsert="true" 
+			enableSelectByPrimaryKey="true"
+			enableUpdateByPrimaryKey="true" 
+			enableDeleteByPrimaryKey="true"
+			domainObjectName="PaymentTransaction"
+			>
+			<generatedKey column="id" sqlStatement="MySql" identity="true"/>
+			<columnOverride column="payment_status" javaType="com.siebre.payment.entity.enums.PaymentTransactionStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+		</table>
+		<table 
+			tableName="pmt_payment_transaction" 
+			selectByExampleQueryId="false"
+			enableCountByExample="false" 
+			enableUpdateByExample="false" 
+			enableDeleteByExample="false" 
+			enableSelectByExample="false"
+			enableInsert="true" 
+			enableSelectByPrimaryKey="true"
+			enableUpdateByPrimaryKey="true" 
+			enableDeleteByPrimaryKey="true"
+			domainObjectName="PaymentTransaction"
+			>
+			<generatedKey column="id" sqlStatement="MySql" identity="true"/>
+			<columnOverride column="interface_type" javaType="com.siebre.payment.entity.enums.PaymentInterfaceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+		</table>
+		<table 
+			tableName="pmt_payment_way" 
+			selectByExampleQueryId="false"
+			enableCountByExample="false" 
+			enableUpdateByExample="false" 
+			enableDeleteByExample="false" 
+			enableSelectByExample="false"
+			enableInsert="true" 
+			enableSelectByPrimaryKey="true"
+			enableUpdateByPrimaryKey="true" 
+			enableDeleteByPrimaryKey="true"
+			domainObjectName="PaymentWay"
+			>
+			<generatedKey column="id" sqlStatement="MySql" identity="true"/>
+			<columnOverride column="encryption_mode" javaType="com.siebre.payment.entity.enums.EncryptionMode" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+		</table>
+		<table 
+			tableName="pmt_policy_libility" 
+			selectByExampleQueryId="false"
+			enableCountByExample="false" 
+			enableUpdateByExample="false" 
+			enableDeleteByExample="false" 
+			enableSelectByExample="false"
+			enableInsert="true" 
+			enableSelectByPrimaryKey="true"
+			enableUpdateByPrimaryKey="true" 
+			enableDeleteByPrimaryKey="true"
+			domainObjectName="PolicyLibility"
+			>
+			<generatedKey column="id" sqlStatement="MySql" identity="true"/>
+			<columnOverride column="encryption_mode" javaType="com.siebre.payment.entity.enums.EncryptionMode" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+		</table>
+		<table 
+			tableName="pmt_policy_role" 
+			selectByExampleQueryId="false"
+			enableCountByExample="false" 
+			enableUpdateByExample="false" 
+			enableDeleteByExample="false" 
+			enableSelectByExample="false"
+			enableInsert="true" 
+			enableSelectByPrimaryKey="true"
+			enableUpdateByPrimaryKey="true" 
+			enableDeleteByPrimaryKey="true"
+			domainObjectName="PolicyRole"
+			>
+			<generatedKey column="id" sqlStatement="MySql" identity="true"/>
+			<columnOverride column="gender" javaType="com.siebre.payment.entity.enums.Gender" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+			<columnOverride column="certificate_type" javaType="com.siebre.payment.entity.enums.CertificateType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+			<columnOverride column="beneficiary" javaType="com.siebre.payment.entity.enums.Beneficiary" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+		</table>
+		<table 
+			tableName="pmt_refund_application" 
+			selectByExampleQueryId="false"
+			enableCountByExample="false" 
+			enableUpdateByExample="false" 
+			enableDeleteByExample="false" 
+			enableSelectByExample="false"
+			enableInsert="true" 
+			enableSelectByPrimaryKey="true"
+			enableUpdateByPrimaryKey="true" 
+			enableDeleteByPrimaryKey="true"
+			domainObjectName="RefundApplication"
+			>
+			<generatedKey column="id" sqlStatement="MySql" identity="true"/>
+			<columnOverride column="status" javaType="com.siebre.payment.entity.enums.RefundApplicationStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+		</table>
+		<table 
+			tableName="pmt_transaction_message" 
+			selectByExampleQueryId="false"
+			enableCountByExample="false" 
+			enableUpdateByExample="false" 
+			enableDeleteByExample="false" 
+			enableSelectByExample="false"
+			enableInsert="true" 
+			enableSelectByPrimaryKey="true"
+			enableUpdateByPrimaryKey="true" 
+			enableDeleteByPrimaryKey="true"
+			domainObjectName="TransactionMessage"
 			>
 			<generatedKey column="id" sqlStatement="MySql" identity="true"/>
 		</table>

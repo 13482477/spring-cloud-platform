@@ -1,8 +1,8 @@
 package com.siebre.payment.service.paymenthandler.unionpay.paycallback;
 
 import com.siebre.basic.utils.HttpServletRequestUtil;
-import com.siebre.payment.entity.paymentinterface.PaymentInterface;
-import com.siebre.payment.entity.paymentway.PaymentWay;
+import com.siebre.payment.paymentinterface.entity.PaymentInterface;
+import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.service.paymenthandler.basic.paymentcallback.AbstractPaymentCallBackHandler;
 import com.siebre.payment.service.paymenthandler.unionpay.sdk.UnionPayUtil;
 import org.springframework.stereotype.Component;

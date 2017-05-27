@@ -33,9 +33,7 @@ public class PaymentOrderOutOfTimeListener implements ChannelAwareMessageListene
         try {
             String orderNumber = new String(message.getBody());
 
-
             transactionService.outOfTime(orderNumber);
-
 
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false); //确认消息成功消费
         }catch (Exception e){

@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
-import com.siebre.payment.entity.paymentorder.PaymentOrder;
-import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
+import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.service.PaymentOrderService;
+import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+import com.siebre.payment.paymentway.service.PaymentWayService;
 import com.siebre.payment.service.paymenthandler.basic.payment.PaymentInterfaceComponent;
 import com.siebre.payment.service.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.service.paymenthandler.paymentquery.PaymentQueryResponse;
-import com.siebre.payment.service.paymentorder.PaymentOrderService;
 import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
-import com.siebre.payment.service.paymentway.PaymentWayService;
 
 public abstract class AbstractPaymentQueryComponent implements PaymentInterfaceComponent<PaymentQueryRequest, PaymentQueryResponse> {
     protected Logger logger  = LoggerFactory.getLogger(this.getClass());

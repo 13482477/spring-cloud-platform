@@ -1,8 +1,9 @@
 package com.siebre.payment.service.paymenthandler.basic.paymentcallback;
 
-import com.siebre.payment.entity.paymentinterface.PaymentInterface;
+import com.siebre.payment.paymentinterface.entity.PaymentInterface;
+import com.siebre.payment.paymentway.service.PaymentWayService;
 import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
-import com.siebre.payment.service.paymentway.PaymentWayService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

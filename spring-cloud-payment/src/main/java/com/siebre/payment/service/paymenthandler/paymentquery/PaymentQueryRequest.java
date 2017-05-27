@@ -1,10 +1,10 @@
 package com.siebre.payment.service.paymenthandler.paymentquery;
 
-import com.siebre.payment.entity.paymentchannel.PaymentChannel;
-import com.siebre.payment.entity.paymentinterface.PaymentInterface;
-import com.siebre.payment.entity.paymentorder.PaymentOrder;
-import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
-import com.siebre.payment.entity.paymentway.PaymentWay;
+import com.siebre.payment.paymentchannel.entity.PaymentChannel;
+import com.siebre.payment.paymentinterface.entity.PaymentInterface;
+import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+import com.siebre.payment.paymentway.entity.PaymentWay;
 
 public class PaymentQueryRequest {
 

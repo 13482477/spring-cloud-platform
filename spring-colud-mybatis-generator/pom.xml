@@ -41,6 +41,11 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.siebre</groupId>
+			<artifactId>spring-cloud-basic</artifactId>
+			<version>1.0.0.RELEASE</version>
+		</dependency>
 	</dependencies>
 
 </project>

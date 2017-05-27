@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.siebre.basic.applicationcontext.SpringContextUtil;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
-import com.siebre.payment.entity.paymentinterface.PaymentInterface;
-import com.siebre.payment.entity.paymentway.PaymentWay;
+import com.siebre.payment.paymentinterface.entity.PaymentInterface;
+import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.paymentway.service.PaymentWayService;
 import com.siebre.payment.service.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.service.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.service.paymenthandler.payment.PaymentResponse;
 import com.siebre.payment.service.paymenthandler.wechatpay.WeChatPublicAuthService;
-import com.siebre.payment.service.paymentway.PaymentWayService;
 
 @RestController
 public class UnifiedPayController {

@@ -1,8 +1,8 @@
 package com.siebre.payment.service.paymenthandler.paymentrefund;
 
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
-import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
 import com.siebre.payment.entity.refundapplication.RefundApplication;
+import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 
 /**
  * 退款返回信息DTO

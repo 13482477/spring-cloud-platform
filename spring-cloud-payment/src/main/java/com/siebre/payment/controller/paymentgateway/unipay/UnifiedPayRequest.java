@@ -3,7 +3,7 @@ package com.siebre.payment.controller.paymentgateway.unipay;
 import java.io.Serializable;
 import java.util.List;
 
-import com.siebre.payment.entity.paymentorderitem.PaymentOrderItem;
+import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 
 public class UnifiedPayRequest implements Serializable{
 

@@ -2,8 +2,8 @@ package com.siebre.payment.entity.refundapplication;
 
 import com.siebre.basic.model.BaseObject;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
-import com.siebre.payment.entity.paymentorder.PaymentOrder;
-import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
+import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 
 import java.math.BigDecimal;
 

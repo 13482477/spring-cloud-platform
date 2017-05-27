@@ -3,7 +3,7 @@ package com.siebre.payment.service.paymenthandler.payment;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.siebre.payment.entity.paymentorderitem.PaymentOrderItem;
+import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 
 public class PaymentRequest {
 	

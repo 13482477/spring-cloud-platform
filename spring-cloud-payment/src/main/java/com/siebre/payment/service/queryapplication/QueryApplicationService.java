@@ -10,15 +10,15 @@ import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.controller.paymentgateway.query.PaymentOrderQueryRequest;
 import com.siebre.payment.controller.paymentgateway.query.PaymentOrderQueryResponse;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
-import com.siebre.payment.entity.paymentchannel.PaymentChannel;
-import com.siebre.payment.entity.paymentinterface.PaymentInterface;
-import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
-import com.siebre.payment.entity.paymentway.PaymentWay;
+import com.siebre.payment.paymentchannel.entity.PaymentChannel;
+import com.siebre.payment.paymentinterface.entity.PaymentInterface;
+import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.paymentway.service.PaymentWayService;
 import com.siebre.payment.service.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
 import com.siebre.payment.service.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.service.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
-import com.siebre.payment.service.paymentway.PaymentWayService;
 
 /**
  * @author Huang Tianci

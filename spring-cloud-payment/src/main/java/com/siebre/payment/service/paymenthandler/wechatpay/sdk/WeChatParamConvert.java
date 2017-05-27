@@ -14,8 +14,8 @@ import java.util.UUID;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
-import com.siebre.payment.entity.paymentway.PaymentWay;
+import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.service.paymenthandler.payment.PaymentRequest;
 
 public class WeChatParamConvert {

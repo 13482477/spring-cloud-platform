@@ -12,11 +12,11 @@ import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
-import com.siebre.payment.entity.paymentorder.PaymentOrder;
 import com.siebre.payment.entity.refundapplication.RefundApplication;
-import com.siebre.payment.mapper.paymentorder.PaymentOrderMapper;
 import com.siebre.payment.mapper.refundapplication.RefundApplicationMapper;
 import com.siebre.payment.mapper.serialnumber.SerialNumberMapper;
+import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
 
 /**
  * Created by AdamTang on 2017/4/22.

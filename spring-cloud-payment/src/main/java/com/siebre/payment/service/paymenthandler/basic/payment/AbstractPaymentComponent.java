@@ -11,16 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
-import com.siebre.payment.entity.paymentinterface.PaymentInterface;
-import com.siebre.payment.entity.paymentorder.PaymentOrder;
-import com.siebre.payment.entity.paymenttransaction.PaymentTransaction;
-import com.siebre.payment.entity.paymentway.PaymentWay;
-import com.siebre.payment.mapper.paymentorder.PaymentOrderMapper;
+import com.siebre.payment.paymentinterface.entity.PaymentInterface;
+import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
+import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.paymentway.service.PaymentWayService;
 import com.siebre.payment.service.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.service.paymenthandler.payment.PaymentResponse;
 import com.siebre.payment.service.paymentorder.PaymentOrderOutOfTimeService;
 import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
-import com.siebre.payment.service.paymentway.PaymentWayService;
 import com.siebre.payment.service.serialnumber.SerialNumberService;
 
 /**
