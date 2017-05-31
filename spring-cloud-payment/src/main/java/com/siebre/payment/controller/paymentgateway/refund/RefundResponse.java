@@ -10,7 +10,9 @@ import java.math.BigDecimal;
  */
 public class RefundResponse implements Serializable {
 
-    private String refundStatus;
+	private static final long serialVersionUID = -5752076769574098065L;
+
+	private String refundStatus;
 
     private String applicationNumber;
 

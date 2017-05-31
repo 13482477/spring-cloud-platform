@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.siebre.basic.model.BaseObject;
-import com.siebre.payment.entity.paymentorderitem.PolicyLibility;
-import com.siebre.payment.entity.paymentorderitem.PolicyRole;
+import com.siebre.payment.policylibility.entity.PolicyLibility;
+import com.siebre.payment.policyrole.entity.PolicyRole;
 
 public class PaymentOrderItem extends BaseObject {
 

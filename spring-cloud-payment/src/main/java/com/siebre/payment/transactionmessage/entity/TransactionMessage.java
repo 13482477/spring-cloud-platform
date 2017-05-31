@@ -1,4 +1,4 @@
-package com.siebre.payment.entity.transactionmessage;
+package com.siebre.payment.transactionmessage.entity;
 
 import com.siebre.basic.model.BaseObject;
 

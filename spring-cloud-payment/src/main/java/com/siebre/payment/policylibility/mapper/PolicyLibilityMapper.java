@@ -1,7 +1,8 @@
-package com.siebre.payment.mapper.paymentorderitem;
+package com.siebre.payment.policylibility.mapper;
 
-import com.siebre.payment.entity.paymentorderitem.PolicyLibility;
 import org.springframework.stereotype.Repository;
+
+import com.siebre.payment.policylibility.entity.PolicyLibility;
 
 @Repository
 public interface PolicyLibilityMapper {

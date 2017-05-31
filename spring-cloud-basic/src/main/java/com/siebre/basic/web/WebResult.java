@@ -9,6 +9,10 @@ import com.siebre.basic.query.PageInfo;
 public class WebResult<T> implements Serializable {
 
 	private static final long serialVersionUID = -6145741379535874029L;
+	
+	public static final String SUCCESS_CODE = "200";
+
+	public static final String FAIL_CODE = "500";
 
 	private String returnCode;
 

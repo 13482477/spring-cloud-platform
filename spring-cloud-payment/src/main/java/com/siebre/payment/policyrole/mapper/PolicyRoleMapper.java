@@ -1,7 +1,8 @@
-package com.siebre.payment.mapper.paymentorderitem;
+package com.siebre.payment.policyrole.mapper;
 
-import com.siebre.payment.entity.paymentorderitem.PolicyRole;
 import org.springframework.stereotype.Repository;
+
+import com.siebre.payment.policyrole.entity.PolicyRole;
 
 @Repository
 public interface PolicyRoleMapper {

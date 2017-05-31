@@ -9,15 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
-import com.siebre.payment.entity.refundapplication.RefundApplication;
 import com.siebre.payment.mapper.serialnumber.SerialNumberMapper;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entiry.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.refundapplication.dto.PaymentRefundRequest;
+import com.siebre.payment.refundapplication.dto.PaymentRefundResponse;
+import com.siebre.payment.refundapplication.entity.RefundApplication;
 import com.siebre.payment.service.paymenthandler.basic.payment.PaymentInterfaceComponent;
-import com.siebre.payment.service.paymenthandler.paymentrefund.PaymentRefundRequest;
-import com.siebre.payment.service.paymenthandler.paymentrefund.PaymentRefundResponse;
 import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
 
 public abstract class AbstractPaymentRefundComponent implements PaymentInterfaceComponent<PaymentRefundRequest, PaymentRefundResponse> {

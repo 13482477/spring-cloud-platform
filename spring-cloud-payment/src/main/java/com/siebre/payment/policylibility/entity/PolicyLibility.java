@@ -1,4 +1,4 @@
-package com.siebre.payment.entity.paymentorderitem;
+package com.siebre.payment.policylibility.entity;
 
 import com.siebre.basic.model.BaseObject;
 

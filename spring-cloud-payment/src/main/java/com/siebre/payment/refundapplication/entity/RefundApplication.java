@@ -1,11 +1,11 @@
-package com.siebre.payment.entity.refundapplication;
+package com.siebre.payment.refundapplication.entity;
+
+import java.math.BigDecimal;
 
 import com.siebre.basic.model.BaseObject;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
 import com.siebre.payment.paymentorder.entiry.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
-
-import java.math.BigDecimal;
 
 /**
  * Created by AdamTang on 2017/4/22.
@@ -15,7 +15,10 @@ import java.math.BigDecimal;
  * 每一笔经过iPay的退款 都需要创建退款申请，从退款申请->订单->交易->渠道
  */
 public class RefundApplication extends BaseObject {
-    //订单号
+	
+	private static final long serialVersionUID = 9017247646028696851L;
+
+	//订单号
     private String orderNumber;
 
     private PaymentOrder paymentOrder;

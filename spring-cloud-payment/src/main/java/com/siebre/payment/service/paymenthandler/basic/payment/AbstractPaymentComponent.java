@@ -50,7 +50,7 @@ public abstract class AbstractPaymentComponent implements PaymentInterfaceCompon
 
     @Override
     public PaymentResponse handle(PaymentRequest request) {
-        PaymentWay paymentWay = this.paymentWayService.getPaymentWayByCode(request.getPaymentWayCode()).getData();
+        PaymentWay paymentWay = this.paymentWayService.getPaymentWayByCode(request.getPaymentWayCode());
 
         PaymentOrder paymentOrder = paymentOrderMapper.selectByOrderNumber(request.getOrderNumber());
 

@@ -1,4 +1,4 @@
-package com.siebre.payment.entity.paymentorderitem;
+package com.siebre.payment.policyrole.entity;
 
 import com.siebre.basic.model.BaseObject;
 import com.siebre.payment.entity.enums.Beneficiary;

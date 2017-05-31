@@ -66,7 +66,7 @@ public class UnifiedPayController {
     public Object weChatTest(HttpServletRequest request){
         String pageUrl = request.getParameter("pageUrl");
         Map<String,String> result = new HashMap<>();
-        PaymentWay paymentWay = this.paymentWayService.getPaymentWayByCode("WECHAT_PUBLIC_PAY").getData();
+        PaymentWay paymentWay = this.paymentWayService.getPaymentWayByCode("WECHAT_PUBLIC_PAY");
         String redirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+ paymentWay.getAppId() +"&redirect_uri=" + pageUrl +
                 "&response_type=code&scope=snsapi_base&state=1#wechat_redirect";
         result.put("redirectUrl",redirectUrl);

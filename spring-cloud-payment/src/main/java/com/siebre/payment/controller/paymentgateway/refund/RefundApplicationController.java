@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
-import com.siebre.payment.entity.refundapplication.RefundApplication;
-import com.siebre.payment.service.paymenthandler.paymentrefund.PaymentRefundRequest;
-import com.siebre.payment.service.paymenthandler.paymentrefund.PaymentRefundResponse;
+import com.siebre.payment.refundapplication.dto.PaymentRefundRequest;
+import com.siebre.payment.refundapplication.dto.PaymentRefundResponse;
+import com.siebre.payment.refundapplication.entity.RefundApplication;
+import com.siebre.payment.refundapplication.service.RefundApplicationService;
 import com.siebre.payment.service.paymentroute.PaymentRefundRouteService;
 import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
-import com.siebre.payment.service.refundapplication.RefundApplicationService;
 
 /**
  * Created by AdamTang on 2017/4/22.

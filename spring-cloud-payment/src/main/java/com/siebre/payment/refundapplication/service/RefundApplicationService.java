@@ -1,4 +1,4 @@
-package com.siebre.payment.service.refundapplication;
+package com.siebre.payment.refundapplication.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -9,14 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.siebre.basic.query.PageInfo;
-import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
-import com.siebre.payment.entity.refundapplication.RefundApplication;
-import com.siebre.payment.mapper.refundapplication.RefundApplicationMapper;
-import com.siebre.payment.mapper.serialnumber.SerialNumberMapper;
 import com.siebre.payment.paymentorder.entiry.PaymentOrder;
 import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
+import com.siebre.payment.refundapplication.entity.RefundApplication;
+import com.siebre.payment.refundapplication.mapper.RefundApplicationMapper;
 
 /**
  * Created by AdamTang on 2017/4/22.
@@ -32,36 +30,20 @@ public class RefundApplicationService {
     @Autowired
     private PaymentOrderMapper paymentOrderMapper;
 
-    @Autowired
-    private SerialNumberMapper serialNumberMapper;
-
-    public ServiceResult<List<RefundApplication>> selectRefundList(String orderNumber, String refundNumber,
+    public List<RefundApplication> selectRefundList(String orderNumber, String refundNumber,
                                                                    String channelName, RefundApplicationStatus refundStatus,
                                                                    Date startDate, Date endDate, PageInfo pageInfo) {
         List<RefundApplication> list = refundApplicationMapper.selectRefundList(orderNumber, refundNumber, channelName, refundStatus, startDate, endDate, pageInfo);
-        ServiceResult<List<RefundApplication>> result = new ServiceResult<>();
-        result.setData(list);
-        result.setPageInfo(pageInfo);
+        return list;
+    }
+
+    public RefundApplication getRefundApplicationByOrderNumber(String orderNumber) {
+        RefundApplication result = refundApplicationMapper.selectByBusinessNumber(orderNumber, null);
         return result;
     }
 
-    public ServiceResult<List<RefundApplication>> getRefundApplicationByPage(PageInfo pageInfo) {
-        List<RefundApplication> list = refundApplicationMapper.selectByPage(pageInfo);
-        ServiceResult<List<RefundApplication>> result = new ServiceResult<>();
-        result.setData(list);
-        result.setPageInfo(pageInfo);
-        return result;
-    }
-
-    public ServiceResult<RefundApplication> getRefundApplicationByOrderNumber(String orderNumber) {
-        ServiceResult<RefundApplication> result = new ServiceResult<>();
-        result.setData(refundApplicationMapper.selectByBusinessNumber(orderNumber, null));
-        return result;
-    }
-
-    public ServiceResult<RefundApplication> getRefundApplicationByRefundApplicationNumber(String refundApplicationNumber) {
-        ServiceResult<RefundApplication> result = new ServiceResult<>();
-        result.setData(refundApplicationMapper.selectByBusinessNumber(null, refundApplicationNumber));
+    public RefundApplication getRefundApplicationByRefundApplicationNumber(String refundApplicationNumber) {
+        RefundApplication result = refundApplicationMapper.selectByBusinessNumber(null, refundApplicationNumber);
         return result;
     }
 

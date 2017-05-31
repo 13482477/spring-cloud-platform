@@ -1,8 +1,9 @@
-package com.siebre.payment.mapper.refundapplication;
+package com.siebre.payment.refundapplication.mapper;
 
 import com.siebre.basic.query.PageInfo;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
-import com.siebre.payment.entity.refundapplication.RefundApplication;
+import com.siebre.payment.refundapplication.entity.RefundApplication;
+
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
