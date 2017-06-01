@@ -1,9 +1,9 @@
-package com.siebre.payment.mapper.serialnumber;
+package com.siebre.payment.serialnumber.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import com.siebre.payment.entity.serialnumber.SerialNumber;
+import com.siebre.payment.serialnumber.entity.SerialNumber;
 
 import java.util.List;
 

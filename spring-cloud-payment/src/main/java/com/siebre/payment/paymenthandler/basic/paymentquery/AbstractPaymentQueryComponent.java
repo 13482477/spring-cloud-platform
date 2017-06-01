@@ -12,8 +12,8 @@ import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.paymentorder.entiry.PaymentOrder;
 import com.siebre.payment.paymentorder.service.PaymentOrderService;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
 import com.siebre.payment.paymentway.service.PaymentWayService;
-import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
 
 public abstract class AbstractPaymentQueryComponent implements PaymentInterfaceComponent<PaymentQueryRequest, PaymentQueryResponse> {
     protected Logger logger  = LoggerFactory.getLogger(this.getClass());

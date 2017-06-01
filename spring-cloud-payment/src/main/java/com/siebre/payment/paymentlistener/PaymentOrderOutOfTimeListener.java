@@ -1,4 +1,4 @@
-package com.siebre.payment.service.paymentlistener;
+package com.siebre.payment.paymentlistener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.rabbitmq.client.Channel;
-import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
+import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
 
 /**
  * Created by AdamTang on 2017/4/11.

@@ -29,7 +29,7 @@ import com.siebre.payment.policylibility.entity.PolicyLibility;
 import com.siebre.payment.policylibility.mapper.PolicyLibilityMapper;
 import com.siebre.payment.policyrole.entity.PolicyRole;
 import com.siebre.payment.policyrole.mapper.PolicyRoleMapper;
-import com.siebre.payment.service.serialnumber.SerialNumberService;
+import com.siebre.payment.serialnumber.service.SerialNumberService;
 import com.siebre.payment.statistics.vo.DonutVo;
 import com.siebre.payment.statistics.vo.PaymentChannelTransactionVo;
 

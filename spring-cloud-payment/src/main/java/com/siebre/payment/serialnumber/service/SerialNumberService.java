@@ -1,9 +1,9 @@
-package com.siebre.payment.service.serialnumber;
+package com.siebre.payment.serialnumber.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.siebre.payment.mapper.serialnumber.SerialNumberMapper;
+import com.siebre.payment.serialnumber.mapper.SerialNumberMapper;
 
 @Service
 public class SerialNumberService {

@@ -1,4 +1,4 @@
-package com.siebre.payment.entity.serialnumber;
+package com.siebre.payment.serialnumber.entity;
 
 /**
  * Created by AdamTang on 2017/3/29.

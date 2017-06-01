@@ -1,4 +1,4 @@
-package com.siebre.payment.service.paymentorder;
+package com.siebre.payment.paymentlistener;
 
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;

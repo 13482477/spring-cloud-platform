@@ -16,9 +16,9 @@ import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.paymentway.service.PaymentWayService;
-import com.siebre.payment.service.paymenttransaction.PaymentTransactionService;
 
 /**
  * @author Huang Tianci
