@@ -1,4 +1,4 @@
-package com.siebre.payment.controller.paymentgateway.paymentcallback;
+package com.siebre.payment.paymentcallback.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

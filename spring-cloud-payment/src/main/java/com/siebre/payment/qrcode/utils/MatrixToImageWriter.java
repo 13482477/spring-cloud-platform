@@ -1,4 +1,4 @@
-package com.siebre.payment.controller.qrcode;
+package com.siebre.payment.qrcode.utils;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

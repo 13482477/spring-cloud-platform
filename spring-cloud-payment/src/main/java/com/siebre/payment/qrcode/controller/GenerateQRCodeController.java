@@ -1,4 +1,4 @@
-package com.siebre.payment.controller.qrcode;
+package com.siebre.payment.qrcode.controller;
 
 import java.io.IOException;
 

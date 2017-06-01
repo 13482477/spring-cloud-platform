@@ -1,7 +1,6 @@
 package com.siebre.payment.paymenthandler.wechatpay;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -19,7 +18,6 @@ import com.siebre.payment.utils.http.HttpTookit;
 public class WeChatPublicAuthService {
 
     @Autowired
-    @Qualifier("paymentWayService")
     private PaymentWayService paymentWayService;
 
     public String getOpenID(String code) {

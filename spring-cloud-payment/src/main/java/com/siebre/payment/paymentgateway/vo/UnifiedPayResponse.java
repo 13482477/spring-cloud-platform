@@ -1,4 +1,4 @@
-package com.siebre.payment.controller.paymentgateway.unipay;
+package com.siebre.payment.paymentgateway.vo;
 
 import java.io.Serializable;
 

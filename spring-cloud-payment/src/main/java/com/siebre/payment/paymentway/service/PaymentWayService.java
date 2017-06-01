@@ -12,7 +12,7 @@ import com.siebre.payment.paymentinterface.mapper.PaymentInterfaceMapper;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.paymentway.mapper.PaymentWayMapper;
 
-@Service("paymentWayService")
+@Service
 public class PaymentWayService {
 	
 	@Autowired

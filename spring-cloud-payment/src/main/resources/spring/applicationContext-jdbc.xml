@@ -81,8 +81,8 @@
 				<value>classpath*:sqlmapper/*Mapper.xml</value>
 			</array>
 		</property>
-		<property name="typeAliasesPackage" value="com.siebre.**.entity" />
-		<property name="typeHandlersPackage" value="com.siebre.**.entity.enums" />
+		<property name="typeAliasesPackage" value="com.siebre.payment.**.entity" />
+		<property name="typeHandlersPackage" value="com.siebre.payment.entity.enums" />
 		<!-- 
 		 -->
 		<property name="plugins">
@@ -106,7 +106,7 @@
 
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" lazy-init="true">
 		<property name="annotationClass" value="org.springframework.stereotype.Repository" />
-		<property name="basePackage" value="com.siebre.**.mapper" />
+		<property name="basePackage" value="com.siebre.payment.**.mapper" />
 		<property name="sqlSessionFactoryBeanName" value="mySqlSessionFactory" />
 	</bean>
 

@@ -9,7 +9,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
-import com.siebre.payment.controller.qrcode.MatrixToImageWriter;
+import com.siebre.payment.qrcode.utils.MatrixToImageWriter;
 
 @Component
 public class QrCodeService {

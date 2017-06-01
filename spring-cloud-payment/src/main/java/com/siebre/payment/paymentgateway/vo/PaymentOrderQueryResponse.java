@@ -1,4 +1,4 @@
-package com.siebre.payment.controller.paymentgateway.query;
+package com.siebre.payment.paymentgateway.vo;
 
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 

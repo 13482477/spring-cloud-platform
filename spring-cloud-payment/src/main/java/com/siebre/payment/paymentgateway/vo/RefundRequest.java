@@ -1,4 +1,4 @@
-package com.siebre.payment.controller.paymentgateway.refund;
+package com.siebre.payment.paymentgateway.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

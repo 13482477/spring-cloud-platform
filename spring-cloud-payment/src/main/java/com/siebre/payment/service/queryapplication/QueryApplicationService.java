@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 
 import com.siebre.basic.applicationcontext.SpringContextUtil;
 import com.siebre.basic.service.ServiceResult;
-import com.siebre.payment.controller.paymentgateway.query.PaymentOrderQueryRequest;
-import com.siebre.payment.controller.paymentgateway.query.PaymentOrderQueryResponse;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
+import com.siebre.payment.paymentgateway.vo.PaymentOrderQueryRequest;
+import com.siebre.payment.paymentgateway.vo.PaymentOrderQueryResponse;
 import com.siebre.payment.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
