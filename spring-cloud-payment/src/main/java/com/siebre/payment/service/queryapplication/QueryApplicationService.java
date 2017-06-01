@@ -25,7 +25,7 @@ import com.siebre.payment.paymentway.service.PaymentWayService;
  */
 @Service
 public class QueryApplicationService{
-    Logger logger = LoggerFactory.getLogger(this.getClass());
+    Logger logger = LoggerFactory.getLogger(QueryApplicationService.class);
 
     @Autowired
     private PaymentTransactionService paymentTransactionService;
