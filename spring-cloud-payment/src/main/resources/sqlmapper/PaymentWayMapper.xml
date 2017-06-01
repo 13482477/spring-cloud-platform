@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.siebre.payment.mapper.paymentway.PaymentWayMapper">
-	<resultMap id="BaseResultMap" type="com.siebre.payment.entity.paymentway.PaymentWay">
+<mapper namespace="com.siebre.payment.paymentway.mapper.PaymentWayMapper">
+	<resultMap id="BaseResultMap" type="com.siebre.payment.paymentway.entity.PaymentWay">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
@@ -20,8 +20,8 @@
 		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
 		<result column="update_date" property="updateDate" jdbcType="VARCHAR" />
 	</resultMap>
-	<resultMap id="PaymentWayResultMap" type="com.siebre.payment.entity.paymentway.PaymentWay" extends="BaseResultMap">
-		<association property="paymentChannel" javaType="com.siebre.payment.entity.paymentchannel.PaymentChannel" notNullColumn="id" columnPrefix="paymentChannel_" >
+	<resultMap id="PaymentWayResultMap" type="com.siebre.payment.paymentway.entity.PaymentWay" extends="BaseResultMap">
+		<association property="paymentChannel" javaType="com.siebre.payment.paymentchannel.entity.PaymentChannel" notNullColumn="id" columnPrefix="paymentChannel_" >
 			<id column="id" property="id" jdbcType="BIGINT" />
 			<result column="channel_name" property="channelName" jdbcType="VARCHAR" />
 			<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
@@ -44,7 +44,7 @@
 			<result column="payment_callback_url" property="paymentCallbackUrl" jdbcType="VARCHAR" />
 			<result column="payment_return_page_url" property="paymentReturnPageUrl" jdbcType="VARCHAR" />
 		</association>
-		<collection property="paymentInterfaces" javaType="com.siebre.payment.entity.paymentinterface.PaymentInterface" columnPrefix="paymentInterface_" notNullColumn="id">
+		<collection property="paymentInterfaces" javaType="com.siebre.payment.paymentinterface.entity.PaymentInterface" columnPrefix="paymentInterface_" notNullColumn="id">
 			<id column="id" property="id" jdbcType="BIGINT" />
 			<result column="payment_way_id" property="paymentWayId" jdbcType="BIGINT" />
 			<result column="interface_name" property="interfaceName" jdbcType="VARCHAR" />
@@ -123,7 +123,7 @@
 		where
 			id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.siebre.payment.entity.paymentway.PaymentWay" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insert" parameterType="com.siebre.payment.paymentway.entity.PaymentWay" useGeneratedKeys="true" keyProperty="id">
 		insert into pmt_payment_way (
 			id,
 			payment_channel_id,
@@ -164,7 +164,7 @@
 			#{updateDate,jdbcType=VARCHAR}
 		)
 	</insert>
-	<insert id="insertSelective" parameterType="com.siebre.payment.entity.paymentway.PaymentWay" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insertSelective" parameterType="com.siebre.payment.paymentway.entity.PaymentWay" useGeneratedKeys="true" keyProperty="id">
 		insert into 
 			pmt_payment_way
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -277,7 +277,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.entity.paymentway.PaymentWay">
+	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.paymentway.entity.PaymentWay">
 		update pmt_payment_way
 		<set>
 			<if test="paymentChannelId != null">
@@ -332,7 +332,7 @@
 		where 
 			id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.entity.paymentway.PaymentWay">
+	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.paymentway.entity.PaymentWay">
 		update 
 			pmt_payment_way
 		set 

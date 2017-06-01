@@ -10,7 +10,9 @@ import java.util.Date;
 
 public class PolicyRole extends BaseObject {
 
-    private String name;
+	private static final long serialVersionUID = 2709642927506475097L;
+
+	private String name;
 
     private Gender gender;
 

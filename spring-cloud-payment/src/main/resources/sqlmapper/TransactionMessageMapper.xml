@@ -1,93 +1,93 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.siebre.payment.mapper.transactionmessage.TransactionMessageMapper" >
-  <resultMap id="BaseResultMap" type="com.siebre.payment.entity.transactionmessage.TransactionMessage" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
-    <result column="payment_interface_id" property="paymentInterfaceId" jdbcType="BIGINT" />
-    <result column="message_type" property="messageType" jdbcType="INTEGER" />
-    <result column="data" property="data" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    id, payment_channel_id, payment_interface_id, message_type, data
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
-    <include refid="Base_Column_List" />
-    from pmt_transaction_message
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from pmt_transaction_message
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="com.siebre.payment.entity.transactionmessage.TransactionMessage" >
-    insert into pmt_transaction_message (id, payment_channel_id, payment_interface_id, 
-      message_type, data)
-    values (#{id,jdbcType=BIGINT}, #{paymentChannelId,jdbcType=BIGINT}, #{paymentInterfaceId,jdbcType=BIGINT}, 
-      #{messageType,jdbcType=INTEGER}, #{data,jdbcType=VARCHAR})
-  </insert>
-  <insert id="insertSelective" parameterType="com.siebre.payment.entity.transactionmessage.TransactionMessage" >
-    insert into pmt_transaction_message
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="paymentChannelId != null" >
-        payment_channel_id,
-      </if>
-      <if test="paymentInterfaceId != null" >
-        payment_interface_id,
-      </if>
-      <if test="messageType != null" >
-        message_type,
-      </if>
-      <if test="data != null" >
-        data,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="paymentChannelId != null" >
-        #{paymentChannelId,jdbcType=BIGINT},
-      </if>
-      <if test="paymentInterfaceId != null" >
-        #{paymentInterfaceId,jdbcType=BIGINT},
-      </if>
-      <if test="messageType != null" >
-        #{messageType,jdbcType=INTEGER},
-      </if>
-      <if test="data != null" >
-        #{data,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.entity.transactionmessage.TransactionMessage" >
-    update pmt_transaction_message
-    <set >
-      <if test="paymentChannelId != null" >
-        payment_channel_id = #{paymentChannelId,jdbcType=BIGINT},
-      </if>
-      <if test="paymentInterfaceId != null" >
-        payment_interface_id = #{paymentInterfaceId,jdbcType=BIGINT},
-      </if>
-      <if test="messageType != null" >
-        message_type = #{messageType,jdbcType=INTEGER},
-      </if>
-      <if test="data != null" >
-        data = #{data,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.entity.transactionmessage.TransactionMessage" >
-    update pmt_transaction_message
-    set payment_channel_id = #{paymentChannelId,jdbcType=BIGINT},
-      payment_interface_id = #{paymentInterfaceId,jdbcType=BIGINT},
-      message_type = #{messageType,jdbcType=INTEGER},
-      data = #{data,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+<mapper namespace="com.siebre.payment.transactionmessage.mapper.TransactionMessageMapper">
+	<resultMap id="BaseResultMap" type="com.siebre.payment.transactionmessage.entity.TransactionMessage">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
+		<result column="payment_interface_id" property="paymentInterfaceId" jdbcType="BIGINT" />
+		<result column="message_type" property="messageType" jdbcType="INTEGER" />
+		<result column="data" property="data" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, payment_channel_id, payment_interface_id, message_type, data
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from pmt_transaction_message
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from pmt_transaction_message
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.siebre.payment.transactionmessage.entity.TransactionMessage">
+		insert into pmt_transaction_message (id, payment_channel_id, payment_interface_id,
+		message_type, data)
+		values (#{id,jdbcType=BIGINT}, #{paymentChannelId,jdbcType=BIGINT}, #{paymentInterfaceId,jdbcType=BIGINT},
+		#{messageType,jdbcType=INTEGER}, #{data,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.siebre.payment.transactionmessage.entity.TransactionMessage">
+		insert into pmt_transaction_message
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="paymentChannelId != null">
+				payment_channel_id,
+			</if>
+			<if test="paymentInterfaceId != null">
+				payment_interface_id,
+			</if>
+			<if test="messageType != null">
+				message_type,
+			</if>
+			<if test="data != null">
+				data,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="paymentChannelId != null">
+				#{paymentChannelId,jdbcType=BIGINT},
+			</if>
+			<if test="paymentInterfaceId != null">
+				#{paymentInterfaceId,jdbcType=BIGINT},
+			</if>
+			<if test="messageType != null">
+				#{messageType,jdbcType=INTEGER},
+			</if>
+			<if test="data != null">
+				#{data,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.transactionmessage.entity.TransactionMessage">
+		update pmt_transaction_message
+		<set>
+			<if test="paymentChannelId != null">
+				payment_channel_id = #{paymentChannelId,jdbcType=BIGINT},
+			</if>
+			<if test="paymentInterfaceId != null">
+				payment_interface_id = #{paymentInterfaceId,jdbcType=BIGINT},
+			</if>
+			<if test="messageType != null">
+				message_type = #{messageType,jdbcType=INTEGER},
+			</if>
+			<if test="data != null">
+				data = #{data,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.transactionmessage.entity.TransactionMessage">
+		update pmt_transaction_message
+		set payment_channel_id = #{paymentChannelId,jdbcType=BIGINT},
+		payment_interface_id = #{paymentInterfaceId,jdbcType=BIGINT},
+		message_type = #{messageType,jdbcType=INTEGER},
+		data = #{data,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
 </mapper>

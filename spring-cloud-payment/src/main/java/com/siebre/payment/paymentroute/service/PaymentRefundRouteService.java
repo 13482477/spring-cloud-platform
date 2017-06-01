@@ -11,7 +11,7 @@ import com.siebre.basic.applicationcontext.SpringContextUtil;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.paymenthandler.basic.paymentrefund.AbstractPaymentRefundComponent;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
-import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.service.PaymentOrderService;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;

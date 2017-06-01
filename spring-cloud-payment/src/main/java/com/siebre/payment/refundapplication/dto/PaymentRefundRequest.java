@@ -1,6 +1,6 @@
 package com.siebre.payment.refundapplication.dto;
 
-import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
 

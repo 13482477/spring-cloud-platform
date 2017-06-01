@@ -6,7 +6,9 @@ import java.math.BigDecimal;
 
 public class PolicyLibility extends BaseObject{
 
-    private Long orderItemId;
+	private static final long serialVersionUID = -3642964526172290144L;
+
+	private Long orderItemId;
 
     private String libilityName;
 

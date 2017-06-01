@@ -1,4 +1,4 @@
-package com.siebre.payment.paymentorder.entiry;
+package com.siebre.payment.paymentorder.entity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

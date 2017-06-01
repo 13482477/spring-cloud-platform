@@ -18,7 +18,7 @@ import com.siebre.payment.entity.enums.RefundApplicationStatus;
 import com.siebre.payment.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.paymenthandler.basic.paymentrefund.AbstractPaymentRefundComponent;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
-import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.refundapplication.dto.PaymentRefundRequest;

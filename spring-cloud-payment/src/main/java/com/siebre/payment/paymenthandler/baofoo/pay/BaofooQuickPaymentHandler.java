@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
-import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 

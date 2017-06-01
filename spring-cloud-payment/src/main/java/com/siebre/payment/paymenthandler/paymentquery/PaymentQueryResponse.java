@@ -3,7 +3,7 @@ package com.siebre.payment.paymenthandler.paymentquery;
 import java.math.BigDecimal;
 
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
-import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 
 public class PaymentQueryResponse {

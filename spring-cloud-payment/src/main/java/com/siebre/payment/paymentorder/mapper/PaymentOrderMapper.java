@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.siebre.basic.query.PageInfo;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
-import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.statistics.vo.PaymentChannelTransactionVo;
 
 @Repository

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.siebre.payment.mapper.paymentchannel.PaymentChannelMapper">
-	<resultMap id="BaseResultMap" type="com.siebre.payment.entity.paymentchannel.PaymentChannel">
+<mapper namespace="com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper">
+	<resultMap id="BaseResultMap" type="com.siebre.payment.paymentchannel.entity.PaymentChannel">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="channel_name" property="channelName" jdbcType="VARCHAR" />
 		<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
@@ -61,7 +61,7 @@
 		where
 			id = #{id,jdbcType=INTEGER}
 	</delete>
-	<insert id="insert" parameterType="com.siebre.payment.entity.paymentchannel.PaymentChannel" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insert" parameterType="com.siebre.payment.paymentchannel.entity.PaymentChannel" useGeneratedKeys="true" keyProperty="id">
 		insert into pmt_payment_channel (
 			<include refid="Base_Column_List" />
 		)
@@ -89,7 +89,7 @@
 			#{updateDate,jdbcType=TIMESTAMP}
 		)
 	</insert>
-	<insert id="insertSelective" parameterType="com.siebre.payment.entity.paymentchannel.PaymentChannel"  useGeneratedKeys="true" keyProperty="id">
+	<insert id="insertSelective" parameterType="com.siebre.payment.paymentchannel.entity.PaymentChannel"  useGeneratedKeys="true" keyProperty="id">
 		insert into pmt_payment_channel
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -222,7 +222,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.entity.paymentchannel.PaymentChannel">
+	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.paymentchannel.entity.PaymentChannel">
 		update pmt_payment_channel
 		<set>
 			<if test="channelName != null">
@@ -289,7 +289,7 @@
 		where 
 			id = #{id,jdbcType=INTEGER}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.entity.paymentchannel.PaymentChannel">
+	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.paymentchannel.entity.PaymentChannel">
 		update 
 			pmt_payment_channel
 		set 

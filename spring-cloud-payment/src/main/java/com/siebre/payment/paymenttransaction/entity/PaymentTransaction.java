@@ -6,7 +6,7 @@ import com.siebre.basic.model.BaseObject;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
-import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 
 /**

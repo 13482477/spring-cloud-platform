@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.siebre.payment.mapper.paymentorder.PaymentOrderMapper">
-	<resultMap id="BaseResultMap" type="com.siebre.payment.entity.paymentorder.PaymentOrder">
+<mapper namespace="com.siebre.payment.paymentorder.mapper.PaymentOrderMapper">
+	<resultMap id="BaseResultMap" type="com.siebre.payment.paymentorder.entity.PaymentOrder">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
 		<result column="total_insured_amount" property="totalInsuredAmount" jdbcType="DECIMAL" />
@@ -17,12 +17,12 @@
 		<result column="refund_status" property="refundStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
 		<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
-		<association property="paymentChannel" javaType="com.siebre.payment.entity.paymentchannel.PaymentChannel" columnPrefix="paymentChannel_">
+		<association property="paymentChannel" javaType="com.siebre.payment.paymentchannel.entity.PaymentChannel" columnPrefix="paymentChannel_">
 			<result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
 		</association>
 	</resultMap>
 
-	<resultMap id="selectByOrderNumberResultMap" type="com.siebre.payment.entity.paymentorder.PaymentOrder">
+	<resultMap id="selectByOrderNumberResultMap" type="com.siebre.payment.paymentorder.entity.PaymentOrder">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
 		<result column="total_insured_amount" property="totalInsuredAmount" jdbcType="DECIMAL" />
@@ -38,7 +38,7 @@
 		<result column="refund_status" property="refundStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
 		<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
-		<collection property="paymentOrderItems" notNullColumn="id" javaType="com.siebre.payment.entity.paymentorderitem.PaymentOrderItem" columnPrefix="paymentOrderItem_">
+		<collection property="paymentOrderItems" notNullColumn="id" javaType="com.siebre.payment.paymentorderitem.entity.PaymentOrderItem" columnPrefix="paymentOrderItem_">
 			<id column="id" property="id" jdbcType="BIGINT" />
 			<result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT" />
 			<result column="application_number" property="applicationNumber" jdbcType="VARCHAR" />
@@ -52,7 +52,7 @@
 			<result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
 			<result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
 		</collection>
-		<collection property="paymentTransactions" notNullColumn="id" javaType="com.siebre.payment.entity.paymenttransaction.PaymentTransaction" columnPrefix="paymentTransaction_">
+		<collection property="paymentTransactions" notNullColumn="id" javaType="com.siebre.payment.paymenttransaction.entity.PaymentTransaction" columnPrefix="paymentTransaction_">
 			<id column="id" property="id" jdbcType="BIGINT" />
 			<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
 			<result column="payment_way_id" property="paymentWayId" jdbcType="BIGINT" />
@@ -66,10 +66,10 @@
 			<result column="payment_accout" property="paymentAccout" jdbcType="VARCHAR" />
 			<result column="interface_type" property="interfaceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
-			<association property="paymentChannel" javaType="com.siebre.payment.entity.paymentchannel.PaymentChannel">
+			<association property="paymentChannel" javaType="com.siebre.payment.paymentchannel.entity.PaymentChannel">
 				<result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
 			</association>
-			<association property="paymentWay" javaType="com.siebre.payment.entity.paymentway.PaymentWay">
+			<association property="paymentWay" javaType="com.siebre.payment.paymentway.entity.PaymentWay">
 				<result column="name" property="name" jdbcType="VARCHAR"/>
 			</association>
 		</collection>
@@ -156,7 +156,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 
-	<insert id="insert" parameterType="com.siebre.payment.entity.paymentorder.PaymentOrder" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insert" parameterType="com.siebre.payment.paymentorder.entity.PaymentOrder" useGeneratedKeys="true" keyProperty="id">
 		insert into
 		pmt_payment_order (
 		order_number,
@@ -191,7 +191,7 @@
 		#{refundStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler}
 		)
 	</insert>
-	<insert id="insertSelective" parameterType="com.siebre.payment.entity.paymentorder.PaymentOrder" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insertSelective" parameterType="com.siebre.payment.paymentorder.entity.PaymentOrder" useGeneratedKeys="true" keyProperty="id">
 		insert into pmt_payment_order
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -288,7 +288,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.entity.paymentorder.PaymentOrder">
+	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.paymentorder.entity.PaymentOrder">
 		update pmt_payment_order
 		<set>
 			<if test="orderNumber != null">
@@ -336,7 +336,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.entity.paymentorder.PaymentOrder">
+	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.paymentorder.entity.PaymentOrder">
 		update pmt_payment_order
 		set order_number = #{orderNumber,jdbcType=VARCHAR},
 		total_insured_amount = #{totalInsuredAmount,jdbcType=DECIMAL},
@@ -546,7 +546,7 @@
 	</select>
 	
 	
-	<resultMap id="countPaymentChannelTransactionMap" type="com.siebre.payment.vo.statistics.PaymentChannelTransactionVo">
+	<resultMap id="countPaymentChannelTransactionMap" type="com.siebre.payment.statistics.vo.PaymentChannelTransactionVo">
 		<id column="paymentChannelId" property="channelId" jdbcType="BIGINT" />
 		<result column="paymentChannelName" property="channelName" jdbcType="VARCHAR" />
 		<result column="successCount" property="successCount" jdbcType="INTEGER" />

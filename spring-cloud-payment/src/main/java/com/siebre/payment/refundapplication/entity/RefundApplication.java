@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import com.siebre.basic.model.BaseObject;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
-import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 
 /**

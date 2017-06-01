@@ -1,6 +1,6 @@
 package com.siebre.payment.controller.paymentgateway.order;
 
-import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 
 import java.io.Serializable;

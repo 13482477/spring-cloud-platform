@@ -9,7 +9,7 @@ import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.paymenthandler.basic.payment.PaymentInterfaceComponent;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
-import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.service.PaymentOrderService;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;

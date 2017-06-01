@@ -8,7 +8,7 @@ import com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper;
 import com.siebre.payment.paymenthandler.basic.paymentrefund.AbstractPaymentRefundComponent;
 import com.siebre.payment.paymenthandler.wechatpay.sdk.WeChatParamConvert;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
-import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.refundapplication.dto.PaymentRefundRequest;

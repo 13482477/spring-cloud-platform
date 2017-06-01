@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.web.WebResult;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
-import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.service.PaymentOrderService;
 
 /**

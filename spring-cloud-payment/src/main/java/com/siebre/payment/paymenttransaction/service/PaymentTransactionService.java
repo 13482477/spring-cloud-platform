@@ -19,7 +19,7 @@ import com.siebre.payment.entity.enums.PaymentOrderRefundStatus;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
 import com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper;
-import com.siebre.payment.paymentorder.entiry.PaymentOrder;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
 import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 import com.siebre.payment.paymentorderitem.mapper.PaymentOrderItemMapper;
