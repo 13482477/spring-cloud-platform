@@ -1,4 +1,4 @@
-package com.siebre.payment.service.paymentroute;
+package com.siebre.payment.paymentroute.service;
 
 import java.util.List;
 

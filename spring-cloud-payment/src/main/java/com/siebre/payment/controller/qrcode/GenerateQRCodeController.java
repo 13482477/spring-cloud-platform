@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.siebre.payment.service.qrcode.QrCodeService;
+import com.siebre.payment.qrcode.service.QrCodeService;
 
 @Controller
 public class GenerateQRCodeController {

@@ -1,4 +1,4 @@
-package com.siebre.payment.service.qrcode;
+package com.siebre.payment.qrcode.service;
 
 import java.io.OutputStream;
 import java.util.HashMap;

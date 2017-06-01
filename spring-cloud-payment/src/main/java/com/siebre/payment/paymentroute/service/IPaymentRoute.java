@@ -1,4 +1,4 @@
-package com.siebre.payment.service.paymentroute;
+package com.siebre.payment.paymentroute.service;
 
 /**
  * Created by AdamTang on 2017/4/22.
