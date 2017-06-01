@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,13 +34,13 @@ public class PaymentOrderController {
         return paymentOrder;
     }
 
-    @RequestMapping(value = "/api/v1/paymentOrder", method = {RequestMethod.GET})
-    public WebResult<PaymentOrder> queryByOrderNumber(@RequestParam String orderNumber) {
+    @RequestMapping(value = "/api/v1/paymentOrder/{orderNumber}", method = {RequestMethod.GET})
+    public WebResult<PaymentOrder> queryByOrderNumber(@PathVariable String orderNumber) {
         PaymentOrder order = paymentOrderService.queryPaymentOrder(orderNumber);
         return WebResult.<PaymentOrder>builder().returnCode("200").returnMessage("调用成功").data(order).build();
     }
     
-    @RequestMapping(value = "/api/v1/payment", method = {RequestMethod.GET})
+    @RequestMapping(value = "/api/v1/paymentOrders", method = {RequestMethod.GET})
     public WebResult<List<PaymentOrder>> queryByPage(
     		@RequestParam String orderNumber, 
     		@RequestParam PaymentOrderPayStatus orderPayStatus, 

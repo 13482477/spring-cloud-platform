@@ -47,7 +47,7 @@ public class RefundApplicationController {
 		return WebResult.<RefundApplication>builder().returnCode(WebResult.SUCCESS_CODE).data(data).build();
 	}
 	
-	@RequestMapping(value = "/api/v1/refundApplication/{refundApplicationNumber}")
+	@RequestMapping(value = "/api/v1/refundApplication/{refundApplicationNumber}", method = {RequestMethod.GET})
 	public WebResult<RefundApplication> getRefundApplicationByRefundApplicationNumber(@PathVariable String refundApplicationNumber) {
 		RefundApplication data = this.refundApplicationService.getRefundApplicationByRefundApplicationNumber(refundApplicationNumber);
 		return WebResult.<RefundApplication>builder().returnCode(WebResult.SUCCESS_CODE).data(data).build();

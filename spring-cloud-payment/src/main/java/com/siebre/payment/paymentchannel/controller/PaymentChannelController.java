@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.siebre.basic.query.PageInfo;
-import com.siebre.basic.web.PageResult;
+import com.siebre.basic.web.WebResult;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentchannel.service.PaymentChannelService;
 
@@ -33,11 +33,11 @@ public class PaymentChannelController {
 		return paymentChannel;
 	}
 	
-	@RequestMapping(value = "/api/v1/paymentChannel", method = {RequestMethod.GET})
-	public PageResult<List<PaymentChannel>> find(@RequestParam int page, @RequestParam int limit, @RequestParam String sortField, @RequestParam String order) {
+	@RequestMapping(value = "/api/v1/paymentChannels", method = {RequestMethod.GET})
+	public WebResult<List<PaymentChannel>> find(@RequestParam int page, @RequestParam int limit, @RequestParam String sortField, @RequestParam String order) {
 		PageInfo pageInfo = new PageInfo(limit, page, sortField, order);
 		List<PaymentChannel> paymentChannels = this.paymentChannelService.searchAllByPage(pageInfo);
-		return PageResult.<List<PaymentChannel>>builder().data(paymentChannels).pageInfo(pageInfo).build();
+		return WebResult.<List<PaymentChannel>>builder().data(paymentChannels).pageInfo(pageInfo).build();
 	}
 
 }

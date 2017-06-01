@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.siebre.payment.qrcode.service.QrCodeService;
@@ -17,7 +18,7 @@ public class GenerateQRCodeController {
 	@Autowired
 	private QrCodeService qrCodeService;
 	
-	@RequestMapping(value = "/qrcode/generateQrCode")
+	@RequestMapping(value = "/qrcode/generateQrCode", method = {RequestMethod.GET})
 	public void process(@RequestParam("text")String text, HttpServletResponse response) {
 		response.setContentType("image/png");
 		
