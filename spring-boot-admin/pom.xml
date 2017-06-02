@@ -91,8 +91,8 @@
 								</generatorConfiguration>
 							</generatorConfigurations>
 							<jvmSettings>
-								<initialMemorySize>256M</initialMemorySize>
-								<maxMemorySize>512M</maxMemorySize>
+								<initialMemorySize>128M</initialMemorySize>
+								<maxMemorySize>256M</maxMemorySize>
 								<extraArguments>
 									<extraArgument>-server</extraArgument>
 								</extraArguments>
@@ -140,11 +140,21 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 		</profile>
-		<!-- local -->
+		<!-- dev -->
 		<profile>
 			<id>dev</id>
 			<properties>
 				<env>dev</env>
+			</properties>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+		</profile>
+		<!-- uat -->
+		<profile>
+			<id>uat</id>
+			<properties>
+				<env>uat</env>
 			</properties>
 			<activation>
 				<activeByDefault>false</activeByDefault>
