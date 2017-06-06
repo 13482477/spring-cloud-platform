@@ -1,5 +1,7 @@
 package com.siebre.payment.paymentchannel.vo;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
@@ -10,16 +12,19 @@ public class BaofooConfigVo implements Serializable {
     /**
      * 商户id
      */
+    @ApiModelProperty(value = "商户号", required = true)
     private String merchantCode;
 
     /**
      * 商户终端号
      */
+    @ApiModelProperty(value = "商户终端号", required = true)
     private String terminalId;
 
     /**
      * 商户私钥密码
      */
+    @ApiModelProperty(value = "私钥密码", required = true)
     private String secretKey;
 
     public String getMerchantCode() {
