@@ -1,8 +1,8 @@
 package com.siebre.payment.utils.keypair;
 
-import java.io.UnsupportedEncodingException;
-
 import org.apache.commons.codec.digest.DigestUtils;
+
+import java.io.UnsupportedEncodingException;
 
 /** 
 * 功能：支付宝MD5签名处理核心文件，不需要修改

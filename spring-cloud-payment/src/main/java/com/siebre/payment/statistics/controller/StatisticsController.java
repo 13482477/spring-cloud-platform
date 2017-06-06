@@ -1,16 +1,15 @@
 package com.siebre.payment.statistics.controller;
 
-import java.math.BigDecimal;
-import java.util.List;
-
+import com.siebre.payment.paymentorder.service.PaymentOrderService;
+import com.siebre.payment.statistics.vo.DonutVo;
+import com.siebre.payment.statistics.vo.PaymentChannelTransactionVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.siebre.payment.paymentorder.service.PaymentOrderService;
-import com.siebre.payment.statistics.vo.DonutVo;
-import com.siebre.payment.statistics.vo.PaymentChannelTransactionVo;
+import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 public class StatisticsController {
@@ -18,7 +17,7 @@ public class StatisticsController {
 	@Autowired
 	private PaymentOrderService paymentOrderService;
 	
-	@RequestMapping(value = "/api/v1/statistics/successPaymentAmount", method = {RequestMethod.GET})
+	/*@RequestMapping(value = "/api/v1/statistics/successPaymentAmount", method = {RequestMethod.GET})
 	public BigDecimal getSuccessPaymentAmount() {
 		return this.paymentOrderService.getSuccessPaymentAmount();
 	}
@@ -66,6 +65,6 @@ public class StatisticsController {
 	@RequestMapping(value = "/api/v1/statistics/countPaymentChannelTransaction", method = {RequestMethod.GET})
 	public List<PaymentChannelTransactionVo> countPaymentChannelTransaction() {
 		return this.paymentOrderService.countPaymentChannelTransaction();
-	}
+	}*/
 
 }

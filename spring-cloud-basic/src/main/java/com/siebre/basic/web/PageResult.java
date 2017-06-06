@@ -1,8 +1,8 @@
 package com.siebre.basic.web;
 
-import java.io.Serializable;
-
 import com.siebre.basic.query.PageInfo;
+
+import java.io.Serializable;
 
 public class PageResult<T> implements Serializable {
 

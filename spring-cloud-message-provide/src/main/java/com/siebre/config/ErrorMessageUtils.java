@@ -1,12 +1,12 @@
 package com.siebre.config;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 

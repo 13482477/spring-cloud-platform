@@ -1,14 +1,14 @@
 package com.siebre.mybatis;
 
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.internal.DefaultShellCallback;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 本类不用修改，运行就行

@@ -1,13 +1,13 @@
 package com.siebre.payment.paymenttransaction.entity;
 
-import java.math.BigDecimal;
-
 import com.siebre.basic.model.BaseObject;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+
+import java.math.BigDecimal;
 
 /**
  * 支付-交易，不仅仅是支付类型的交易

@@ -1,9 +1,9 @@
 package com.siebre.payment.paymentchannel.entity;
 
-import java.util.Date;
-
 import com.siebre.basic.model.BaseObject;
 import com.siebre.payment.entity.enums.PaymentChannelStatus;
+
+import java.util.Date;
 
 /**
  * 支付渠道
@@ -11,12 +11,12 @@ import com.siebre.payment.entity.enums.PaymentChannelStatus;
  *
  */
 public class PaymentChannel extends BaseObject {
-	
-	private static final long serialVersionUID = -5745390794438045221L;
 
-	/**
-	 * 渠道名称
-	 */
+    private static final long serialVersionUID = -5745390794438045221L;
+
+    /**
+     * 渠道名称
+     */
     private String channelName;
 
     /**
@@ -28,7 +28,22 @@ public class PaymentChannel extends BaseObject {
      * 商户id
      */
     private String merchantCode;
-    
+
+    /**
+     * 商户用户名
+     */
+    private String merchantName;
+
+    /**
+     * 商户用户密码
+     */
+    private String merchantPwd;
+
+    /**
+     * 终端号
+     */
+    private String  terminalId;
+
     /**
      * 图标地址
      */
@@ -79,21 +94,6 @@ public class PaymentChannel extends BaseObject {
      */
     private String remark;
 
-    /**
-     * 支付网关地址
-     */
-    private String paymentGatewayUrl;
-
-    /**
-     * 支付回调地址
-     */
-    private String paymentCallbackUrl;
-    
-    /**
-     * 页面回调地址
-     */
-    private String paymentReturnPageUrl;
-
     public String getChannelName() {
         return channelName;
     }
@@ -109,16 +109,16 @@ public class PaymentChannel extends BaseObject {
     public void setChannelCode(String channelCode) {
         this.channelCode = channelCode == null ? null : channelCode.trim();
     }
-    
+
     public Boolean getSupportRefunded() {
-		return supportRefunded;
-	}
+        return supportRefunded;
+    }
 
-	public void setSupportRefunded(Boolean supportRefunded) {
-		this.supportRefunded = supportRefunded;
-	}
+    public void setSupportRefunded(Boolean supportRefunded) {
+        this.supportRefunded = supportRefunded;
+    }
 
-	public String getContractNumber() {
+    public String getContractNumber() {
         return contractNumber;
     }
 
@@ -174,52 +174,51 @@ public class PaymentChannel extends BaseObject {
         this.remark = remark == null ? null : remark.trim();
     }
 
-	public PaymentChannelStatus getStatus() {
-		return status;
-	}
+    public PaymentChannelStatus getStatus() {
+        return status;
+    }
 
-	public void setStatus(PaymentChannelStatus status) {
-		this.status = status;
-	}
+    public void setStatus(PaymentChannelStatus status) {
+        this.status = status;
+    }
 
-	public String getPaymentGatewayUrl() {
-		return paymentGatewayUrl;
-	}
+    public String getMerchantCode() {
+        return merchantCode;
+    }
 
-	public void setPaymentGatewayUrl(String paymentGatewayUrl) {
-		this.paymentGatewayUrl = paymentGatewayUrl;
-	}
+    public void setMerchantCode(String merchantCode) {
+        this.merchantCode = merchantCode;
+    }
 
-	public String getPaymentCallbackUrl() {
-		return paymentCallbackUrl;
-	}
+    public String getIconUrl() {
+        return iconUrl;
+    }
 
-	public void setPaymentCallbackUrl(String paymentCallbackUrl) {
-		this.paymentCallbackUrl = paymentCallbackUrl;
-	}
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
+    }
 
-	public String getMerchantCode() {
-		return merchantCode;
-	}
+    public String getMerchantName() {
+        return merchantName;
+    }
 
-	public void setMerchantCode(String merchantCode) {
-		this.merchantCode = merchantCode;
-	}
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
+    }
 
-	public String getPaymentReturnPageUrl() {
-		return paymentReturnPageUrl;
-	}
+    public String getMerchantPwd() {
+        return merchantPwd;
+    }
 
-	public void setPaymentReturnPageUrl(String paymentReturnPageUrl) {
-		this.paymentReturnPageUrl = paymentReturnPageUrl;
-	}
+    public void setMerchantPwd(String getMerchantPwd) {
+        this.merchantPwd = getMerchantPwd;
+    }
 
-	public String getIconUrl() {
-		return iconUrl;
-	}
+    public String getTerminalId() {
+        return terminalId;
+    }
 
-	public void setIconUrl(String iconUrl) {
-		this.iconUrl = iconUrl;
-	}
-
+    public void setTerminalId(String terminalId) {
+        this.terminalId = terminalId;
+    }
 }

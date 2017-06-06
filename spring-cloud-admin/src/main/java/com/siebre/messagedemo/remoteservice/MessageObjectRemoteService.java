@@ -1,14 +1,13 @@
 package com.siebre.messagedemo.remoteservice;
 
-import java.util.List;
-
+import com.siebre.basic.web.WebResult;
+import com.siebre.messagedemo.entity.MessageObject;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.siebre.basic.web.WebResult;
-import com.siebre.messagedemo.entity.MessageObject;
+import java.util.List;
 
 @FeignClient(value = "SPRING-CLOUD-MESSAGE-DEMO", fallback = MessageObjectFallback.class)
 public interface MessageObjectRemoteService {

@@ -1,15 +1,14 @@
 package com.siebre.payment.qrcode.service;
 
-import java.io.OutputStream;
-import java.util.HashMap;
-
-import org.springframework.stereotype.Component;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 import com.siebre.payment.qrcode.utils.MatrixToImageWriter;
+import org.springframework.stereotype.Component;
+
+import java.io.OutputStream;
+import java.util.HashMap;
 
 @Component
 public class QrCodeService {

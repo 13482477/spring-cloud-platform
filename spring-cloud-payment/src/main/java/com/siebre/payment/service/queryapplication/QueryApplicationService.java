@@ -1,10 +1,5 @@
 package com.siebre.payment.service.queryapplication;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.siebre.basic.applicationcontext.SpringContextUtil;
 import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
@@ -19,6 +14,10 @@ import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.paymentway.service.PaymentWayService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Huang Tianci

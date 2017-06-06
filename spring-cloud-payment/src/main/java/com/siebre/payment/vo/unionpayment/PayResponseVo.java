@@ -7,8 +7,6 @@
 package com.siebre.payment.vo.unionpayment;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 
 

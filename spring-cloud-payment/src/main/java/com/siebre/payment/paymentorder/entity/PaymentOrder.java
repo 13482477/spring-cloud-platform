@@ -1,17 +1,18 @@
 package com.siebre.payment.paymentorder.entity;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import com.siebre.basic.model.BaseObject;
 import com.siebre.payment.entity.enums.PaymentOrderCheckStatus;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.PaymentOrderRefundStatus;
+import com.siebre.payment.entity.enums.SellingChannel;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 支付收单
@@ -19,9 +20,9 @@ import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
  */
 public class PaymentOrder extends BaseObject {
 
-	private static final long serialVersionUID = 9097516995785709378L;
+    private static final long serialVersionUID = 9097516995785709378L;
 
-	private String orderNumber;
+    private String orderNumber;
 
     private BigDecimal totalInsuredAmount;
 
@@ -59,9 +60,25 @@ public class PaymentOrder extends BaseObject {
     //退款金额
     private BigDecimal refundAmount;
 
+    //销售渠道
+    private SellingChannel sellingChannel;
+
+    /**
+     * 前端唯一标识一次提交订单的字段
+     */
+    private String messageId;
+
     private List<PaymentOrderItem> paymentOrderItems = new ArrayList<PaymentOrderItem>();
-    
+
     private List<PaymentTransaction> paymentTransactions = new ArrayList<PaymentTransaction>();
+
+    public SellingChannel getSellingChannel() {
+        return sellingChannel;
+    }
+
+    public void setSellingChannel(SellingChannel sellingChannel) {
+        this.sellingChannel = sellingChannel;
+    }
 
     public String getOrderNumber() {
         return orderNumber;
@@ -120,14 +137,14 @@ public class PaymentOrder extends BaseObject {
     }
 
     public PaymentOrderPayStatus getStatus() {
-		return status;
-	}
+        return status;
+    }
 
-	public void setStatus(PaymentOrderPayStatus status) {
-		this.status = status;
-	}
+    public void setStatus(PaymentOrderPayStatus status) {
+        this.status = status;
+    }
 
-	public Integer getPaymentTerminalType() {
+    public Integer getPaymentTerminalType() {
         return paymentTerminalType;
     }
 
@@ -135,21 +152,21 @@ public class PaymentOrder extends BaseObject {
         this.paymentTerminalType = paymentTerminalType;
     }
 
-	public List<PaymentOrderItem> getPaymentOrderItems() {
-		return paymentOrderItems;
-	}
+    public List<PaymentOrderItem> getPaymentOrderItems() {
+        return paymentOrderItems;
+    }
 
-	public void setPaymentOrderItems(List<PaymentOrderItem> paymentOrderItems) {
-		this.paymentOrderItems = paymentOrderItems;
-	}
+    public void setPaymentOrderItems(List<PaymentOrderItem> paymentOrderItems) {
+        this.paymentOrderItems = paymentOrderItems;
+    }
 
-	public List<PaymentTransaction> getPaymentTransactions() {
-		return paymentTransactions;
-	}
+    public List<PaymentTransaction> getPaymentTransactions() {
+        return paymentTransactions;
+    }
 
-	public void setPaymentTransactions(List<PaymentTransaction> paymentTransactions) {
-		this.paymentTransactions = paymentTransactions;
-	}
+    public void setPaymentTransactions(List<PaymentTransaction> paymentTransactions) {
+        this.paymentTransactions = paymentTransactions;
+    }
 
     public PaymentOrderRefundStatus getRefundStatus() {
         return refundStatus;
@@ -197,6 +214,14 @@ public class PaymentOrder extends BaseObject {
 
     public void setPaymentWayCode(String paymentWayCode) {
         this.paymentWayCode = paymentWayCode;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 
     @Override

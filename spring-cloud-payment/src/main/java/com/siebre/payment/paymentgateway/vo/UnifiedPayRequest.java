@@ -1,9 +1,9 @@
 package com.siebre.payment.paymentgateway.vo;
 
+import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
+
 import java.io.Serializable;
 import java.util.List;
-
-import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 
 public class UnifiedPayRequest implements Serializable{
 

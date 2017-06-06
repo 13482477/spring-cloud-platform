@@ -1,9 +1,9 @@
 package com.siebre.messagedemo.remoteservice;
 
-import java.util.List;
-
 import com.siebre.basic.web.WebResult;
 import com.siebre.messagedemo.entity.MessageObject;
+
+import java.util.List;
 
 public class MessageObjectFallback implements MessageObjectRemoteService {
 

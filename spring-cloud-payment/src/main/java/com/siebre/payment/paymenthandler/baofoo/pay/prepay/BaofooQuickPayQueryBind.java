@@ -1,13 +1,9 @@
 package com.siebre.payment.paymenthandler.baofoo.pay.prepay;
 
-import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.paymenthandler.baofoo.pay.dto.BaofooRequest;
 import com.siebre.payment.paymenthandler.baofoo.pay.dto.BaofooResponse;
 import com.siebre.payment.paymenthandler.baofoo.pay.dto.BindCard;
 import com.siebre.payment.paymenthandler.baofoo.sdk.BaofooApiClient;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,14 +20,14 @@ public class BaofooQuickPayQueryBind{
 
 
     private BaofooResponse queryBindCard(BaofooRequest request){
-        Map<String,String> requestParams = new HashMap<>();
+        Map<String,Object> requestParams = new HashMap<>();
 
         requestParams.put("user_id",request.getUserID());//用户 ID
 
-        Map<String,Object> responseMap = client.send(requestParams,request.getRequestUrl());
+        Map<String,String> responseMap = client.send(requestParams,request.getRequestUrl(),"fastPay");
 
-
-        return buildResponse(responseMap);
+        return null;
+        //return buildResponse(responseMap);
     }
 
 
@@ -46,7 +42,7 @@ public class BaofooQuickPayQueryBind{
         response.setResponseMessage((String)responseMap.get("resp_msg"));
 
         //交易失败不进行解析直接返回
-        if(!response.isSuccess()){
+        if(!response.getSuccess()){
             return response;
         }
 

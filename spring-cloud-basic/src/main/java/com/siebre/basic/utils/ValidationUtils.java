@@ -1,15 +1,14 @@
 package com.siebre.basic.utils;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
-
-import org.apache.commons.collections4.CollectionUtils;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class ValidationUtils {
     private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();

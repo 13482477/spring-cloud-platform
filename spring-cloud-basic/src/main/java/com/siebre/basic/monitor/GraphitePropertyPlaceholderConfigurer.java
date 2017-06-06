@@ -1,10 +1,9 @@
 package com.siebre.basic.monitor;
 
-import java.util.Properties;
-
+import com.siebre.basic.utils.PropertiesUtil;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
-import com.siebre.basic.utils.PropertiesUtil;
+import java.util.Properties;
 
 /**
  * 

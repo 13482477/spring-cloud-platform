@@ -1,13 +1,12 @@
 package com.siebre.payment.qrcode.utils;
 
+import com.google.zxing.common.BitMatrix;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import javax.imageio.ImageIO;
-
-import com.google.zxing.common.BitMatrix;
 
 public class MatrixToImageWriter {
 	private static final int BLACK = 0xFF000000;

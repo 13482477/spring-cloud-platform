@@ -1,5 +1,7 @@
 package com.siebre.message.test.controller.messageobject;
 
+import com.siebre.message.test.base.WebApplicationMockConfig;
+import com.siebre.messageconsumer.service.messageobject.MessageObjectService;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +12,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import com.siebre.message.test.base.WebApplicationMockConfig;
-import com.siebre.messageconsumer.service.messageobject.MessageObjectService;
 
 public class MessageObjectControllerTest extends WebApplicationMockConfig {
 	

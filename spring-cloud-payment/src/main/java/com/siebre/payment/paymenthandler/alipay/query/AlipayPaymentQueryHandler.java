@@ -1,10 +1,5 @@
 package com.siebre.payment.paymenthandler.alipay.query;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.stereotype.Service;
-
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
@@ -17,8 +12,13 @@ import com.siebre.payment.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
+import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by AdamTang on 2017/4/26.
@@ -27,13 +27,15 @@ import com.siebre.payment.paymentway.entity.PaymentWay;
  */
 @Service("alipayPaymentQueryHandler")
 public class AlipayPaymentQueryHandler extends AbstractPaymentQueryComponent {
+
     @Override
     protected PaymentQueryResponse handleInternal(PaymentQueryRequest request) {
         PaymentWay paymentWay = request.getPaymentWay();
+        PaymentInterface paymentInterface = request.getPaymentInterface();
         PaymentTransaction paymentTransaction = request.getPaymentTransaction();
 
-        AlipayClient alipayClient = new DefaultAlipayClient(paymentWay.getPaymentGatewayUrl(),
-                paymentWay.getAppId(), paymentWay.getSecretKey(), "json", AlipayConfig.input_charset_utf,
+        AlipayClient alipayClient = new DefaultAlipayClient(paymentInterface.getRequestUrl(),
+                paymentWay.getAppId(), paymentWay.getSecretKey(), "json", AlipayConfig.INPUT_CHARSET_UTF,
                 paymentWay.getPublicKey(),  EncryptionMode.RSA.getDescription()); //获得初始化的AlipayClient
 
         AlipayTradeQueryRequest alipayRequest = buildAlipayQueryRequest(paymentWay,paymentTransaction);

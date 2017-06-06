@@ -1,9 +1,9 @@
 package com.siebre.payment.vo.unionpayment;
 
-import java.io.Serializable;
-
 import com.siebre.basic.query.PageInfo;
 import com.siebre.payment.entity.enums.ReturnCode;
+
+import java.io.Serializable;
 
 public class BaseResponse<T> implements Serializable {
 

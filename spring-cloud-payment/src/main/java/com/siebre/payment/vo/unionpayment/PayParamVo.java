@@ -1,9 +1,9 @@
 package com.siebre.payment.vo.unionpayment;
 
+import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
+
 import java.io.Serializable;
 import java.util.List;
-
-import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 
 /**
  * 

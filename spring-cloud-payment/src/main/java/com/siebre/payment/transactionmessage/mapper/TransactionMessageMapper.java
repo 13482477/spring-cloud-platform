@@ -1,8 +1,7 @@
 package com.siebre.payment.transactionmessage.mapper;
 
-import org.springframework.stereotype.Repository;
-
 import com.siebre.payment.transactionmessage.entity.TransactionMessage;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TransactionMessageMapper {
