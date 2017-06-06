@@ -1,23 +1,8 @@
 package com.siebre.payment.paymenttransaction.service;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.service.ServiceResult;
-import com.siebre.payment.entity.enums.PaymentInterfaceType;
-import com.siebre.payment.entity.enums.PaymentOrderCheckStatus;
-import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
-import com.siebre.payment.entity.enums.PaymentOrderRefundStatus;
-import com.siebre.payment.entity.enums.PaymentTransactionStatus;
-import com.siebre.payment.entity.enums.RefundApplicationStatus;
+import com.siebre.payment.entity.enums.*;
 import com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
@@ -29,6 +14,15 @@ import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
 import com.siebre.payment.refundapplication.mapper.RefundApplicationMapper;
 import com.siebre.payment.serialnumber.service.SerialNumberService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class PaymentTransactionService {
@@ -68,19 +62,40 @@ public class PaymentTransactionService {
         PaymentTransaction transaction = paymentTransactionMapper.selectByPrimaryKey(transactionId);
         PaymentOrder paymentOrder = paymentOrderMapper.selectByPrimaryKey(orderId);
 
-        if (!transactionStatus.equals(transaction.getPaymentStatus())) {
-            PaymentTransaction transaction1 = new PaymentTransaction();
-            transaction1.setId(transactionId);
-            transaction1.setPaymentStatus(transactionStatus);
-            paymentTransactionMapper.updateByPrimaryKeySelective(transaction1);
-            paymentOrder.setStatus(orderStatus);
-            paymentOrderMapper.updateByPrimaryKeySelective(paymentOrder);
+        if (PaymentTransactionStatus.SUCCESS.equals(transactionStatus)) {
+            if (!PaymentTransactionStatus.SUCCESS.equals(transaction.getPaymentStatus())) {
+                PaymentTransaction transaction1 = new PaymentTransaction();
+                transaction1.setId(transactionId);
+                transaction1.setPaymentStatus(transactionStatus);
+                paymentTransactionMapper.updateByPrimaryKeySelective(transaction1);
+
+            }
+            if (!PaymentOrderPayStatus.PAID.equals(paymentOrder.getStatus())) {
+                PaymentOrder paymentOrder1 = new PaymentOrder();
+                paymentOrder1.setId(paymentOrder.getId());
+                paymentOrder1.setStatus(PaymentOrderPayStatus.PAID);
+                paymentOrderMapper.updateByPrimaryKeySelective(paymentOrder1);
+            }
+        } else if (PaymentTransactionStatus.FAILED.equals(transactionStatus)) {
+            //如果查询结果返回失败，并且订单状态为支付中，更新订单状态为交易关闭
+            if (PaymentTransactionStatus.PROCESSING.equals(transaction.getPaymentStatus())) {
+                PaymentTransaction transaction1 = new PaymentTransaction();
+                transaction1.setId(transactionId);
+                transaction1.setPaymentStatus(PaymentTransactionStatus.CLOSED);
+                paymentTransactionMapper.updateByPrimaryKeySelective(transaction1);
+            }
+            if (PaymentOrderPayStatus.PAYING.equals(paymentOrder.getStatus())) {
+                PaymentOrder paymentOrder1 = new PaymentOrder();
+                paymentOrder1.setId(paymentOrder.getId());
+                paymentOrder1.setStatus(PaymentOrderPayStatus.CLOSED);
+                paymentOrderMapper.updateByPrimaryKeySelective(paymentOrder1);
+            }
         }
 
     }
 
-    public List<PaymentTransaction> queryRefundTransaction(Long orderId){
-        return paymentTransactionMapper.selectTransaction(orderId,PaymentInterfaceType.REFUND);
+    public List<PaymentTransaction> queryRefundTransaction(Long orderId) {
+        return paymentTransactionMapper.selectTransaction(orderId, PaymentInterfaceType.REFUND);
     }
 
     /**
@@ -282,7 +297,7 @@ public class PaymentTransactionService {
         }
         // 校验total_fee
         BigDecimal paymentAmount = paymentTransaction.getPaymentAmount();
-        if (!paymentAmount.equals(total_fee)) {
+        if (paymentAmount.compareTo(total_fee) != 0) {
             logger.error("订单金额不一致total_fee={}，paymentAmount={}", total_fee, paymentAmount);
             return ServiceResult.<PaymentTransaction>builder().success(false).message("订单金额不一致total_fee=" + seller_id + "，paymentAmount=" + paymentAmount).build();
         }
@@ -299,6 +314,39 @@ public class PaymentTransactionService {
         paymentOrderMapper.updateByPrimaryKeySelective(paymentOrder);
 
         return ServiceResult.<PaymentTransaction>builder().success(true).data(paymentTransaction).build();
+    }
+
+    /**
+     * 支付失败，更新订单和交易状态
+     *
+     * @param internalTransactionNumber
+     * @param externalTransactionNumber
+     * @return
+     */
+    public ServiceResult<PaymentTransaction> setFailStatus(String internalTransactionNumber, String externalTransactionNumber) {
+        PaymentTransaction paymentTransaction = this.paymentTransactionMapper.selectByInterTradeNo(internalTransactionNumber);
+
+        if (paymentTransaction == null) {
+            logger.error("没有找到该条交易记录internalTransactionNumber={}", internalTransactionNumber);
+            return ServiceResult.<PaymentTransaction>builder().success(false).message("没有找到该条交易记录internalTransactionNumber=" + internalTransactionNumber).build();
+        }
+        if (externalTransactionNumber.equals(paymentTransaction.getExternalTransactionNumber())) {
+            logger.error("重复回调internalTransactionNumber={}", internalTransactionNumber);
+            return ServiceResult.<PaymentTransaction>builder().success(false).message("重复回调internalTransactionNumber=" + internalTransactionNumber).build();
+        }
+        //更新transaction状态
+        paymentTransaction.setExternalTransactionNumber(externalTransactionNumber);
+        paymentTransaction.setPaymentStatus(PaymentTransactionStatus.FAILED);
+        this.paymentTransactionMapper.updateByPrimaryKeySelective(paymentTransaction);
+
+        //更新order状态
+        PaymentOrder paymentOrder = this.paymentOrderMapper.selectByPrimaryKey(paymentTransaction.getPaymentOrderId());
+        paymentOrder.setStatus(PaymentOrderPayStatus.PAYERROR);
+        //设置为未对账
+        paymentOrder.setCheckStatus(PaymentOrderCheckStatus.NOT_CONFIRM);
+        paymentOrderMapper.updateByPrimaryKeySelective(paymentOrder);
+
+        return ServiceResult.<PaymentTransaction>builder().success(false).data(paymentTransaction).build();
     }
 
     @Transactional("db")
@@ -344,19 +392,24 @@ public class PaymentTransactionService {
     public void synchronizedRefundConfirm(RefundApplication refundApplication, PaymentTransaction paymentTransaction) {
 
         PaymentOrder paymentOrder = this.paymentOrderMapper.selectByPrimaryKey(paymentTransaction.getPaymentOrderId());
-        //更新订单退款金额
-        BigDecimal totalRefundAmount = paymentOrder.getRefundAmount();
-        if (totalRefundAmount != null) {
-            paymentOrder.setRefundAmount(totalRefundAmount.add(refundApplication.getRefundAmount()));
-        } else {
-            paymentOrder.setRefundAmount(refundApplication.getRefundAmount());
-        }
+        //退款处理中，更新order状态为处理中
+        if (RefundApplicationStatus.PROCESSING.equals(refundApplication.getStatus())) {
+            paymentOrder.setRefundStatus(PaymentOrderRefundStatus.PROCESSING_REFUND);
+        } else if (RefundApplicationStatus.SUCCESS.equals(refundApplication.getStatus()) || RefundApplicationStatus.FAILED.equals(refundApplication.getStatus())) {
+            //更新订单退款金额
+            BigDecimal totalRefundAmount = paymentOrder.getRefundAmount();
+            if (totalRefundAmount != null) {
+                paymentOrder.setRefundAmount(totalRefundAmount.add(refundApplication.getRefundAmount()));
+            } else {
+                paymentOrder.setRefundAmount(refundApplication.getRefundAmount());
+            }
 
-        //更新订单退款状态
-        if (paymentOrder.getRefundAmount().compareTo(paymentOrder.getTotalPremium()) == 0) {
-            paymentOrder.setRefundStatus(PaymentOrderRefundStatus.FULL_REFUND);
-        } else {
-            paymentOrder.setRefundStatus(PaymentOrderRefundStatus.PART_REFUND);
+            //更新订单退款状态
+            if (paymentOrder.getRefundAmount().compareTo(paymentOrder.getTotalPremium()) == 0) {
+                paymentOrder.setRefundStatus(PaymentOrderRefundStatus.FULL_REFUND);
+            } else {
+                paymentOrder.setRefundStatus(PaymentOrderRefundStatus.PART_REFUND);
+            }
         }
 
         paymentOrderMapper.updateByPrimaryKey(paymentOrder);

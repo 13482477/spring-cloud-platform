@@ -1,11 +1,17 @@
 package com.siebre.payment.paymentinterface.mapper;
 
+import com.siebre.basic.query.PageInfo;
+import com.siebre.payment.paymentinterface.entity.PaymentInterface;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import com.siebre.payment.paymentinterface.entity.PaymentInterface;
+import java.util.List;
 
 @Repository
 public interface PaymentInterfaceMapper {
+
+    int deleteByPaymentWayId(Long paymentWayId);
+
     int deleteByPrimaryKey(Long id);
 
     int insert(PaymentInterface record);
@@ -19,4 +25,8 @@ public interface PaymentInterfaceMapper {
     int updateByPrimaryKeySelective(PaymentInterface record);
 
     int updateByPrimaryKey(PaymentInterface record);
+
+    List<PaymentInterface> selectByPaymentWayId(Long paymentWayId);
+
+    List<PaymentInterface> selectByPage(@Param("pageInfo") PageInfo pageInfo);
 }

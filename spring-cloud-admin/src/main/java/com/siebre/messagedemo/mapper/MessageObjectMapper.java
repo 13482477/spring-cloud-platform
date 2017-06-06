@@ -1,12 +1,11 @@
 package com.siebre.messagedemo.mapper;
 
-import java.util.List;
-
+import com.siebre.basic.query.PageInfo;
+import com.siebre.messagedemo.entity.MessageObject;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import com.siebre.basic.query.PageInfo;
-import com.siebre.messagedemo.entity.MessageObject;
+import java.util.List;
 
 @Repository
 public interface MessageObjectMapper {

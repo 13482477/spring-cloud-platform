@@ -1,20 +1,46 @@
 package com.siebre.payment.paymenthandler.payment;
 
+import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
-
 public class PaymentRequest {
-	
+
 	private String paymentWayCode;
-	
+
 	private String ip;
-	
+
 	private String orderNumber;
 
 	private String openid;
-	
+
+	/**
+	 * 银行卡号
+	 */
+	private String accountNo;
+
+	/**
+	 * 银行卡持有人
+	 */
+	private String accountName;
+
+	public String getAccountNo() {
+		return accountNo;
+	}
+
+	public void setAccountNo(String accountNo) {
+		this.accountNo = accountNo;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
 	private List<PaymentOrderItem> paymentOrderItems = new ArrayList<PaymentOrderItem>();
 
 	public String getPaymentWayCode() {

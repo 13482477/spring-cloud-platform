@@ -1,12 +1,12 @@
 package com.siebre.basic.applicationcontext;
 
-import java.lang.annotation.Annotation;
-import java.util.Map;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import java.lang.annotation.Annotation;
+import java.util.Map;
 
 public class SpringContextUtil implements ApplicationContextAware {
 

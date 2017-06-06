@@ -2,9 +2,10 @@ package com.siebre.payment.paymenthandler.paymentquery;
 
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
-import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+
+import java.util.Date;
 
 public class PaymentQueryRequest {
 
@@ -28,6 +29,28 @@ public class PaymentQueryRequest {
 
     //交易
     private PaymentTransaction paymentTransaction;
+
+    //开始时间
+    private Date startDate;
+
+    //结束时间
+    private Date endDate;
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
     public String getOrderNumber() {
         return orderNumber;

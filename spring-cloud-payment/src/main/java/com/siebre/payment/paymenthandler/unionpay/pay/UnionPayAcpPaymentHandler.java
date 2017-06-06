@@ -1,19 +1,19 @@
 package com.siebre.payment.paymenthandler.unionpay.pay;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.stereotype.Service;
-
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
 import com.siebre.payment.paymenthandler.unionpay.sdk.UnionPayUtil;
+import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by AdamTang on 2017/4/13.
@@ -23,15 +23,15 @@ import com.siebre.payment.paymentway.entity.PaymentWay;
 @Service("unionPayAcpPaymentHandler")
 public class UnionPayAcpPaymentHandler extends AbstractPaymentComponent {
     @Override
-    protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
-        Map<String,String> requestParams = generateParamsMap(request,paymentWay,paymentTransaction);
+    protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
+        Map<String, String> requestParams = generateParamsMap(request, paymentWay, paymentInterface, paymentTransaction);
 
-        String paymentUrl = this.getPaymentUrl(paymentWay,requestParams);
+        String paymentUrl = this.getPaymentUrl(paymentWay, requestParams);
 
         return PaymentResponse.builder().payUrl(paymentUrl).build();
     }
 
-    private Map<String, String> generateParamsMap(PaymentRequest request, PaymentWay paymentWay, PaymentTransaction paymentTransaction) {
+    private Map<String, String> generateParamsMap(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
         Map<String, String> requestData = new HashMap<>();
 
         requestData.put("version", "5.1.0");//版本号，全渠道默认值-------------------
@@ -50,10 +50,10 @@ public class UnionPayAcpPaymentHandler extends AbstractPaymentComponent {
 
         String amt = paymentTransaction.getPaymentAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
 
-        requestData.put("txnAmt",amt ); //交易金额，单位分，不要带小数点
+        requestData.put("txnAmt", amt); //交易金额，单位分，不要带小数点
 
-        requestData.put("frontUrl", paymentWay.getPaymentReturnPageUrl());//前台通知地址
-        requestData.put("backUrl", paymentWay.getPaymentCallbackUrl());//后台通知地址
+        requestData.put("frontUrl", paymentInterface.getReturnPageUrl());//前台通知地址
+        requestData.put("backUrl", paymentInterface.getCallbackUrl());//后台通知地址
 
         requestData.put("payTimeout", new SimpleDateFormat("yyyyMMddHHmmss").format(paymentTransaction.getCreateDate().getTime() + 30 * 60 * 1000));// 订单超时时间 30分钟
 

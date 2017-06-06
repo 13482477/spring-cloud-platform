@@ -1,9 +1,5 @@
 package com.siebre.config;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.concurrent.Executor;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,6 +29,10 @@ import org.springframework.session.web.http.HttpSessionStrategy;
 import org.springframework.session.web.http.SessionRepositoryFilter;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
  * Exposes the {@link SessionRepositoryFilter} as a bean named "springSessionRepositoryFilter". In

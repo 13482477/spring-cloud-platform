@@ -5,7 +5,6 @@ import com.siebre.payment.paymenthandler.basic.paymentcallback.AbstractPaymentCa
 import com.siebre.payment.paymenthandler.unionpay.sdk.UnionPayUtil;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentway.entity.PaymentWay;
-
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;

@@ -1,18 +1,13 @@
 package com.siebre.payment.utils.http;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyStore;
-
-import javax.net.ssl.SSLContext;
-
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+
+import javax.net.ssl.SSLContext;
+import java.io.*;
+import java.security.KeyStore;
 
 public class HttpsClientUtil {
 	public static CloseableHttpClient getHttpsClient(byte[] cerFile, String keys) {

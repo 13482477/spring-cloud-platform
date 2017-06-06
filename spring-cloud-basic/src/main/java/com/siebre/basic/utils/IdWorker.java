@@ -1,10 +1,9 @@
 package com.siebre.basic.utils;
 
-import java.io.PrintStream;
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Date;
 
 public class IdWorker {
     private static final Logger logger = LoggerFactory.getLogger(IdWorker.class);

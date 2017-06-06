@@ -1,9 +1,9 @@
 package com.siebre.message.test.service.messageobject;
 
-import static org.mockito.Mockito.*;
-
-import java.util.Date;
-
+import com.siebre.message.test.base.MockitoTestConfig;
+import com.siebre.messagedemo.entity.MessageObject;
+import com.siebre.messagedemo.mapper.MessageObjectMapper;
+import com.siebre.messagedemo.service.messageobject.MessageObjectService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -11,10 +11,9 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import com.siebre.message.test.base.MockitoTestConfig;
-import com.siebre.messagedemo.entity.MessageObject;
-import com.siebre.messagedemo.mapper.MessageObjectMapper;
-import com.siebre.messagedemo.service.messageobject.MessageObjectService;
+import java.util.Date;
+
+import static org.mockito.Mockito.when;
 
 public class MessageObjectServiceTest extends MockitoTestConfig{
 	

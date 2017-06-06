@@ -1,200 +1,163 @@
 package com.siebre.payment.paymentway.entity;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import com.siebre.basic.model.BaseObject;
 import com.siebre.payment.entity.enums.EncryptionMode;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 支付方式
+ *
  * @author lizhiqiang
  */
 public class PaymentWay extends BaseObject {
 
-	private static final long serialVersionUID = 577116574400454457L;
-
-	/**
-	 * 支付渠道id
-	 */
-	private Long paymentChannelId;
-
-	/**
-	 * 支付渠道
-	 */
-	private PaymentChannel paymentChannel;
-
-	/**
-	 * 支付方式名称
-	 */
-	private String name;
-
-	/**
-	 * 支付方式代码
-	 */
-	private String code;
-	
-	/**
-	 * 支付应用id
-	 */
-	private String appId;
-	
-	/**
-	 * 加密方式
-	 */
-	private EncryptionMode encryptionMode;
-	
-	/**
-	 * 自己的私钥
-	 */
-	private String secretKey;
-
-	/**
-	 * 支付方式的公钥
-     */
-	private String publicKey;
-
-	/**
-	 * 支付方式的加密证书
-     */
-	private String creditPath;
-
-	/**
-	 * 支付方式加密证书的key
-	 */
-	private String creditKey;
-
-	/**
-     * 支付网关地址
-     */
-    private String paymentGatewayUrl;
+    private static final long serialVersionUID = 577116574400454457L;
 
     /**
-     * 支付回调地址
+     * 支付渠道id
      */
-    private String paymentCallbackUrl;
-    
+    private Long paymentChannelId;
+
     /**
-     * 页面回调地址
+     * 支付渠道
      */
-    private String paymentReturnPageUrl;
-	
-	/**
-	 * 支付接口
-	 */
-	private List<PaymentInterface> paymentInterfaces = new ArrayList<PaymentInterface>();
+    private PaymentChannel paymentChannel;
 
-	public Long getPaymentChannelId() {
-		return paymentChannelId;
-	}
+    /**
+     * 支付方式名称
+     */
+    private String name;
 
-	public void setPaymentChannelId(Long paymentChannelId) {
-		this.paymentChannelId = paymentChannelId;
-	}
+    /**
+     * 支付方式代码
+     */
+    private String code;
 
-	public PaymentChannel getPaymentChannel() {
-		return paymentChannel;
-	}
+    /**
+     * 支付应用id
+     */
+    private String appId;
 
-	public void setPaymentChannel(PaymentChannel paymentChannel) {
-		this.paymentChannel = paymentChannel;
-	}
+    /**
+     * 加密方式
+     */
+    private EncryptionMode encryptionMode;
 
-	public String getName() {
-		return name;
-	}
+    /**
+     * 自己的私钥
+     */
+    private String secretKey;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * 支付方式的公钥
+     */
+    private String publicKey;
 
-	public String getCode() {
-		return code;
-	}
+    /**
+     * 支付方式的加密证书
+     */
+    private byte[] apiClientCertCer;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    /**
+     * 支付方式加密证书的key
+     */
+    private byte[] apiClientCertPkcs;
 
-	public String getAppId() {
-		return appId;
-	}
+    /**
+     * 支付接口
+     */
+    private List<PaymentInterface> paymentInterfaces = new ArrayList<PaymentInterface>();
 
-	public void setAppId(String appId) {
-		this.appId = appId;
-	}
+    public Long getPaymentChannelId() {
+        return paymentChannelId;
+    }
 
-	public List<PaymentInterface> getPaymentInterfaces() {
-		return paymentInterfaces;
-	}
+    public void setPaymentChannelId(Long paymentChannelId) {
+        this.paymentChannelId = paymentChannelId;
+    }
 
-	public void setPaymentInterfaces(List<PaymentInterface> paymentInterfaces) {
-		this.paymentInterfaces = paymentInterfaces;
-	}
+    public PaymentChannel getPaymentChannel() {
+        return paymentChannel;
+    }
 
-	public EncryptionMode getEncryptionMode() {
-		return encryptionMode;
-	}
+    public void setPaymentChannel(PaymentChannel paymentChannel) {
+        this.paymentChannel = paymentChannel;
+    }
 
-	public void setEncryptionMode(EncryptionMode encryptionMode) {
-		this.encryptionMode = encryptionMode;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getSecretKey() {
-		return secretKey;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setSecretKey(String secretKey) {
-		this.secretKey = secretKey;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public String getPaymentGatewayUrl() {
-		return paymentGatewayUrl;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setPaymentGatewayUrl(String paymentGatewayUrl) {
-		this.paymentGatewayUrl = paymentGatewayUrl;
-	}
+    public String getAppId() {
+        return appId;
+    }
 
-	public String getPaymentCallbackUrl() {
-		return paymentCallbackUrl;
-	}
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
 
-	public void setPaymentCallbackUrl(String paymentCallbackUrl) {
-		this.paymentCallbackUrl = paymentCallbackUrl;
-	}
+    public List<PaymentInterface> getPaymentInterfaces() {
+        return paymentInterfaces;
+    }
 
-	public String getPaymentReturnPageUrl() {
-		return paymentReturnPageUrl;
-	}
+    public void setPaymentInterfaces(List<PaymentInterface> paymentInterfaces) {
+        this.paymentInterfaces = paymentInterfaces;
+    }
 
-	public void setPaymentReturnPageUrl(String paymentReturnPageUrl) {
-		this.paymentReturnPageUrl = paymentReturnPageUrl;
-	}
+    public EncryptionMode getEncryptionMode() {
+        return encryptionMode;
+    }
 
-	public String getPublicKey() {
-		return publicKey;
-	}
+    public void setEncryptionMode(EncryptionMode encryptionMode) {
+        this.encryptionMode = encryptionMode;
+    }
 
-	public void setPublicKey(String publicKey) {
-		this.publicKey = publicKey;
-	}
+    public String getSecretKey() {
+        return secretKey;
+    }
 
-	public String getCreditPath() {
-		return creditPath;
-	}
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
 
-	public void setCreditPath(String creditPath) {
-		this.creditPath = creditPath;
-	}
+    public String getPublicKey() {
+        return publicKey;
+    }
 
-	public String getCreditKey() {
-		return creditKey;
-	}
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
 
-	public void setCreditKey(String creditKey) {
-		this.creditKey = creditKey;
-	}
+    public byte[] getApiClientCertCer() {
+        return apiClientCertCer;
+    }
+
+    public void setApiClientCertCer(byte[] apiClientCertCer) {
+        this.apiClientCertCer = apiClientCertCer;
+    }
+
+    public byte[] getApiClientCertPkcs() {
+        return apiClientCertPkcs;
+    }
+
+    public void setApiClientCertPkcs(byte[] apiClientCertPkcs) {
+        this.apiClientCertPkcs = apiClientCertPkcs;
+    }
 }

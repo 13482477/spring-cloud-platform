@@ -1,21 +1,15 @@
 package com.siebre.basic.utils;
 
+import org.csource.common.IniFileReader;
+import org.csource.common.NameValuePair;
+import org.csource.fastdfs.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
-
-import org.csource.common.IniFileReader;
-import org.csource.common.NameValuePair;
-import org.csource.fastdfs.ClientGlobal;
-import org.csource.fastdfs.DownloadStream;
-import org.csource.fastdfs.StorageClient1;
-import org.csource.fastdfs.StorageServer;
-import org.csource.fastdfs.TrackerClient;
-import org.csource.fastdfs.TrackerServer;
-import org.csource.fastdfs.UploadStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 

@@ -1,7 +1,6 @@
 package com.siebre.payment.paymenthandler.wechatpay.query;
 
 import com.siebre.payment.entity.enums.EncryptionMode;
-import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryRequest;

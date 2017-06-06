@@ -1,8 +1,8 @@
 package com.siebre.payment.vo.unionpayment;
 
-import java.io.Serializable;
-
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
+
+import java.io.Serializable;
 
 public class BasePayNotifyResponseVo implements Serializable{
     /**

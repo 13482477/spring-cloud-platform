@@ -20,9 +20,9 @@
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
 		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
 		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
-		<result column="payment_gateway_url" property="paymentGatewayUrl" jdbcType="VARCHAR" />
-		<result column="payment_callback_url" property="paymentCallbackUrl" jdbcType="VARCHAR" />
-		<result column="payment_return_page_url" property="paymentReturnPageUrl" jdbcType="VARCHAR" />
+		<result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
+		<result column="merchant_pwd" property="merchantPwd" jdbcType="VARCHAR" />
+		<result column="terminal_id" property="terminalId" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id,
@@ -39,54 +39,54 @@
 		end_date,
 		payee_account,
 		remark,
-		payment_gateway_url,
-		payment_callback_url,
-		payment_return_page_url,
 		create_user,
 		create_date,
 		update_user,
-		update_date
+		update_date,
+		merchant_name,
+		merchant_pwd,
+		terminal_id
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select
-			<include refid="Base_Column_List" />
+		<include refid="Base_Column_List" />
 		from
-			pmt_payment_channel
+		pmt_payment_channel
 		where
-			id = #{id,jdbcType=INTEGER}
+		id = #{id,jdbcType=INTEGER}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-		delete from 
-			pmt_payment_channel
+		delete from
+		pmt_payment_channel
 		where
-			id = #{id,jdbcType=INTEGER}
+		id = #{id,jdbcType=INTEGER}
 	</delete>
 	<insert id="insert" parameterType="com.siebre.payment.paymentchannel.entity.PaymentChannel" useGeneratedKeys="true" keyProperty="id">
 		insert into pmt_payment_channel (
-			<include refid="Base_Column_List" />
+		<include refid="Base_Column_List" />
 		)
 		values (
-			#{id,jdbcType=BIGINT},
-			#{channelName,jdbcType=VARCHAR},
-			#{channelCode,jdbcType=VARCHAR},
-			#{merchantCode,jdbcType=VARCHAR},
-			#{iconUrl,jdbcType=VARCHAR},
-			#{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
-			#{supportRefunded,jdbcType=BOOLEAN},
-			#{contractNumber,jdbcType=VARCHAR},
-			#{contractStartDate,jdbcType=TIMESTAMP},
-			#{contractEndDate,jdbcType=TIMESTAMP},
-			#{startDate,jdbcType=TIMESTAMP},
-			#{endDate,jdbcType=TIMESTAMP},
-			#{payeeAccount,jdbcType=VARCHAR},
-			#{remark,jdbcType=VARCHAR},
-			#{paymentGatewayUrl,jdbcType=VARCHAR},
-			#{paymentCallbackUrl,jdbcType=VARCHAR},
-			#{paymentReturnPageUrl,jdbcType=VARCHAR},
-			#{createUser,jdbcType=VARCHAR},
-			#{createDate,jdbcType=TIMESTAMP},
-			#{updateUser,jdbcType=VARCHAR},
-			#{updateDate,jdbcType=TIMESTAMP}
+		#{id,jdbcType=BIGINT},
+		#{channelName,jdbcType=VARCHAR},
+		#{channelCode,jdbcType=VARCHAR},
+		#{merchantCode,jdbcType=VARCHAR},
+		#{iconUrl,jdbcType=VARCHAR},
+		#{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		#{supportRefunded,jdbcType=BOOLEAN},
+		#{contractNumber,jdbcType=VARCHAR},
+		#{contractStartDate,jdbcType=TIMESTAMP},
+		#{contractEndDate,jdbcType=TIMESTAMP},
+		#{startDate,jdbcType=TIMESTAMP},
+		#{endDate,jdbcType=TIMESTAMP},
+		#{payeeAccount,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},
+		#{createUser,jdbcType=VARCHAR},
+		#{createDate,jdbcType=TIMESTAMP},
+		#{updateUser,jdbcType=VARCHAR},
+		#{updateDate,jdbcType=TIMESTAMP},
+		#{merchantName,jdbcType=VARCHAR},
+		#{merchantPwd,jdbcType=VARCHAR},
+		#{terminalId,jdbcType=VARCHAR}
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.siebre.payment.paymentchannel.entity.PaymentChannel"  useGeneratedKeys="true" keyProperty="id">
@@ -134,15 +134,6 @@
 			<if test="remark != null">
 				remark,
 			</if>
-			<if test="paymentGatewayUrl != null">
-				payment_gateway_url,
-			</if>
-			<if test="paymentCallbackUrl != null">
-				payment_callback_url,
-			</if>
-			<if test="paymentReturnPageUrl != null">
-				payment_return_page_url,
-			</if>
 			<if test="createUser != null">
 				create_user,
 			</if>
@@ -153,7 +144,16 @@
 				update_user,
 			</if>
 			<if test="updateDate != null">
-				update_date
+				update_date,
+			</if>
+			<if test="merchantName != null">
+				merchant_name,
+			</if>
+			<if test="merchantPwd != null">
+				merchant_pwd,
+			</if>
+			<if test="terminalId != null">
+				terminal_id
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -199,15 +199,6 @@
 			<if test="remark != null">
 				#{remark,jdbcType=VARCHAR},
 			</if>
-			<if test="paymentGatewayUrl != null">
-				#{paymentGatewayUrl,jdbcType=VARCHAR},
-			</if>
-			<if test="paymentCallbackUrl != null">
-				#{paymentCallbackUrl,jdbcType=VARCHAR},
-			</if>
-			<if test="paymentReturnPageUrl != null">
-				#{paymentReturnPageUrl,jdbcType=VARCHAR},
-			</if>
 			<if test="createUser != null">
 				#{createUser,jdbcType=VARCHAR},
 			</if>
@@ -219,6 +210,15 @@
 			</if>
 			<if test="updateDate != null">
 				#{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="merchantName != null">
+				#{merchantName,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantPwd != null">
+				#{merchantPwd,jdbcType=VARCHAR},
+			</if>
+			<if test="terminalId != null">
+				#{terminalId,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -232,7 +232,7 @@
 				channel_code = #{channelCode,jdbcType=VARCHAR},
 			</if>
 			<if test="merchantCode != null">
-				merchantCode = #{merchantCode,jdbcType=VARCHAR},
+				merchant_code = #{merchantCode,jdbcType=VARCHAR},
 			</if>
 			<if test="iconUrl != null">
 				icon_url = #{iconUrl,jdbcType=VARCHAR},
@@ -276,75 +276,75 @@
 			<if test="updateDate != null">
 				update_date = #{updateDate,jdbcType=TIMESTAMP},
 			</if>
-			<if test="paymentGatewayUrl != null">
-				payment_gateway_url = #{paymentGatewayUrl,jdbcType=VARCHAR},
+			<if test="merchantName != null">
+				merchant_name = #{merchantName,jdbcType=VARCHAR},
 			</if>
-			<if test="paymentCallbackUrl != null">
-				paymentCallbackUrl = #{paymentCallbackUrl,jdbcType=VARCHAR},
+			<if test="merchantPwd != null">
+				merchant_pwd = #{merchantPwd,jdbcType=VARCHAR},
 			</if>
-			<if test="paymentReturnPageUrl != null">
-				payment_return_page_url = #{paymentReturnPageUrl,jdbcType=VARCHAR},
+			<if test="terminalId != null">
+				terminal_id = #{terminalId,jdbcType=VARCHAR},
 			</if>
 		</set>
-		where 
-			id = #{id,jdbcType=INTEGER}
+		where
+		id = #{id,jdbcType=INTEGER}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.paymentchannel.entity.PaymentChannel">
-		update 
-			pmt_payment_channel
-		set 
-			channel_name = #{channelName,jdbcType=VARCHAR},
-			channel_code = #{channelCode,jdbcType=VARCHAR},
-			merchant_code = #{merchantCode,jdbcType=VARCHAR},
-			icon_url = #{iconUrl,jdbcType=VARCHAR},
-			status = #{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
-			support_refunded = #{supportRefunded,jdbcType=BOOLEAN},
-			contract_number = #{contractNumber,jdbcType=VARCHAR},
-			contract_start_date = #{contractStartDate,jdbcType=TIMESTAMP},
-			contract_end_date = #{contractEndDate,jdbcType=TIMESTAMP},
-			start_date = #{startDate,jdbcType=TIMESTAMP},
-			end_date = #{endDate,jdbcType=TIMESTAMP},
-			payee_account = #{payeeAccount,jdbcType=VARCHAR},
-			remark = #{remark,jdbcType=VARCHAR},
-			payment_gateway_url = #{paymentGatewayUrl,jdbcType=VARCHAR},
-			payment_callback_url = #{paymentCallbackUrl,jdbcType=VARCHAR},
-			payment_return_page_url = #{paymentReturnPageUrl,jdbcType=VARCHAR},
-			create_user = #{createUser,jdbcType=VARCHAR},
-			create_date = #{createDate,jdbcType=TIMESTAMP},
-			update_user = #{updateUser,jdbcType=VARCHAR},
-			update_date = #{updateDate,jdbcType=TIMESTAMP},
-		where 
-			id = #{id,jdbcType=INTEGER}
+		update
+		pmt_payment_channel
+		set
+		channel_name = #{channelName,jdbcType=VARCHAR},
+		channel_code = #{channelCode,jdbcType=VARCHAR},
+		merchant_code = #{merchantCode,jdbcType=VARCHAR},
+		icon_url = #{iconUrl,jdbcType=VARCHAR},
+		status = #{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		support_refunded = #{supportRefunded,jdbcType=BOOLEAN},
+		contract_number = #{contractNumber,jdbcType=VARCHAR},
+		contract_start_date = #{contractStartDate,jdbcType=TIMESTAMP},
+		contract_end_date = #{contractEndDate,jdbcType=TIMESTAMP},
+		start_date = #{startDate,jdbcType=TIMESTAMP},
+		end_date = #{endDate,jdbcType=TIMESTAMP},
+		payee_account = #{payeeAccount,jdbcType=VARCHAR},
+		remark = #{remark,jdbcType=VARCHAR},
+		create_user = #{createUser,jdbcType=VARCHAR},
+		create_date = #{createDate,jdbcType=TIMESTAMP},
+		update_user = #{updateUser,jdbcType=VARCHAR},
+		update_date = #{updateDate,jdbcType=TIMESTAMP},
+		merchant_name = #{merchantName,jdbcType=VARCHAR},
+		merchant_pwd = #{merchantPwd,jdbcType=VARCHAR},
+		terminal_id = #{terminalId,jdbcType=VARCHAR}
+		where
+		id = #{id,jdbcType=INTEGER}
 	</update>
 
 	<select id="selectByChannelCode" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
-			<include refid="Base_Column_List" />
-		from 
-			pmt_payment_channel
-		where 
-			channel_code = #{channelCode,jdbcType=VARCHAR}
+		<include refid="Base_Column_List" />
+		from
+		pmt_payment_channel
+		where
+		channel_code = #{channelCode,jdbcType=VARCHAR}
 	</select>
 
 
 	<select id="selectAll" resultMap="BaseResultMap">
 		select
-			<include refid="Base_Column_List" />
-		from 
-			pmt_payment_channel
-		where 
-			1=1
-		order by 
-			id asc
+		<include refid="Base_Column_List" />
+		from
+		pmt_payment_channel
+		where
+		1=1
+		order by
+		id asc
 	</select>
-	
+
 	<select id="selectAllByPage" resultMap="BaseResultMap">
 		select
-			<include refid="Base_Column_List" />
-		from 
-			pmt_payment_channel
-		where 
-			1=1
+		<include refid="Base_Column_List" />
+		from
+		pmt_payment_channel
+		where
+		1=1
 	</select>
 
 </mapper>

@@ -1,15 +1,14 @@
 package com.siebre.message.test.mapper.messageobject;
 
-import java.util.Date;
-
+import com.siebre.message.test.base.DbTestConfig;
+import com.siebre.messageconsumer.entity.MessageObject;
+import com.siebre.messageconsumer.mapper.MessageObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.siebre.message.test.base.DbTestConfig;
-import com.siebre.messageconsumer.entity.MessageObject;
-import com.siebre.messageconsumer.mapper.MessageObjectMapper;
+import java.util.Date;
 
 public class MessageObjectMapperTest extends DbTestConfig {
 	

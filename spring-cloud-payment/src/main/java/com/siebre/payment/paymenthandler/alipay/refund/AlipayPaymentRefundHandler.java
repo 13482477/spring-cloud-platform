@@ -1,11 +1,5 @@
 package com.siebre.payment.paymenthandler.alipay.refund;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.stereotype.Service;
-
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
@@ -24,6 +18,11 @@ import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.refundapplication.dto.PaymentRefundRequest;
 import com.siebre.payment.refundapplication.dto.PaymentRefundResponse;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by AdamTang on 2017/4/24.
@@ -33,9 +32,10 @@ import com.siebre.payment.refundapplication.entity.RefundApplication;
 @Service("alipayPaymentRefundHandler")
 public class AlipayPaymentRefundHandler extends AbstractPaymentRefundComponent {
     @Override
-    protected PaymentRefundResponse handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface) {
-        AlipayClient alipayClient = new DefaultAlipayClient(paymentWay.getPaymentGatewayUrl(),
-                paymentWay.getAppId(), paymentWay.getSecretKey(), "json", AlipayConfig.input_charset_utf,
+    protected PaymentRefundResponse handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentTransaction paymentTransaction,
+                                                   PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface) {
+        AlipayClient alipayClient = new DefaultAlipayClient(paymentInterface.getRequestUrl(),
+                paymentWay.getAppId(), paymentWay.getSecretKey(), "json", AlipayConfig.INPUT_CHARSET_UTF,
                 paymentWay.getPublicKey(), EncryptionMode.RSA.getDescription()); //获得初始化的AlipayClient
 
         AlipayTradeRefundRequest alipayRequest = buildAlipayRefundRequest(paymentRefundRequest, paymentWay, paymentTransaction);

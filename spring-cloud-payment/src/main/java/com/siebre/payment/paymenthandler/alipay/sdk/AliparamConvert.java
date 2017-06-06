@@ -1,9 +1,5 @@
 package com.siebre.payment.paymenthandler.alipay.sdk;
 
-import java.util.HashMap;
-
-import com.siebre.payment.vo.unionpayment.PayQueryParamVo;
-
 public class AliparamConvert {
 
 //	public static AliWebpayReqParam payParamConvUnifiedPayRequestyRequest payParamDTO) {

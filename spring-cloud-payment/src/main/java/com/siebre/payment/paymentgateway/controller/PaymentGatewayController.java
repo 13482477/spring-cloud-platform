@@ -1,26 +1,9 @@
 package com.siebre.payment.paymentgateway.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.siebre.basic.applicationcontext.SpringContextUtil;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
-import com.siebre.payment.paymentgateway.vo.PaymentOrderQueryRequest;
-import com.siebre.payment.paymentgateway.vo.PaymentOrderQueryResponse;
-import com.siebre.payment.paymentgateway.vo.RefundRequest;
-import com.siebre.payment.paymentgateway.vo.RefundResponse;
-import com.siebre.payment.paymentgateway.vo.UnifiedPayRequest;
-import com.siebre.payment.paymentgateway.vo.UnifiedPayResponse;
+import com.siebre.payment.paymentgateway.vo.*;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
@@ -34,6 +17,12 @@ import com.siebre.payment.refundapplication.dto.PaymentRefundResponse;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
 import com.siebre.payment.refundapplication.service.RefundApplicationService;
 import com.siebre.payment.service.queryapplication.QueryApplicationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class PaymentGatewayController {
@@ -142,7 +131,7 @@ public class PaymentGatewayController {
 	public Object weChatTest(HttpServletRequest request) {
 		String pageUrl = request.getParameter("pageUrl");
 		Map<String, String> result = new HashMap<>();
-		PaymentWay paymentWay = this.paymentWayService.getPaymentWayByCode("WECHAT_PUBLIC_PAY");
+		PaymentWay paymentWay = this.paymentWayService.getPaymentWayByCode("WECHAT_PUBLIC_PAY").getData();
 		String redirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + paymentWay.getAppId() + "&redirect_uri=" + pageUrl
 				+ "&response_type=code&scope=snsapi_base&state=1#wechat_redirect";
 		result.put("redirectUrl", redirectUrl);

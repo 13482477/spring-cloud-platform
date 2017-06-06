@@ -1,13 +1,12 @@
 package com.siebre.messageconsumer.service.messageobject;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.siebre.basic.query.PageInfo;
 import com.siebre.messageconsumer.entity.MessageObject;
 import com.siebre.messageconsumer.mapper.MessageObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class MessageObjectService {

@@ -1,12 +1,11 @@
 package com.siebre.basic.encryption;
 
+import com.siebre.basic.exception.SiebreRuntimeException;
+import org.apache.commons.codec.binary.Base64;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import org.apache.commons.codec.binary.Base64;
-
-import com.siebre.basic.exception.SiebreRuntimeException;
 
 public class EncryptionUtils {
 

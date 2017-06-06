@@ -1,11 +1,5 @@
 package com.siebre.payment.paymenthandler.unionpay.query;
 
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.stereotype.Service;
-
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryRequest;
@@ -15,6 +9,11 @@ import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.utils.http.HttpTookit;
+import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by AdamTang on 2017/4/22.

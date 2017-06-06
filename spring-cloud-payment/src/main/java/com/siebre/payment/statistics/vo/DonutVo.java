@@ -4,19 +4,27 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class DonutVo implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
-	private String label;
-	
-	private BigDecimal value;
-
-	public String getLabel() {
-		return label;
+	public DonutVo() {
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
+	public DonutVo(String name, BigDecimal value) {
+		this.name = name;
+		this.value = value;
+	}
+
+	private String name;
+
+	private BigDecimal value;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public BigDecimal getValue() {

@@ -1,26 +1,12 @@
 package com.siebre.payment.paymentorder.service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.siebre.basic.query.PageInfo;
-import com.siebre.payment.entity.enums.PaymentOrderCheckStatus;
-import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
-import com.siebre.payment.entity.enums.PolicyRoleType;
+import com.siebre.basic.service.ServiceResult;
+import com.siebre.payment.entity.enums.*;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper;
+import com.siebre.payment.paymentgateway.vo.PaymentOrderRequest;
+import com.siebre.payment.paymentgateway.vo.PaymentOrderResponse;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
 import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
@@ -32,6 +18,17 @@ import com.siebre.payment.policyrole.mapper.PolicyRoleMapper;
 import com.siebre.payment.serialnumber.service.SerialNumberService;
 import com.siebre.payment.statistics.vo.DonutVo;
 import com.siebre.payment.statistics.vo.PaymentChannelTransactionVo;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 /**
  * Created by AdamTang on 2017/3/29. Project:siebre-cloud-platform Version:1.0
@@ -54,9 +51,22 @@ public class PaymentOrderService {
 
     @Autowired
     private PolicyLibilityMapper policyLibilityMapper;
-    
+
     @Autowired
-	private PaymentChannelMapper paymentChannelMapper;
+    private PaymentChannelMapper paymentChannelMapper;
+
+    public ServiceResult<List<PaymentOrder>> queryPaymentOrder(PageInfo pageInfo) {
+        return null;
+    }
+
+    public ServiceResult<Map<String, Object>> queryPaymentSummary(PageInfo pageInfo) {
+        return null;
+    }
+
+    public PaymentOrderPayStatus queryOrderStatus(String orderNumber) {
+        PaymentOrder order = paymentOrderMapper.selectByOrderNumber(orderNumber);
+        return order.getStatus();
+    }
 
     /**
      * 创建order和order item   libility    applicant   insurePerson
@@ -66,17 +76,38 @@ public class PaymentOrderService {
      * @return
      */
     @Transactional("db")
-    public void createPaymentOrderAndItems(String paymetnWayCode, PaymentOrder paymentOrder) {
+    public PaymentOrderResponse createPaymentOrderAndItems(PaymentOrderRequest orderRequest, HttpServletRequest request) {
+        //幂等性校验
+        String messageId = orderRequest.getMessageId();
+        PaymentOrder order = paymentOrderMapper.selectByMessageId(messageId);
+        if (order != null) {
+            List<PaymentOrderItem> items = paymentOrderItemMapper.selectByPaymentOrderId(order.getId());
+            return PaymentOrderResponse.SUCCESS("创建成功", order, items);
+        }
+
         //保存order
-        paymentOrder.setPaymentWayCode(paymetnWayCode);
+        PaymentOrder paymentOrder = new PaymentOrder();
+        paymentOrder.setPaymentWayCode(orderRequest.getPaymentWayCode());
         paymentOrder.setOrderNumber(serialNumberService.nextValue("sale_order"));
+        paymentOrder.setPaymentOrderItems(orderRequest.getPaymentOrderItems());
+        if (orderRequest.getSellingChannel() != null) {
+            if (orderRequest.getSellingChannel().equals("MOBILE_SALE_APP")) {
+                paymentOrder.setSellingChannel(SellingChannel.MOBILE_SALE_APP);//移动展业
+            } else {
+                paymentOrder.setSellingChannel(SellingChannel.SELF_INSURANCE);//自助投保
+            }
+        }
+
+
         //设置order状态为未支付
         paymentOrder.setStatus(PaymentOrderPayStatus.UNPAID);
         paymentOrder.setCreateTime(new Date());
-        this.processTotalAmount(paymentOrder);
+        this.processTotalAmount(paymentOrder, orderRequest.getPaymentOrderItems());
+        //退款状态默认设置为未支付
+        paymentOrder.setRefundStatus(PaymentOrderRefundStatus.NOT_REFUND);
         this.paymentOrderMapper.insert(paymentOrder);
 
-        for (PaymentOrderItem paymentOrderItem : paymentOrder.getPaymentOrderItems()) {
+        for (PaymentOrderItem paymentOrderItem : orderRequest.getPaymentOrderItems()) {
             paymentOrderItem.setPaymentOrderId(paymentOrder.getId());
             //save applicant
             PolicyRole applicant = paymentOrderItem.getApplicant();
@@ -97,6 +128,7 @@ public class PaymentOrderService {
                 policyLibilityMapper.insert(libility);
             }
         }
+        return PaymentOrderResponse.SUCCESS("创建成功", paymentOrder, orderRequest.getPaymentOrderItems());
     }
 
     /**
@@ -105,11 +137,11 @@ public class PaymentOrderService {
      * @param paymentOrder
      * @param paymentOrderItems
      */
-    private void processTotalAmount(PaymentOrder paymentOrder) {
+    private void processTotalAmount(PaymentOrder paymentOrder, List<PaymentOrderItem> paymentOrderItems) {
         BigDecimal totalInsuredAmount = BigDecimal.ZERO;
         BigDecimal totalPremium = BigDecimal.ZERO;
 
-        for (PaymentOrderItem paymentOrderItem : paymentOrder.getPaymentOrderItems()) {
+        for (PaymentOrderItem paymentOrderItem : paymentOrderItems) {
             this.processPolicyLibilityAmount(paymentOrderItem);
             totalPremium = totalPremium.add(paymentOrderItem.getPremium());
             totalInsuredAmount = totalInsuredAmount.add(paymentOrderItem.getInsuredAmount());
@@ -117,6 +149,8 @@ public class PaymentOrderService {
         paymentOrder.setTotalInsuredAmount(totalInsuredAmount);
         paymentOrder.setTotalPremium(totalPremium);
     }
+
+
 
     private void processPolicyLibilityAmount(PaymentOrderItem paymentOrderItem) {
         BigDecimal totalInsuredAmount = BigDecimal.ZERO;
@@ -136,10 +170,28 @@ public class PaymentOrderService {
         return order;
     }
 
-    public List<PaymentOrder> getOrderListForPage(String orderNumber, PaymentOrderPayStatus orderPayStatus, String channelName,
+    public ServiceResult<PaymentOrder> queryPaymentOrderRPC(String orderNumber) {
+        ServiceResult<PaymentOrder> result = new ServiceResult<PaymentOrder>();
+        result.setData(this.queryPaymentOrder(orderNumber));
+        return result;
+    }
+
+    public ServiceResult<List<PaymentOrder>> getOrderListForPage(String orderNumber, List<PaymentOrderPayStatus> orderPayStatusList, List<String> channelCodeList,
+                                                                 List<PaymentOrderRefundStatus> refundStatusList,
                                                                  Date startDate, Date endDate, PageInfo page) {
-        List<PaymentOrder> orders = paymentOrderMapper.selectOrderByPage(orderNumber, orderPayStatus, channelName, startDate, endDate, page);
-        return orders;
+        ServiceResult<List<PaymentOrder>> result = new ServiceResult<>();
+        List<PaymentOrder> orders = paymentOrderMapper.selectOrderByPage(orderNumber, orderPayStatusList, channelCodeList, refundStatusList, startDate, endDate, page);
+        result.setData(orders);
+        result.setPageInfo(page);
+        return result;
+    }
+
+    public ServiceResult<List<PaymentOrder>> queryPaymentOrderListRPC(String orderNumber, String applicationNumber, PaymentTransactionStatus status, PageInfo page) {
+        ServiceResult<List<PaymentOrder>> result = new ServiceResult<List<PaymentOrder>>();
+        List<PaymentOrder> orders = paymentOrderMapper.selectOrderJoinTransaction(orderNumber, applicationNumber, status, page);
+        result.setData(orders);
+        result.setPageInfo(page);
+        return result;
     }
 
     @Transactional("db")
@@ -149,33 +201,36 @@ public class PaymentOrderService {
         paymentOrderMapper.updateByPrimaryKeySelective(paymentOrder);
     }
 
-    public BigDecimal getSuccessPaymentAmount() {
+    public ServiceResult<BigDecimal> getSuccessPaymentAmount() {
         BigDecimal result = this.paymentOrderMapper.getSuccessedPaymentAmount();
-        return result;
+        return ServiceResult.<BigDecimal>builder().success(true).message("处理成功！").data(result == null ? BigDecimal.ZERO : result).build();
     }
 
-    public Integer getSuccessPaymentCount() {
-        return this.paymentOrderMapper.getSuccessedPaymentCount();
+    public ServiceResult<Integer> getSuccessPaymentCount() {
+        Integer result = this.paymentOrderMapper.getSuccessedPaymentCount();
+        return ServiceResult.<Integer>builder().success(true).message("处理成功！").data(result == null ? 0 : result).build();
     }
 
-    public BigDecimal getFaildPaymentAmount() {
+    public ServiceResult<BigDecimal> getFaildPaymentAmount() {
         BigDecimal result = this.paymentOrderMapper.getFaildPaymentAmount();
-        return result == null ? BigDecimal.ZERO : result;
+        return ServiceResult.<BigDecimal>builder().success(true).data(result == null ? BigDecimal.ZERO : result).build();
     }
 
-    public Integer getFaildPaymentCount() {
+    public ServiceResult<Integer> getFaildPaymentCount() {
         Integer result = this.paymentOrderMapper.getFaildPaymentCount();
-        return result == null ? 0 : result;
+        return ServiceResult.<Integer>builder().success(true).data(result == null ? 0 : result).build();
     }
 
-    public BigDecimal getConversionRate() {
+    public ServiceResult<BigDecimal> getConversionRate() {
         Integer totalCount = this.paymentOrderMapper.getCount();
         Integer successedCount = this.paymentOrderMapper.getSuccessedPaymentCount();
+
         BigDecimal result = new BigDecimal(successedCount).multiply(new BigDecimal(100)).divide(new BigDecimal(totalCount), RoundingMode.HALF_UP);
-        return result;
+
+        return ServiceResult.<BigDecimal>builder().success(true).data(result).build();
     }
 
-    public BigDecimal[] getTotalAmountOfThisWeek() {
+    public ServiceResult<BigDecimal[]> getTotalAmountOfThisWeek() {
         Date[] dates = this.getDateOfThisWeek();
 
         BigDecimal data1 = this.paymentOrderMapper.getTotalAmountByDateRange(dates[0], DateUtils.addDays(dates[0], 1));
@@ -196,13 +251,13 @@ public class PaymentOrderService {
                 data7
         };
 
-        for (int i = 0; i < datas.length; i ++) {
-        	if (datas[i] == null) {
-        		datas[i] = BigDecimal.ZERO;
-        	}
+        for (int i = 0; i < datas.length; i++) {
+            if (datas[i] == null) {
+                datas[i] = BigDecimal.ZERO;
+            }
         }
 
-        return datas;
+        return ServiceResult.<BigDecimal[]>builder().success(true).data(datas).build();
     }
 
     private Date[] getDateOfThisWeek() {
@@ -228,107 +283,133 @@ public class PaymentOrderService {
         return date;
     }
 
-	public List<DonutVo> getChannelSuccessedCount() {
-		List<PaymentChannel> paymentChannelList = this.paymentChannelMapper.selectAll();
+    public ServiceResult<List<DonutVo>> getChannelSuccessedCount() {
+        List<PaymentChannel> paymentChannelList = this.paymentChannelMapper.selectAll();
 
-		List<Map<String, Object>> dataList = this.paymentOrderMapper.getChannelSuccessedCount();
+        List<Map<String, Object>> dataList = this.paymentOrderMapper.getChannelSuccessedCount();
 
-		List<DonutVo> result = new ArrayList<DonutVo>();
+        List<DonutVo> result = new ArrayList<DonutVo>();
 
-		for (Map<String, Object> data : dataList) {
-			DonutVo donutVo = new DonutVo();
-			donutVo.setLabel(this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
-			donutVo.setValue(new BigDecimal((Long) data.get("count")));
-			result.add(donutVo);
-		}
+        for (Map<String, Object> data : dataList) {
+            DonutVo donutVo = new DonutVo();
+            donutVo.setName( this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
+            donutVo.setValue(new BigDecimal((Long) data.get("count")));
+            result.add(donutVo);
+        }
 
-		return result;
-	}
+        return ServiceResult.<List<DonutVo>>builder().success(true).data(result).build();
+    }
 
-	public List<DonutVo> getChannelSuccessedAmount() {
-		List<PaymentChannel> paymentChannelList = this.paymentChannelMapper.selectAll();
+    public ServiceResult<List<DonutVo>> getChannelFailCount() {
+        List<PaymentChannel> paymentChannelList = this.paymentChannelMapper.selectAll();
 
-		List<Map<String, Object>> dataList = this.paymentOrderMapper.getChannelSuccessedAmount();
+        List<Map<String, Object>> dataList = this.paymentOrderMapper.getChannelFailCount();
 
-		List<DonutVo> result = new ArrayList<DonutVo>();
+        List<DonutVo> result = new ArrayList<DonutVo>();
 
-		for (Map<String, Object> data : dataList) {
-			DonutVo donutVo = new DonutVo();
-			donutVo.setLabel(this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
-			donutVo.setValue((BigDecimal) data.get("totalAmount"));
-			result.add(donutVo);
-		}
+        for (Map<String, Object> data : dataList) {
+            DonutVo donutVo = new DonutVo();
+            donutVo.setName( this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
+            donutVo.setValue(new BigDecimal((Long) data.get("count")));
+            result.add(donutVo);
+        }
 
-		return result;
-	}
+        return ServiceResult.<List<DonutVo>>builder().success(true).data(result).build();
+    }
 
-	private String getLabelName(Long paymentChannelId, List<PaymentChannel> paymentChannelList) {
-		for (PaymentChannel paymentChannel : paymentChannelList) {
-			if (paymentChannelId == paymentChannel.getId()) {
-				return paymentChannel.getChannelName();
-			}
-		}
-		return null;
-	}
+    public ServiceResult<List<DonutVo>> getChannelSuccessedAmount() {
+        List<PaymentChannel> paymentChannelList = this.paymentChannelMapper.selectAll();
 
-	public List<List<Integer>> getPaymentWaySuccessCount() {
-		String[] paymentWayCodes = {
-				"ALIPAY_WEB_PAY",
-				"WECHAT_SCAN_PAY",
-				"UNIONPAY_ACP_PAY",
-				"ALIPAY_TRADE_WAP_PAY",
-				"WECHAT_PUBLIC_PAY",
-				"ALLIN_ACP_PAY",
-		};
+        List<Map<String, Object>> dataList = this.paymentOrderMapper.getChannelSuccessedAmount();
 
-		List<Map<String, Object>> paidDatas = this.paymentOrderMapper.getPaymentWayCount(PaymentOrderPayStatus.PAID);
-		List<Map<String, Object>> payErrorDatas = this.paymentOrderMapper.getPaymentWayCount(PaymentOrderPayStatus.PAYERROR);
-		List<Map<String, Object>> payingDatas = this.paymentOrderMapper.getPaymentWayCount(PaymentOrderPayStatus.PAYING);
+        List<DonutVo> result = new ArrayList<DonutVo>();
 
-		List<List<Integer>> result = new ArrayList<List<Integer>>();
+        for (Map<String, Object> data : dataList) {
+            DonutVo donutVo = new DonutVo();
+            donutVo.setName( this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
+            donutVo.setValue((BigDecimal) data.get("totalAmount"));
+            result.add(donutVo);
+        }
 
-		List<Integer> result1 = new ArrayList<Integer>();
-		result1.add(this.getCountByPayWayCode(paidDatas, paymentWayCodes[0]));
-		result1.add(this.getCountByPayWayCode(paidDatas, paymentWayCodes[1]));
-		result1.add(this.getCountByPayWayCode(paidDatas, paymentWayCodes[2]));
-		result1.add(this.getCountByPayWayCode(paidDatas, paymentWayCodes[3]));
-		result1.add(this.getCountByPayWayCode(paidDatas, paymentWayCodes[4]));
-		result1.add(this.getCountByPayWayCode(paidDatas, paymentWayCodes[5]));
-		result.add(result1);
+        return ServiceResult.<List<DonutVo>>builder().success(true).data(result).build();
+    }
 
-		List<Integer> result2 = new ArrayList<Integer>();
-		result2.add(this.getCountByPayWayCode(payErrorDatas, paymentWayCodes[0]));
-		result2.add(this.getCountByPayWayCode(payErrorDatas, paymentWayCodes[1]));
-		result2.add(this.getCountByPayWayCode(payErrorDatas, paymentWayCodes[2]));
-		result2.add(this.getCountByPayWayCode(payErrorDatas, paymentWayCodes[3]));
-		result2.add(this.getCountByPayWayCode(payErrorDatas, paymentWayCodes[4]));
-		result2.add(this.getCountByPayWayCode(payErrorDatas, paymentWayCodes[5]));
-		result.add(result2);
+    public ServiceResult<List<DonutVo>> getChannelFailAmount() {
+        List<PaymentChannel> paymentChannelList = this.paymentChannelMapper.selectAll();
 
-		List<Integer> result3 = new ArrayList<Integer>();
-		result3.add(this.getCountByPayWayCode(payingDatas, paymentWayCodes[0]));
-		result3.add(this.getCountByPayWayCode(payingDatas, paymentWayCodes[1]));
-		result3.add(this.getCountByPayWayCode(payingDatas, paymentWayCodes[2]));
-		result3.add(this.getCountByPayWayCode(payingDatas, paymentWayCodes[3]));
-		result3.add(this.getCountByPayWayCode(payingDatas, paymentWayCodes[4]));
-		result3.add(this.getCountByPayWayCode(payingDatas, paymentWayCodes[5]));
-		result.add(result3);
+        List<Map<String, Object>> dataList = this.paymentOrderMapper.getChannelFailAmount();
 
-		return result;
-	}
+        List<DonutVo> result = new ArrayList<DonutVo>();
 
-	private Integer getCountByPayWayCode(List<Map<String, Object>> dataMaps, String paymentWayCode) {
-		for (Map<String, Object> dataMap : dataMaps) {
-			if (StringUtils.equals(paymentWayCode, (CharSequence) dataMap.get("paymentWayCode"))) {
-				return ((Long) dataMap.get("count")).intValue();
-			}
-		}
-		return 0;
-	}
+        for (Map<String, Object> data : dataList) {
+            DonutVo donutVo = new DonutVo();
+            donutVo.setName( this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
+            donutVo.setValue((BigDecimal) data.get("totalAmount"));
+            result.add(donutVo);
+        }
 
-	public List<PaymentChannelTransactionVo> countPaymentChannelTransaction() {
-		List<PaymentChannelTransactionVo> result = this.paymentOrderMapper.countPaymentChannelTransaction();
-		return result;
-	}
+        return ServiceResult.<List<DonutVo>>builder().success(true).data(result).build();
+    }
+
+    private String getLabelName(Long paymentChannelId, List<PaymentChannel> paymentChannelList) {
+        for (PaymentChannel paymentChannel : paymentChannelList) {
+            if (paymentChannelId == paymentChannel.getId()) {
+                return paymentChannel.getChannelName();
+            }
+        }
+        return null;
+    }
+
+    public ServiceResult<Map<String,List<DonutVo>>> getPaymentWaySuccessCount() {
+        String[] paymentWayCodes = {
+                "ALIPAY_WEB_PAY",
+                "WECHAT_SCAN_PAY",
+                "UNIONPAY_ACP_PAY",
+                "ALIPAY_TRADE_WAP_PAY",
+                "WECHAT_PUBLIC_PAY",
+                "ALLIN_ACP_PAY",
+        };
+
+        List<Map<String, Object>> paidDatas = this.paymentOrderMapper.getPaymentWayCount(PaymentOrderPayStatus.PAID);
+        /*List<Map<String, Object>> payErrorDatas = this.paymentOrderMapper.getPaymentWayCount(PaymentOrderPayStatus.PAYERROR);
+        List<Map<String, Object>> payingDatas = this.paymentOrderMapper.getPaymentWayCount(PaymentOrderPayStatus.PAYING);*/
+
+        Map<String,List<DonutVo>> result = new HashMap<>();
+
+        //app支付目前没有
+        List<DonutVo> result1 = new ArrayList<>();
+        result.put("APP支付", result1);
+
+        //手机网页
+        List<DonutVo> result2 = new ArrayList<>();
+        result2.add(new DonutVo("支付宝手机网关支付", this.getCountByPayWayCode(paidDatas, paymentWayCodes[3])));
+        result2.add(new DonutVo("微信公众号支付", this.getCountByPayWayCode(paidDatas, paymentWayCodes[4])));
+        result2.add(new DonutVo("通联支付", this.getCountByPayWayCode(paidDatas, paymentWayCodes[5])));
+        result.put("手机网页支付", result2);
+
+        //PC网页支付
+        List<DonutVo> result3 = new ArrayList<>();
+        result3.add(new DonutVo("支付宝即时到账",this.getCountByPayWayCode(paidDatas, paymentWayCodes[0])));
+        result3.add(new DonutVo("微信扫码支付", this.getCountByPayWayCode(paidDatas, paymentWayCodes[1])));
+        result3.add(new DonutVo("银联支付", this.getCountByPayWayCode(paidDatas, paymentWayCodes[2])));
+        result3.add(new DonutVo("通联支付", this.getCountByPayWayCode(paidDatas, paymentWayCodes[5])));
+        result.put("PC网页支付", result3);
+
+        return ServiceResult.<Map<String,List<DonutVo>>>builder().success(true).data(result).build();
+    }
+
+    private BigDecimal getCountByPayWayCode(List<Map<String, Object>> dataMaps, String paymentWayCode) {
+        for (Map<String, Object> dataMap : dataMaps) {
+            if (StringUtils.equals(paymentWayCode, (CharSequence) dataMap.get("paymentWayCode"))) {
+                return new BigDecimal((Long)dataMap.get("count"));
+            }
+        }
+        return new BigDecimal("0");
+    }
+
+    public ServiceResult<List<PaymentChannelTransactionVo>> countPaymentChannelTransaction() {
+        List<PaymentChannelTransactionVo> result = this.paymentOrderMapper.countPaymentChannelTransaction();
+        return ServiceResult.<List<PaymentChannelTransactionVo>>builder().success(true).data(result).build();
+    }
 
 }

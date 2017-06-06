@@ -1,11 +1,8 @@
 package com.siebre.basic.db;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.Set;
-
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -20,12 +17,20 @@ import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.Set;
+
 /**
  * 
  * @author 李志强
  *
  */
 public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
+
+	private Logger logger = LoggerFactory.getLogger(ClassPathMapperScanner.class);
+
 	private boolean addToConfig = true;
 	private SqlSessionFactory sqlSessionFactory;
 	private DynamicSqlSessionTemplate sqlSessionTemplate;

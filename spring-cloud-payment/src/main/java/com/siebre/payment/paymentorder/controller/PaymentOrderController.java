@@ -1,21 +1,15 @@
 package com.siebre.payment.paymentorder.controller;
 
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.web.WebResult;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.service.PaymentOrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Huang Tianci
@@ -30,8 +24,8 @@ public class PaymentOrderController {
 
     @RequestMapping(value = "/api/v1/paymentOrder", method = {RequestMethod.POST})
     public PaymentOrder create(@RequestParam String paymentWayCode, @RequestBody PaymentOrder paymentOrder){
-        paymentOrderService.createPaymentOrderAndItems(paymentWayCode, paymentOrder);
-        return paymentOrder;
+        //paymentOrderService.createPaymentOrderAndItems(paymentWayCode, paymentOrder);
+        return null;
     }
 
     @RequestMapping(value = "/api/v1/paymentOrder/{orderNumber}", method = {RequestMethod.GET})
@@ -55,9 +49,9 @@ public class PaymentOrderController {
     	
     	PageInfo pageInfo = new PageInfo(page, limit, sortField, order);
     	
-    	List<PaymentOrder> orders = this.paymentOrderService.getOrderListForPage(orderNumber, orderPayStatus, channelName, startDate, endDate, pageInfo);
+    	//List<PaymentOrder> orders = this.paymentOrderService.getOrderListForPage(orderNumber, orderPayStatus, channelName, startDate, endDate, pageInfo);
     	
-    	return WebResult.<List<PaymentOrder>>builder().returnCode("200").returnMessage("调用成功").data(orders).pageInfo(pageInfo).build();
+    	return WebResult.<List<PaymentOrder>>builder().returnCode("200").returnMessage("调用成功").pageInfo(pageInfo).build();
     }
     
     

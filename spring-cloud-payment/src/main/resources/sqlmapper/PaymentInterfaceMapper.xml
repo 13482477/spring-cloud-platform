@@ -28,9 +28,6 @@
 			<result column="payment_code" property="code" jdbcType="VARCHAR" />
 			<result column="app_id" property="appId" jdbcType="VARCHAR" />
 			<result column="encryption_mode" property="encryptionMode" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
-			<result column="payment_gateway_url" property="paymentGatewayUrl" jdbcType="VARCHAR" />
-			<result column="payment_callback_url" property="paymentCallbackUrl" jdbcType="VARCHAR" />
-			<result column="payment_return_page_url" property="paymentReturnPageUrl" jdbcType="VARCHAR" />
 			<result column="secret_key" property="secretKey" jdbcType="VARCHAR" />
 			<result column="public_key" property="publicKey" jdbcType="VARCHAR" />
 			<result column="credit_path" property="creditPath" jdbcType="VARCHAR" />
@@ -75,9 +72,6 @@
 		w.code AS payment_code,
 		w.name AS payment_name,
 		w.encryption_mode AS encryption_mode,
-		w.payment_gateway_url AS payment_gateway_url,
-		w.payment_callback_url AS payment_callback_url,
-		w.payment_return_page_url AS payment_return_page_url,
 		w.secret_key AS secret_key,
 		w.public_key AS public_key,
 		w.credit_path AS credit_path,
@@ -90,6 +84,12 @@
 
 	</select>
 
+	<delete id="deleteByPaymentWayId" parameterType="java.lang.Long">
+		DELETE FROM
+		pmt_payment_interface
+		WHERE
+		payment_way_id = #{paymentWayId,jdbcType=BIGINT}
+	</delete>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
 		DELETE FROM
 		pmt_payment_interface
@@ -114,6 +114,8 @@
 		#{interfaceName,jdbcType=VARCHAR},
 		#{interfaceCode,jdbcType=VARCHAR},
 		#{requestUrl,jdbcType=VARCHAR},
+		#{callbackUrl,jdbcType=VARCHAR},
+		#{returnPageUrl,jdbcType=VARCHAR},
 		#{paymentInterfaceType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{handlerBeanName,jdbcType=VARCHAR}
 		)
@@ -182,9 +184,6 @@
 	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.paymentinterface.entity.PaymentInterface">
 		update pmt_payment_interface
 		<set>
-			<if test="paymentChannelId != null">
-				payment_channel_id = #{paymentChannelId,jdbcType=BIGINT},
-			</if>
 			<if test="paymentWayId != null">
 				payment_way_id = #{paymentWayId,jdbcType=BIGINT},
 			</if>
@@ -229,4 +228,20 @@
 		WHERE
 		id = #{id,jdbcType=BIGINT}
 	</update>
+	<select id="selectByPaymentWayId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from
+		pmt_payment_interface
+		where
+		payment_way_id = #{paymentWayId,jdbcType=BIGINT}
+	</select>
+	<select id="selectByPage" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		pmt_payment_interface
+		where
+		1=1
+	</select>
 </mapper>
