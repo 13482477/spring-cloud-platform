@@ -38,6 +38,8 @@ public class Application {
 			sb.append("name: " + beanDefinitionNames[i] + ", class:" + applicationContext.getBean(beanDefinitionNames[i]).getClass().getName() + "\n");
 		}
 		
+		System.out.println("test");
+		
 		return sb.toString();
 	}
 	
