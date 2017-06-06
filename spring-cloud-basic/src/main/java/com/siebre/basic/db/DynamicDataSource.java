@@ -1,11 +1,14 @@
 package com.siebre.basic.db;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 
@@ -16,8 +19,8 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
 	private AtomicInteger counter = new AtomicInteger();
-	private javax.sql.DataSource master;
-	private List<javax.sql.DataSource> slaves;
+	private DataSource master;
+	private List<DataSource> slaves = new ArrayList<DataSource>();
 
 	protected Object determineCurrentLookupKey() {
 		return null;
@@ -51,19 +54,27 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 		return returnDataSource;
 	}
 
-	public javax.sql.DataSource getMaster() {
+	public DataSource getMaster() {
 		return this.master;
 	}
 
-	public void setMaster(javax.sql.DataSource master) {
+	public void setMaster(DataSource master) {
 		this.master = master;
 	}
 
-	public List<javax.sql.DataSource> getSlaves() {
+	public List<DataSource> getSlaves() {
 		return this.slaves;
 	}
 
-	public void setSlaves(List<javax.sql.DataSource> slaves) {
+	public void setSlaves(List<DataSource> slaves) {
 		this.slaves = slaves;
+	}
+	
+	public boolean addSlave(DataSource ds) {
+		return this.slaves.add(ds);
+	}
+	
+	public boolean removeSlave(DataSource ds) {
+		return this.slaves.remove(ds);
 	}
 }
