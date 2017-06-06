@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
 @RestController
 public class PaymentGatewayController {
 
@@ -48,7 +50,7 @@ public class PaymentGatewayController {
 	 * @param orderNumber
 	 * @return
 	 */
-	@RequestMapping(value = "/openApi/v1/paymentGateway/query", method = { RequestMethod.GET })
+	@RequestMapping(value = "/openApi/v1/paymentGateway/query", method = GET)
 	public PaymentOrderQueryResponse payQuery(@RequestParam("orderNumber") String orderNumber) throws Exception {
 		PaymentOrderQueryRequest request = new PaymentOrderQueryRequest();
 		request.setOrderNumber(orderNumber);
@@ -63,7 +65,7 @@ public class PaymentGatewayController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/openApi/v1/paymentGateway/unifiedPay", method = { RequestMethod.POST })
+	@RequestMapping(value = "/openApi/v1/paymentGateway/unifiedPay", method = POST)
 	public UnifiedPayResponse unipay(@RequestBody UnifiedPayRequest unipayRequest, HttpServletRequest request) {
 		PaymentRequest paymentRequest = new PaymentRequest();
 		paymentRequest.setPaymentWayCode(unipayRequest.getPayWayCode());
@@ -91,7 +93,7 @@ public class PaymentGatewayController {
 	 * @param servletRequest
 	 * @return
 	 */
-	@RequestMapping(value = "/openApi/v1/paymentGateWay/refund", method = { RequestMethod.POST })
+	@RequestMapping(value = "/openApi/v1/paymentGateWay/refund", method = POST)
 	public RefundResponse applicationRefund(@RequestBody RefundRequest refundRequest, HttpServletRequest servletRequest) {
 		RefundApplication application = new RefundApplication();
 		application.setStatus(RefundApplicationStatus.APPLICATION);
@@ -127,7 +129,7 @@ public class PaymentGatewayController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/paymentGateway/unifiedPay/wechatauthorize", method = { RequestMethod.GET })
+	@RequestMapping(value = "/paymentGateway/unifiedPay/wechatauthorize", method = GET)
 	public Object weChatTest(HttpServletRequest request) {
 		String pageUrl = request.getParameter("pageUrl");
 		Map<String, String> result = new HashMap<>();
@@ -144,7 +146,7 @@ public class PaymentGatewayController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/paymentGateway/unifiedPay/getWeChatOpenid", method = { RequestMethod.GET })
+	@RequestMapping(value = "/paymentGateway/unifiedPay/getWeChatOpenid", method = GET)
 	public Object getWeChatOpenid(HttpServletRequest request) {
 		Map<String, String> result = new HashMap<>();
 		String openid = weChatPublicAuthService.getOpenID(request.getParameter("code"));

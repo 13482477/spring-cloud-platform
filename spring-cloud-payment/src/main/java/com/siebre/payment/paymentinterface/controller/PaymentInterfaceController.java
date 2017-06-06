@@ -17,70 +17,39 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
  *         支付接口
  */
 @RestController
-@RequestMapping("/v1/paymentinterface")
-@CrossOrigin("*")
 public class PaymentInterfaceController {
 
     @Autowired
     private PaymentInterfaceService paymentInterfaceService;
 
-    /**
-     * 根据分页信息查询支付接口
-     *
-     * @param pageInfo
-     * @return
-     */
     @ApiOperation(value = "根据分页信息查询支付接口", notes = "根据分页信息查询支付接口")
-    @RequestMapping(method = GET)
+    @RequestMapping(value = "/api/v1/paymentInterfaces", method = GET)
     public ServiceResult<List<PaymentInterface>> list(PageInfo pageInfo) {
         return paymentInterfaceService.selectByPage(pageInfo);
     }
 
-    /**
-     * 创建支付接口
-     *
-     * @param paymentInterface
-     * @return
-     */
     @ApiOperation(value = "创建支付接口", notes = "创建支付接口")
-    @RequestMapping(method = POST)
+    @RequestMapping(value = "/api/v1/paymentInterfaces", method = POST)
     public ServiceResult<PaymentInterface> create(@RequestBody PaymentInterface paymentInterface) {
         return paymentInterfaceService.createPaymentInterface(paymentInterface);
     }
 
-    /**
-     * 更新支付接口
-     *
-     * @param paymentInterface
-     * @return
-     */
     @ApiOperation(value = "更新支付接口", notes = "更新支付接口")
-    @RequestMapping(method = PUT)
-    public ServiceResult<PaymentInterface> update(@RequestBody PaymentInterface paymentInterface) {
+    @RequestMapping(value = "/api/v1/paymentInterfaces/{interfaceId}", method = PUT)
+    public ServiceResult<PaymentInterface> update(@PathVariable Long interfaceId, @RequestBody PaymentInterface paymentInterface) {
+        paymentInterface.setId(interfaceId);
         return paymentInterfaceService.updatePaymentInterface(paymentInterface);
     }
 
-    /**
-     * 查询详细
-     *
-     * @param id 支付接口id
-     * @return
-     */
     @ApiOperation(value = "查询支付接口详细信息", notes = "查询支付接口详细信息")
-    @RequestMapping(value = "/{id}", method = GET)
-    public ServiceResult<PaymentInterface> detail(@PathVariable Long id) {
-        return paymentInterfaceService.selectById(id);
+    @RequestMapping(value = "/api/v1/paymentInterfaces/{interfaceId}", method = GET)
+    public ServiceResult<PaymentInterface> detail(@PathVariable Long interfaceId) {
+        return paymentInterfaceService.selectById(interfaceId);
     }
 
-    /**
-     * 删除支付接口
-     *
-     * @param id 支付接口id
-     * @return
-     */
     @ApiOperation(value = "删除支付接口", notes = "删除支付接口")
-    @RequestMapping(value = "/{id}", method = DELETE)
-    public ServiceResult delete(@PathVariable Long id) {
-        return paymentInterfaceService.deletePaymentInterfaceById(id);
+    @RequestMapping(value = "/api/v1/paymentInterfaces/{interfaceId}", method = DELETE)
+    public ServiceResult delete(@PathVariable Long interfaceId) {
+        return paymentInterfaceService.deletePaymentInterfaceById(interfaceId);
     }
 }
