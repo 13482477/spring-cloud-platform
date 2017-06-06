@@ -12,7 +12,9 @@ public enum PaymentOrderCheckStatus implements BaseEnum {
 
     SUCCESS(2,"对账成功"),
 
-    FAIL(3,"对账失败"),;
+    FAIL(3,"对账失败"),
+
+    UNUSUAL(4,"对账异常"),;
 
     private PaymentOrderCheckStatus(int value, String description) {
 
