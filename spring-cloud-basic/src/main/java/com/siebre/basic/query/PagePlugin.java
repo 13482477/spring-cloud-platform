@@ -236,13 +236,6 @@ public class PagePlugin implements Interceptor {
 				e.printStackTrace();
 			}
 		}
-		if (dialect == null || dialect.equals("")) {
-			try {
-				throw new PropertyException("pageSqlId property is not found!");
-			} catch (PropertyException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 }
