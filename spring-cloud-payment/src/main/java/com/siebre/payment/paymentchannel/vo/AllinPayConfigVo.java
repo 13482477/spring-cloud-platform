@@ -1,6 +1,8 @@
 package com.siebre.payment.paymentchannel.vo;
 
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
@@ -11,6 +13,7 @@ public class AllinPayConfigVo implements Serializable {
     /**
      * 商户id
      */
+    @ApiModelProperty(value = "商户号", required = true)
     private String merchantCode;
 
     /**
