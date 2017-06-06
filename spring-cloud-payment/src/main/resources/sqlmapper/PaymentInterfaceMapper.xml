@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.paymentinterface.mapper.PaymentInterfaceMapper">
+	<resultMap id="BaseResultMap" type="com.siebre.payment.paymentinterface.entity.PaymentInterface">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="payment_way_id" property="paymentWayId" jdbcType="BIGINT" />
+		<result column="interface_name" property="interfaceName" jdbcType="VARCHAR" />
+		<result column="interface_code" property="interfaceCode" jdbcType="VARCHAR" />
+		<result column="request_url" property="requestUrl" jdbcType="VARCHAR" />
+		<result column="callback_url" property="callbackUrl" jdbcType="VARCHAR" />
+		<result column="return_page_url" property="returnPageUrl" jdbcType="VARCHAR" />
+		<result column="payment_interface_type" property="paymentInterfaceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="handler_bean_name" property="handlerBeanName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="PaymentInterface" type="com.siebre.payment.paymentinterface.entity.PaymentInterface">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="payment_way_id" property="paymentWayId" jdbcType="BIGINT" />
+		<result column="interface_name" property="interfaceName" jdbcType="VARCHAR" />
+		<result column="interface_code" property="interfaceCode" jdbcType="VARCHAR" />
+		<result column="request_url" property="requestUrl" jdbcType="VARCHAR" />
+		<result column="payment_interface_type" property="paymentInterfaceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="handler_bean_name" property="handlerBeanName" jdbcType="VARCHAR" />
+		<association property="paymentWay" javaType="com.siebre.payment.paymentway.entity.PaymentWay">
+			<id column="payment_way_id" property="id" jdbcType="BIGINT" />
+			<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
+			<result column="payment_name" property="name" jdbcType="VARCHAR" />
+			<result column="payment_code" property="code" jdbcType="VARCHAR" />
+			<result column="app_id" property="appId" jdbcType="VARCHAR" />
+			<result column="encryption_mode" property="encryptionMode" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+			<result column="secret_key" property="secretKey" jdbcType="VARCHAR" />
+			<result column="public_key" property="publicKey" jdbcType="VARCHAR" />
+			<result column="credit_path" property="creditPath" jdbcType="VARCHAR" />
+			<result column="credit_key" property="creditKey" jdbcType="VARCHAR" />
+		</association>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,
+		payment_way_id,
+		interface_name,
+		interface_code,
+		request_url,
+		callback_url,
+		return_page_url,
+		payment_interface_type,
+		handler_bean_name
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from
+		pmt_payment_interface
+		where
+		id = #{id,jdbcType=BIGINT}
+	</select>
+
+	<select id="selectByCode" resultMap="PaymentInterface">
+		SELECT
+		i.id AS id,
+		i.interface_code AS interface_code,
+		i.payment_way_id AS payment_way_id,
+		i.interface_name AS interface_name,
+		i.request_url AS request_url,
+		i.callback_url AS callback_url,
+		i.return_page_url AS return_page_url,
+		i.payment_interface_type AS payment_interface_type,
+		i.handler_bean_name AS handler_bean_name,
+
+		w.app_id AS app_id,
+		w.payment_channel_id AS payment_channel_id,
+		w.code AS payment_code,
+		w.name AS payment_name,
+		w.encryption_mode AS encryption_mode,
+		w.secret_key AS secret_key,
+		w.public_key AS public_key,
+		w.credit_path AS credit_path,
+		w.credit_key AS credit_key
+		FROM pmt_payment_interface i LEFT JOIN pmt_payment_way w ON i.payment_way_id = w.id
+		WHERE
+		i.payment_interface_type = 5
+		AND i.interface_code = #{interfaceCode}
+
+
+	</select>
+
+	<delete id="deleteByPaymentWayId" parameterType="java.lang.Long">
+		DELETE FROM
+		pmt_payment_interface
+		WHERE
+		payment_way_id = #{paymentWayId,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		DELETE FROM
+		pmt_payment_interface
+		WHERE
+		id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.siebre.payment.paymentinterface.entity.PaymentInterface" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO pmt_payment_interface (
+		id,
+		payment_way_id,
+		interface_name,
+		interface_code,
+		request_url,
+		callback_url,
+		return_page_url,
+		payment_interface_type,
+		handler_bean_name
+		)
+		VALUES (
+		#{id,jdbcType=BIGINT},
+		#{paymentWayId,jdbcType=BIGINT},
+		#{interfaceName,jdbcType=VARCHAR},
+		#{interfaceCode,jdbcType=VARCHAR},
+		#{requestUrl,jdbcType=VARCHAR},
+		#{callbackUrl,jdbcType=VARCHAR},
+		#{returnPageUrl,jdbcType=VARCHAR},
+		#{paymentInterfaceType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		#{handlerBeanName,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.siebre.payment.paymentinterface.entity.PaymentInterface" useGeneratedKeys="true" keyProperty="id">
+		insert into pmt_payment_interface
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="paymentWayId != null">
+				payment_way_id,
+			</if>
+			<if test="interfaceName != null">
+				interface_name,
+			</if>
+			<if test="interfaceCode != null">
+				interface_code,
+			</if>
+			<if test="requestUrl != null">
+				request_url,
+			</if>
+			<if test="callbackUrl != null">
+				callback_url,
+			</if>
+			<if test="returnPageUrl != null">
+				return_page_url,
+			</if>
+			<if test="paymentInterfaceType != null">
+				payment_interface_type,
+			</if>
+			<if test="handlerBeanName != null">
+				handler_bean_name
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="paymentWayId != null">
+				#{paymentWayId,jdbcType=BIGINT},
+			</if>
+			<if test="interfaceName != null">
+				#{interfaceName,jdbcType=VARCHAR},
+			</if>
+			<if test="interfaceCode != null">
+				#{interfaceCode,jdbcType=VARCHAR},
+			</if>
+			<if test="requestUrl != null">
+				#{requestUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="callbackUrl != null">
+				#{callbackUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="returnPageUrl != null">
+				#{returnPageUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentInterfaceType != null">
+				#{paymentInterfaceType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
+			<if test="handlerBeanName != null">
+				#{handlerBeanName,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.paymentinterface.entity.PaymentInterface">
+		update pmt_payment_interface
+		<set>
+			<if test="paymentWayId != null">
+				payment_way_id = #{paymentWayId,jdbcType=BIGINT},
+			</if>
+			<if test="interfaceName != null">
+				interface_name = #{interfaceName,jdbcType=VARCHAR},
+			</if>
+			<if test="interfaceCode != null">
+				interface_code = #{interfaceCode,jdbcType=VARCHAR},
+			</if>
+			<if test="requestUrl != null">
+				request_url = #{requestUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="callbackUrl != null">
+				callback_url = #{callbackUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="returnPageUrl != null">
+				return_page_url = #{returnPageUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentInterfaceType != null">
+				payment_interface_type =
+				#{paymentInterfaceType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
+			<if test="handlerBeanName != null">
+				handler_bean_name = #{handlerBeanName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where
+		id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.paymentinterface.entity.PaymentInterface">
+		UPDATE
+		pmt_payment_interface
+		SET
+		payment_way_id = #{paymentWayId,jdbcType=BIGINT},
+		interface_name = #{interfaceName,jdbcType=VARCHAR},
+		interface_code = #{interfaceCode,jdbcType=VARCHAR},
+		request_url = #{requestUrl,jdbcType=VARCHAR},
+		callback_url = #{callbackUrl,jdbcType=VARCHAR},
+		return_page_url = #{returnPageUrl,jdbcType=VARCHAR},
+		payment_interface_type = #{paymentInterfaceType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		handler_bean_name = #{handlerBeanName,jdbcType=VARCHAR}
+		WHERE
+		id = #{id,jdbcType=BIGINT}
+	</update>
+	<select id="selectByPaymentWayId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from
+		pmt_payment_interface
+		where
+		payment_way_id = #{paymentWayId,jdbcType=BIGINT}
+	</select>
+	<select id="selectByPage" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		pmt_payment_interface
+		where
+		1=1
+	</select>
+</mapper>

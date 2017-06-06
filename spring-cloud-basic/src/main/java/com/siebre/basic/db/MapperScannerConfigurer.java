@@ -1,7 +1,5 @@
 package com.siebre.basic.db;
 
-import java.lang.annotation.Annotation;
-import java.util.Map;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
@@ -20,6 +18,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.lang.annotation.Annotation;
+import java.util.Map;
 
 /**
  * 

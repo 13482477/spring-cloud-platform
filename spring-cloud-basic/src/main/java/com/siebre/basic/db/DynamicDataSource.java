@@ -77,5 +77,4 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 	public boolean removeSlave(DataSource ds) {
 		return this.slaves.remove(ds);
 	}
-	
 }

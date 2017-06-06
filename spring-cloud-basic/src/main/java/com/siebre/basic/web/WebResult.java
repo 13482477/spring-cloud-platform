@@ -1,14 +1,18 @@
 package com.siebre.basic.web;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.siebre.basic.query.PageInfo;
 
+import java.io.Serializable;
+
 public class WebResult<T> implements Serializable {
 
 	private static final long serialVersionUID = -6145741379535874029L;
+	
+	public static final String SUCCESS_CODE = "200";
+
+	public static final String FAIL_CODE = "500";
 
 	private String returnCode;
 

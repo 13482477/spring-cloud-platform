@@ -85,8 +85,8 @@
 								</generatorConfiguration>
 							</generatorConfigurations>
 							<jvmSettings>
-								<initialMemorySize>256M</initialMemorySize>
-								<maxMemorySize>512M</maxMemorySize>
+								<initialMemorySize>128M</initialMemorySize>
+								<maxMemorySize>256M</maxMemorySize>
 								<extraArguments>
 									<extraArgument>-server</extraArgument>
 								</extraArguments>

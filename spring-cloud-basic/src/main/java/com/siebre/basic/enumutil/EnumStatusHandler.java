@@ -1,12 +1,12 @@
 package com.siebre.basic.enumutil;
 
+import org.apache.ibatis.type.BaseTypeHandler;
+import org.apache.ibatis.type.JdbcType;
+
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.apache.ibatis.type.BaseTypeHandler;
-import org.apache.ibatis.type.JdbcType;
 
 public class EnumStatusHandler<E extends BaseEnum> extends BaseTypeHandler<BaseEnum> {
 

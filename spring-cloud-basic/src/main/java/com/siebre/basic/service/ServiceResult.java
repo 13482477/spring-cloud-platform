@@ -1,11 +1,10 @@
 package com.siebre.basic.service;
 
-import java.io.Serializable;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.web.WebResult;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
 
 public class ServiceResult<T> implements Serializable {
 

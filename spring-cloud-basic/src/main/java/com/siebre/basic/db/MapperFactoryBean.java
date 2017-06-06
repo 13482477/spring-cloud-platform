@@ -2,6 +2,8 @@ package com.siebre.basic.db;
 
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.util.Assert;
 
@@ -12,6 +14,9 @@ import org.springframework.util.Assert;
  * @param <T>
  */
 public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements FactoryBean<T> {
+
+	private Logger logger = LoggerFactory.getLogger(MapperFactoryBean.class);
+
 	private Class<T> mapperInterface;
 	private boolean addToConfig = true;
 

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.policylibility.mapper.PolicyLibilityMapper">
+	<resultMap id="BaseResultMap" type="com.siebre.payment.policylibility.entity.PolicyLibility">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="order_item_id" property="orderItemId" jdbcType="BIGINT" />
+		<result column="libility_name" property="libilityName" jdbcType="VARCHAR" />
+		<result column="insured_amount" property="insuredAmount" jdbcType="DECIMAL" />
+		<result column="premium" property="premium" jdbcType="DECIMAL" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id,
+		order_item_id,
+		libility_name,
+		insured_amount,
+		premium
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from pmt_policy_libility
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from pmt_policy_libility
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.siebre.payment.policylibility.entity.PolicyLibility" useGeneratedKeys="true" keyProperty="id">
+		insert into pmt_policy_libility (id, order_item_id, libility_name,
+		insured_amount, premium)
+		values (#{id,jdbcType=BIGINT}, #{orderItemId,jdbcType=BIGINT}, #{libilityName,jdbcType=VARCHAR},
+		#{insuredAmount,jdbcType=DECIMAL}, #{premium,jdbcType=DECIMAL})
+	</insert>
+	<insert id="insertSelective" parameterType="com.siebre.payment.policylibility.entity.PolicyLibility" useGeneratedKeys="true" keyProperty="id">
+		insert into pmt_policy_libility
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="orderItemId != null">
+				order_item_id,
+			</if>
+			<if test="libilityName != null">
+				libility_name,
+			</if>
+			<if test="insuredAmount != null">
+				insured_amount,
+			</if>
+			<if test="premium != null">
+				premium,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="orderItemId != null">
+				#{orderItemId,jdbcType=BIGINT},
+			</if>
+			<if test="libilityName != null">
+				#{libilityName,jdbcType=VARCHAR},
+			</if>
+			<if test="insuredAmount != null">
+				#{insuredAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="premium != null">
+				#{premium,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.policylibility.entity.PolicyLibility">
+		update pmt_policy_libility
+		<set>
+			<if test="orderItemId != null">
+				order_item_id = #{orderItemId,jdbcType=BIGINT},
+			</if>
+			<if test="libilityName != null">
+				libility_name = #{libilityName,jdbcType=VARCHAR},
+			</if>
+			<if test="insuredAmount != null">
+				insured_amount = #{insuredAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="premium != null">
+				premium = #{premium,jdbcType=DECIMAL},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.policylibility.entity.PolicyLibility">
+		update pmt_policy_libility
+		set order_item_id = #{orderItemId,jdbcType=BIGINT},
+		libility_name = #{libilityName,jdbcType=VARCHAR},
+		insured_amount = #{insuredAmount,jdbcType=DECIMAL},
+		premium = #{premium,jdbcType=DECIMAL}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+</mapper>
