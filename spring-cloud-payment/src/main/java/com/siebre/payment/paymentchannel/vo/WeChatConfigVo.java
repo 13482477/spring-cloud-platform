@@ -22,7 +22,7 @@ public class WeChatConfigVo implements Serializable{
     @ApiModelProperty(value = "API密钥", required = true)
     private String secretKey;
 
-    @ApiModelProperty(value = "操作员账号", required = true)
+    @ApiModelProperty(value = "操作员账号", required = false)
     private String opUesrId;
 
     public String getMerchantCode() {
