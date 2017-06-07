@@ -19,6 +19,8 @@
 		<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
 		<result column="selling_channel" property="sellingChannel" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="message_id" property="messageId" jdbcType="VARCHAR" />
+		<result column="amount" property="amount" jdbcType="DECIMAL" />
+		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
 		<association property="paymentChannel" javaType="com.siebre.payment.paymentchannel.entity.PaymentChannel" columnPrefix="paymentChannel_">
 			<result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
 			<result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
@@ -43,6 +45,8 @@
 		<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
 		<result column="selling_channel" property="sellingChannel" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="message_id" property="messageId" jdbcType="VARCHAR" />
+		<result column="amount" property="amount" jdbcType="DECIMAL" />
+		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
 		<collection property="paymentOrderItems" notNullColumn="id" javaType="com.siebre.payment.paymentorderitem.entity.PaymentOrderItem" columnPrefix="paymentOrderItem_">
 			<id column="id" property="id" jdbcType="BIGINT" />
 			<result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT" />
@@ -100,6 +104,8 @@
 		pmt_payment_order.payment_way_code,
 		pmt_payment_order.selling_channel,
 		pmt_payment_order.message_id,
+		pmt_payment_order.amount,
+		pmt_payment_order.check_time,
 		pmt_payment_order_item.id paymentOrderItem_id,
 		pmt_payment_order_item.payment_order_id paymentOrderItem_payment_order_id,
 		pmt_payment_order_item.application_number paymentOrderItem_application_number,
@@ -148,7 +154,9 @@
 		refund_amount,
 		payment_way_code,
 		selling_channel,
-		message_id
+		message_id,
+		amount,
+		check_time
 	</sql>
 
 	<sql id="colnum_for_page">
@@ -169,6 +177,8 @@
 		pmt_payment_order.payment_way_code,
 		pmt_payment_order.selling_channel,
 		pmt_payment_order.message_id,
+		pmt_payment_order.amount,
+		pmt_payment_order.check_time,
 		pmt_payment_channel.channel_name paymentChannel_channel_name,
 		pmt_payment_channel.channel_code paymentChannel_channel_code
 	</sql>
@@ -202,7 +212,9 @@
 		payment_way_code,
 		selling_channel,
 		refund_status,
-		message_id
+		message_id,
+		amount,
+		check_time
 		)
 		values (
 		#{orderNumber,jdbcType=VARCHAR},
@@ -220,7 +232,9 @@
 		#{paymentWayCode,jdbcType=VARCHAR},
 		#{sellingChannel,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{refundStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
-		#{messageId,jdbcType=VARCHAR}
+		#{messageId,jdbcType=VARCHAR},
+		#{amount,jdbcType=DECIMAL},
+		#{checkTime,jdbcType=TIMESTAMP}
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.siebre.payment.paymentorder.entity.PaymentOrder" useGeneratedKeys="true" keyProperty="id">
@@ -277,6 +291,12 @@
 			<if test="messageId!=null">
 				message_id,
 			</if>
+			<if test="amount!=null">
+				amount,
+			</if>
+			<if test="checkTime!=null">
+				check_time,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -329,6 +349,12 @@
 			</if>
 			<if test="messageId!=null">
 				#{messageId,jdbcType=VARCHAR},
+			</if>
+			<if test="amount!=null">
+				#{amount,jdbcType=DECIMAL},
+			</if>
+			<if test="checkTime!=null">
+				#{checkTime,jdbcType=TIMESTAMP},
 			</if>
 		</trim>
 	</insert>
@@ -383,6 +409,12 @@
 			<if test="messageId!=null">
 				message_id = #{paymentWayCode,jdbcType=VARCHAR},
 			</if>
+			<if test="amount != null">
+				amount = #{amount,jdbcType=DECIMAL},
+			</if>
+			<if test="checkTime != null">
+				check_time = #{checkTime,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
@@ -403,7 +435,9 @@
 		payment_way_code = #{paymentWayCode,jdbcType=VARCHAR},
 		refund_status = #{refundStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		selling_channel = #{sellingChannel,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
-		message_id = #{messageId,jdbcType=VARCHAR}
+		message_id = #{messageId,jdbcType=VARCHAR},
+		amount = #{amount,jdbcType=DECIMAL},
+		check_time = #{checkTime,jdbcType=VARCHAR}
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 
@@ -703,6 +737,45 @@
 		payment_channel_id
 		) table3
 		on paymentChannel.id = table3.payment_channel_id
+	</select>
+
+	<select id="getOrdersByChannelAndDate" resultMap="BaseResultMap">
+		select
+		<include refid="colnum_for_page"/>
+		from
+		pmt_payment_order
+		left join
+		pmt_payment_channel on pmt_payment_order.payment_channel_id = pmt_payment_channel.id
+		WHERE 1 = 1
+		<if test="channelId != null and channelId != ''">
+			and pmt_payment_order.payment_channel_id = #{channelId,jdbcType=VARCHAR}
+		</if>
+		<if test="checkStartDate != null">
+			and pmt_payment_order.create_time &gt; #{checkStartDate,jdbcType=VARCHAR}
+		</if>
+		<if test="checkEndDate != null">
+			and pmt_payment_order.create_time &lt; #{checkEndDate,jdbcType=VARCHAR}
+		</if>
+		order by
+		pmt_payment_order.create_time desc
+	</select>
+
+	<select id="getOrdersByCheckDate" resultMap="BaseResultMap">
+		select
+		<include refid="colnum_for_page"/>
+		from
+		pmt_payment_order
+		left join
+		pmt_payment_channel on pmt_payment_order.payment_channel_id = pmt_payment_channel.id
+		WHERE 1 = 1
+		<if test="checkStartDate != null">
+			and pmt_payment_order.create_time &gt; #{checkStartDate,jdbcType=VARCHAR}
+		</if>
+		<if test="checkEndDate != null">
+			and pmt_payment_order.create_time &lt; #{checkEndDate,jdbcType=VARCHAR}
+		</if>
+		order by
+		pmt_payment_order.create_time desc
 	</select>
 
 </mapper>

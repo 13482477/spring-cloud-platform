@@ -28,6 +28,8 @@ public class PaymentOrder extends BaseObject {
 
     private BigDecimal totalPremium;
 
+    private BigDecimal amount;//订单支付金额
+
     private Integer businessPlantform;
 
     private Integer paymentClient;
@@ -53,6 +55,8 @@ public class PaymentOrder extends BaseObject {
      * 对账状态
      */
     private PaymentOrderCheckStatus checkStatus;
+
+    private Date checkTime;//对账时间
 
     //退款状态
     private PaymentOrderRefundStatus refundStatus;
@@ -224,6 +228,22 @@ public class PaymentOrder extends BaseObject {
 
     public void setMessageId(String messageId) {
         this.messageId = messageId;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public Date getCheckTime() {
+        return checkTime;
+    }
+
+    public void setCheckTime(Date checkTime) {
+        this.checkTime = checkTime;
     }
 
     public Long getPaymentAccoundId() {
