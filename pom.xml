@@ -141,7 +141,8 @@
 		<module>spring-cloud-message-consumer</module>
 		<module>spring-cloud-payment</module>
 		<module>spring-cloud-admin</module>
-	</modules>
+    	<module>spring-cloud-iproduct-webapp</module>
+  </modules>
 
 	<build>
 		<plugins>
