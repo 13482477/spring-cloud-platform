@@ -68,6 +68,8 @@ public class PaymentOrder extends BaseObject {
      */
     private String messageId;
 
+    private Long paymentAccoundId;
+
     private List<PaymentOrderItem> paymentOrderItems = new ArrayList<PaymentOrderItem>();
 
     private List<PaymentTransaction> paymentTransactions = new ArrayList<PaymentTransaction>();
@@ -222,6 +224,14 @@ public class PaymentOrder extends BaseObject {
 
     public void setMessageId(String messageId) {
         this.messageId = messageId;
+    }
+
+    public Long getPaymentAccoundId() {
+        return paymentAccoundId;
+    }
+
+    public void setPaymentAccoundId(Long paymentAccoundId) {
+        this.paymentAccoundId = paymentAccoundId;
     }
 
     @Override

@@ -24,7 +24,7 @@
     delete from pmt_payment_account
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.siebre.payment.paymentaccount.entity.PaymentAccount" >
+  <insert id="insert" parameterType="com.siebre.payment.paymentaccount.entity.PaymentAccount" useGeneratedKeys="true" keyProperty="id">
     insert into pmt_payment_account (id, type, 
       account_type, 
       acount_number, bank_code, holder_name, 
@@ -34,7 +34,7 @@
       #{acountNumber,jdbcType=VARCHAR}, #{bankCode,jdbcType=VARCHAR}, #{holderName,jdbcType=VARCHAR}, 
       #{nickName,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.siebre.payment.paymentaccount.entity.PaymentAccount" >
+  <insert id="insertSelective" parameterType="com.siebre.payment.paymentaccount.entity.PaymentAccount" useGeneratedKeys="true" keyProperty="id">
     insert into pmt_payment_account
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
