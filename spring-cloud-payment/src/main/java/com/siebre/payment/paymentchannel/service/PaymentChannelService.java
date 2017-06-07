@@ -64,7 +64,6 @@ public class PaymentChannelService {
 		result.add(initChannel("JD_PAY", "京东支付"));
 		result.add(initChannel("BD_PAY", "百度支付"));
 		result.add(initChannel("YWT_PAY", "一网通支付"));
-		result.add(initChannel("YWT_PAY", "一网通支付"));
 		result.add(initChannel(AllinpayConstants.CHANNEL_CODE, "通联支付"));
 		result.add(initChannel(BaofooConfig.CHANNEL_CODE, "宝付支付"));
 		return result;

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.paymentaccount.mapper.PaymentAccountMapper" >
+  <resultMap id="BaseResultMap" type="com.siebre.payment.paymentaccount.entity.PaymentAccount" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="INTEGER" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+    <result column="account_type" property="accountType" jdbcType="INTEGER" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+    <result column="acount_number" property="acountNumber" jdbcType="VARCHAR" />
+    <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+    <result column="holder_name" property="holderName" jdbcType="VARCHAR" />
+    <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
+    <result column="openid" property="openid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, type, account_type, acount_number, bank_code, holder_name, nick_name, openid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from pmt_payment_account
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from pmt_payment_account
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.siebre.payment.paymentaccount.entity.PaymentAccount" >
+    insert into pmt_payment_account (id, type, 
+      account_type, 
+      acount_number, bank_code, holder_name, 
+      nick_name, openid)
+    values (#{id,jdbcType=BIGINT}, #{type,jdbcType=INTEGER,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler}, 
+      #{accountType,jdbcType=INTEGER,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler}, 
+      #{acountNumber,jdbcType=VARCHAR}, #{bankCode,jdbcType=VARCHAR}, #{holderName,jdbcType=VARCHAR}, 
+      #{nickName,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.siebre.payment.paymentaccount.entity.PaymentAccount" >
+    insert into pmt_payment_account
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="accountType != null" >
+        account_type,
+      </if>
+      <if test="acountNumber != null" >
+        acount_number,
+      </if>
+      <if test="bankCode != null" >
+        bank_code,
+      </if>
+      <if test="holderName != null" >
+        holder_name,
+      </if>
+      <if test="nickName != null" >
+        nick_name,
+      </if>
+      <if test="openid != null" >
+        openid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      </if>
+      <if test="accountType != null" >
+        #{accountType,jdbcType=INTEGER,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      </if>
+      <if test="acountNumber != null" >
+        #{acountNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="bankCode != null" >
+        #{bankCode,jdbcType=VARCHAR},
+      </if>
+      <if test="holderName != null" >
+        #{holderName,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null" >
+        #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="openid != null" >
+        #{openid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.paymentaccount.entity.PaymentAccount" >
+    update pmt_payment_account
+    <set >
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      </if>
+      <if test="accountType != null" >
+        account_type = #{accountType,jdbcType=INTEGER,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      </if>
+      <if test="acountNumber != null" >
+        acount_number = #{acountNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="bankCode != null" >
+        bank_code = #{bankCode,jdbcType=VARCHAR},
+      </if>
+      <if test="holderName != null" >
+        holder_name = #{holderName,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null" >
+        nick_name = #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="openid != null" >
+        openid = #{openid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.paymentaccount.entity.PaymentAccount" >
+    update pmt_payment_account
+    set type = #{type,jdbcType=INTEGER,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      account_type = #{accountType,jdbcType=INTEGER,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+      acount_number = #{acountNumber,jdbcType=VARCHAR},
+      bank_code = #{bankCode,jdbcType=VARCHAR},
+      holder_name = #{holderName,jdbcType=VARCHAR},
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      openid = #{openid,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

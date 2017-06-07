@@ -1,4 +1,4 @@
-package com.siebre.message.test.config;
+package com.siebre.config;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
