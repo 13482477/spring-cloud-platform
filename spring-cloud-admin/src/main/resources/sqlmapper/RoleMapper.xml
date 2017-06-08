@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.admin.role.mapper.RoleMapper">
+    <resultMap id="BaseRole" type="com.siebre.admin.role.entity.Role">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="role_name" property="roleName" jdbcType="VARCHAR"/>
+        <result column="role_code" property="roleCode" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <resultMap id="RoleResourceMap" type="com.siebre.admin.role.entity.Role" extends="BaseRole">
+    	<collection property="authorities" ofType="com.siebre.admin.authority.entity.Authority" columnPrefix="authority_">
+    		<id column="id" property="id" jdbcType="BIGINT"/>
+	        <result column="authority_name" property="authorityName" jdbcType="VARCHAR"/>
+	        <result column="authority_code" property="authorityCode" jdbcType="VARCHAR"/>
+	        <result column="description" property="description" jdbcType="VARCHAR"/>
+	        <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+	        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+	        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+	        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
+    	</collection>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        sys_role.id id, 
+        sys_role.role_name role_name, 
+        sys_role.role_code role_code, 
+        sys_role.description description, 
+        sys_role.create_user create_user, 
+        sys_role.create_date create_date, 
+        sys_role.update_user update_user, 
+        sys_role.update_date update_date
+    </sql>
+    
+    <sql id="Authority_Column_List">
+        sys_authority.id authority_id, 
+        sys_authority.authority_name authority_authority_name, 
+        sys_authority.authority_code authority_authority_code, 
+        sys_authority.description authority_description, 
+        sys_authority.create_user authority_create_user, 
+        sys_authority.create_date authority_create_date, 
+        sys_authority.update_user authority_update_user, 
+        sys_authority.update_date authority_update_date
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseRole" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    
+    <select id="selectByRoleName" resultMap="BaseRole" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role
+        where name = #{name,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByUserID" resultMap="BaseRole" parameterType="java.lang.Long">
+        select
+            id, role_name, role_code, description
+        from sys_role  LEFT JOIN sys_user_role  ON sys_role.id = sys_user_role.role_id
+        where sys_user_role.user_id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectAll" resultMap="BaseRole">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role;
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM sys_role
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.siebre.admin.role.entity.Role" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_role (id, role_name, role_code,
+                              description, create_user, create_date,
+                              update_user, update_date)
+        VALUES (#{id,jdbcType=BIGINT}, #{roleName,jdbcType=VARCHAR}, #{roleCode,jdbcType=VARCHAR},
+                #{description,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP},
+                #{updateUser,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="com.siebre.admin.role.entity.Role" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="roleName != null">
+                role_name,
+            </if>
+            <if test="roleCode != null">
+                role_code,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="updateUser != null">
+                update_user,
+            </if>
+            <if test="updateDate != null">
+                update_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null">
+                #{roleCode,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null">
+                #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.siebre.admin.role.entity.Role">
+        update sys_role
+        <set>
+            <if test="roleName != null">
+                role_name = #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="roleCode != null">
+                role_code = #{roleCode,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.siebre.admin.role.entity.Role">
+        UPDATE sys_role
+        SET role_name   = #{roleName,jdbcType=VARCHAR},
+            role_code   = #{roleCode,jdbcType=VARCHAR},
+            description = #{description,jdbcType=VARCHAR},
+            create_user = #{createUser,jdbcType=VARCHAR},
+            create_date = #{createDate,jdbcType=TIMESTAMP},
+            update_user = #{updateUser,jdbcType=VARCHAR},
+            update_date = #{updateDate,jdbcType=TIMESTAMP}
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+    
+    <select id="findRole" resultMap="BaseRole">
+    	select
+        <include refid="Base_Column_List"/>
+        from 
+        	sys_role
+        where 
+        	1 = 1
+        	<if test="roleName != null and roleName != '' " >
+                and role_name = #{roleName,jdbcType=VARCHAR}
+            </if>
+            <if test="roleCode != null and roleCode !='' ">
+                and role_code = #{roleCode,jdbcType=VARCHAR}
+            </if>
+    </select>
+    
+    <select id="getRole" resultMap="RoleResourceMap" parameterType="java.lang.Long">
+        select
+        	<include refid="Base_Column_List"/>,
+        	<include refid="Authority_Column_List"/>
+        from sys_role
+        	left join sys_role_authority 
+        		on sys_role.id = sys_role_authority.role_id
+        	left join sys_authority
+        		on sys_role_authority.authority_id = sys_authority.id
+        where
+        	sys_role.id = #{id,jdbcType=BIGINT}
+    </select>
+    
+    <delete id="removeRoleAuthority">
+    	delete from 
+    		sys_role_authority
+    	where
+    		role_id = #{roleId, jdbcType=BIGINT}
+    </delete>
+    
+    <insert id="grantAuthority">
+    	insert into
+    		sys_role_authority (
+    		role_id,
+    		authority_id
+    	)
+    	values
+    	<foreach collection="authorityIds" item="authorityId" index="index" separator="," >  
+        (
+        	#{roleId},
+        	#{authorityId}
+        )
+    	</foreach> 
+    </insert>
+    
+</mapper>
