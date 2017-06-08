@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.admin.resource.mapper.ResourceMapper">
+	<resultMap id="BaseResultMap" type="com.siebre.admin.model.resource.Resource">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="resource_type" property="resourceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="resource_name" property="resourceName" jdbcType="VARCHAR" />
+		<result column="resource_code" property="resourceCode" jdbcType="VARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<result column="parent_id" property="parentId" jdbcType="BIGINT" />
+	</resultMap>
+	
+	<resultMap id="ResourceAuthorityMapper" type="com.siebre.admin.model.resource.Resource" extends="BaseResultMap">
+		<collection property="authorities" ofType="com.siebre.admin.model.authority.Authority" columnPrefix="authority_" >
+			<id column="id" property="id" jdbcType="BIGINT"/>
+			<result column="authority_name" property="authorityName" jdbcType="VARCHAR"/>
+			<result column="authority_code" property="authorityCode" jdbcType="VARCHAR"/>
+			<result column="descirption" property="deacription" jdbcType="VARCHAR"/>
+		</collection>
+	</resultMap>
+	
+	<resultMap id="BaseResultMap2" type="com.siebre.admin.model.resource.Resource">
+		<id column="r_id" property="id" jdbcType="BIGINT" />
+		<result column="r_resource_type" property="resourceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="r_resource_name" property="resourceName" jdbcType="VARCHAR" />
+		<result column="r_resource_code" property="resourceCode" jdbcType="VARCHAR" />
+		<result column="r_url" property="url" jdbcType="VARCHAR" />
+		<result column="r_description" property="description" jdbcType="VARCHAR" />
+		<result column="r_create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="r_create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="r_update_user" property="updateUser" jdbcType="VARCHAR" />
+		<result column="r_update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<result column="r_parent_id" property="parentId" jdbcType="BIGINT" />
+		<collection property="authorities" ofType="com.siebre.admin.model.authority.Authority" >
+			<id column="a_id" property="id" jdbcType="BIGINT"/>
+			<result column="a_authority_name" property="authorityName" jdbcType="VARCHAR"/>
+			<result column="a_authority_code" property="authorityCode" jdbcType="VARCHAR"/>
+			<result column="a_descirption" property="deacription" jdbcType="VARCHAR"/>
+		</collection>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		sys_resource.id id, 
+		sys_resource.resource_type resource_type, 
+		sys_resource.resource_name resource_name, 
+		sys_resource.resource_code resource_code, 
+		sys_resource.url url, 
+		sys_resource.description description, 
+		sys_resource.sequence sequence, 
+		sys_resource.parent_id parent_id,
+		sys_resource.create_user create_user,
+		sys_resource.create_date create_date, 
+		sys_resource.update_user update_user, 
+		sys_resource.update_date update_date
+	</sql>
+
+	<sql id="Authority_Column_List">
+		sys_authority.id authority_id, 
+		sys_authority.authority_name authority_authority_name, 
+		sys_authority.authority_code authority_authority_code, 
+		sys_authority.description authority_description
+	</sql>
+	
+	<sql id="From_Resource_Authority">
+		sys_resource
+			left join 
+				sys_authority_resource on sys_resource.id = sys_authority_resource.resource_id
+			left join
+				sys_authority on sys_authority_resource.authority_id = sys_authority.id
+	</sql>
+	
+	
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />,
+		<include refid="Authority_Column_List" />
+		from
+		<include refid="From_Resource_Authority" />
+		where sys_resource.id = #{id}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from sys_resource
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+
+
+	<delete id="clearAuthority" parameterType="java.lang.Long">
+		delete from sys_authority_resource
+		where resource_id = #{id,jdbcType=BIGINT}
+	</delete>
+
+	<insert id="insert" parameterType="com.siebre.admin.model.resource.Resource" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_resource (
+			resource_type,
+			url,
+			resource_name,
+			resource_code,
+			description,
+			create_user,
+			create_date,
+			update_user,
+			update_date,
+			parent_id,
+			sequence
+		)
+		values (
+			#{resourceType, typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			#{url, jdbcType=VARCHAR},
+			#{resourceName, jdbcType=VARCHAR},
+			#{resourceCode, jdbcType=VARCHAR},
+			#{description, jdbcType=VARCHAR},
+			#{createUser, jdbcType=VARCHAR},
+			#{createDate, jdbcType=TIMESTAMP},
+			#{updateUser, jdbcType=VARCHAR},
+			#{updateDate, jdbcType=TIMESTAMP},
+			#{parentId, jdbcType=BIGINT},
+			#{sequence, jdbcType=BIGINT}
+		)
+	</insert>
+	
+	<insert id="insertResourceAuthority">
+		insert into sys_authority_resource (
+			resource_id,
+			authority_id
+		)
+		values (
+			#{resourceId, jdbcType=BIGINT},
+			#{authorityId, jdbcType=BIGINT}
+		)
+	</insert>
+	
+	<insert id="insertSelective" parameterType="com.siebre.admin.model.resource.Resource" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_resource
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="resourceType != null">
+				resource_type,
+			</if>
+			<if test="resourceName != null">
+				resource_name,
+			</if>
+			<if test="resourceCode != null">
+				resource_code,
+			</if>
+			<if test="url != null">
+				url,
+			</if>
+			<if test="description != null">
+				description,
+			</if>
+			<if test="sequence != null">
+				sequence,
+			</if>
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="createUser != null">
+				create_user,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="updateUser != null">
+				update_user,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="resourceType != null">
+				#{resourceType,jdbcType=INTEGER},
+			</if>
+			<if test="resourceName != null">
+				#{resourceName,jdbcType=VARCHAR},
+			</if>
+			<if test="resourceCode != null">
+				#{resourceCode,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				#{url,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=VARCHAR},
+			</if>
+			<if test="sequence != null">
+				#{sequence,jdbcType=INTEGER},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=BIGINT},
+			</if>
+			<if test="createUser != null">
+				#{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				#{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.admin.model.resource.Resource">
+		update sys_resource
+		<set>
+			<if test="resourceType != null">
+				resource_type = #{resourceType.value,jdbcType=INTEGER},
+			</if>
+			<if test="resourceName != null">
+				resource_name = #{resourceName,jdbcType=VARCHAR},
+			</if>
+			<if test="resourceCode != null">
+				resource_code = #{resourceCode,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				url = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				description = #{description,jdbcType=VARCHAR},
+			</if>
+			<if test="sequence != null">
+				sequence = #{sequence,jdbcType=INTEGER},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=BIGINT},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.siebre.admin.model.resource.Resource">
+		update sys_resource
+		set resource_type = #{resourceType.value,jdbcType=INTEGER},
+		resource_name = #{resourceName,jdbcType=VARCHAR},
+		resource_code = #{resourceCode,jdbcType=VARCHAR},
+		url = #{url,jdbcType=VARCHAR},
+		description = #{description,jdbcType=VARCHAR},
+		sequence = #{sequence,jdbcType=INTEGER},
+		parent_id = #{parentId,jdbcType=BIGINT},
+		create_user = #{createUser,jdbcType=VARCHAR},
+		create_date = #{createDate,jdbcType=TIMESTAMP},
+		update_user = #{updateUser,jdbcType=VARCHAR},
+		update_date = #{updateDate,jdbcType=TIMESTAMP}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<select id="getChildren" resultMap="BaseResultMap">
+		select
+		*
+		from
+		sys_resource
+		where 1 = 1
+		<if test="parentId != null">
+			and parent_id = #{parentId}
+		</if>
+		<if test="parentId == null">
+			and parent_id is null
+		</if>
+		ORDER by sys_resource.sequence
+	</select>
+
+	<select id="getChildrenCount" resultType="java.lang.Long">
+		select
+		count(*)
+		from
+		sys_resource
+		where 1 = 1
+		<if test="parentId != null">
+			and parent_id = #{parentId}
+		</if>
+		<if test="parentId == null">
+			and parent_id is null
+		</if>
+	</select>
+	
+	<select id="getAllResource" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sys_resource
+	</select>
+	
+	<select id="getResourceByParent" resultMap="ResourceAuthorityMapper">
+		select
+		<include refid="Base_Column_List" />,
+		<include refid="Authority_Column_List" />
+		from 
+		<include refid="From_Resource_Authority" />
+		where
+			1 = 1
+			<if test="parentId != null">
+				and parent_id = #{parentId}
+			</if>
+			<if test="parentId == null">
+				and parent_id is null
+			</if>
+			<if test="type != null">
+				and resource_type = #{type.value}
+			</if>
+	</select>
+
+	<select id="getSortedResourceByParent" resultMap="ResourceAuthorityMapper">
+		select
+		<include refid="Base_Column_List" />,
+		<include refid="Authority_Column_List" />
+		from
+		<include refid="From_Resource_Authority" />
+		where
+		1 = 1
+		<if test="parentId != null">
+			and parent_id = #{parentId}
+		</if>
+		<if test="parentId == null">
+			and parent_id is null
+		</if>
+		<if test="type != null">
+			and resource_type = #{type.value}
+		</if>
+		ORDER by sys_resource.sequence
+	</select>
+	
+	<select id="getResourcesByIds" resultMap="BaseResultMap2">
+		select
+		r.id r_id, 
+		r.resource_type r_resource_type, 
+		r.resource_name r_resource_name, 
+		r.resource_code r_resource_code, 
+		r.url r_url, 
+		r.description r_description, 
+		r.sequence r_sequence, 
+		r.parent_id r_parent_id,
+		r.create_user r_create_user, 
+		r.create_date r_create_date, 
+		r.update_user r_update_user, 
+		r.update_date r_update_date,
+		ra.resource_id,
+		ra.authority_id,
+		a.id a_id, 
+		a.authority_name a_authority_name, 
+		a.authority_code a_authority_code, 
+		a.description a_description
+		from
+		sys_resource r
+			left join 
+				sys_authority_resource ra on r.id = ra.resource_id
+			left join
+				sys_authority a on ra.authority_id = a.id
+		where
+			1 = 1
+			<if test="resourceIds != null and resourceIds.length != 0">
+				and r.id in
+				<foreach item="resourceId" index="index" collection="resourceIds" open="(" separator="," close=")">  
+				#{resourceId}
+				</foreach> 
+			</if>
+	</select>
+	
+	<select id="getAllResourceWithAuthority" resultMap="BaseResultMap2">
+		select
+			r.id 				r_id, 
+			r.resource_type 	r_resource_type, 
+			r.resource_name 	r_resource_name, 
+			r.resource_code 	r_resource_code, 
+			r.url 				r_url, 
+			r.description 		r_description, 
+			r.sequence 			r_sequence, 
+			r.parent_id 		r_parent_id,
+			r.create_user 		r_create_user, 
+			r.create_date 		r_create_date, 
+			r.update_user 		r_update_user, 
+			r.update_date 		r_update_date,
+			ra.resource_id,
+			ra.authority_id,
+			a.id 				a_id, 
+			a.authority_name 	a_authority_name, 
+			a.authority_code 	a_authority_code, 
+			a.description 		a_description
+		from
+				sys_resource r
+			left join 
+				sys_authority_resource ra on r.id = ra.resource_id
+			left join
+				sys_authority a on ra.authority_id = a.id
+	</select>
+	
+	<select id="getResourceByResourceCode" resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from
+			sys_resource
+		where
+			resource_code = #{resourceCode}
+	</select>
+	
+	<!-- 
+	<select id="getResourcesByIds" resultMap="ResourceAuthorityMapper">
+		select
+		<include refid="Base_Column_List" />,
+		<include refid="Authority_Column_List" />
+		from
+		<include refid="From_Resource_Authority" />
+		where
+			1 = 1
+			<if test="resourceIds != null and resourceIds.length != 0">
+				and sys_resource.id in
+				<foreach item="resourceId" index="index" collection="resourceIds" open="(" separator="," close=")">  
+				#{resourceId}
+				</foreach> 
+			</if>
+	</select>
+	  -->
+</mapper>

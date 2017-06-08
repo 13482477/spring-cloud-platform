@@ -1,9 +1,9 @@
 package com.siebre.message.test.controller.messageobject;
 
-import com.siebre.message.test.base.MockitoTestConfig;
-import com.siebre.messagedemo.controller.messageobject.MessageObjectController;
-import com.siebre.messagedemo.entity.MessageObject;
-import com.siebre.messagedemo.service.messageobject.MessageObjectService;
+import static org.mockito.Mockito.when;
+
+import java.util.Date;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -18,9 +18,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Date;
-
-import static org.mockito.Mockito.when;
+import com.siebre.message.test.base.MockitoTestConfig;
+import com.siebre.messagedemo.controller.messageobject.MessageObjectController;
+import com.siebre.messagedemo.entity.MessageObject;
+import com.siebre.messagedemo.service.messageobject.MessageObjectService;
 
 public class MessageObjectController2Test extends MockitoTestConfig {
 	
