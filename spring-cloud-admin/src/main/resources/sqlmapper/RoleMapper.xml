@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.siebre.admin.role.mapper.RoleMapper">
-    <resultMap id="BaseRole" type="com.siebre.admin.model.role.Role">
+    <resultMap id="BaseRole" type="com.siebre.admin.role.entity.Role">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="role_name" property="roleName" jdbcType="VARCHAR"/>
         <result column="role_code" property="roleCode" jdbcType="VARCHAR"/>
@@ -12,8 +12,8 @@
         <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
     </resultMap>
     
-    <resultMap id="RoleResourceMap" type="com.siebre.admin.model.role.Role" extends="BaseRole">
-    	<collection property="authorities" ofType="com.siebre.admin.model.authority.Authority" columnPrefix="authority_">
+    <resultMap id="RoleResourceMap" type="com.siebre.admin.role.entity.Role" extends="BaseRole">
+    	<collection property="authorities" ofType="com.siebre.admin.authority.entity.Authority" columnPrefix="authority_">
     		<id column="id" property="id" jdbcType="BIGINT"/>
 	        <result column="authority_name" property="authorityName" jdbcType="VARCHAR"/>
 	        <result column="authority_code" property="authorityCode" jdbcType="VARCHAR"/>
@@ -79,7 +79,7 @@
         DELETE FROM sys_role
         WHERE id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="com.siebre.admin.model.role.Role" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="com.siebre.admin.role.entity.Role" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO sys_role (id, role_name, role_code,
                               description, create_user, create_date,
                               update_user, update_date)
@@ -87,7 +87,7 @@
                 #{description,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP},
                 #{updateUser,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP})
     </insert>
-    <insert id="insertSelective" parameterType="com.siebre.admin.model.role.Role" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertSelective" parameterType="com.siebre.admin.role.entity.Role" useGeneratedKeys="true" keyProperty="id">
         insert into sys_role
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -142,7 +142,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.siebre.admin.model.role.Role">
+    <update id="updateByPrimaryKeySelective" parameterType="com.siebre.admin.role.entity.Role">
         update sys_role
         <set>
             <if test="roleName != null">
@@ -169,7 +169,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.siebre.admin.model.role.Role">
+    <update id="updateByPrimaryKey" parameterType="com.siebre.admin.role.entity.Role">
         UPDATE sys_role
         SET role_name   = #{roleName,jdbcType=VARCHAR},
             role_code   = #{roleCode,jdbcType=VARCHAR},

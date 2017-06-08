@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.siebre.admin.user.mapper.UserMapper">
-    <resultMap id="BaseUser" type="com.siebre.admin.model.user.User">
+    <resultMap id="BaseUser" type="com.siebre.admin.user.entity.User">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="username" property="username" jdbcType="VARCHAR"/>
         <result column="password" property="password" jdbcType="VARCHAR"/>
@@ -15,8 +15,8 @@
         <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
     </resultMap>
     
-    <resultMap id="UserRoleAuthorityMap" type="com.siebre.admin.model.user.User" extends="BaseUser">
-    	<collection property="roles" ofType="com.siebre.admin.model.role.Role" columnPrefix="role_" notNullColumn="id">
+    <resultMap id="UserRoleAuthorityMap" type="com.siebre.admin.user.entity.User" extends="BaseUser">
+    	<collection property="roles" ofType="com.siebre.admin.role.entity.Role" columnPrefix="role_" notNullColumn="id">
     		<id column="id" property="id" jdbcType="BIGINT"/>
 	        <result column="role_name" property="roleName" jdbcType="VARCHAR"/>
 	        <result column="role_code" property="roleCode" jdbcType="VARCHAR"/>
@@ -25,7 +25,7 @@
 	        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
 	        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
 	        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
-	        <collection property="authorities" ofType="com.siebre.admin.model.authority.Authority" columnPrefix="authority_" notNullColumn="id">
+	        <collection property="authorities" ofType="com.siebre.admin.authority.entity.Authority" columnPrefix="authority_" notNullColumn="id">
 	        	<id column="id" property="id" jdbcType="BIGINT"/>
 		        <result column="authority_name" property="authorityName" jdbcType="VARCHAR"/>
 		        <result column="authority_code" property="authorityCode" jdbcType="VARCHAR"/>
@@ -100,7 +100,7 @@
         DELETE FROM sys_user
         WHERE id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="com.siebre.admin.model.user.User" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="com.siebre.admin.user.entity.User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO sys_user (id, username, password,
                               email, mobile, nickname,
                               active, create_user, create_date,
@@ -112,7 +112,7 @@
                                         #{createDate,jdbcType=TIMESTAMP},
                                         #{updateUser,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP})
     </insert>
-    <insert id="insertSelective" parameterType="com.siebre.admin.model.user.User" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertSelective" parameterType="com.siebre.admin.user.entity.User" useGeneratedKeys="true" keyProperty="id">
         insert into sys_user
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -185,7 +185,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.siebre.admin.model.user.User">
+    <update id="updateByPrimaryKeySelective" parameterType="com.siebre.admin.user.entity.User">
         update sys_user
         <set>
             <if test="username != null">
@@ -221,7 +221,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.siebre.admin.model.user.User">
+    <update id="updateByPrimaryKey" parameterType="com.siebre.admin.user.entity.User">
         UPDATE sys_user
         SET username    = #{username,jdbcType=VARCHAR},
             password    = #{password,jdbcType=VARCHAR},

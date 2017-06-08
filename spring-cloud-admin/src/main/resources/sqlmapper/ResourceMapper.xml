@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.siebre.admin.resource.mapper.ResourceMapper">
-	<resultMap id="BaseResultMap" type="com.siebre.admin.model.resource.Resource">
+	<resultMap id="BaseResultMap" type="com.siebre.admin.resource.entity.Resource">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="resource_type" property="resourceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="resource_name" property="resourceName" jdbcType="VARCHAR" />
@@ -15,8 +15,8 @@
 		<result column="parent_id" property="parentId" jdbcType="BIGINT" />
 	</resultMap>
 	
-	<resultMap id="ResourceAuthorityMapper" type="com.siebre.admin.model.resource.Resource" extends="BaseResultMap">
-		<collection property="authorities" ofType="com.siebre.admin.model.authority.Authority" columnPrefix="authority_" >
+	<resultMap id="ResourceAuthorityMapper" type="com.siebre.admin.resource.entity.Resource" extends="BaseResultMap">
+		<collection property="authorities" ofType="com.siebre.admin.authority.entity.Authority" columnPrefix="authority_" >
 			<id column="id" property="id" jdbcType="BIGINT"/>
 			<result column="authority_name" property="authorityName" jdbcType="VARCHAR"/>
 			<result column="authority_code" property="authorityCode" jdbcType="VARCHAR"/>
@@ -24,7 +24,7 @@
 		</collection>
 	</resultMap>
 	
-	<resultMap id="BaseResultMap2" type="com.siebre.admin.model.resource.Resource">
+	<resultMap id="BaseResultMap2" type="com.siebre.admin.resource.entity.Resource">
 		<id column="r_id" property="id" jdbcType="BIGINT" />
 		<result column="r_resource_type" property="resourceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="r_resource_name" property="resourceName" jdbcType="VARCHAR" />
@@ -36,7 +36,7 @@
 		<result column="r_update_user" property="updateUser" jdbcType="VARCHAR" />
 		<result column="r_update_date" property="updateDate" jdbcType="TIMESTAMP" />
 		<result column="r_parent_id" property="parentId" jdbcType="BIGINT" />
-		<collection property="authorities" ofType="com.siebre.admin.model.authority.Authority" >
+		<collection property="authorities" ofType="com.siebre.admin.authority.entity.Authority" >
 			<id column="a_id" property="id" jdbcType="BIGINT"/>
 			<result column="a_authority_name" property="authorityName" jdbcType="VARCHAR"/>
 			<result column="a_authority_code" property="authorityCode" jdbcType="VARCHAR"/>
@@ -95,7 +95,7 @@
 		where resource_id = #{id,jdbcType=BIGINT}
 	</delete>
 
-	<insert id="insert" parameterType="com.siebre.admin.model.resource.Resource" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insert" parameterType="com.siebre.admin.resource.entity.Resource" useGeneratedKeys="true" keyProperty="id">
 		insert into sys_resource (
 			resource_type,
 			url,
@@ -135,7 +135,7 @@
 		)
 	</insert>
 	
-	<insert id="insertSelective" parameterType="com.siebre.admin.model.resource.Resource" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insertSelective" parameterType="com.siebre.admin.resource.entity.Resource" useGeneratedKeys="true" keyProperty="id">
 		insert into sys_resource
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -214,7 +214,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.admin.model.resource.Resource">
+	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.admin.resource.entity.Resource">
 		update sys_resource
 		<set>
 			<if test="resourceType != null">
@@ -253,7 +253,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.siebre.admin.model.resource.Resource">
+	<update id="updateByPrimaryKey" parameterType="com.siebre.admin.resource.entity.Resource">
 		update sys_resource
 		set resource_type = #{resourceType.value,jdbcType=INTEGER},
 		resource_name = #{resourceName,jdbcType=VARCHAR},

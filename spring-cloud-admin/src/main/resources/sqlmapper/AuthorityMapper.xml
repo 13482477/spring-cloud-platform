@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.siebre.admin.authority.mapper.AuthorityMapper">
-    <resultMap id="BaseAuthority" type="com.siebre.admin.model.authority.Authority">
+    <resultMap id="BaseAuthority" type="com.siebre.admin.authority.entity.Authority">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="authority_name" property="authorityName" jdbcType="VARCHAR"/>
         <result column="authority_code" property="authorityCode" jdbcType="VARCHAR"/>
@@ -39,7 +39,7 @@
         DELETE FROM sys_authority
         WHERE id = #{id,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="com.siebre.admin.model.authority.Authority" keyProperty="id" useGeneratedKeys="true">
+    <insert id="insert" parameterType="com.siebre.admin.authority.entity.Authority" keyProperty="id" useGeneratedKeys="true">
         INSERT INTO sys_authority (
         	id, 
         	authority_name, 
@@ -61,7 +61,7 @@
             #{updateDate,jdbcType=TIMESTAMP}
         )
     </insert>
-    <insert id="insertSelective" parameterType="com.siebre.admin.model.authority.Authority" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertSelective" parameterType="com.siebre.admin.authority.entity.Authority" useGeneratedKeys="true" keyProperty="id">
         insert into sys_authority
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -116,7 +116,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.siebre.admin.model.authority.Authority">
+    <update id="updateByPrimaryKeySelective" parameterType="com.siebre.admin.authority.entity.Authority">
         update sys_authority
         <set>
             <if test="authorityName != null">
@@ -143,7 +143,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.siebre.admin.model.authority.Authority">
+    <update id="updateByPrimaryKey" parameterType="com.siebre.admin.authority.entity.Authority">
         UPDATE 
         	sys_authority
         SET 
