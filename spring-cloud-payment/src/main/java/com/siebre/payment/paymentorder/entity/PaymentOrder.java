@@ -1,10 +1,7 @@
 package com.siebre.payment.paymentorder.entity;
 
 import com.siebre.basic.model.BaseObject;
-import com.siebre.payment.entity.enums.PaymentOrderCheckStatus;
-import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
-import com.siebre.payment.entity.enums.PaymentOrderRefundStatus;
-import com.siebre.payment.entity.enums.SellingChannel;
+import com.siebre.payment.entity.enums.*;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
@@ -72,7 +69,21 @@ public class PaymentOrder extends BaseObject {
      */
     private String messageId;
 
-    private Long paymentAccoundId;
+
+
+    /**
+     * 统一支付接口2.0字段
+     * ------start-------
+     */
+    private PaymentMethod paymentMethod;
+    private PaymentProvider paymentProvider;
+    private String currency;
+    //账户信息
+    private Long paymentAccountId;
+    private String summary;
+
+    //-------finish---------
+
 
     private List<PaymentOrderItem> paymentOrderItems = new ArrayList<PaymentOrderItem>();
 
@@ -246,12 +257,44 @@ public class PaymentOrder extends BaseObject {
         this.checkTime = checkTime;
     }
 
-    public Long getPaymentAccoundId() {
-        return paymentAccoundId;
+    public Long getPaymentAccountId() {
+        return paymentAccountId;
     }
 
-    public void setPaymentAccoundId(Long paymentAccoundId) {
-        this.paymentAccoundId = paymentAccoundId;
+    public void setPaymentAccountId(Long paymentAccountId) {
+        this.paymentAccountId = paymentAccountId;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public PaymentProvider getPaymentProvider() {
+        return paymentProvider;
+    }
+
+    public void setPaymentProvider(PaymentProvider paymentProvider) {
+        this.paymentProvider = paymentProvider;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     @Override

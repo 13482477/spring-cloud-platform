@@ -55,7 +55,7 @@ public class PaymentAccountService {
         paymentAccountMapper.insert(paymentAccount);
         PaymentOrder paymentOrder = new PaymentOrder();
         paymentOrder.setId(orderId);
-        paymentOrder.setPaymentAccoundId(paymentAccount.getId());
+        paymentOrder.setPaymentAccountId(paymentAccount.getId());
         paymentOrderMapper.updateByPrimaryKeySelective(paymentOrder);
         return paymentAccount;
     }
