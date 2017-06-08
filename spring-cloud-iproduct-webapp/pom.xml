@@ -10,7 +10,6 @@
 	<groupId>com.siebre</groupId>
 	<artifactId>spring-cloud-iproduct-webapp</artifactId>
 
-
 	<dependencies>
 		<dependency>
 			<groupId>com.siebre</groupId>
