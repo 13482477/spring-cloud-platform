@@ -117,10 +117,8 @@ public class WeChatConfigTransfer {
         PaymentInterface paymentInterface = new PaymentInterface();
         paymentInterface.setPaymentWayId(paymentWay.getId());
         paymentInterface.setInterfaceName("微信退款接口");
-        paymentInterface.setInterfaceCode(WeChatConfig.INTERFACE_REFUND);
         paymentInterface.setRequestUrl(WeChatConfig.REFUND_URL);
         paymentInterface.setPaymentInterfaceType(PaymentInterfaceType.REFUND);
-        paymentInterface.setHandlerBeanName("weChatPaymentRefundHandler");
         paymentInterfaceService.createPaymentInterface(paymentInterface);
         paymentInterface.setPaymentWay(paymentWay);
     }
@@ -129,9 +127,7 @@ public class WeChatConfigTransfer {
         PaymentInterface paymentInterface = new PaymentInterface();
         paymentInterface.setPaymentWayId(paymentWay.getId());
         paymentInterface.setInterfaceName("微信公众号支付回调接口");
-        paymentInterface.setInterfaceCode(WeChatConfig.INTERFACE_PUBLIC_PAY_CALLBACK);
         paymentInterface.setPaymentInterfaceType(PaymentInterfaceType.PAY_NOTIFY);
-        paymentInterface.setHandlerBeanName("weChatPublicCallBackHandler");
         paymentInterfaceService.createPaymentInterface(paymentInterface);
         paymentInterface.setPaymentWay(paymentWay);
     }
@@ -140,11 +136,9 @@ public class WeChatConfigTransfer {
         PaymentInterface paymentInterface = new PaymentInterface();
         paymentInterface.setPaymentWayId(paymentWay.getId());
         paymentInterface.setInterfaceName("微信公众号支付接口");
-        paymentInterface.setInterfaceCode(WeChatConfig.INTERFACE_PUBLIC_PAY);
         paymentInterface.setRequestUrl(WeChatConfig.PAY_REQUEST_URL);
         paymentInterface.setCallbackUrl(WeChatConfig.PUBLIC_CALLBACK_URL);
         paymentInterface.setPaymentInterfaceType(PaymentInterfaceType.PAY);
-        paymentInterface.setHandlerBeanName("weChatPublicPaymentHandler");
         paymentInterfaceService.createPaymentInterface(paymentInterface);
         paymentInterface.setPaymentWay(paymentWay);
     }
@@ -169,10 +163,8 @@ public class WeChatConfigTransfer {
         PaymentInterface paymentInterface = new PaymentInterface();
         paymentInterface.setPaymentWayId(paymentWay.getId());
         paymentInterface.setInterfaceName("微信订单查询接口");
-        paymentInterface.setInterfaceCode(WeChatConfig.INTERFACE_ORDER_QUERY);
         paymentInterface.setRequestUrl(WeChatConfig.QUERY_REQUEST_URL);
         paymentInterface.setPaymentInterfaceType(PaymentInterfaceType.QUERY);
-        paymentInterface.setHandlerBeanName("weChatQueryHandler");
         paymentInterfaceService.createPaymentInterface(paymentInterface);
         paymentInterface.setPaymentWay(paymentWay);
     }
@@ -181,9 +173,7 @@ public class WeChatConfigTransfer {
         PaymentInterface paymentInterface = new PaymentInterface();
         paymentInterface.setPaymentWayId(paymentWay.getId());
         paymentInterface.setInterfaceName("微信扫码支付回调接口");
-        paymentInterface.setInterfaceCode(WeChatConfig.INTERFACE_SACN_PAY_CALLBACK);
         paymentInterface.setPaymentInterfaceType(PaymentInterfaceType.PAY_NOTIFY);
-        paymentInterface.setHandlerBeanName("weChatCallBackHandler");
         paymentInterfaceService.createPaymentInterface(paymentInterface);
         paymentInterface.setPaymentWay(paymentWay);
     }
@@ -192,12 +182,10 @@ public class WeChatConfigTransfer {
         PaymentInterface paymentInterface = new PaymentInterface();
         paymentInterface.setPaymentWayId(paymentWay.getId());
         paymentInterface.setInterfaceName("微信扫码支付接口");
-        paymentInterface.setInterfaceCode(WeChatConfig.INTERFACE_SCAN_PAY);
         paymentInterface.setRequestUrl(WeChatConfig.PAY_REQUEST_URL);
         paymentInterface.setCallbackUrl(WeChatConfig.SCAN_CALLBACK_URL);
         paymentInterface.setReturnPageUrl(WeChatConfig.RETURN_PAGE_URL);
         paymentInterface.setPaymentInterfaceType(PaymentInterfaceType.PAY);
-        paymentInterface.setHandlerBeanName("weChatScanPaymentHandler");
         paymentInterfaceService.createPaymentInterface(paymentInterface);
         paymentInterface.setPaymentWay(paymentWay);
     }

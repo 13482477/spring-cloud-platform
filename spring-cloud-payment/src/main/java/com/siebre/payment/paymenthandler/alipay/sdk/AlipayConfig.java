@@ -9,31 +9,10 @@ public class AlipayConfig {
     public static String CHANNEL_CODE = "ALI_PAY";
 
     //支付宝-即时到账代码
-    public static String WAP_WEB_PAY = "ALIPAY_WEB_PAY";
+    public static String WAY_WEB_PAY = "ALIPAY_WEB_PAY";
 
     //支付宝-手机网关支付代码
-    public static String WAP_TRADE_PAY = "ALIPAY_TRADE_WAP_PAY";
-
-    //支付宝-即时到账-支付接口代码
-    public static String INTERFACE_FASTPAY = "ALIPAY_FASTPAY";
-
-    //支付宝-即时到账-支付回调接口代码
-    public static String INTERFACE_FASTPAY_CALLBACK = "ALIPAY_FASTPAY_CALLBACK";
-
-    //支付宝-即时到账-退款接口代码
-    public static String INTERFACE_FASTPAY_REFUND = "ALIPAY_FASTPAY_REFUND";
-
-    //支付宝-手机网关-支付接口代码
-    public static String INTERFACE_TRADE_WAPPAY = "ALIPAY_TRADE_WAPPAY";
-
-    //支付宝-手机网关-支付回调接口代码
-    public static String INTERFACE_TRADE_CALLBACK = "ALIPAY_TRADE_WAPPAY_CALLBACK";
-
-    //支付宝-手机网关-退款接口代码
-    public static String INTERFACE_TRADE_REFUND = "ALIPAY_TRADE_WAPPAY_REFUND";
-
-    //支付宝-手机网关-查询接口代码
-    public static String INTERFACE_TRADE_QUERY = "ALIPAY_QUERY";
+    public static String WAY_TRADE_PAY = "ALIPAY_TRADE_WAP_PAY";
 
     //即时到账-支付网关地址
     public static String FASTPAY_REQUEST_URL = "https://mapi.alipay.com/gateway.do";
@@ -42,10 +21,10 @@ public class AlipayConfig {
     public static String TRADE_REQUEST_URL = "https://openapi.alipay.com/gateway.do";
 
     //即时到账-支付回调地址
-    public static String FASTPAY_CALLBACK_URL = "http://tianci.vicp.io:14369/siebre-cloud-payment-service/payment/paymentGateWay/notify/" + INTERFACE_FASTPAY_CALLBACK;
+    public static String FASTPAY_CALLBACK_URL = "http://tianci.vicp.io:14369/siebre-cloud-payment-service/payment/paymentGateWay/notify/" + WAY_WEB_PAY;
 
     //手机网关支付-支付回调地址
-    public static String TRADE_CALLBACK_URL = "http://tianci.vicp.io:14369/siebre-cloud-payment-service/payment/paymentGateWay/notify/" + INTERFACE_TRADE_CALLBACK;
+    public static String TRADE_CALLBACK_URL = "http://tianci.vicp.io:14369/siebre-cloud-payment-service/payment/paymentGateWay/notify/" + WAY_TRADE_PAY;
 
     //即时到账-退款回调地址
     public static String FASTPAY_REFUND_CALLBACK_URL = "http://tianci.vicp.io:14369/siebre-cloud-payment-service/payment/paymentGateWay/notify/ALIPAY_FASTPAY_REFUND_CALLBACK";

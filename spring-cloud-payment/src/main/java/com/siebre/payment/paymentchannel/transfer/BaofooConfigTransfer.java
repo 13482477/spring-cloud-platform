@@ -44,7 +44,7 @@ public class BaofooConfigTransfer {
         baofooPayChannel.setUpdateDate(current);
         paymentChannelService.updateById(baofooPayChannel);
 
-        PaymentWay fastPayWay = paymentWayService.getPaymentWay(BaofooConfig.BAOFOO_FAST_PAY);
+        PaymentWay fastPayWay = paymentWayService.getPaymentWay(BaofooConfig.WAY_BAOFOO_FAST_PAY);
         fastPayWay.setSecretKey(baofooConfigVo.getSecretKey());
         fastPayWay.setUpdateDate(current);
         paymentWayService.updatePaymentWay(fastPayWay);
@@ -58,7 +58,7 @@ public class BaofooConfigTransfer {
         baofooConfigVo.setMerchantCode(baofooPayChannel.getMerchantCode());
         baofooConfigVo.setTerminalId(baofooPayChannel.getTerminalId());
 
-        PaymentWay fastPayWay = paymentWayService.getPaymentWay(BaofooConfig.BAOFOO_FAST_PAY);
+        PaymentWay fastPayWay = paymentWayService.getPaymentWay(BaofooConfig.WAY_BAOFOO_FAST_PAY);
         baofooConfigVo.setSecretKey(fastPayWay.getSecretKey());
 
         return ServiceResult.<BaofooConfigVo>builder().success(Boolean.TRUE).data(baofooConfigVo).message(ServiceResult.SUCCESS_MESSAGE).build();
@@ -99,7 +99,7 @@ public class BaofooConfigTransfer {
         PaymentWay fastPayWay = new PaymentWay();
         fastPayWay.setPaymentChannelId(paymentChannel.getId());
         fastPayWay.setName("宝付快捷支付");
-        fastPayWay.setCode(BaofooConfig.BAOFOO_FAST_PAY);
+        fastPayWay.setCode(BaofooConfig.WAY_BAOFOO_FAST_PAY);
         fastPayWay.setCreateDate(current);
         paymentWayService.createPaymentWay(fastPayWay);
         fastPayWay.setPaymentChannel(paymentChannel);
@@ -114,13 +114,10 @@ public class BaofooConfigTransfer {
         PaymentInterface fastPayInter = new PaymentInterface();
         fastPayInter.setPaymentWayId(fastPayWay.getId());
         fastPayInter.setInterfaceName("宝付快捷支付预支付接口");
-        fastPayInter.setInterfaceCode(BaofooConfig.BAOFOO_FASTPAY_PREPAY);
         fastPayInter.setRequestUrl(BaofooConfig.BAOFOO_FASTPAY_URL);
         fastPayInter.setPaymentInterfaceType(PaymentInterfaceType.PAY);
-        fastPayInter.setHandlerBeanName("baofooQuickPaymentHandler");
         paymentInterfaceService.createPaymentInterface(fastPayInter);
         fastPayInter.setPaymentWay(fastPayWay);
-
     }
 
 }

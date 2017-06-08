@@ -26,6 +26,7 @@ public class PaymentInterface extends BaseObject {
     /**
      * 支付接口代码
      */
+	@Deprecated
     private String interfaceCode;
     
     /**
@@ -51,6 +52,7 @@ public class PaymentInterface extends BaseObject {
     /**
      * 处理器bean name
      */
+    @Deprecated
     private String handlerBeanName;
     
 
@@ -78,10 +80,12 @@ public class PaymentInterface extends BaseObject {
 		this.interfaceName = interfaceName;
 	}
 
+	@Deprecated
 	public String getInterfaceCode() {
 		return interfaceCode;
 	}
 
+	@Deprecated
 	public void setInterfaceCode(String interfaceCode) {
 		this.interfaceCode = interfaceCode;
 	}
@@ -102,10 +106,12 @@ public class PaymentInterface extends BaseObject {
 		this.paymentInterfaceType = paymentInterfaceType;
 	}
 
+	@Deprecated
 	public String getHandlerBeanName() {
 		return handlerBeanName;
 	}
 
+	@Deprecated
 	public void setHandlerBeanName(String handlerBeanName) {
 		this.handlerBeanName = handlerBeanName;
 	}

@@ -1,19 +1,16 @@
 package com.siebre.payment.paymentchannel.service;
 
-import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.entity.enums.PaymentChannelStatus;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper;
 import com.siebre.payment.paymentchannel.vo.PaymentChannelVo;
 import com.siebre.payment.paymenthandler.alipay.sdk.AlipayConfig;
-import com.siebre.payment.paymenthandler.allinpay.sdk.AllinpayConstants;
-import com.siebre.payment.paymenthandler.baofoo.pay.prepay.BaofooCon;
+import com.siebre.payment.paymenthandler.allinpay.sdk.AllinpayConfig;
 import com.siebre.payment.paymenthandler.baofoo.sdk.BaofooConfig;
 import com.siebre.payment.paymenthandler.wechatpay.sdk.WeChatConfig;
 import com.siebre.payment.paymentway.service.PaymentWayService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,7 +61,7 @@ public class PaymentChannelService {
 		result.add(initChannel("JD_PAY", "京东支付"));
 		result.add(initChannel("BD_PAY", "百度支付"));
 		result.add(initChannel("YWT_PAY", "一网通支付"));
-		result.add(initChannel(AllinpayConstants.CHANNEL_CODE, "通联支付"));
+		result.add(initChannel(AllinpayConfig.CHANNEL_CODE, "通联支付"));
 		result.add(initChannel(BaofooConfig.CHANNEL_CODE, "宝付支付"));
 		return result;
 	}

@@ -2,7 +2,9 @@ package com.siebre.payment.paymentcallback.controller;
 
 import com.siebre.basic.applicationcontext.SpringContextUtil;
 import com.siebre.basic.web.WebResult;
+import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.paymenthandler.basic.paymentcallback.AbstractPaymentCallBackHandler;
+import com.siebre.payment.paymenthandler.config.HandlerBeanNameConfig;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentway.service.PaymentWayService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +24,10 @@ public class PaymentCallbackController {
 
 	@RequestMapping(value = "/api/v1/paymentGateWay/notify/{notifyCode}", method = {RequestMethod.POST })
 	public WebResult<Object> paymentCallback(@PathVariable String notifyCode, HttpServletRequest request, HttpServletResponse response) {
-		PaymentInterface paymentInterface = this.paymentWayService.getNotifyPaymentInterface(notifyCode);
-		if (paymentInterface != null) {
-			AbstractPaymentCallBackHandler handler = (AbstractPaymentCallBackHandler) SpringContextUtil.getBean(paymentInterface.getHandlerBeanName());
+		String handleBeanName = HandlerBeanNameConfig.CALL_BACK_MAPPING.get(notifyCode);
+		PaymentInterface paymentInterface = this.paymentWayService.getPaymentInterface(notifyCode, PaymentInterfaceType.PAY_NOTIFY);
+		if (handleBeanName != null) {
+			AbstractPaymentCallBackHandler handler = (AbstractPaymentCallBackHandler) SpringContextUtil.getBean(handleBeanName);
 			Object result = handler.callBackHandle(request, response, paymentInterface); 
 			return WebResult.<Object>builder().returnCode("200").data(result).build();
 

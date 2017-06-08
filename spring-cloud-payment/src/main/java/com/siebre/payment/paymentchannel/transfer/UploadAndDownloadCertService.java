@@ -3,7 +3,7 @@ package com.siebre.payment.paymentchannel.transfer;
 import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentchannel.service.PaymentChannelService;
-import com.siebre.payment.paymenthandler.allinpay.sdk.AllinpayConstants;
+import com.siebre.payment.paymenthandler.allinpay.sdk.AllinpayConfig;
 import com.siebre.payment.paymenthandler.wechatpay.sdk.WeChatConfig;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.paymentway.service.PaymentWayService;
@@ -135,7 +135,7 @@ public class UploadAndDownloadCertService {
     private void initSuffixs() {
         if (!initsuffixsFlag.getAndSet(true)) {
             suffixsMapping.put(WeChatConfig.CHANNEL_CODE, SUFFIX_P12);
-            suffixsMapping.put(AllinpayConstants.CHANNEL_CODE, SUFFIX_P12 + "," + SUFFIX_CER);
+            suffixsMapping.put(AllinpayConfig.CHANNEL_CODE, SUFFIX_P12 + "," + SUFFIX_CER);
         }
     }
 
@@ -149,7 +149,7 @@ public class UploadAndDownloadCertService {
             Map<String, String> allinpayMapping = new HashMap<>();
             allinpayMapping.put(CER, "allinpay-pds.cer");
             allinpayMapping.put(PKCS, "20036800000096104.p12");
-            fileNameMapping.put(AllinpayConstants.CHANNEL_CODE, allinpayMapping);
+            fileNameMapping.put(AllinpayConfig.CHANNEL_CODE, allinpayMapping);
         }
     }
 

@@ -7,7 +7,7 @@ import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentchannel.service.PaymentChannelService;
 import com.siebre.payment.paymentchannel.vo.AllinPayConfigVo;
-import com.siebre.payment.paymenthandler.allinpay.sdk.AllinpayConstants;
+import com.siebre.payment.paymenthandler.allinpay.sdk.AllinpayConfig;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentinterface.service.PaymentInterfaceService;
 import com.siebre.payment.paymentway.entity.PaymentWay;
@@ -36,7 +36,7 @@ public class AllinpayConfigTransfer {
     @Transactional("db")
     public ServiceResult<AllinPayConfigVo> transfer(AllinPayConfigVo allinPayConfigVo) {
         Date current = new Date();
-        PaymentChannel allinPayChannel = paymentChannelService.queryByChannelCode(AllinpayConstants.CHANNEL_CODE).getData();
+        PaymentChannel allinPayChannel = paymentChannelService.queryByChannelCode(AllinpayConfig.CHANNEL_CODE).getData();
         if(allinPayChannel == null) {
             allinPayChannel = initAllinpayChannel();
         }
@@ -46,7 +46,7 @@ public class AllinpayConfigTransfer {
         allinPayChannel.setUpdateDate(current);
         paymentChannelService.updateById(allinPayChannel);
 
-        PaymentWay allinPayWay = paymentWayService.getPaymentWay(AllinpayConstants.ALLIN_REALTIME_PAY);
+        PaymentWay allinPayWay = paymentWayService.getPaymentWay(AllinpayConfig.WAY_ALLIN_REALTIME_PAY);
         allinPayWay.setSecretKey(allinPayConfigVo.getSecretKey());
         allinPayWay.setUpdateDate(current);
         paymentWayService.updatePaymentWay(allinPayWay);
@@ -57,11 +57,11 @@ public class AllinpayConfigTransfer {
     @Transactional("db")
     public ServiceResult<AllinPayConfigVo> detailTransfer() {
         AllinPayConfigVo allinPayConfigVo = new AllinPayConfigVo();
-        PaymentChannel allinPayChannel = paymentChannelService.queryByChannelCode(AllinpayConstants.CHANNEL_CODE).getData();
+        PaymentChannel allinPayChannel = paymentChannelService.queryByChannelCode(AllinpayConfig.CHANNEL_CODE).getData();
         allinPayConfigVo.setMerchantCode(allinPayChannel.getMerchantCode());
         allinPayConfigVo.setMerchantName(allinPayChannel.getMerchantName());
         allinPayConfigVo.setMerchantPwd(allinPayChannel.getMerchantPwd());
-        PaymentWay allinPayWay = paymentWayService.getPaymentWay(AllinpayConstants.ALLIN_REALTIME_PAY);
+        PaymentWay allinPayWay = paymentWayService.getPaymentWay(AllinpayConfig.WAY_ALLIN_REALTIME_PAY);
         allinPayConfigVo.setSecretKey(allinPayWay.getSecretKey());
 
         return ServiceResult.<AllinPayConfigVo>builder().success(Boolean.TRUE).data(allinPayConfigVo).message(ServiceResult.SUCCESS_MESSAGE).build();
@@ -77,7 +77,7 @@ public class AllinpayConfigTransfer {
 
         PaymentChannel paymentChannel = new PaymentChannel();
         paymentChannel.setChannelName("通联支付");
-        paymentChannel.setChannelCode(AllinpayConstants.CHANNEL_CODE);
+        paymentChannel.setChannelCode(AllinpayConfig.CHANNEL_CODE);
         paymentChannel.setStatus(PaymentChannelStatus.ENABLE);
         paymentChannel.setSupportRefunded(Boolean.TRUE);
         paymentChannel.setCreateDate(current);
@@ -98,7 +98,7 @@ public class AllinpayConfigTransfer {
         PaymentWay paymentWay = new PaymentWay();
         paymentWay.setPaymentChannelId(paymentChannel.getId());
         paymentWay.setName("通联实时代扣支付");
-        paymentWay.setCode(AllinpayConstants.ALLIN_REALTIME_PAY);
+        paymentWay.setCode(AllinpayConfig.WAY_ALLIN_REALTIME_PAY);
         paymentWay.setCreateDate(current);
         paymentWayService.createPaymentWay(paymentWay);
         paymentWay.setPaymentChannel(paymentChannel);
@@ -121,10 +121,8 @@ public class AllinpayConfigTransfer {
         PaymentInterface payInterface = new PaymentInterface();
         payInterface.setPaymentWayId(paymentWay.getId());
         payInterface.setInterfaceName("通联实时代扣支付接口");
-        payInterface.setInterfaceCode(AllinpayConstants.ALLIN_ACP_PAYMENT);
-        payInterface.setRequestUrl(AllinpayConstants.ALLIN_URL);
+        payInterface.setRequestUrl(AllinpayConfig.ALLIN_URL);
         payInterface.setPaymentInterfaceType(PaymentInterfaceType.PAY);
-        payInterface.setHandlerBeanName("allinPayRealTimeHandler");
         paymentInterfaceService.createPaymentInterface(payInterface);
         payInterface.setPaymentWay(paymentWay);
     }
@@ -137,10 +135,8 @@ public class AllinpayConfigTransfer {
         PaymentInterface refundInterface = new PaymentInterface();
         refundInterface.setPaymentWayId(paymentWay.getId());
         refundInterface.setInterfaceName("通联实时代扣退款接口");
-        refundInterface.setInterfaceCode(AllinpayConstants.ALLIN_ACP_REFUND);
-        refundInterface.setRequestUrl(AllinpayConstants.ALLIN_URL);
+        refundInterface.setRequestUrl(AllinpayConfig.ALLIN_URL);
         refundInterface.setPaymentInterfaceType(PaymentInterfaceType.REFUND);
-        refundInterface.setHandlerBeanName("allinPayRealTimeRefundHandler");
         paymentInterfaceService.createPaymentInterface(refundInterface);
         refundInterface.setPaymentWay(paymentWay);
     }
@@ -153,10 +149,8 @@ public class AllinpayConfigTransfer {
         PaymentInterface queryInterface = new PaymentInterface();
         queryInterface.setPaymentWayId(paymentWay.getId());
         queryInterface.setInterfaceName("通联实时代扣查询接口");
-        queryInterface.setInterfaceCode(AllinpayConstants.ALLIN_ACP_QUERY);
-        queryInterface.setRequestUrl(AllinpayConstants.ALLIN_URL);
+        queryInterface.setRequestUrl(AllinpayConfig.ALLIN_URL);
         queryInterface.setPaymentInterfaceType(PaymentInterfaceType.QUERY);
-        queryInterface.setHandlerBeanName("allinPayQueryHandler");
         paymentInterfaceService.createPaymentInterface(queryInterface);
         queryInterface.setPaymentWay(paymentWay);
     }

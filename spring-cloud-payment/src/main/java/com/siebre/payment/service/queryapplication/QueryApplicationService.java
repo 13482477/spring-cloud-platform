@@ -7,6 +7,7 @@ import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentgateway.vo.PaymentOrderQueryRequest;
 import com.siebre.payment.paymentgateway.vo.PaymentOrderQueryResponse;
 import com.siebre.payment.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
+import com.siebre.payment.paymenthandler.config.HandlerBeanNameConfig;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Service;
  * @author Huang Tianci
  */
 @Service
-public class QueryApplicationService{
+public class QueryApplicationService {
     Logger logger = LoggerFactory.getLogger(QueryApplicationService.class);
 
     @Autowired
@@ -34,8 +35,8 @@ public class QueryApplicationService{
 
     public ServiceResult<PaymentOrderQueryResponse> queryOrderStatusByOrderNumber(PaymentOrderQueryRequest request) throws Exception {
         PaymentTransaction transaction = paymentTransactionService.getPaymentTransactionForQuery(request.getOrderNumber());
-        if(null == transaction){
-            logger.error("查询失败，没有找到对应的有效交易orderNumber={}",request.getOrderNumber());
+        if (null == transaction) {
+            logger.error("查询失败，没有找到对应的有效交易orderNumber={}", request.getOrderNumber());
             return ServiceResult.<PaymentOrderQueryResponse>builder().success(false).message("没有找到对应的有效交易=" + request.getOrderNumber()).build();
         }
         //根据交易的transaction找到支付对应的paymentWay,再获得退款对应的paymentInterface
@@ -52,7 +53,8 @@ public class QueryApplicationService{
         paymentQueryRequest.setPaymentWay(paymentWay);
         paymentQueryRequest.setPaymentInterface(paymentInterface);
 
-        AbstractPaymentQueryComponent paymentComponent = (AbstractPaymentQueryComponent) SpringContextUtil.getBean(paymentInterface.getHandlerBeanName());
+        String handlerBeanName = HandlerBeanNameConfig.QUERY_MAPPING.get(paymentWay.getCode());
+        AbstractPaymentQueryComponent paymentComponent = (AbstractPaymentQueryComponent) SpringContextUtil.getBean(handlerBeanName);
         PaymentQueryResponse paymentQueryResponse = paymentComponent.handle(paymentQueryRequest);
 
         PaymentOrderQueryResponse paymentOrderQueryResponse = new PaymentOrderQueryResponse();

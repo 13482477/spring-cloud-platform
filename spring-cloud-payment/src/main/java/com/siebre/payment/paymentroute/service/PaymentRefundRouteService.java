@@ -3,6 +3,7 @@ package com.siebre.payment.paymentroute.service;
 import com.siebre.basic.applicationcontext.SpringContextUtil;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.paymenthandler.basic.paymentrefund.AbstractPaymentRefundComponent;
+import com.siebre.payment.paymenthandler.config.HandlerBeanNameConfig;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.service.PaymentOrderService;
@@ -53,11 +54,11 @@ public class PaymentRefundRouteService {
         //针对同一渠道下不同支付方式使用统一退款接口的情况，需要做处理。先在该支付方式下查找，是否存在paymentInterface，如果不存在，则在该支付方式所在渠道下查找paymentInterface
         PaymentInterface paymentInterface = paymentWayService.getPaymentInterface(paymentWay.getCode(), PaymentInterfaceType.REFUND);
         if (paymentInterface == null) {
-            logger.info("支付方式{}下没有找到对应的退款handler,在该支付方式对应的渠道下查找",paymentWay.getName());
+            logger.info("支付方式{}下没有找到对应的退款handler,在该支付方式对应的渠道下查找", paymentWay.getName());
             List<PaymentWay> ways = paymentWayService.getPaymentWayByChannelId(paymentWay.getPaymentChannelId());
-            for (PaymentWay way : ways){
+            for (PaymentWay way : ways) {
                 paymentInterface = paymentWayService.getPaymentInterface(way.getCode(), PaymentInterfaceType.REFUND);
-                if(paymentInterface != null){
+                if (paymentInterface != null) {
                     //使用该interface对应的paymentway
                     paymentWay = paymentWayService.getPaymentWay(way.getCode());
                     break;
@@ -65,7 +66,8 @@ public class PaymentRefundRouteService {
             }
         }
 
-        AbstractPaymentRefundComponent paymentRefundHandler = (AbstractPaymentRefundComponent) SpringContextUtil.getBean(paymentInterface.getHandlerBeanName());
+        String handleBeanName = HandlerBeanNameConfig.REFUND_MAPPING.get(paymentWay.getCode());
+        AbstractPaymentRefundComponent paymentRefundHandler = (AbstractPaymentRefundComponent) SpringContextUtil.getBean(handleBeanName);
 
         PaymentRefundResponse paymentRefundResponse = paymentRefundHandler.handle(paymentRefundRequest, paymentTransaction, paymentOrder, paymentWay, paymentInterface);
 

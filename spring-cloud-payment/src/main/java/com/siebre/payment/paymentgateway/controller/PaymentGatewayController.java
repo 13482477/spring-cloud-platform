@@ -5,6 +5,7 @@ import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
 import com.siebre.payment.paymentgateway.vo.*;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
+import com.siebre.payment.paymenthandler.config.HandlerBeanNameConfig;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
 import com.siebre.payment.paymenthandler.wechatpay.WeChatPublicAuthService;
@@ -67,6 +68,8 @@ public class PaymentGatewayController {
 	 */
 	@RequestMapping(value = "/openApi/v1/paymentGateway/unifiedPay", method = POST)
 	public UnifiedPayResponse unipay(@RequestBody UnifiedPayRequest unipayRequest, HttpServletRequest request) {
+		String handlerBeanName = HandlerBeanNameConfig.PAY_MAPPING.get(unipayRequest.getPayWayCode());
+
 		PaymentRequest paymentRequest = new PaymentRequest();
 		paymentRequest.setPaymentWayCode(unipayRequest.getPayWayCode());
 		paymentRequest.setOrderNumber(unipayRequest.getOrderNumber());
@@ -76,7 +79,7 @@ public class PaymentGatewayController {
 
 		PaymentInterface paymentInterface = this.paymentWayService.getPaymentInterface(paymentRequest.getPaymentWayCode(), PaymentInterfaceType.PAY);
 
-		AbstractPaymentComponent paymentComponent = (AbstractPaymentComponent) SpringContextUtil.getBean(paymentInterface.getHandlerBeanName());
+		AbstractPaymentComponent paymentComponent = (AbstractPaymentComponent) SpringContextUtil.getBean(handlerBeanName);
 
 		PaymentResponse paymentResponse = paymentComponent.handle(paymentRequest);
 
