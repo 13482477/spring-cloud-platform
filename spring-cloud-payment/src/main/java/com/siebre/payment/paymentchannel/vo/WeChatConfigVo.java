@@ -1,5 +1,7 @@
 package com.siebre.payment.paymentchannel.vo;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
@@ -8,16 +10,19 @@ import java.io.Serializable;
  */
 public class WeChatConfigVo implements Serializable{
 
+    @ApiModelProperty(value = "商户号", required = true)
     private String merchantCode;
 
+    @ApiModelProperty(value = "AppId", required = true)
     private String appId;
 
+    @ApiModelProperty(value = "AppSecret", required = true)
     private String appSecret;
 
-    //API密钥
+    @ApiModelProperty(value = "API密钥", required = true)
     private String secretKey;
 
-    //操作员账号
+    @ApiModelProperty(value = "操作员账号", required = false)
     private String opUesrId;
 
     public String getMerchantCode() {

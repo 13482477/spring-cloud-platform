@@ -18,7 +18,7 @@ import javax.servlet.Filter;
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**");
+        registry.addMapping("/**").allowedMethods("*");
     }
 
     @Bean

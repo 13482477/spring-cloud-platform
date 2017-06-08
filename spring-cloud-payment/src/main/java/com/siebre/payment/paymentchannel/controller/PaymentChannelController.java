@@ -4,6 +4,7 @@ import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentchannel.service.PaymentChannelService;
+import com.siebre.payment.paymentchannel.vo.PaymentChannelVo;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.paymentway.service.PaymentWayService;
 import io.swagger.annotations.ApiOperation;
@@ -28,8 +29,8 @@ public class PaymentChannelController {
 
 	@ApiOperation(value = "支付渠道列表", notes = "支付渠道列表")
 	@RequestMapping(value = "/api/v1/paymentChannels", method = GET)
-	public ServiceResult<List<PaymentChannel>> list(PageInfo page) {
-		return paymentChannelService.searchAllByPage(page);
+	public ServiceResult<List<PaymentChannelVo>> list() {
+		return paymentChannelService.searchAll();
 	}
 
 	@ApiOperation(value = "创建支付渠道", notes = "创建支付渠道")

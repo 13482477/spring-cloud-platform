@@ -16,6 +16,7 @@ import java.util.Map;
 
 @Repository
 public interface PaymentOrderMapper {
+
     int deleteByPrimaryKey(Long id);
 
     int insert(PaymentOrder record);
@@ -61,27 +62,31 @@ public interface PaymentOrderMapper {
 
     int updateOrderStatusToClose(String orderNumber);
 
-    public BigDecimal getSuccessedPaymentAmount();
+    BigDecimal getSuccessedPaymentAmount();
 
-    public Integer getSuccessedPaymentCount();
+    Integer getSuccessedPaymentCount();
 
-    public BigDecimal getFaildPaymentAmount();
+    BigDecimal getFaildPaymentAmount();
 
-    public Integer getFaildPaymentCount();
+    Integer getFaildPaymentCount();
 
-    public Integer getCount();
+    Integer getCount();
 
-    public BigDecimal getTotalAmountByDateRange(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    BigDecimal getTotalAmountByDateRange(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
-    public List<Map<String, Object>> getChannelSuccessedCount();
+    List<Map<String, Object>> getChannelSuccessedCount();
 
-    public List<Map<String, Object>> getChannelFailCount();
+    List<Map<String, Object>> getChannelFailCount();
 
-    public List<Map<String, Object>> getChannelSuccessedAmount();
+    List<Map<String, Object>> getChannelSuccessedAmount();
 
-    public List<Map<String, Object>> getChannelFailAmount();
+    List<Map<String, Object>> getChannelFailAmount();
 
-    public List<Map<String, Object>> getPaymentWayCount(@Param("status") PaymentOrderPayStatus status);
+    List<Map<String, Object>> getPaymentWayCount(@Param("status") PaymentOrderPayStatus status);
 
-    public List<PaymentChannelTransactionVo> countPaymentChannelTransaction();
+    List<PaymentChannelTransactionVo> countPaymentChannelTransaction();
+
+    List<PaymentOrder> getOrdersByChannelAndDate(@Param("channelId") Long channelId,@Param("checkStartDate") Date checkStartDate, @Param("checkEndDate") Date checkEndDate);
+
+    List<PaymentOrder> getOrdersByCheckDate(@Param("checkStartDate") Date checkStartDate, @Param("checkEndDate") Date checkEndDate);
 }

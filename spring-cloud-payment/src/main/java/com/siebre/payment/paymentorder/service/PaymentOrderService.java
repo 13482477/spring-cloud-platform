@@ -5,6 +5,7 @@ import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.entity.enums.*;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper;
+import com.siebre.payment.paymentcheck.vo.CheckOverviewResult;
 import com.siebre.payment.paymentgateway.vo.PaymentOrderRequest;
 import com.siebre.payment.paymentgateway.vo.PaymentOrderResponse;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
@@ -105,6 +106,8 @@ public class PaymentOrderService {
         this.processTotalAmount(paymentOrder, orderRequest.getPaymentOrderItems());
         //退款状态默认设置为未支付
         paymentOrder.setRefundStatus(PaymentOrderRefundStatus.NOT_REFUND);
+        //设置对账状态为未对账
+        paymentOrder.setCheckStatus(PaymentOrderCheckStatus.NOT_CONFIRM);
         this.paymentOrderMapper.insert(paymentOrder);
 
         for (PaymentOrderItem paymentOrderItem : orderRequest.getPaymentOrderItems()) {
@@ -410,6 +413,56 @@ public class PaymentOrderService {
     public ServiceResult<List<PaymentChannelTransactionVo>> countPaymentChannelTransaction() {
         List<PaymentChannelTransactionVo> result = this.paymentOrderMapper.countPaymentChannelTransaction();
         return ServiceResult.<List<PaymentChannelTransactionVo>>builder().success(true).data(result).build();
+    }
+
+    public CheckOverviewResult getOrdersByChannelAndDate(Long channelId, Date checkStartDate, Date checkEndDate) {
+
+        List<PaymentOrder> orders = null;
+        if (channelId != null) {
+            orders = this.paymentOrderMapper.getOrdersByChannelAndDate(channelId,checkStartDate,checkEndDate);
+        }else {
+            orders = this.paymentOrderMapper.getOrdersByCheckDate(checkStartDate,checkEndDate);
+        }
+
+        CheckOverviewResult checkOverviewResult = new CheckOverviewResult();
+        int checkTotalCount = 0;//对账总笔数
+        int successCount = 0;//成功笔数
+        int failCount = 0;//失败笔数
+        BigDecimal payOrderTotalAmount = BigDecimal.ZERO;//支付信息-订单金额
+        BigDecimal payTotalAmount = BigDecimal.ZERO;//支付信息-支付金额
+        BigDecimal refundOrderTotalAmount = BigDecimal.ZERO;//退款信息-订单金额
+        BigDecimal refundTotalAmount = BigDecimal.ZERO;//退款信息-退款金额
+
+        for (PaymentOrder order : orders) {
+            if (order.getCheckStatus().getValue() != 1) {//已对账
+                checkTotalCount = checkTotalCount + 1;
+                if (order.getCheckStatus().getValue() == 2) {//对账成功
+                    successCount = successCount + 1;
+                    if (order.getStatus().getValue() ==3 && order.getRefundStatus().getValue() ==0) {//支付成功且未退款
+                        payOrderTotalAmount = payOrderTotalAmount.add(order.getAmount());
+                        payTotalAmount = payTotalAmount.add(order.getAmount());
+                    }else if (order.getRefundStatus().getValue() ==2) {//全额退款成功
+                        //payOrderTotalAmount.add(order.getAmount());  TODO 退款成功，是否要累计支付对账总金额
+                        //payTotalAmount.add(order.getAmount());
+                        refundOrderTotalAmount = refundOrderTotalAmount.add(order.getAmount());
+                        refundTotalAmount = refundTotalAmount.add(order.getAmount());
+                    }
+                }else {//对账失败，异常
+                    failCount = failCount + 1;
+                    //TODO 对账失败或异常，是否要判断并累计支付/退款方金额
+                }
+            }
+        }
+
+        checkOverviewResult.setCheckTotalCount(checkTotalCount);
+        checkOverviewResult.setSuccessCount(successCount);
+        checkOverviewResult.setFailCount(failCount);
+        checkOverviewResult.setPayOrderTotalAmount(payOrderTotalAmount);
+        checkOverviewResult.setPayTotalAmount(payTotalAmount);
+        checkOverviewResult.setRefundOrderTotalAmount(refundOrderTotalAmount);
+        checkOverviewResult.setRefundTotalAmount(refundTotalAmount);
+
+        return checkOverviewResult;
     }
 
 }
