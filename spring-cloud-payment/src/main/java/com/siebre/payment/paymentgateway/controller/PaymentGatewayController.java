@@ -65,7 +65,7 @@ public class PaymentGatewayController {
     /**
      * 统一支付接口
      */
-    @ApiOperation(value = "统一支付接口", notes = "统一支付接口")
+    @ApiOperation(value = "统一支付接口(V1.0)", notes = "统一支付接口(V1.0)")
     @RequestMapping(value = "/openApi/v1/paymentGateway/unifiedPay", method = POST)
     public UnifiedPayResponse unipay(@RequestBody UnifiedPayRequest unipayRequest, HttpServletRequest request) {
         String handlerBeanName = HandlerBeanNameConfig.PAY_MAPPING.get(unipayRequest.getPayWayCode());
@@ -81,6 +81,13 @@ public class PaymentGatewayController {
         response.setPaymentUrl(paymentResponse.getPayUrl());
         response.setBody(paymentResponse.getBody());
         return response;
+    }
+
+    @ApiOperation(value = "统一支付接口(V2.0)", notes = "统一支付接口(V2.0)")
+    @RequestMapping(value = "/openApi/v2/paymentGateway/unifiedPay", method = POST)
+    public Object unipayV2(@RequestBody UnifiedPayRequest unifiedPayRequest, HttpServletRequest request){
+
+        return null;
     }
 
     /**

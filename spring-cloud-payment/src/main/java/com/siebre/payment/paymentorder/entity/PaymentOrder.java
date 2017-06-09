@@ -88,7 +88,7 @@ public class PaymentOrder extends BaseObject {
     //-------finish---------
 
 
-    private List<PaymentOrderItem> paymentOrderItems = new ArrayList<PaymentOrderItem>();
+    private List<PaymentOrderItem> items = new ArrayList<PaymentOrderItem>();
 
     private List<PaymentTransaction> paymentTransactions = new ArrayList<PaymentTransaction>();
 
@@ -172,12 +172,12 @@ public class PaymentOrder extends BaseObject {
         this.paymentTerminalType = paymentTerminalType;
     }
 
-    public List<PaymentOrderItem> getPaymentOrderItems() {
-        return paymentOrderItems;
+    public List<PaymentOrderItem> getItems() {
+        return items;
     }
 
-    public void setPaymentOrderItems(List<PaymentOrderItem> paymentOrderItems) {
-        this.paymentOrderItems = paymentOrderItems;
+    public void setItems(List<PaymentOrderItem> items) {
+        this.items = items;
     }
 
     public List<PaymentTransaction> getPaymentTransactions() {
@@ -333,7 +333,7 @@ public class PaymentOrder extends BaseObject {
                 ", checkStatus=" + checkStatus +
                 ", refundStatus=" + refundStatus +
                 ", refundAmount=" + refundAmount +
-                ", paymentOrderItems=" + paymentOrderItems +
+                ", items=" + items +
                 ", paymentTransactions=" + paymentTransactions +
                 '}';
     }

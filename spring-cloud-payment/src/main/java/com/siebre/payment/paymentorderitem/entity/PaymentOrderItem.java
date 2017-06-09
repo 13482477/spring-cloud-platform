@@ -23,7 +23,7 @@ public class PaymentOrderItem extends BaseObject {
     /**
      * 保单号
      */
-    private String policeNumber;
+    private String policyNumber;
 
     /**
      * 保额
@@ -33,7 +33,7 @@ public class PaymentOrderItem extends BaseObject {
     /**
      * 保费
      */
-    private BigDecimal premium;
+    private BigDecimal grossPremium;
 
     /**
      * 保险起期
@@ -47,7 +47,9 @@ public class PaymentOrderItem extends BaseObject {
 
     /**
      * 责任
+     * v2.0版本，该模型废弃
      */
+    @Deprecated
     private List<PolicyLibility> libilities = new ArrayList<>();
 
     /**
@@ -60,17 +62,29 @@ public class PaymentOrderItem extends BaseObject {
      * 被保人
      */
     private Long insuredPersonId;
-    private PolicyRole insuredPerson;
+    private PolicyRole insured;
 
     /**
      * 投被保人是否是同一人
+     * v2.0版本该字段放在被保人上
      */
+    @Deprecated
     private String samePerson;
 
     /**
      * 产品名称
      */
     private String productName;
+
+    /**
+     * 产品代码
+     */
+    private String productCode;
+
+    private Date inceptionDate;
+
+    private Date plannedEndDate;
+
 
     public Long getPaymentOrderId() {
         return paymentOrderId;
@@ -88,12 +102,12 @@ public class PaymentOrderItem extends BaseObject {
         this.applicationNumber = applicationNumber == null ? null : applicationNumber.trim();
     }
 
-    public String getPoliceNumber() {
-        return policeNumber;
+    public String getPolicyNumber() {
+        return policyNumber;
     }
 
-    public void setPoliceNumber(String policeNumber) {
-        this.policeNumber = policeNumber == null ? null : policeNumber.trim();
+    public void setPolicyNumber(String policyNumber) {
+        this.policyNumber = policyNumber;
     }
 
     public BigDecimal getInsuredAmount() {
@@ -104,12 +118,12 @@ public class PaymentOrderItem extends BaseObject {
         this.insuredAmount = insuredAmount;
     }
 
-    public BigDecimal getPremium() {
-        return premium;
+    public BigDecimal getGrossPremium() {
+        return grossPremium;
     }
 
-    public void setPremium(BigDecimal premium) {
-        this.premium = premium;
+    public void setGrossPremium(BigDecimal grossPremium) {
+        this.grossPremium = grossPremium;
     }
 
     public static long getSerialVersionUID() {
@@ -172,12 +186,12 @@ public class PaymentOrderItem extends BaseObject {
         this.insuredPersonId = insuredPersonId;
     }
 
-    public PolicyRole getInsuredPerson() {
-        return insuredPerson;
+    public PolicyRole getInsured() {
+        return insured;
     }
 
-    public void setInsuredPerson(PolicyRole insuredPerson) {
-        this.insuredPerson = insuredPerson;
+    public void setInsured(PolicyRole insured) {
+        this.insured = insured;
     }
 
     public String getSamePerson() {
@@ -188,23 +202,27 @@ public class PaymentOrderItem extends BaseObject {
         this.samePerson = samePerson;
     }
 
-    @Override
-    public String toString() {
-        return "PaymentOrderItem{" +
-                "paymentOrderId=" + paymentOrderId +
-                ", applicationNumber='" + applicationNumber + '\'' +
-                ", policeNumber='" + policeNumber + '\'' +
-                ", insuredAmount=" + insuredAmount +
-                ", premium=" + premium +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", libilities=" + libilities +
-                ", applicantId=" + applicantId +
-                ", applicant=" + applicant +
-                ", insuredPersonId=" + insuredPersonId +
-                ", insuredPerson=" + insuredPerson +
-                ", samePerson='" + samePerson + '\'' +
-                ", productName='" + productName + '\'' +
-                '}';
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
+    public Date getInceptionDate() {
+        return inceptionDate;
+    }
+
+    public void setInceptionDate(Date inceptionDate) {
+        this.inceptionDate = inceptionDate;
+    }
+
+    public Date getPlannedEndDate() {
+        return plannedEndDate;
+    }
+
+    public void setPlannedEndDate(Date plannedEndDate) {
+        this.plannedEndDate = plannedEndDate;
     }
 }

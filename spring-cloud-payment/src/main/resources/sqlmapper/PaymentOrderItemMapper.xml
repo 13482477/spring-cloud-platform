@@ -5,9 +5,9 @@
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT" />
 		<result column="application_number" property="applicationNumber" jdbcType="VARCHAR" />
-		<result column="police_number" property="policeNumber" jdbcType="VARCHAR" />
+		<result column="policy_number" property="policyNumber" jdbcType="VARCHAR" />
 		<result column="insured_amount" property="insuredAmount" jdbcType="DECIMAL" />
-		<result column="premium" property="premium" jdbcType="DECIMAL" />
+		<result column="gross_premium" property="grossPremium" jdbcType="DECIMAL" />
 		<result column="applicant_id" property="applicantId" jdbcType="BIGINT" />
 		<result column="product_name" property="productName" jdbcType="VARCHAR" />
 		<result column="insured_person_id" property="insuredPersonId" jdbcType="BIGINT" />
@@ -51,9 +51,9 @@
 		id,
 		payment_order_id,
 		application_number,
-		police_number,
+		policy_number,
 		insured_amount,
-		premium,
+		gross_premium,
 		applicant_id,
 		insured_person_id,
 		product_name,
@@ -65,9 +65,9 @@
 		pmt_payment_order_item.id,
 		pmt_payment_order_item.payment_order_id,
 		pmt_payment_order_item.application_number,
-		pmt_payment_order_item.police_number,
+		pmt_payment_order_item.policy_number,
 		pmt_payment_order_item.insured_amount,
-		pmt_payment_order_item.premium,
+		pmt_payment_order_item.gross_premium,
 		pmt_payment_order_item.applicant_id,
 		pmt_payment_order_item.insured_person_id,
 		pmt_payment_order_item.product_name,
@@ -121,12 +121,12 @@
 
 	<insert id="insert" parameterType="com.siebre.payment.paymentorderitem.entity.PaymentOrderItem" useGeneratedKeys="true" keyProperty="id">
 		insert into pmt_payment_order_item (id, payment_order_id, application_number,
-		police_number, insured_amount, premium,
+		policy_number, insured_amount, gross_premium,
 		applicant_id, insured_person_id, product_name,
 		same_person, start_date, end_date
 		)
 		values (#{id,jdbcType=BIGINT}, #{paymentOrderId,jdbcType=BIGINT}, #{applicationNumber,jdbcType=VARCHAR},
-		#{policeNumber,jdbcType=VARCHAR}, #{insuredAmount,jdbcType=DECIMAL}, #{premium,jdbcType=DECIMAL},
+		#{policyNumber,jdbcType=VARCHAR}, #{insuredAmount,jdbcType=DECIMAL}, #{grossPremium,jdbcType=DECIMAL},
 		#{applicantId,jdbcType=BIGINT}, #{insuredPersonId,jdbcType=BIGINT}, #{productName,jdbcType=VARCHAR},
 		#{samePerson,jdbcType=VARCHAR}, #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}
 		)
@@ -144,14 +144,14 @@
 			<if test="applicationNumber != null">
 				application_number,
 			</if>
-			<if test="policeNumber != null">
-				police_number,
+			<if test="policyNumber != null">
+				policy_number,
 			</if>
 			<if test="insuredAmount != null">
 				insured_amount,
 			</if>
-			<if test="premium != null">
-				premium,
+			<if test="grossPremium != null">
+				gross_premium,
 			</if>
 			<if test="applicantId != null">
 				applicant_id,
@@ -182,14 +182,14 @@
 			<if test="applicationNumber != null">
 				#{applicationNumber,jdbcType=VARCHAR},
 			</if>
-			<if test="policeNumber != null">
-				#{policeNumber,jdbcType=VARCHAR},
+			<if test="policyNumber != null">
+				#{policyNumber,jdbcType=VARCHAR},
 			</if>
 			<if test="insuredAmount != null">
 				#{insuredAmount,jdbcType=DECIMAL},
 			</if>
-			<if test="premium != null">
-				#{premium,jdbcType=DECIMAL},
+			<if test="grossPremium != null">
+				#{grossPremium,jdbcType=DECIMAL},
 			</if>
 			<if test="applicantId != null">
 				#{applicantId,jdbcType=BIGINT},
@@ -221,14 +221,14 @@
 			<if test="applicationNumber != null">
 				application_number = #{applicationNumber,jdbcType=VARCHAR},
 			</if>
-			<if test="policeNumber != null">
-				police_number = #{policeNumber,jdbcType=VARCHAR},
+			<if test="policyNumber != null">
+				policy_number = #{policyNumber,jdbcType=VARCHAR},
 			</if>
 			<if test="insuredAmount != null">
 				insured_amount = #{insuredAmount,jdbcType=DECIMAL},
 			</if>
-			<if test="premium != null">
-				premium = #{premium,jdbcType=DECIMAL},
+			<if test="grossPremium != null">
+				gross_premium = #{grossPremium,jdbcType=DECIMAL},
 			</if>
 			<if test="applicantId != null">
 				applicant_id = #{applicantId,jdbcType=BIGINT},
@@ -256,9 +256,9 @@
 		update pmt_payment_order_item
 		set payment_order_id = #{paymentOrderId,jdbcType=BIGINT},
 		application_number = #{applicationNumber,jdbcType=VARCHAR},
-		police_number = #{policeNumber,jdbcType=VARCHAR},
+		policy_number = #{policyNumber,jdbcType=VARCHAR},
 		insured_amount = #{insuredAmount,jdbcType=DECIMAL},
-		premium = #{premium,jdbcType=DECIMAL},
+		gross_premium = #{grossPremium,jdbcType=DECIMAL},
 		applicant_id = #{applicantId,jdbcType=BIGINT},
 		insured_person_id = #{insuredPersonId,jdbcType=BIGINT},
 		product_name = #{productName,jdbcType=VARCHAR},

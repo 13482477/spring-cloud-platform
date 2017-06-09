@@ -230,7 +230,7 @@ public class PaymentTransactionService {
         BigDecimal totalPremium = BigDecimal.ZERO;
 
         for (PaymentOrderItem paymentOrderItem : paymentOrderItems) {
-            totalPremium = totalPremium.add(paymentOrderItem.getPremium());
+            totalPremium = totalPremium.add(paymentOrderItem.getGrossPremium());
         }
         paymentOrder.setTotalInsuredAmount(totalInsuredAmount);
         paymentOrder.setTotalPremium(totalPremium);
@@ -255,7 +255,7 @@ public class PaymentTransactionService {
         PaymentOrder paymentOrder = paymentOrderMapper.selectByOrderNumber(orderNumber);
         List<PaymentOrderItem> orderItem = paymentOrderItemMapper.selectByPaymentOrderId(paymentOrder.getId());
         List<PaymentTransaction> paymentTransactions = paymentTransactionMapper.selectByPaymentOrderId(paymentOrder.getId());
-        paymentOrder.setPaymentOrderItems(orderItem);
+        paymentOrder.setItems(orderItem);
         paymentOrder.setPaymentTransactions(paymentTransactions);
         return paymentOrder;
     }
