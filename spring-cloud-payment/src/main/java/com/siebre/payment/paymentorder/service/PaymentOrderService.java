@@ -97,7 +97,7 @@ public class PaymentOrderService {
         PaymentOrder paymentOrder = new PaymentOrder();
         paymentOrder.setPaymentWayCode(orderRequest.getPaymentWayCode());
         paymentOrder.setOrderNumber(serialNumberService.nextValue("sale_order"));
-        paymentOrder.setPaymentOrderItems(orderRequest.getPaymentOrderItems());
+        paymentOrder.setItems(orderRequest.getPaymentOrderItems());
         if (orderRequest.getSellingChannel() != null) {
             if (orderRequest.getSellingChannel().equals("MOBILE_SALE_APP")) {
                 paymentOrder.setSellingChannel(SellingChannel.MOBILE_SALE_APP);//移动展业
@@ -124,9 +124,9 @@ public class PaymentOrderService {
             applicant.setPolicyRoleType(PolicyRoleType.POLICY_HOLDER);
             policyRoleMapper.insert(applicant);
             paymentOrderItem.setApplicantId(applicant.getId());
-            //save insuredPerson
+            //save insured
             if ("n".equalsIgnoreCase(paymentOrderItem.getSamePerson())) {
-                PolicyRole insuredPerson = paymentOrderItem.getInsuredPerson();
+                PolicyRole insuredPerson = paymentOrderItem.getInsured();
                 insuredPerson.setPolicyRoleType(PolicyRoleType.INSURED_PERSON);
                 policyRoleMapper.insert(insuredPerson);
                 paymentOrderItem.setInsuredPersonId(insuredPerson.getId());
@@ -153,7 +153,7 @@ public class PaymentOrderService {
 
         for (PaymentOrderItem paymentOrderItem : paymentOrderItems) {
             this.processPolicyLibilityAmount(paymentOrderItem);
-            totalPremium = totalPremium.add(paymentOrderItem.getPremium());
+            totalPremium = totalPremium.add(paymentOrderItem.getGrossPremium());
             totalInsuredAmount = totalInsuredAmount.add(paymentOrderItem.getInsuredAmount());
         }
         paymentOrder.setTotalInsuredAmount(totalInsuredAmount);
@@ -168,14 +168,14 @@ public class PaymentOrderService {
             totalPremium = totalPremium.add(libility.getPremium());
             totalInsuredAmount = totalInsuredAmount.add(libility.getInsuredAmount());
         }
-        paymentOrderItem.setPremium(totalPremium);
+        paymentOrderItem.setGrossPremium(totalPremium);
         paymentOrderItem.setInsuredAmount(totalInsuredAmount);
     }
 
     public CheckOrderVo queryPaymentOrderForCheckDetail(String orderNumber) {
         PaymentOrder order = paymentOrderMapper.selectByOrderNumberleftjoin(orderNumber);
         List<PaymentOrderItem> items = paymentOrderItemMapper.selectByPaymentOrderId(order.getId());
-        order.setPaymentOrderItems(items);
+        order.setItems(items);
 
         CheckOrderVo orderVo = new CheckOrderVo();
         orderVo.setCheckTime(order.getCheckTime());
@@ -211,7 +211,7 @@ public class PaymentOrderService {
     public PaymentOrder queryPaymentOrder(String orderNumber) {
         PaymentOrder order = paymentOrderMapper.selectByOrderNumberleftjoin(orderNumber);
         List<PaymentOrderItem> items = paymentOrderItemMapper.selectByPaymentOrderId(order.getId());
-        order.setPaymentOrderItems(items);
+        order.setItems(items);
         return order;
     }
 
@@ -629,7 +629,7 @@ public class PaymentOrderService {
             }
         }
 
-        for (PaymentOrderItem paymentOrderItem : paymentOrder.getPaymentOrderItems()) {
+        for (PaymentOrderItem paymentOrderItem : paymentOrder.getItems()) {
             detail.addOrderItems(transItemVo(paymentOrderItem));
         }
 
@@ -646,11 +646,11 @@ public class PaymentOrderService {
         item.setApplicationNumber(paymentOrderItem.getApplicationNumber());
         item.setPolicyNumber(paymentOrderItem.getApplicationNumber());
         item.setPolicyState("未生效");
-        item.setPayAmount(paymentOrderItem.getPremium().toString());
+        item.setPayAmount(paymentOrderItem.getGrossPremium().toString());
 
         item.setProductName(paymentOrderItem.getProductName());
         item.setApplicantName(paymentOrderItem.getApplicant().getName());
-        item.setPayAmount(paymentOrderItem.getPremium().toString());
+        item.setPayAmount(paymentOrderItem.getGrossPremium().toString());
 
         item.setApplicantMobile(paymentOrderItem.getApplicant().getPhoneNumber());
         item.setApplicantIdentityType("身份证");
