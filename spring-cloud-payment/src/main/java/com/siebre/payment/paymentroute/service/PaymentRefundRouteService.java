@@ -71,7 +71,6 @@ public class PaymentRefundRouteService {
 
         PaymentRefundResponse paymentRefundResponse = paymentRefundHandler.handle(paymentRefundRequest, paymentTransaction, paymentOrder, paymentWay, paymentInterface);
 
-
         return paymentRefundResponse;
     }
 }
