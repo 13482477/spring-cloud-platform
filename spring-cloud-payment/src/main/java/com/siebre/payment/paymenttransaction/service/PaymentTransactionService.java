@@ -395,7 +395,7 @@ public class PaymentTransactionService {
         //退款处理中，更新order状态为处理中
         if (RefundApplicationStatus.PROCESSING.equals(refundApplication.getStatus())) {
             paymentOrder.setRefundStatus(PaymentOrderRefundStatus.PROCESSING_REFUND);
-        } else if (RefundApplicationStatus.SUCCESS.equals(refundApplication.getStatus()) || RefundApplicationStatus.FAILED.equals(refundApplication.getStatus())) {
+        } else if (RefundApplicationStatus.SUCCESS.equals(refundApplication.getStatus())) {
             //更新订单退款金额
             BigDecimal totalRefundAmount = paymentOrder.getRefundAmount();
             if (totalRefundAmount != null) {
