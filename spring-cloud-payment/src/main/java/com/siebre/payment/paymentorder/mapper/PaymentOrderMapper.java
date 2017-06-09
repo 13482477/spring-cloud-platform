@@ -1,6 +1,7 @@
 package com.siebre.payment.paymentorder.mapper;
 
 import com.siebre.basic.query.PageInfo;
+import com.siebre.payment.entity.enums.PaymentOrderCheckStatus;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.PaymentOrderRefundStatus;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
@@ -88,5 +89,9 @@ public interface PaymentOrderMapper {
 
     List<PaymentOrder> getOrdersByChannelAndDate(@Param("channelId") Long channelId,@Param("checkStartDate") Date checkStartDate, @Param("checkEndDate") Date checkEndDate);
 
-    List<PaymentOrder> getOrdersByCheckDate(@Param("checkStartDate") Date checkStartDate, @Param("checkEndDate") Date checkEndDate);
+    //对账明细列表查询
+    List<PaymentOrder> selectCheckOrderByPage(@Param("orderNumber") String orderNumber, @Param("channelCodeList") List<String> channelCodeList,
+                                              @Param("payStatus") PaymentOrderPayStatus payStatus, @Param("refundStatus") PaymentOrderRefundStatus refundStatus,
+                                              @Param("checkStatusList") List<PaymentOrderCheckStatus> checkStatusList, PageInfo pageInfo);
+
 }

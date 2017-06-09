@@ -845,7 +845,7 @@
 		pmt_payment_order.create_time desc
 	</select>
 
-	<select id="getOrdersByCheckDate" resultMap="BaseResultMap">
+	<select id="selectCheckOrderByPage" resultMap="BaseResultMap">
 		select
 		<include refid="colnum_for_page"/>
 		from
@@ -853,11 +853,26 @@
 		left join
 		pmt_payment_channel on pmt_payment_order.payment_channel_id = pmt_payment_channel.id
 		WHERE 1 = 1
-		<if test="checkStartDate != null">
-			and pmt_payment_order.create_time &gt; #{checkStartDate,jdbcType=VARCHAR}
+		<if test="orderNumber != null and orderNumber != ''">
+			and pmt_payment_order.order_number = #{orderNumber,jdbcType=VARCHAR}
 		</if>
-		<if test="checkEndDate != null">
-			and pmt_payment_order.create_time &lt; #{checkEndDate,jdbcType=VARCHAR}
+		<if test="channelCodeList != null and channelCodeList.size() != 0">
+			and pmt_payment_channel.channel_code in
+			<foreach item="channelCode" index="index" collection="channelCodeList" open="(" separator="," close=")">
+				#{channelCode,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+		<if test="payStatus != null">
+			and pmt_payment_order.status = #{payStatus.value}
+		</if>
+		<if test="refundStatus != null">
+			and pmt_payment_order.refund_status = #{refundStatus.value}
+		</if>
+		<if test="checkStatusList != null and checkStatusList.size() != 0">
+			and pmt_payment_order.check_status in
+			<foreach item="checkStatus" index="index" collection="checkStatusList" open="(" separator="," close=")">
+				#{checkStatus.value}
+			</foreach>
 		</if>
 		order by
 		pmt_payment_order.create_time desc
