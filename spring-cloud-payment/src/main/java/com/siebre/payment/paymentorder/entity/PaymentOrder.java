@@ -39,9 +39,7 @@ public class PaymentOrder extends BaseObject {
 
     private Integer paymentTerminalType;
 
-    private Long paymentChannelId;
 
-    private PaymentChannel paymentChannel;
 
     /**
      * 用户可以先选择支付方式，该字段用来保存支付方式的code
@@ -80,6 +78,9 @@ public class PaymentOrder extends BaseObject {
     private String externalOrderNumber;
     private PaymentMethod paymentMethod;
     private PaymentProvider paymentProvider;
+    private Long paymentChannelId;
+
+    private PaymentChannel paymentChannel;
     private String currency;
     //账户信息
     private Long paymentAccountId;
