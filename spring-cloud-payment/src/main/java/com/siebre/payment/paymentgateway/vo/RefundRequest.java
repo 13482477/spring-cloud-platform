@@ -14,7 +14,7 @@ public class RefundRequest implements Serializable{
 
     private BigDecimal refundAmount;
 
-    private String request;
+    private String reason;
 
     public String getOrderNumber() {
         return orderNumber;
@@ -32,11 +32,11 @@ public class RefundRequest implements Serializable{
         this.refundAmount = refundAmount;
     }
 
-    public String getRequest() {
-        return request;
+    public String getReason() {
+        return reason;
     }
 
-    public void setRequest(String request) {
-        this.request = request;
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }

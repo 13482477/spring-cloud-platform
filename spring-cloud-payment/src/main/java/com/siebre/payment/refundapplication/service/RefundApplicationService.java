@@ -1,17 +1,24 @@
 package com.siebre.payment.refundapplication.service;
 
 import com.siebre.basic.query.PageInfo;
+import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
+import com.siebre.payment.entity.enums.PaymentOrderRefundStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
+import com.siebre.payment.paymentorder.vo.OrderQueryParamsVo;
+import com.siebre.payment.paymentorder.vo.Refund;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
 import com.siebre.payment.refundapplication.mapper.RefundApplicationMapper;
+import com.siebre.payment.serialnumber.mapper.SerialNumberMapper;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,20 +36,36 @@ public class RefundApplicationService {
     @Autowired
     private PaymentOrderMapper paymentOrderMapper;
 
-    public List<RefundApplication> selectRefundList(String orderNumber, String refundNumber,
-                                                                   String channelName, RefundApplicationStatus refundStatus,
-                                                                   Date startDate, Date endDate, PageInfo pageInfo) {
-        List<RefundApplication> list = refundApplicationMapper.selectRefundList(orderNumber, refundNumber, channelName, refundStatus, startDate, endDate, pageInfo);
-        return list;
-    }
+    @Autowired
+    private SerialNumberMapper serialNumberMapper;
 
-    public RefundApplication getRefundApplicationByOrderNumber(String orderNumber) {
-        RefundApplication result = refundApplicationMapper.selectByBusinessNumber(orderNumber, null);
+    public ServiceResult<List<RefundApplication>> selectRefundList(String orderNumber, String refundNumber,
+                                                                   List<String> channelCodeList, List<PaymentOrderRefundStatus> refundStatusList,
+                                                                   Date startDate, Date endDate, PageInfo pageInfo) {
+        List<RefundApplication> list = refundApplicationMapper.selectRefundList(orderNumber, refundNumber, channelCodeList, refundStatusList, startDate, endDate, pageInfo);
+        ServiceResult<List<RefundApplication>> result = new ServiceResult<>();
+        result.setData(list);
+        result.setPageInfo(pageInfo);
         return result;
     }
 
-    public RefundApplication getRefundApplicationByRefundApplicationNumber(String refundApplicationNumber) {
-        RefundApplication result = refundApplicationMapper.selectByBusinessNumber(null, refundApplicationNumber);
+    public ServiceResult<List<RefundApplication>> getRefundApplicationByPage(PageInfo pageInfo) {
+        List<RefundApplication> list = refundApplicationMapper.selectByPage(pageInfo);
+        ServiceResult<List<RefundApplication>> result = new ServiceResult<>();
+        result.setData(list);
+        result.setPageInfo(pageInfo);
+        return result;
+    }
+
+    public ServiceResult<RefundApplication> getRefundApplicationByOrderNumber(String orderNumber) {
+        ServiceResult<RefundApplication> result = new ServiceResult<>();
+        result.setData(refundApplicationMapper.selectByBusinessNumber(orderNumber, null));
+        return result;
+    }
+
+    public ServiceResult<RefundApplication> getRefundApplicationByRefundApplicationNumber(String refundApplicationNumber) {
+        ServiceResult<RefundApplication> result = new ServiceResult<>();
+        result.setData(refundApplicationMapper.selectByBusinessNumber(null, refundApplicationNumber));
         return result;
     }
 
@@ -77,10 +100,34 @@ public class RefundApplicationService {
         return refundApplication;
     }
 
-    @Transactional("db")
-    public RefundApplication updateRefundApplication(RefundApplication refundApplication) {
-        refundApplicationMapper.updateByPrimaryKey(refundApplication);
-        return refundApplication;
+    public List<Refund> qeuryRefundByPage(OrderQueryParamsVo paramsVo, PageInfo page) {
+        String orderNumber = paramsVo.getOrderNumber();
+        String refundNumber = paramsVo.getRefundNumber();
+        Date startDate = paramsVo.getStartDate();
+        Date endDate = paramsVo.getEndDate();
+        ServiceResult<List<RefundApplication>> refundsListResult = this.selectRefundList(orderNumber, refundNumber, paramsVo.getChannelCodeList(),
+                paramsVo.getRefundStatusList(), startDate, endDate, page);
+        List<RefundApplication> refundsList = refundsListResult.getData();
+        page.setTotalPage(refundsListResult.getPageInfo().getTotalPage());
+        List<Refund> result = new ArrayList<>();
+        for (RefundApplication refundApp : refundsList) {
+            Refund refund = new Refund();
+            refund.setOrderNumber(refundApp.getOrderNumber());
+            refund.setRefundNumber(refundApp.getApplicationNumber());
+            refund.setChannelName(refundApp.getPaymentOrder().getPaymentChannel().getChannelName());
+            refund.setOrderAmount(refundApp.getPaymentOrder().getTotalPremium().toString());
+            refund.setRefundAmount(refundApp.getRefundAmount().toString());
+            refund.setRefundStatus(refundApp.getStatus().getDescription());
+            if(RefundApplicationStatus.SUCCESS.equals(refundApp.getStatus())){
+                refund.setOrderRefundStatus(refundApp.getPaymentOrder().getRefundStatus().getDescription());
+            }
+            if(refundApp.getCreateDate() != null) {
+                String dateStr = DateFormatUtils.format(refundApp.getCreateDate(), "yyyy-MM-dd HH:mm:ss");
+                refund.setCreateDate(dateStr);
+            }
+            result.add(refund);
+        }
+        return result;
     }
 
 

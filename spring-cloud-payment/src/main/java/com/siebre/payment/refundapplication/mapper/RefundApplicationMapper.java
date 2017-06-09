@@ -1,6 +1,7 @@
 package com.siebre.payment.refundapplication.mapper;
 
 import com.siebre.basic.query.PageInfo;
+import com.siebre.payment.entity.enums.PaymentOrderRefundStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
 import org.apache.ibatis.annotations.Param;
@@ -19,12 +20,12 @@ public interface RefundApplicationMapper {
 
     RefundApplication selectByPrimaryKey(Long id);
 
-    RefundApplication selectByBusinessNumber(@Param("orderNumber") String orderNumber,@Param("applicationNumber") String applicationNumber);
+    RefundApplication selectByBusinessNumber(@Param("orderNumber") String orderNumber, @Param("applicationNumber") String applicationNumber);
 
     List<RefundApplication> selectByPage(PageInfo pageinfo);
 
     List<RefundApplication> selectRefundList(@Param("orderNumber") String orderNumber, @Param("refundNumber") String refundNumber,
-                                             @Param("channelName") String channelName, @Param("refundStatus") RefundApplicationStatus refundStatus,
+                                             @Param("channelCodeList") List<String> channelCodeList, @Param("refundStatusList") List<PaymentOrderRefundStatus> refundStatusList,
                                              @Param("startDate") Date startDate, @Param("endDate") Date endDate, PageInfo pageinfo);
 
     int updateByPrimaryKeySelective(RefundApplication record);

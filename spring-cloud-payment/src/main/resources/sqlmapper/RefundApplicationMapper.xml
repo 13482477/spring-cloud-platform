@@ -2,31 +2,31 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.siebre.payment.refundapplication.mapper.RefundApplicationMapper">
 	<resultMap id="BaseResultMap" type="com.siebre.payment.refundapplication.entity.RefundApplication">
-		<id column="id" property="id" jdbcType="BIGINT" />
-		<result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
-		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
-		<result column="application_number" property="applicationNumber" jdbcType="VARCHAR" />
-		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
-		<result column="request" property="request" jdbcType="VARCHAR" />
-		<result column="response" property="response" jdbcType="VARCHAR" />
-		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
-		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
-		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
-		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<id column="id" property="id" jdbcType="BIGINT"/>
+		<result column="order_number" property="orderNumber" jdbcType="VARCHAR"/>
+		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL"/>
+		<result column="application_number" property="applicationNumber" jdbcType="VARCHAR"/>
+		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+		<result column="request" property="request" jdbcType="VARCHAR"/>
+		<result column="response" property="response" jdbcType="VARCHAR"/>
+		<result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
 	</resultMap>
 
 	<resultMap id="refundOrderResultMap" type="com.siebre.payment.refundapplication.entity.RefundApplication">
-		<id column="id" property="id" jdbcType="BIGINT" />
-		<result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
-		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
-		<result column="application_number" property="applicationNumber" jdbcType="VARCHAR" />
-		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
-		<result column="request" property="request" jdbcType="VARCHAR" />
-		<result column="response" property="response" jdbcType="VARCHAR" />
-		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
-		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
-		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
-		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<id column="id" property="id" jdbcType="BIGINT"/>
+		<result column="order_number" property="orderNumber" jdbcType="VARCHAR"/>
+		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL"/>
+		<result column="application_number" property="applicationNumber" jdbcType="VARCHAR"/>
+		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+		<result column="request" property="request" jdbcType="VARCHAR"/>
+		<result column="response" property="response" jdbcType="VARCHAR"/>
+		<result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
 		<association property="paymentOrder" notNullColumn="id" javaType="com.siebre.payment.paymentorder.entity.PaymentOrder" columnPrefix="paymentOrder_">
 			<id column="id" property="id" jdbcType="BIGINT" />
 			<result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
@@ -44,23 +44,28 @@
 			<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
 			<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
 			<association property="paymentChannel" javaType="com.siebre.payment.paymentchannel.entity.PaymentChannel" columnPrefix="paymentChannel_">
-				<result column="channel_name" property="channelName" jdbcType="VARCHAR" />
+				<result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
+				<result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
 			</association>
 		</association>
 		<association property="refundTransaction" notNullColumn="id" javaType="com.siebre.payment.paymenttransaction.entity.PaymentTransaction" columnPrefix="refundTransaction_">
-			<id column="id" property="id" jdbcType="BIGINT" />
-			<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
-			<result column="payment_way_id" property="paymentWayId" jdbcType="BIGINT" />
-			<result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT" />
-			<result column="internal_transaction_number" property="internalTransactionNumber" jdbcType="VARCHAR" />
-			<result column="external_transaction_number" property="externalTransactionNumber" jdbcType="VARCHAR" />
-			<result column="payment_amount" property="paymentAmount" jdbcType="DECIMAL" />
-			<result column="payment_status" property="paymentStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
-			<result column="transaction_message_id" property="transactionMessageId" jdbcType="VARCHAR" />
-			<result column="payee_account" property="payeeAccount" jdbcType="VARCHAR" />
-			<result column="payment_accout" property="paymentAccout" jdbcType="VARCHAR" />
-			<result column="interface_type" property="interfaceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
-			<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+			<id column="id" property="id" jdbcType="BIGINT"/>
+			<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT"/>
+			<result column="payment_way_id" property="paymentWayId" jdbcType="BIGINT"/>
+			<result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT"/>
+			<result column="internal_transaction_number" property="internalTransactionNumber" jdbcType="VARCHAR"/>
+			<result column="external_transaction_number" property="externalTransactionNumber" jdbcType="VARCHAR"/>
+			<result column="payment_amount" property="paymentAmount" jdbcType="DECIMAL"/>
+			<result column="payment_status" property="paymentStatus"
+					typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+			<result column="transaction_message_id" property="transactionMessageId" jdbcType="VARCHAR"/>
+			<result column="payee_account" property="payeeAccount" jdbcType="VARCHAR"/>
+			<result column="payment_accout" property="paymentAccout" jdbcType="VARCHAR"/>
+			<result column="interface_type" property="interfaceType"
+					typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
+			<result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+			<result column="sender" property="sender" jdbcType="VARCHAR"/>
+			<result column="receiver" property="receiver" jdbcType="VARCHAR"/>
 		</association>
 	</resultMap>
 
@@ -81,59 +86,57 @@
 		pmt_refund_application.update_user,
 		pmt_refund_application.create_date,
 		pmt_refund_application.update_date,
-		pmt_payment_order.id paymentOrder_id,
-		pmt_payment_order.order_number paymentOrder_order_number,
-		pmt_payment_order.total_insured_amount paymentOrder_total_insured_amount,
-		pmt_payment_order.total_premium
-		paymentOrder_total_premium,
-		pmt_payment_order.business_plantform paymentOrder_business_plantform,
-		pmt_payment_order.payment_client paymentOrder_payment_client,
-		pmt_payment_order.return_trade_no
-		paymentOrder_return_trade_no,
-		pmt_payment_order.status paymentOrder_status,
-		pmt_payment_order.check_status paymentOrder_check_status,
-		pmt_payment_order.payment_terminal_type
-		paymentOrder_payment_terminal_type,
-		pmt_payment_order.payment_channel_id paymentOrder_payment_channel_id,
-		pmt_payment_order.create_time paymentOrder_create_time,
-		pmt_payment_order.refund_status
-		paymentOrder_refund_status,
-		pmt_payment_order.refund_amount paymentOrder_refund_amount,
-		pmt_payment_order.payment_way_code paymentOrder_payment_way_code,
-		pmt_payment_channel.channel_name
-		paymentOrder_paymentChannel_channel_name,
-		pmt_payment_transaction.id refundTransaction_id,
-		pmt_payment_transaction.payment_channel_id refundTransaction_payment_channel_id,
-		pmt_payment_transaction.payment_way_id refundTransaction_payment_way_id,
-		pmt_payment_transaction.payment_order_id refundTransaction_payment_order_id,
-		pmt_payment_transaction.internal_transaction_number refundTransaction_internal_transaction_number,
-		pmt_payment_transaction.external_transaction_number refundTransaction_external_transaction_number,
-		pmt_payment_transaction.payment_amount refundTransaction_payment_amount,
-		pmt_payment_transaction.payment_status refundTransaction_payment_status,
-		pmt_payment_transaction.transaction_message_id refundTransaction_transaction_message_id,
-		pmt_payment_transaction.payee_account refundTransaction_payee_account,
-		pmt_payment_transaction.payment_accout refundTransaction_payment_accout,
-		pmt_payment_transaction.interface_type refundTransaction_interface_type,
-		pmt_payment_transaction.create_date refundTransaction_create_date
+		pmt_payment_order.id                               paymentOrder_id,
+		pmt_payment_order.order_number                     paymentOrder_order_number,
+		pmt_payment_order.total_insured_amount             paymentOrder_total_insured_amount,
+		pmt_payment_order.total_premium                    paymentOrder_total_premium,
+		pmt_payment_order.business_plantform               paymentOrder_business_plantform,
+		pmt_payment_order.payment_client                   paymentOrder_payment_client,
+		pmt_payment_order.return_trade_no                  paymentOrder_return_trade_no,
+		pmt_payment_order.status                           paymentOrder_status,
+		pmt_payment_order.check_status                     paymentOrder_check_status,
+		pmt_payment_order.payment_terminal_type            paymentOrder_payment_terminal_type,
+		pmt_payment_order.payment_channel_id               paymentOrder_payment_channel_id,
+		pmt_payment_order.create_time                      paymentOrder_create_time,
+		pmt_payment_order.refund_status                    paymentOrder_refund_status,
+		pmt_payment_order.refund_amount                    paymentOrder_refund_amount,
+		pmt_payment_order.payment_way_code                 paymentOrder_payment_way_code,
+		pmt_payment_channel.channel_name                   paymentOrder_paymentChannel_channel_name,
+		pmt_payment_channel.channel_code                   paymentOrder_paymentChannel_channel_code,
+		pmt_payment_transaction.id                                refundTransaction_id,
+		pmt_payment_transaction.payment_channel_id                refundTransaction_payment_channel_id,
+		pmt_payment_transaction.payment_way_id                    refundTransaction_payment_way_id,
+		pmt_payment_transaction.payment_order_id                  refundTransaction_payment_order_id,
+		pmt_payment_transaction.internal_transaction_number       refundTransaction_internal_transaction_number,
+		pmt_payment_transaction.external_transaction_number       refundTransaction_external_transaction_number,
+		pmt_payment_transaction.payment_amount                    refundTransaction_payment_amount,
+		pmt_payment_transaction.payment_status                    refundTransaction_payment_status,
+		pmt_payment_transaction.transaction_message_id            refundTransaction_transaction_message_id,
+		pmt_payment_transaction.payee_account                     refundTransaction_payee_account,
+		pmt_payment_transaction.payment_accout                    refundTransaction_payment_accout,
+		pmt_payment_transaction.interface_type                    refundTransaction_interface_type,
+		pmt_payment_transaction.create_date                       refundTransaction_create_date,
+		pmt_payment_transaction.sender                            refundTransaction_sender,
+		pmt_payment_transaction.receiver                          refundTransaction_receiver
 	</sql>
 
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
-		<include refid="Base_Column_List" />
+		<include refid="Base_Column_List"/>
 		from pmt_refund_application
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
-	<select id="selectByPage" resultMap="BaseResultMap">
+	<select id="selectByPage" resultMap="BaseResultMap" >
 		select
-		<include refid="Base_Column_List" />
+		<include refid="Base_Column_List"/>
 		from pmt_refund_application
 		where 1=1
 	</select>
 
-	<select id="selectRefundList" resultMap="refundOrderResultMap">
+	<select id="selectRefundList" resultMap="refundOrderResultMap" >
 		select
-		<include refid="Refund_Order_List" />
+		<include refid="Refund_Order_List"/>
 		from
 		pmt_refund_application
 		left JOIN
@@ -149,11 +152,17 @@
 		<if test="refundNumber!=null and refundNumber!=''">
 			and pmt_refund_application.application_number = #{refundNumber}
 		</if>
-		<if test="channelName!=null and channelName!=''">
-			and pmt_payment_channel.channel_name = #{channelName}
+		<if test="channelCodeList != null and channelCodeList.size() != 0">
+			and pmt_payment_channel.channel_code in
+			<foreach item="channelCode" index="index" collection="channelCodeList" open="(" separator="," close=")">
+				#{channelCode}
+			</foreach>
 		</if>
-		<if test="refundStatus != null">
-			and pmt_refund_application.status = #{refundStatus.value}
+		<if test="refundStatusList != null and refundStatusList.size() != 0">
+			and pmt_payment_order.refund_status in
+			<foreach item="refundStatus" index="index" collection="refundStatusList" open="(" separator="," close=")">
+				#{refundStatus.value}
+			</foreach>
 		</if>
 		<if test="startDate != null">
 			and pmt_refund_application.create_date &gt; #{startDate,jdbcType=VARCHAR}
@@ -165,9 +174,9 @@
 		pmt_refund_application.create_date desc
 	</select>
 
-	<select id="selectByBusinessNumber" resultMap="BaseResultMap">
+	<select id="selectByBusinessNumber" resultMap="BaseResultMap" >
 		select
-		<include refid="Base_Column_List" />
+		<include refid="Base_Column_List"/>
 		from pmt_refund_application
 		where 1=1
 		<if test="orderNumber!=null and orderNumber!=''">
@@ -268,7 +277,8 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.refundapplication.entity.RefundApplication">
+	<update id="updateByPrimaryKeySelective"
+			parameterType="com.siebre.payment.refundapplication.entity.RefundApplication">
 		update pmt_refund_application
 		<set>
 			<if test="orderNumber != null">
@@ -306,16 +316,16 @@
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.refundapplication.entity.RefundApplication">
 		UPDATE pmt_refund_application
-		SET order_number = #{orderNumber,jdbcType=VARCHAR},
-		refund_amount = #{refundAmount,jdbcType=DECIMAL},
+		SET order_number       = #{orderNumber,jdbcType=VARCHAR},
+		refund_amount      = #{refundAmount,jdbcType=DECIMAL},
 		application_number = #{applicationNumber,jdbcType=VARCHAR},
-		status = #{status.value},
-		request = #{request,jdbcType=VARCHAR},
-		response = #{response,jdbcType=VARCHAR},
-		create_user = #{createUser,jdbcType=VARCHAR},
-		update_user = #{updateUser,jdbcType=VARCHAR},
-		create_date = #{createDate,jdbcType=TIMESTAMP},
-		update_date = #{updateDate,jdbcType=TIMESTAMP}
+		status             = #{status.value},
+		request            = #{request,jdbcType=VARCHAR},
+		response           = #{response,jdbcType=VARCHAR},
+		create_user        = #{createUser,jdbcType=VARCHAR},
+		update_user        = #{updateUser,jdbcType=VARCHAR},
+		create_date        = #{createDate,jdbcType=TIMESTAMP},
+		update_date        = #{updateDate,jdbcType=TIMESTAMP}
 		WHERE id = #{id,jdbcType=BIGINT}
 	</update>
 </mapper>

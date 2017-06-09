@@ -25,6 +25,8 @@
 		<result column="payment_provider" property="paymentProvider" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="currency" property="currency" jdbcType="VARCHAR" />
 		<result column="payment_account_id" property="paymentAccountId" jdbcType="BIGINT" />
+		<result column="notification_url" property="notificationUrl" jdbcType="VARCHAR" />
+		<result column="external_order_number" property="externalOrderNumber" jdbcType="VARCHAR" />
 		<result column="summary" property="summary" jdbcType="VARCHAR" />
 		<association property="paymentChannel" javaType="com.siebre.payment.paymentchannel.entity.PaymentChannel" columnPrefix="paymentChannel_">
 			<result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
@@ -56,6 +58,8 @@
 		<result column="payment_provider" property="paymentProvider" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="currency" property="currency" jdbcType="VARCHAR" />
 		<result column="payment_account_id" property="paymentAccountId" jdbcType="BIGINT" />
+		<result column="notification_url" property="notificationUrl" jdbcType="VARCHAR" />
+		<result column="external_order_number" property="externalOrderNumber" jdbcType="VARCHAR" />
 		<result column="summary" property="summary" jdbcType="VARCHAR" />
 		<collection property="paymentOrderItems" notNullColumn="id" javaType="com.siebre.payment.paymentorderitem.entity.PaymentOrderItem" columnPrefix="paymentOrderItem_">
 			<id column="id" property="id" jdbcType="BIGINT" />
@@ -120,6 +124,8 @@
 		pmt_payment_order.payment_provider,
 		pmt_payment_order.currency,
 		pmt_payment_order.payment_account_id,
+		pmt_payment_order.notification_url,
+		pmt_payment_order.external_order_number,
 		pmt_payment_order.summary,
 		pmt_payment_order_item.id paymentOrderItem_id,
 		pmt_payment_order_item.payment_order_id paymentOrderItem_payment_order_id,
@@ -176,6 +182,8 @@
 		payment_provider,
 		currency,
 		payment_account_id,
+		notification_url,
+		external_order_number,
 		summary
 	</sql>
 
@@ -203,6 +211,8 @@
 		pmt_payment_order.payment_provider,
 		pmt_payment_order.currency,
 		pmt_payment_order.payment_account_id,
+		pmt_payment_order.notification_url,
+		pmt_payment_order.external_order_number,
 		pmt_payment_order.summary,
 		pmt_payment_channel.channel_name paymentChannel_channel_name,
 		pmt_payment_channel.channel_code paymentChannel_channel_code
@@ -244,6 +254,8 @@
 		payment_provider,
 		currency,
 		payment_account_id,
+		notification_url,
+		external_order_number,
 		summary
 		)
 		values (
@@ -269,6 +281,8 @@
 		#{paymentProvider,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{currency,jdbcType=VARCHAR},
 		#{paymentAccountId,jdbcType=BIGINT},
+		#{notificationUrl,jdbcType=VARCHAR},
+		#{externalOrderNumber,jdbcType=VARCHAR},
 		#{summary,jdbcType=VARCHAR}
 		)
 	</insert>
@@ -344,6 +358,12 @@
 			<if test="paymentAccountId!=null">
 				payment_account_id,
 			</if>
+			<if test="notificationUrl != null">
+				notification_url,
+			</if>
+			<if test="externalOrderNumber!=null">
+				external_order_number,
+			</if>
 			<if test="summary!=null">
 				summary,
 			</if>
@@ -418,6 +438,12 @@
 			<if test="paymentAccountId!=null">
 				#{paymentAccountId,jdbcType=BIGINT},
 			</if>
+			<if test="notificationUrl!=null">
+				#{notificationUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="externalOrderNumber!=null">
+				#{externalOrderNumber,jdbcType=VARCHAR},
+			</if>
 			<if test="summary!=null">
 				#{summary,jdbcType=VARCHAR},
 			</if>
@@ -472,7 +498,7 @@
 				selling_channel = #{sellingChannel,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
 			<if test="messageId!=null">
-				message_id = #{paymentWayCode,jdbcType=VARCHAR},
+				message_id = #{messageId,jdbcType=VARCHAR},
 			</if>
 			<if test="amount != null">
 				amount = #{amount,jdbcType=DECIMAL},
@@ -491,6 +517,12 @@
 			</if>
 			<if test="paymentAccountId!=null">
 				payment_account_id = #{paymentAccountId,jdbcType=BIGINT},
+			</if>
+			<if test="notificationUrl!=null">
+				notification_url = #{notificationUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="externalOrderNumber!=null">
+				external_order_number = #{externalOrderNumber,jdbcType=VARCHAR},
 			</if>
 			<if test="summary!=null">
 				summary = #{summary,jdbcType=VARCHAR},
@@ -522,6 +554,8 @@
 		payment_provider = #{paymentProvider,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		currency = #{currency,jdbcType=VARCHAR},
 		payment_account_id = #{paymentAccountId,jdbcType=BIGINT},
+		notification_url = #{notificationUrl,jdbcType=VARCHAR},
+		external_order_number = #{externalOrderNumber,jdbcType=VARCHAR},
 		summary = #{summary,jdbcType=VARCHAR}
 		where id = #{id,jdbcType=BIGINT}
 	</update>
@@ -845,7 +879,7 @@
 		pmt_payment_order.create_time desc
 	</select>
 
-	<select id="getOrdersByCheckDate" resultMap="BaseResultMap">
+	<select id="selectCheckOrderByPage" resultMap="BaseResultMap">
 		select
 		<include refid="colnum_for_page"/>
 		from
@@ -853,11 +887,26 @@
 		left join
 		pmt_payment_channel on pmt_payment_order.payment_channel_id = pmt_payment_channel.id
 		WHERE 1 = 1
-		<if test="checkStartDate != null">
-			and pmt_payment_order.create_time &gt; #{checkStartDate,jdbcType=VARCHAR}
+		<if test="orderNumber != null and orderNumber != ''">
+			and pmt_payment_order.order_number = #{orderNumber,jdbcType=VARCHAR}
 		</if>
-		<if test="checkEndDate != null">
-			and pmt_payment_order.create_time &lt; #{checkEndDate,jdbcType=VARCHAR}
+		<if test="channelCodeList != null and channelCodeList.size() != 0">
+			and pmt_payment_channel.channel_code in
+			<foreach item="channelCode" index="index" collection="channelCodeList" open="(" separator="," close=")">
+				#{channelCode,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+		<if test="payStatus != null">
+			and pmt_payment_order.status = #{payStatus.value}
+		</if>
+		<if test="refundStatus != null">
+			and pmt_payment_order.refund_status = #{refundStatus.value}
+		</if>
+		<if test="checkStatusList != null and checkStatusList.size() != 0">
+			and pmt_payment_order.check_status in
+			<foreach item="checkStatus" index="index" collection="checkStatusList" open="(" separator="," close=")">
+				#{checkStatus.value}
+			</foreach>
 		</if>
 		order by
 		pmt_payment_order.create_time desc

@@ -5,13 +5,19 @@ import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.entity.enums.*;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper;
+import com.siebre.payment.paymentcheck.vo.CheckOrderVo;
 import com.siebre.payment.paymentcheck.vo.CheckOverviewResult;
 import com.siebre.payment.paymentgateway.vo.PaymentOrderRequest;
 import com.siebre.payment.paymentgateway.vo.PaymentOrderResponse;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
+import com.siebre.payment.paymentorder.vo.OrderQueryParamsVo;
+import com.siebre.payment.paymentorder.vo.TradeOrder;
+import com.siebre.payment.paymentorder.vo.TradeOrderDetail;
+import com.siebre.payment.paymentorder.vo.TradeOrderItem;
 import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 import com.siebre.payment.paymentorderitem.mapper.PaymentOrderItemMapper;
+import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.policylibility.entity.PolicyLibility;
 import com.siebre.payment.policylibility.mapper.PolicyLibilityMapper;
 import com.siebre.payment.policyrole.entity.PolicyRole;
@@ -20,6 +26,7 @@ import com.siebre.payment.serialnumber.service.SerialNumberService;
 import com.siebre.payment.statistics.vo.DonutVo;
 import com.siebre.payment.statistics.vo.PaymentChannelTransactionVo;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -154,7 +161,6 @@ public class PaymentOrderService {
     }
 
 
-
     private void processPolicyLibilityAmount(PaymentOrderItem paymentOrderItem) {
         BigDecimal totalInsuredAmount = BigDecimal.ZERO;
         BigDecimal totalPremium = BigDecimal.ZERO;
@@ -164,6 +170,42 @@ public class PaymentOrderService {
         }
         paymentOrderItem.setPremium(totalPremium);
         paymentOrderItem.setInsuredAmount(totalInsuredAmount);
+    }
+
+    public CheckOrderVo queryPaymentOrderForCheckDetail(String orderNumber) {
+        PaymentOrder order = paymentOrderMapper.selectByOrderNumberleftjoin(orderNumber);
+        List<PaymentOrderItem> items = paymentOrderItemMapper.selectByPaymentOrderId(order.getId());
+        order.setPaymentOrderItems(items);
+
+        CheckOrderVo orderVo = new CheckOrderVo();
+        orderVo.setCheckTime(order.getCheckTime());
+        if ( !order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)) {//非全额退款就属于支付对账类型
+            orderVo.setCheckType("支付");
+        }else if (order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)){
+            orderVo.setCheckType("退款");
+        }
+        orderVo.setCheckStatus(order.getCheckStatus());
+
+        //投保信息
+        orderVo.setApplicationNumber("1494469393190");
+        orderVo.setPremium(order.getTotalPremium());
+        orderVo.setApplicationCreateTime(order.getCreateTime());
+        orderVo.setApplicationPayStatus(order.getStatus());
+
+        //支付信息
+        orderVo.setOrderNumber(order.getOrderNumber());
+        orderVo.setAmount(order.getAmount());
+        orderVo.setCreateTime(order.getCreateTime());
+        orderVo.setPayStatus(order.getStatus());
+
+        //第三方支付信息
+        orderVo.setChannelCode(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelCode());
+        orderVo.setExternalTransactionNumber(orderNumber);//暂时用订单号
+        orderVo.setPayTime(order.getCreateTime());
+        orderVo.setRealAmount(order.getAmount());
+        orderVo.setRealPayStatus(order.getStatus());
+
+        return orderVo;
     }
 
     public PaymentOrder queryPaymentOrder(String orderNumber) {
@@ -186,6 +228,40 @@ public class PaymentOrderService {
         List<PaymentOrder> orders = paymentOrderMapper.selectOrderByPage(orderNumber, orderPayStatusList, channelCodeList, refundStatusList, startDate, endDate, page);
         result.setData(orders);
         result.setPageInfo(page);
+        return result;
+    }
+
+    public ServiceResult<List<CheckOrderVo>> selectCheckOrderByPage(String orderNumber, List<String> channelCodeList,
+                                                                    PaymentOrderRefundStatus refundStatus, List<PaymentOrderCheckStatus> checkStatusList, PageInfo pageInfo) {
+
+        ServiceResult<List<CheckOrderVo>> result = new ServiceResult<>();
+        List<PaymentOrder> orders = new ArrayList<PaymentOrder>();
+
+        if (PaymentOrderRefundStatus.NOT_REFUND.equals(refundStatus) || PaymentOrderRefundStatus.FULL_REFUND.equals(refundStatus)) {
+            orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, PaymentOrderPayStatus.PAID, refundStatus, checkStatusList, pageInfo);
+        } else {
+            orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, null, null, checkStatusList, pageInfo);
+        }
+
+        List<CheckOrderVo> checkOrderVos = new ArrayList<CheckOrderVo>();
+        for (PaymentOrder order : orders) {
+            CheckOrderVo checkOrderVo = new CheckOrderVo();
+            checkOrderVo.setOrderNumber(order.getOrderNumber());
+            checkOrderVo.setChannelCode(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelCode());
+            checkOrderVo.setAmount(order.getAmount());
+            checkOrderVo.setCheckStatus(order.getCheckStatus());
+            checkOrderVo.setCheckTime(order.getCheckTime());
+            if (!order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)) {//非全额退款就属于支付对账类型
+                checkOrderVo.setCheckType("支付");
+            }else if (order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)){
+                checkOrderVo.setCheckType("退款");
+            }
+
+            checkOrderVos.add(checkOrderVo);
+        }
+
+        result.setData(checkOrderVos);
+        result.setPageInfo(pageInfo);
         return result;
     }
 
@@ -295,7 +371,7 @@ public class PaymentOrderService {
 
         for (Map<String, Object> data : dataList) {
             DonutVo donutVo = new DonutVo();
-            donutVo.setName( this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
+            donutVo.setName(this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
             donutVo.setValue(new BigDecimal((Long) data.get("count")));
             result.add(donutVo);
         }
@@ -312,7 +388,7 @@ public class PaymentOrderService {
 
         for (Map<String, Object> data : dataList) {
             DonutVo donutVo = new DonutVo();
-            donutVo.setName( this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
+            donutVo.setName(this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
             donutVo.setValue(new BigDecimal((Long) data.get("count")));
             result.add(donutVo);
         }
@@ -329,7 +405,7 @@ public class PaymentOrderService {
 
         for (Map<String, Object> data : dataList) {
             DonutVo donutVo = new DonutVo();
-            donutVo.setName( this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
+            donutVo.setName(this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
             donutVo.setValue((BigDecimal) data.get("totalAmount"));
             result.add(donutVo);
         }
@@ -346,7 +422,7 @@ public class PaymentOrderService {
 
         for (Map<String, Object> data : dataList) {
             DonutVo donutVo = new DonutVo();
-            donutVo.setName( this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
+            donutVo.setName(this.getLabelName((Long) data.get("paymentChannelId"), paymentChannelList));
             donutVo.setValue((BigDecimal) data.get("totalAmount"));
             result.add(donutVo);
         }
@@ -363,7 +439,7 @@ public class PaymentOrderService {
         return null;
     }
 
-    public ServiceResult<Map<String,List<DonutVo>>> getPaymentWaySuccessCount() {
+    public ServiceResult<Map<String, List<DonutVo>>> getPaymentWaySuccessCount() {
         String[] paymentWayCodes = {
                 "ALIPAY_WEB_PAY",
                 "WECHAT_SCAN_PAY",
@@ -377,7 +453,7 @@ public class PaymentOrderService {
         /*List<Map<String, Object>> payErrorDatas = this.paymentOrderMapper.getPaymentWayCount(PaymentOrderPayStatus.PAYERROR);
         List<Map<String, Object>> payingDatas = this.paymentOrderMapper.getPaymentWayCount(PaymentOrderPayStatus.PAYING);*/
 
-        Map<String,List<DonutVo>> result = new HashMap<>();
+        Map<String, List<DonutVo>> result = new HashMap<>();
 
         //app支付目前没有
         List<DonutVo> result1 = new ArrayList<>();
@@ -392,19 +468,19 @@ public class PaymentOrderService {
 
         //PC网页支付
         List<DonutVo> result3 = new ArrayList<>();
-        result3.add(new DonutVo("支付宝即时到账",this.getCountByPayWayCode(paidDatas, paymentWayCodes[0])));
+        result3.add(new DonutVo("支付宝即时到账", this.getCountByPayWayCode(paidDatas, paymentWayCodes[0])));
         result3.add(new DonutVo("微信扫码支付", this.getCountByPayWayCode(paidDatas, paymentWayCodes[1])));
         result3.add(new DonutVo("银联支付", this.getCountByPayWayCode(paidDatas, paymentWayCodes[2])));
         result3.add(new DonutVo("通联支付", this.getCountByPayWayCode(paidDatas, paymentWayCodes[5])));
         result.put("PC网页支付", result3);
 
-        return ServiceResult.<Map<String,List<DonutVo>>>builder().success(true).data(result).build();
+        return ServiceResult.<Map<String, List<DonutVo>>>builder().success(true).data(result).build();
     }
 
     private BigDecimal getCountByPayWayCode(List<Map<String, Object>> dataMaps, String paymentWayCode) {
         for (Map<String, Object> dataMap : dataMaps) {
             if (StringUtils.equals(paymentWayCode, (CharSequence) dataMap.get("paymentWayCode"))) {
-                return new BigDecimal((Long)dataMap.get("count"));
+                return new BigDecimal((Long) dataMap.get("count"));
             }
         }
         return new BigDecimal("0");
@@ -417,12 +493,7 @@ public class PaymentOrderService {
 
     public CheckOverviewResult getOrdersByChannelAndDate(Long channelId, Date checkStartDate, Date checkEndDate) {
 
-        List<PaymentOrder> orders = null;
-        if (channelId != null) {
-            orders = this.paymentOrderMapper.getOrdersByChannelAndDate(channelId,checkStartDate,checkEndDate);
-        }else {
-            orders = this.paymentOrderMapper.getOrdersByCheckDate(checkStartDate,checkEndDate);
-        }
+        List<PaymentOrder> orders = this.paymentOrderMapper.getOrdersByChannelAndDate(channelId, checkStartDate, checkEndDate);
 
         CheckOverviewResult checkOverviewResult = new CheckOverviewResult();
         int checkTotalCount = 0;//对账总笔数
@@ -434,20 +505,20 @@ public class PaymentOrderService {
         BigDecimal refundTotalAmount = BigDecimal.ZERO;//退款信息-退款金额
 
         for (PaymentOrder order : orders) {
-            if (order.getCheckStatus().getValue() != 1) {//已对账
+            if ( !order.getCheckStatus().equals(PaymentOrderCheckStatus.NOT_CONFIRM)) {//已对账
                 checkTotalCount = checkTotalCount + 1;
-                if (order.getCheckStatus().getValue() == 2) {//对账成功
+                if (order.getCheckStatus().equals(PaymentOrderCheckStatus.SUCCESS)) {//对账成功
                     successCount = successCount + 1;
-                    if (order.getStatus().getValue() ==3 && order.getRefundStatus().getValue() ==0) {//支付成功且未退款
+                    if (order.getStatus().equals(PaymentOrderPayStatus.PAID) && order.getRefundStatus().equals(PaymentOrderRefundStatus.NOT_REFUND)) {//支付成功且未退款
                         payOrderTotalAmount = payOrderTotalAmount.add(order.getAmount());
                         payTotalAmount = payTotalAmount.add(order.getAmount());
-                    }else if (order.getRefundStatus().getValue() ==2) {//全额退款成功
+                    } else if (order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)) {//全额退款成功
                         //payOrderTotalAmount.add(order.getAmount());  TODO 退款成功，是否要累计支付对账总金额
                         //payTotalAmount.add(order.getAmount());
                         refundOrderTotalAmount = refundOrderTotalAmount.add(order.getAmount());
                         refundTotalAmount = refundTotalAmount.add(order.getAmount());
                     }
-                }else {//对账失败，异常
+                } else {//对账失败，异常
                     failCount = failCount + 1;
                     //TODO 对账失败或异常，是否要判断并累计支付/退款方金额
                 }
@@ -463,6 +534,129 @@ public class PaymentOrderService {
         checkOverviewResult.setRefundTotalAmount(refundTotalAmount);
 
         return checkOverviewResult;
+    }
+
+    public List<TradeOrder> queryOrderByPage(OrderQueryParamsVo paramsVo, PageInfo page) {
+        String orderNumber = paramsVo.getOrderNumber();
+        Date startDate = paramsVo.getStartDate();
+        Date endDate = paramsVo.getEndDate();
+        ServiceResult<List<PaymentOrder>> rpcResult = this.getOrderListForPage(orderNumber, paramsVo.getPayStatusList(), paramsVo.getChannelCodeList(),
+                paramsVo.getRefundStatusList(), startDate, endDate, page);
+        page.setTotalResult(rpcResult.getPageInfo().getTotalResult());
+        List<TradeOrder> orders = new ArrayList<>();
+        if (rpcResult.getData() == null) {
+            return orders;
+        }
+        for (PaymentOrder paymentOrder : rpcResult.getData()) {
+            TradeOrder order = new TradeOrder();
+            if (paymentOrder.getCreateTime() != null) {
+                String dateStr = DateFormatUtils.format(paymentOrder.getCreateTime(), "yyyy-MM-dd HH:mm:ss");
+                order.setOrderCreateDate(dateStr);
+            }
+            order.setOrderNumber(paymentOrder.getOrderNumber());
+            order.setOrderAmount(paymentOrder.getTotalPremium().toString());
+            order.setPayState(paymentOrder.getStatus().getDescription());
+            if (null != paymentOrder.getPaymentChannel()) {
+                order.setPayChannel(paymentOrder.getPaymentChannel().getChannelName());
+            }
+            if (paymentOrder.getRefundStatus() != null) {
+                order.setRefundStatus(paymentOrder.getRefundStatus().getDescription());
+            }
+            orders.add(order);
+        }
+        return orders;
+    }
+
+    public TradeOrderDetail loadOrderDetail(String number) {
+        ServiceResult<PaymentOrder> result = this.queryPaymentOrderRPC(number);
+        PaymentOrder paymentOrder = result.getData();
+        if (paymentOrder == null) {
+            return null;
+        }
+        TradeOrderDetail detail = new TradeOrderDetail();
+        detail.setOrderNumber(paymentOrder.getOrderNumber());
+        if(paymentOrder.getSellingChannel() != null) {
+            detail.setSaleChannel(paymentOrder.getSellingChannel().getDescription());
+        }
+        if (paymentOrder.getCreateTime() != null) {
+            String dateStr = DateFormatUtils.format(paymentOrder.getCreateTime(), "yyyy-MM-dd HH:mm:ss");
+            detail.setOrderCreateDate(dateStr);
+            //TODO 需要paymentOrder记录交易成功时间
+            detail.setPayConfirmTime(dateStr);
+            detail.setPayCallBackTime(dateStr);
+            detail.setPayTime(dateStr);
+        }
+        if (paymentOrder.getStatus() != null) {
+            detail.setPayState(paymentOrder.getStatus().getDescription());
+        }
+        detail.setOrderAmount(paymentOrder.getTotalPremium().toString());
+        List<PaymentTransaction> transactions = paymentOrder.getPaymentTransactions();
+        for (PaymentTransaction transaction : transactions) {
+            if (PaymentInterfaceType.PAY.equals(transaction.getInterfaceType())) {//过滤只有类型为PAY的交易
+                if (transaction.getPaymentStatus().equals(PaymentTransactionStatus.SUCCESS)) {
+                    detail.setTransactionStatus(transaction.getPaymentStatus().getDescription());
+                    detail.setPayAmount(paymentOrder.getTotalPremium().toString());
+                    detail.setPayChannel(transaction.getPaymentChannel().getChannelName());
+                    detail.setPayMethod(transaction.getPaymentWay().getName());
+                    detail.setPaySerialNumber(transaction.getExternalTransactionNumber());
+                    if (paymentOrder.getCheckStatus() != null) {
+                        detail.setCheckStatus(paymentOrder.getCheckStatus().getDescription());
+                    }
+                    break;
+                } else {
+                    detail.setTransactionStatus(transaction.getPaymentStatus().getDescription());
+                    detail.setPayAmount(paymentOrder.getTotalPremium().toString());
+                    detail.setPayChannel(transaction.getPaymentChannel().getChannelName());
+                    detail.setPayMethod(transaction.getPaymentWay().getName());
+                    detail.setPaySerialNumber(transaction.getExternalTransactionNumber());
+                    if (paymentOrder.getCheckStatus() != null) {
+                        detail.setCheckStatus(paymentOrder.getCheckStatus().getDescription());
+                    }
+                }
+            }
+        }
+
+        for (PaymentTransaction transaction : transactions) {
+            if (PaymentInterfaceType.REFUND.equals(transaction.getInterfaceType())) {
+                if (transaction.getPaymentStatus().equals(PaymentTransactionStatus.SUCCESS) || transaction.getPaymentStatus().equals(PaymentTransactionStatus.FAILED)) {
+                    detail.setRefundAmount(paymentOrder.getRefundAmount().toString());
+                    detail.setRefundNumber(transaction.getInternalTransactionNumber());
+                    if (transaction.getCreateDate() != null) {
+                        String dateStr = DateFormatUtils.format(transaction.getCreateDate(), "yyyy-MM-dd HH:mm:ss");
+                        detail.setRefundTime(dateStr);
+                    }
+                }
+            }
+        }
+
+        for (PaymentOrderItem paymentOrderItem : paymentOrder.getPaymentOrderItems()) {
+            detail.addOrderItems(transItemVo(paymentOrderItem));
+        }
+
+        if (paymentOrder.getRefundStatus() != null) {
+            detail.setRefundStatus(paymentOrder.getRefundStatus().getDescription());
+        }
+
+        return detail;
+    }
+
+    private TradeOrderItem transItemVo(PaymentOrderItem paymentOrderItem) {
+        TradeOrderItem item = new TradeOrderItem();
+
+        item.setApplicationNumber(paymentOrderItem.getApplicationNumber());
+        item.setPolicyNumber(paymentOrderItem.getApplicationNumber());
+        item.setPolicyState("未生效");
+        item.setPayAmount(paymentOrderItem.getPremium().toString());
+
+        item.setProductName(paymentOrderItem.getProductName());
+        item.setApplicantName(paymentOrderItem.getApplicant().getName());
+        item.setPayAmount(paymentOrderItem.getPremium().toString());
+
+        item.setApplicantMobile(paymentOrderItem.getApplicant().getPhoneNumber());
+        item.setApplicantIdentityType("身份证");
+        item.setApplicantIdentityNumber(paymentOrderItem.getApplicant().getCertificateNumber());
+
+        return item;
     }
 
 }
