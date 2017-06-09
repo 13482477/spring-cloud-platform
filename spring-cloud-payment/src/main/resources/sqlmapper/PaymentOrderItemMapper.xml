@@ -12,6 +12,9 @@
 		<result column="product_name" property="productName" jdbcType="VARCHAR" />
 		<result column="insured_person_id" property="insuredPersonId" jdbcType="BIGINT" />
 		<result column="same_person" property="samePerson" jdbcType="VARCHAR" />
+		<result column="product_code" property="productCode" jdbcType="VARCHAR" />
+		<result column="inception_date" property="inceptionDate" jdbcType="TIMESTAMP" />
+		<result column="planned_end_date" property="plannedEndDate" jdbcType="TIMESTAMP" />
 		<result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
 		<result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
 		<association property="applicant" javaType="com.siebre.payment.policyrole.entity.PolicyRole" notNullColumn="id" columnPrefix="applicant_">
@@ -58,6 +61,9 @@
 		insured_person_id,
 		product_name,
 		same_person,
+		product_code,
+		inception_date,
+		planned_end_date,
 		start_date, end_date
 	</sql>
 
@@ -72,6 +78,9 @@
 		pmt_payment_order_item.insured_person_id,
 		pmt_payment_order_item.product_name,
 		pmt_payment_order_item.same_person,
+		pmt_payment_order_item.product_code,
+		pmt_payment_order_item.inception_date,
+		pmt_payment_order_item.planned_end_date,
 		pmt_payment_order_item.start_date,
 		pmt_payment_order_item.end_date,
 
@@ -123,12 +132,15 @@
 		insert into pmt_payment_order_item (id, payment_order_id, application_number,
 		policy_number, insured_amount, gross_premium,
 		applicant_id, insured_person_id, product_name,
-		same_person, start_date, end_date
+		same_person, product_code,
+		inception_date, planned_end_date, start_date, end_date
 		)
 		values (#{id,jdbcType=BIGINT}, #{paymentOrderId,jdbcType=BIGINT}, #{applicationNumber,jdbcType=VARCHAR},
 		#{policyNumber,jdbcType=VARCHAR}, #{insuredAmount,jdbcType=DECIMAL}, #{grossPremium,jdbcType=DECIMAL},
 		#{applicantId,jdbcType=BIGINT}, #{insuredPersonId,jdbcType=BIGINT}, #{productName,jdbcType=VARCHAR},
-		#{samePerson,jdbcType=VARCHAR}, #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}
+		#{samePerson,jdbcType=VARCHAR}, #{productCode,jdbcType=VARCHAR},
+		#{inceptionDate,jdbcType=TIMESTAMP},#{plannedEndDate,jdbcType=TIMESTAMP},
+		#{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}
 		)
 	</insert>
 
@@ -164,6 +176,15 @@
 			</if>
 			<if test="samePerson != null">
 				same_person,
+			</if>
+			<if test="productCode != null">
+				product_code,
+			</if>
+			<if test="inceptionDate != null">
+				inception_date,
+			</if>
+			<if test="plannedEndDate != null">
+				planned_end_date,
 			</if>
 			<if test="startDate != null">
 				start_date,
@@ -202,6 +223,15 @@
 			</if>
 			<if test="samePerson != null">
 				#{samePerson,jdbcType=VARCHAR},
+			</if>
+			<if test="productCode != null">
+				#{productCode,jdbcType=VARCHAR},
+			</if>
+			<if test="inceptionDate != null">
+				#{inceptionDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="plannedEndDate != null">
+				#{plannedEndDate,jdbcType=TIMESTAMP},
 			</if>
 			<if test="startDate != null">
 				#{startDate,jdbcType=TIMESTAMP},
@@ -242,6 +272,15 @@
 			<if test="samePerson != null">
 				same_person = #{samePerson,jdbcType=VARCHAR},
 			</if>
+			<if test="productCode != null">
+				product_code = #{productCode,jdbcType=VARCHAR},
+			</if>
+			<if test="inceptionDate != null">
+				inception_date = #{inceptionDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="plannedEndDate != null">
+				planned_end_date = #{plannedEndDate,jdbcType=TIMESTAMP},
+			</if>
 			<if test="startDate != null">
 				start_date = #{startDate,jdbcType=TIMESTAMP},
 			</if>
@@ -263,6 +302,9 @@
 		insured_person_id = #{insuredPersonId,jdbcType=BIGINT},
 		product_name = #{productName,jdbcType=VARCHAR},
 		same_person = #{samePerson,jdbcType=VARCHAR},
+		product_code = #{productCode,jdbcType=VARCHAR},
+		inception_date = #{inceptionDate,jdbcType=TIMESTAMP},
+		planned_end_date = #{plannedEndDate,jdbcType=TIMESTAMP},
 		start_date = #{startDate,jdbcType=TIMESTAMP},
 		end_date = #{endDate,jdbcType=TIMESTAMP}
 		where id = #{id,jdbcType=BIGINT}
