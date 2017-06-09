@@ -29,7 +29,7 @@
 			<result column="policy_role_type" property="policyRoleType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="beneficiary" property="beneficiary" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		</association>
-		<association property="insuredPerson" javaType="com.siebre.payment.policyrole.entity.PolicyRole" notNullColumn="id" columnPrefix="insured_person_">
+		<association property="insured" javaType="com.siebre.payment.policyrole.entity.PolicyRole" notNullColumn="id" columnPrefix="insured_person_">
 			<id column="id" property="id" jdbcType="BIGINT" />
 			<result column="name" property="name" jdbcType="VARCHAR" />
 			<result column="gender" property="gender" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
@@ -40,6 +40,7 @@
 			<result column="certificate_number" property="certificateNumber" jdbcType="VARCHAR" />
 			<result column="policy_role_type" property="policyRoleType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="beneficiary" property="beneficiary" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+			<result column="related_to_applicant" property="relatedToApplicant" jdbcType="VARCHAR" />
 		</association>
 		<collection property="libilities" javaType="com.siebre.payment.policylibility.entity.PolicyLibility" columnPrefix="libilities_" notNullColumn="id">
 			<id column="id" property="id" jdbcType="BIGINT" />
@@ -105,6 +106,7 @@
 		insuredPerson.certificate_number insured_person_certificate_number,
 		insuredPerson.policy_role_type insured_person_policy_role_type,
 		insuredPerson.beneficiary insured_person_beneficiary,
+		insuredPerson.related_to_applicant insured_person_related_to_applicant,
 
 		pmt_policy_libility.id libilities_id,
 		pmt_policy_libility.order_item_id libilities_order_item_id,

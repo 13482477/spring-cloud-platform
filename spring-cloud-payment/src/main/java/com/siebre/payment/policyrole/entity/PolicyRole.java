@@ -30,6 +30,9 @@ public class PolicyRole extends BaseObject {
 
     private Beneficiary beneficiary;
 
+    //与投保人关系  SELF
+    private String relatedToApplicant;
+
     public Long getId() {
         return id;
     }
@@ -108,5 +111,13 @@ public class PolicyRole extends BaseObject {
 
     public void setBeneficiary(Beneficiary beneficiary) {
         this.beneficiary = beneficiary;
+    }
+
+    public String getRelatedToApplicant() {
+        return relatedToApplicant;
+    }
+
+    public void setRelatedToApplicant(String relatedToApplicant) {
+        this.relatedToApplicant = relatedToApplicant;
     }
 }
