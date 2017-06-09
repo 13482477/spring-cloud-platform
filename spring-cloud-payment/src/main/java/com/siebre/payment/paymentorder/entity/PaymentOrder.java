@@ -75,6 +75,9 @@ public class PaymentOrder extends BaseObject {
      * 统一支付接口2.0字段
      * ------start-------
      */
+    private String notificationUrl;
+    //外部订单交易编号
+    private String externalOrderNumber;
     private PaymentMethod paymentMethod;
     private PaymentProvider paymentProvider;
     private String currency;
@@ -295,6 +298,22 @@ public class PaymentOrder extends BaseObject {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public String getNotificationUrl() {
+        return notificationUrl;
+    }
+
+    public void setNotificationUrl(String notificationUrl) {
+        this.notificationUrl = notificationUrl;
+    }
+
+    public String getExternalOrderNumber() {
+        return externalOrderNumber;
+    }
+
+    public void setExternalOrderNumber(String externalOrderNumber) {
+        this.externalOrderNumber = externalOrderNumber;
     }
 
     @Override

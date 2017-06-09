@@ -38,7 +38,7 @@ public class RefundApplicationController {
 	}
 
 	@ApiOperation(value = "申请退款列表", notes = "申请退款列表")
-	@RequestMapping(value = "/listForSingleRefund", method = GET)
+	@RequestMapping(value = "/api/v1/listForSingleRefunds", method = GET)
 	public WebResult<List<TradeOrder>> queryForSingleRefundByPage(OrderQueryParamsVo paramsVo) {
 		PageInfo page = new PageInfo();
 		page.setCurrentPage(paramsVo.getCurrentPage());

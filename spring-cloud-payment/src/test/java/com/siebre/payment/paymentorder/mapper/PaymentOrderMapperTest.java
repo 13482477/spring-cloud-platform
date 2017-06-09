@@ -49,6 +49,9 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         paymentOrder.setPaymentAccountId(1L);
         paymentOrder.setSummary("KKKKKK");
 
+        paymentOrder.setNotificationUrl("http://gsajdka.com");
+        paymentOrder.setExternalOrderNumber("EXhjkasd789698");
+
         return paymentOrder;
     }
 
@@ -65,6 +68,8 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         assertTrue(order.getCurrency().equals(paymentOrder.getCurrency()));
         assertTrue(order.getPaymentAccountId().equals(paymentOrder.getPaymentAccountId()));
         assertTrue(order.getSummary().equals(paymentOrder.getSummary()));
+        assertTrue(order.getNotificationUrl().equals(paymentOrder.getNotificationUrl()));
+        assertTrue(order.getExternalOrderNumber().equals(paymentOrder.getExternalOrderNumber()));
     }
 
     @Test
@@ -91,6 +96,8 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         paymentOrder.setCurrency("CNY");
         paymentOrder.setPaymentAccountId(1L);
         paymentOrder.setSummary("KKKKKK");
+        paymentOrder.setNotificationUrl("http://hdsakj.com");
+        paymentOrder.setExternalOrderNumber("EXhjka789236389");
         paymentOrderMapper.insertSelective(paymentOrder);
         PaymentOrder order = paymentOrderMapper.selectByPrimaryKey(paymentOrder.getId());
         assertTrue(order.getPaymentMethod().equals(paymentOrder.getPaymentMethod()));
@@ -98,6 +105,8 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         assertTrue(order.getCurrency().equals(paymentOrder.getCurrency()));
         assertTrue(order.getPaymentAccountId().equals(paymentOrder.getPaymentAccountId()));
         assertTrue(order.getSummary().equals(paymentOrder.getSummary()));
+        assertTrue(order.getNotificationUrl().equals(paymentOrder.getNotificationUrl()));
+        assertTrue(order.getExternalOrderNumber().equals(paymentOrder.getExternalOrderNumber()));
 
         assertNull(order.getAmount());
         assertNull(order.getCheckStatus());
@@ -122,6 +131,8 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         p1.setCurrency("CNY1");
         p1.setPaymentAccountId(2L);
         p1.setSummary("KKKKddKK");
+        p1.setNotificationUrl("http://dahf9798.com");
+        p1.setExternalOrderNumber("EX896767");
         paymentOrderMapper.updateByPrimaryKeySelective(p1);
         PaymentOrder order = paymentOrderMapper.selectByPrimaryKey(paymentOrder.getId());
 
@@ -130,12 +141,16 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         assertTrue(order.getCurrency().equals(p1.getCurrency()));
         assertTrue(order.getPaymentAccountId().equals(p1.getPaymentAccountId()));
         assertTrue(order.getSummary().equals(p1.getSummary()));
+        assertTrue(order.getNotificationUrl().equals(p1.getNotificationUrl()));
+        assertTrue(order.getExternalOrderNumber().equals(p1.getExternalOrderNumber()));
 
         assertFalse(order.getPaymentMethod().equals(paymentOrder.getPaymentMethod()));
         assertFalse(order.getPaymentProvider().equals(paymentOrder.getPaymentProvider()));
         assertFalse(order.getCurrency().equals(paymentOrder.getCurrency()));
         assertFalse(order.getPaymentAccountId().equals(paymentOrder.getPaymentAccountId()));
         assertFalse(order.getSummary().equals(paymentOrder.getSummary()));
+        assertFalse(order.getNotificationUrl().equals(paymentOrder.getNotificationUrl()));
+        assertFalse(order.getExternalOrderNumber().equals(paymentOrder.getExternalOrderNumber()));
     }
 
     @Test
