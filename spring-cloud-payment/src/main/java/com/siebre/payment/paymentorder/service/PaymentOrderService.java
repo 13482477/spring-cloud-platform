@@ -235,18 +235,20 @@ public class PaymentOrderService {
                                                                     PaymentOrderRefundStatus refundStatus, List<PaymentOrderCheckStatus> checkStatusList, PageInfo pageInfo) {
 
         ServiceResult<List<CheckOrderVo>> result = new ServiceResult<>();
-        List<PaymentOrder> orders = new ArrayList<PaymentOrder>();
+        List<PaymentOrder> orders = new ArrayList<>();
 
-        if (PaymentOrderRefundStatus.NOT_REFUND.equals(refundStatus) || PaymentOrderRefundStatus.FULL_REFUND.equals(refundStatus)) {
+        if (PaymentOrderRefundStatus.NOT_REFUND.equals(refundStatus) || PaymentOrderRefundStatus.FULL_REFUND.equals(refundStatus)) {//支付
             orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, PaymentOrderPayStatus.PAID, refundStatus, checkStatusList, pageInfo);
         } else {
             orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, null, null, checkStatusList, pageInfo);
         }
 
-        List<CheckOrderVo> checkOrderVos = new ArrayList<CheckOrderVo>();
+        List<CheckOrderVo> checkOrderVos = new ArrayList<>();
         for (PaymentOrder order : orders) {
             CheckOrderVo checkOrderVo = new CheckOrderVo();
             checkOrderVo.setOrderNumber(order.getOrderNumber());
+            if (order.getPaymentChannelId() == null)
+                continue;
             checkOrderVo.setChannelCode(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelCode());
             checkOrderVo.setAmount(order.getAmount());
             checkOrderVo.setCheckStatus(order.getCheckStatus());
