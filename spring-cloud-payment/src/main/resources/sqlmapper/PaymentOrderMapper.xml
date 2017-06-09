@@ -132,7 +132,7 @@
 		pmt_payment_order_item.application_number paymentOrderItem_application_number,
 		pmt_payment_order_item.policy_number paymentOrderItem_policy_number,
 		pmt_payment_order_item.insured_amount paymentOrderItem_insured_amount,
-		pmt_payment_order_item.premium paymentOrderItem_premium,
+		pmt_payment_order_item.gross_premium paymentOrderItem_gross_premium,
 		pmt_payment_order_item.applicant_id paymentOrderItem_applicant_id,
 		pmt_payment_order_item.insured_person_id paymentOrderItem_insured_person_id,
 		pmt_payment_order_item.product_name paymentOrderItem_product_name,
