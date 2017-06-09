@@ -24,8 +24,8 @@
 			<result column="phone_number" property="phoneNumber" jdbcType="VARCHAR" />
 			<result column="email" property="email" jdbcType="VARCHAR" />
 			<result column="birthday" property="birthday" jdbcType="DATE" />
-			<result column="certificate_type" property="certificateType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
-			<result column="certificate_number" property="certificateNumber" jdbcType="VARCHAR" />
+			<result column="id_type" property="idType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+			<result column="id_number" property="idNumber" jdbcType="VARCHAR" />
 			<result column="policy_role_type" property="policyRoleType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="beneficiary" property="beneficiary" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		</association>
@@ -36,8 +36,8 @@
 			<result column="phone_number" property="phoneNumber" jdbcType="VARCHAR" />
 			<result column="email" property="email" jdbcType="VARCHAR" />
 			<result column="birthday" property="birthday" jdbcType="DATE" />
-			<result column="certificate_type" property="certificateType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
-			<result column="certificate_number" property="certificateNumber" jdbcType="VARCHAR" />
+			<result column="id_type" property="idType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+			<result column="id_number" property="idNumber" jdbcType="VARCHAR" />
 			<result column="policy_role_type" property="policyRoleType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="beneficiary" property="beneficiary" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="related_to_applicant" property="relatedToApplicant" jdbcType="VARCHAR" />
@@ -91,8 +91,8 @@
 		applicant.phone_number applicant_phone_number,
 		applicant.email applicant_email,
 		applicant.birthday applicant_birthday,
-		applicant.certificate_type applicant_certificate_type,
-		applicant.certificate_number applicant_certificate_number,
+		applicant.id_type applicant_id_type,
+		applicant.id_number applicant_id_number,
 		applicant.policy_role_type applicant_policy_role_type,
 		applicant.beneficiary applicant_beneficiary,
 
@@ -102,8 +102,8 @@
 		insuredPerson.phone_number insured_person_phone_number,
 		insuredPerson.email insured_person_email,
 		insuredPerson.birthday insured_person_birthday,
-		insuredPerson.certificate_type insured_person_certificate_type,
-		insuredPerson.certificate_number insured_person_certificate_number,
+		insuredPerson.id_type insured_person_id_type,
+		insuredPerson.id_number insured_person_id_number,
 		insuredPerson.policy_role_type insured_person_policy_role_type,
 		insuredPerson.beneficiary insured_person_beneficiary,
 		insuredPerson.related_to_applicant insured_person_related_to_applicant,

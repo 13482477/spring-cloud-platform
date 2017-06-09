@@ -654,7 +654,7 @@ public class PaymentOrderService {
 
         item.setApplicantMobile(paymentOrderItem.getApplicant().getPhoneNumber());
         item.setApplicantIdentityType("身份证");
-        item.setApplicantIdentityNumber(paymentOrderItem.getApplicant().getCertificateNumber());
+        item.setApplicantIdentityNumber(paymentOrderItem.getApplicant().getIdNumber());
 
         return item;
     }

@@ -280,7 +280,7 @@
 			<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
 			<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
-			<collection property="paymentOrderItems" notNullColumn="id" javaType="com.siebre.payment.paymentorderitem.entity.PaymentOrderItem" columnPrefix="paymentOrderItem_">
+			<collection property="items" notNullColumn="id" javaType="com.siebre.payment.paymentorderitem.entity.PaymentOrderItem" columnPrefix="paymentOrderItem_">
 				<id column="id" property="id" jdbcType="BIGINT" />
 				<result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT" />
 				<result column="application_number" property="applicationNumber" jdbcType="VARCHAR" />
