@@ -50,7 +50,7 @@ public class RoleController {
 		return WebResult.<Role>builder().returnCode("200").data(role).build();
 	}
 	
-	@RequestMapping(value="/api/v1/role/grant/{roleId}")
+	@RequestMapping(value="/api/v1/role/grant/{roleId}", method = RequestMethod.POST)
 	public WebResult<Object> grant(@PathVariable Long roleId, @RequestBody Long[] resourceIds) {
 		this.roleService.grant(roleId, resourceIds);
 		return WebResult.<Object>builder().returnCode("200").build();
