@@ -117,7 +117,9 @@
 					</execution>
 				</executions>
 				<configuration>
-					<descriptor>assembly/bin.xml</descriptor>
+					<descriptors>
+						<descriptor>assembly/bin.xml</descriptor>
+					</descriptors>
 				</configuration>
 			</plugin>
 		</plugins>
