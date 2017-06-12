@@ -13,4 +13,7 @@
     		</list>
     	</property>
     </bean>
+
+	<bean class="com.siebre.basic.applicationcontext.SpringContextUtil" />
+
 </beans>

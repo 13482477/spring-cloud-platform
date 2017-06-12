@@ -22,13 +22,16 @@ public class PolicyRole extends BaseObject {
 
     private Date birthday;
 
-    private CertificateType certificateType;
+    private CertificateType idType;
 
-    private String certificateNumber;
+    private String idNumber;
 
     private PolicyRoleType policyRoleType;
 
     private Beneficiary beneficiary;
+
+    //与投保人关系  SELF
+    private String relatedToApplicant;
 
     public Long getId() {
         return id;
@@ -78,20 +81,20 @@ public class PolicyRole extends BaseObject {
         this.birthday = birthday;
     }
 
-    public CertificateType getCertificateType() {
-        return certificateType;
+    public CertificateType getIdType() {
+        return idType;
     }
 
-    public void setCertificateType(CertificateType certificateType) {
-        this.certificateType = certificateType;
+    public void setIdType(CertificateType idType) {
+        this.idType = idType;
     }
 
-    public String getCertificateNumber() {
-        return certificateNumber;
+    public String getIdNumber() {
+        return idNumber;
     }
 
-    public void setCertificateNumber(String certificateNumber) {
-        this.certificateNumber = certificateNumber == null ? null : certificateNumber.trim();
+    public void setIdNumber(String idNumber) {
+        this.idNumber = idNumber;
     }
 
     public PolicyRoleType getPolicyRoleType() {
@@ -108,5 +111,13 @@ public class PolicyRole extends BaseObject {
 
     public void setBeneficiary(Beneficiary beneficiary) {
         this.beneficiary = beneficiary;
+    }
+
+    public String getRelatedToApplicant() {
+        return relatedToApplicant;
+    }
+
+    public void setRelatedToApplicant(String relatedToApplicant) {
+        this.relatedToApplicant = relatedToApplicant;
     }
 }

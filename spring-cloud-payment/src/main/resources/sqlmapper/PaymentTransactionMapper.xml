@@ -280,11 +280,11 @@
 			<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
 			<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
-			<collection property="paymentOrderItems" notNullColumn="id" javaType="com.siebre.payment.paymentorderitem.entity.PaymentOrderItem" columnPrefix="paymentOrderItem_">
+			<collection property="items" notNullColumn="id" javaType="com.siebre.payment.paymentorderitem.entity.PaymentOrderItem" columnPrefix="paymentOrderItem_">
 				<id column="id" property="id" jdbcType="BIGINT" />
 				<result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT" />
 				<result column="application_number" property="applicationNumber" jdbcType="VARCHAR" />
-				<result column="police_number" property="policeNumber" jdbcType="VARCHAR" />
+				<result column="policy_number" property="policyNumber" jdbcType="VARCHAR" />
 				<result column="insured_amount" property="insuredAmount" jdbcType="DECIMAL" />
 				<result column="premium" property="premium" jdbcType="DECIMAL" />
 				<result column="applicant_id" property="applicantId" jdbcType="BIGINT" />
@@ -321,9 +321,9 @@
 		pmt_payment_order_item.id paymentOrder_paymentOrderItem_id,
 		pmt_payment_order_item.payment_order_id paymentOrder_paymentOrderItem_payment_order_id,
 		pmt_payment_order_item.application_number paymentOrder_paymentOrderItem_application_number,
-		pmt_payment_order_item.police_number paymentOrder_paymentOrderItem_police_number,
+		pmt_payment_order_item.policy_number paymentOrder_paymentOrderItem_policy_number,
 		pmt_payment_order_item.insured_amount paymentOrder_paymentOrderItem_insured_amount,
-		pmt_payment_order_item.premium paymentOrder_paymentOrderItem_premium,
+		pmt_payment_order_item.gross_premium paymentOrder_paymentOrderItem_gross_premium,
 		pmt_payment_order_item.applicant_id paymentOrder_paymentOrderItem_applicant_id,
 		pmt_payment_order_item.insured_person_id paymentOrder_paymentOrderItem_insured_person_id,
 		pmt_payment_channel.id paymentChannel_id,

@@ -67,6 +67,7 @@ public class PaymentRefundRouteService {
         }
 
         String handleBeanName = HandlerBeanNameConfig.REFUND_MAPPING.get(paymentWay.getCode());
+        logger.info("加载" + handleBeanName);
         AbstractPaymentRefundComponent paymentRefundHandler = (AbstractPaymentRefundComponent) SpringContextUtil.getBean(handleBeanName);
 
         PaymentRefundResponse paymentRefundResponse = paymentRefundHandler.handle(paymentRefundRequest, paymentTransaction, paymentOrder, paymentWay, paymentInterface);

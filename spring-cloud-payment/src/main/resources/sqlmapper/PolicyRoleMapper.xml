@@ -8,10 +8,11 @@
 		<result column="phone_number" property="phoneNumber" jdbcType="VARCHAR" />
 		<result column="email" property="email" jdbcType="VARCHAR" />
 		<result column="birthday" property="birthday" jdbcType="DATE" />
-		<result column="certificate_type" property="certificateType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
-		<result column="certificate_number" property="certificateNumber" jdbcType="VARCHAR" />
+		<result column="id_type" property="idType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="id_number" property="idNumber" jdbcType="VARCHAR" />
 		<result column="policy_role_type" property="policyRoleType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="beneficiary" property="beneficiary" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="related_to_applicant" property="relatedToApplicant" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id,
@@ -20,10 +21,11 @@
 		phone_number,
 		email,
 		birthday,
-		certificate_type,
-		certificate_number,
+		id_type,
+		id_number,
 		policy_role_type,
-		beneficiary
+		beneficiary,
+		related_to_applicant
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
@@ -38,13 +40,13 @@
 	<insert id="insert" parameterType="com.siebre.payment.policyrole.entity.PolicyRole" useGeneratedKeys="true" keyProperty="id">
 		insert into pmt_policy_role (id, name, gender,
 		phone_number, email, birthday,
-		certificate_type, certificate_number, policy_role_type,
-		beneficiary
+		id_type, id_number, policy_role_type,
+		beneficiary,related_to_applicant
 		)
 		values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{gender,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{phoneNumber,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{birthday,jdbcType=DATE},
-		#{certificateType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler}, #{certificateNumber,jdbcType=VARCHAR}, #{policyRoleType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
-		#{beneficiary,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler}
+		#{idType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler}, #{idNumber,jdbcType=VARCHAR}, #{policyRoleType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		#{beneficiary,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},#{relatedToApplicant,jdbcType=VARCHAR}
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.siebre.payment.policyrole.entity.PolicyRole" useGeneratedKeys="true" keyProperty="id">
@@ -68,17 +70,20 @@
 			<if test="birthday != null">
 				birthday,
 			</if>
-			<if test="certificateType != null">
-				certificate_type,
+			<if test="idType != null">
+				id_type,
 			</if>
-			<if test="certificateNumber != null">
-				certificate_number,
+			<if test="idNumber != null">
+				id_number,
 			</if>
 			<if test="policyRoleType != null">
 				policy_role_type,
 			</if>
 			<if test="beneficiary != null">
 				beneficiary,
+			</if>
+			<if test="relatedToApplicant != null">
+				related_to_applicant,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -100,17 +105,20 @@
 			<if test="birthday != null">
 				#{birthday,jdbcType=DATE},
 			</if>
-			<if test="certificateType != null">
-				#{certificateType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			<if test="idType != null">
+				#{idType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
-			<if test="certificateNumber != null">
-				#{certificateNumber,jdbcType=VARCHAR},
+			<if test="idNumber != null">
+				#{idNumber,jdbcType=VARCHAR},
 			</if>
 			<if test="policyRoleType != null">
 				#{policyRoleType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
 			<if test="beneficiary != null">
 				#{beneficiary,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
+			<if test="relatedToApplicant != null">
+				#{relatedToApplicant,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -132,17 +140,20 @@
 			<if test="birthday != null">
 				birthday = #{birthday,jdbcType=DATE},
 			</if>
-			<if test="certificateType != null">
-				certificate_type = #{certificateType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			<if test="idType != null">
+				id_type = #{idType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
-			<if test="certificateNumber != null">
-				certificate_number = #{certificateNumber,jdbcType=VARCHAR},
+			<if test="idNumber != null">
+				id_number = #{idNumber,jdbcType=VARCHAR},
 			</if>
 			<if test="policyRoleType != null">
 				policy_role_type = #{policyRoleType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
 			<if test="beneficiary != null">
 				beneficiary = #{beneficiary,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
+			<if test="relatedToApplicant != null">
+				related_to_applicant = #{relatedToApplicant,jdbcType=VARCHAR},
 			</if>
 		</set>
 		where id = #{id,jdbcType=BIGINT}
@@ -154,10 +165,11 @@
 		phone_number = #{phoneNumber,jdbcType=VARCHAR},
 		email = #{email,jdbcType=VARCHAR},
 		birthday = #{birthday,jdbcType=DATE},
-		certificate_type = #{certificateType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
-		certificate_number = #{certificateNumber,jdbcType=VARCHAR},
+		id_type = #{idType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		id_number = #{idNumber,jdbcType=VARCHAR},
 		policy_role_type = #{policyRoleType,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
-		beneficiary = #{beneficiary,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler}
+		beneficiary = #{beneficiary,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		related_to_applicant = #{relatedToApplicant,jdbcType=VARCHAR},
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 </mapper>
