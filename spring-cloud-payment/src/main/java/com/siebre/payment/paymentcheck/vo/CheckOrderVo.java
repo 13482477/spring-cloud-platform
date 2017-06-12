@@ -4,7 +4,6 @@ import com.siebre.payment.entity.enums.PaymentOrderCheckStatus;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * Created by meilan on 2017/6/6.
@@ -23,6 +22,11 @@ public class CheckOrderVo {
     private String channelCode;
 
     /**
+     * 渠道名称
+     */
+    private String channelName;
+
+    /**
      * 对账类型（支付，退款）
      */
     private String checkType;
@@ -35,12 +39,12 @@ public class CheckOrderVo {
     /**
      * 对账结果
      */
-    private PaymentOrderCheckStatus checkStatus;
+    private String checkStatus;
 
     /**
      * 对账时间
      */
-    private Date checkTime;
+    private String checkTime;
 
     /**
      * 投保信息-投保单号
@@ -55,32 +59,32 @@ public class CheckOrderVo {
     /**
      * 投保信息-投保信息创建时间
      */
-    private Date applicationCreateTime;
+    private String applicationCreateTime;
 
     //投保信息-保单状态
-    private PaymentOrderPayStatus applicationPayStatus;
+    private String applicationPayStatus;
 
     //第三方-外部交易流水号
     private String externalTransactionNumber;
 
     //第三方-支付时间
-    private Date payTime;
+    private String payTime;
 
     //第三方-实际支付
     private BigDecimal realAmount;
 
     //第三方-支付状态
-    private PaymentOrderPayStatus realPayStatus;
+    private String realPayStatus;
 
     /**
      * 支付信息-订单状态
      */
-    private PaymentOrderPayStatus payStatus;
+    private String payStatus;
 
     /**
      * 支付信息-创建时间
      */
-    private Date createTime;
+    private String createTime;
 
     public String getOrderNumber() {
         return orderNumber;
@@ -114,22 +118,6 @@ public class CheckOrderVo {
         this.amount = amount;
     }
 
-    public PaymentOrderCheckStatus getCheckStatus() {
-        return checkStatus;
-    }
-
-    public void setCheckStatus(PaymentOrderCheckStatus checkStatus) {
-        this.checkStatus = checkStatus;
-    }
-
-    public Date getCheckTime() {
-        return checkTime;
-    }
-
-    public void setCheckTime(Date checkTime) {
-        this.checkTime = checkTime;
-    }
-
     public String getApplicationNumber() {
         return applicationNumber;
     }
@@ -146,36 +134,12 @@ public class CheckOrderVo {
         this.premium = premium;
     }
 
-    public Date getApplicationCreateTime() {
-        return applicationCreateTime;
-    }
-
-    public void setApplicationCreateTime(Date applicationCreateTime) {
-        this.applicationCreateTime = applicationCreateTime;
-    }
-
-    public PaymentOrderPayStatus getApplicationPayStatus() {
-        return applicationPayStatus;
-    }
-
-    public void setApplicationPayStatus(PaymentOrderPayStatus applicationPayStatus) {
-        this.applicationPayStatus = applicationPayStatus;
-    }
-
     public String getExternalTransactionNumber() {
         return externalTransactionNumber;
     }
 
     public void setExternalTransactionNumber(String externalTransactionNumber) {
         this.externalTransactionNumber = externalTransactionNumber;
-    }
-
-    public Date getPayTime() {
-        return payTime;
-    }
-
-    public void setPayTime(Date payTime) {
-        this.payTime = payTime;
     }
 
     public BigDecimal getRealAmount() {
@@ -186,27 +150,75 @@ public class CheckOrderVo {
         this.realAmount = realAmount;
     }
 
-    public PaymentOrderPayStatus getRealPayStatus() {
-        return realPayStatus;
+    public String getChannelName() {
+        return channelName;
     }
 
-    public void setRealPayStatus(PaymentOrderPayStatus realPayStatus) {
-        this.realPayStatus = realPayStatus;
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
     }
 
-    public PaymentOrderPayStatus getPayStatus() {
-        return payStatus;
+    public String getCheckTime() {
+        return checkTime;
     }
 
-    public void setPayStatus(PaymentOrderPayStatus payStatus) {
-        this.payStatus = payStatus;
+    public void setCheckTime(String checkTime) {
+        this.checkTime = checkTime;
     }
 
-    public Date getCreateTime() {
+    public String getApplicationCreateTime() {
+        return applicationCreateTime;
+    }
+
+    public void setApplicationCreateTime(String applicationCreateTime) {
+        this.applicationCreateTime = applicationCreateTime;
+    }
+
+    public String getPayTime() {
+        return payTime;
+    }
+
+    public void setPayTime(String payTime) {
+        this.payTime = payTime;
+    }
+
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+
+    public String getCheckStatus() {
+        return checkStatus;
+    }
+
+    public void setCheckStatus(String checkStatus) {
+        this.checkStatus = checkStatus;
+    }
+
+    public String getApplicationPayStatus() {
+        return applicationPayStatus;
+    }
+
+    public void setApplicationPayStatus(String applicationPayStatus) {
+        this.applicationPayStatus = applicationPayStatus;
+    }
+
+    public String getRealPayStatus() {
+        return realPayStatus;
+    }
+
+    public void setRealPayStatus(String realPayStatus) {
+        this.realPayStatus = realPayStatus;
+    }
+
+    public String getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(String payStatus) {
+        this.payStatus = payStatus;
     }
 }

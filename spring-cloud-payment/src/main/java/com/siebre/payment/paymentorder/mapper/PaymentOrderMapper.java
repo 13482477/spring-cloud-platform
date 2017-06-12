@@ -92,6 +92,7 @@ public interface PaymentOrderMapper {
     //对账明细列表查询
     List<PaymentOrder> selectCheckOrderByPage(@Param("orderNumber") String orderNumber, @Param("channelCodeList") List<String> channelCodeList,
                                               @Param("payStatus") PaymentOrderPayStatus payStatus, @Param("refundStatus") PaymentOrderRefundStatus refundStatus,
-                                              @Param("checkStatusList") List<PaymentOrderCheckStatus> checkStatusList, PageInfo pageInfo);
+                                              @Param("checkStatusList") List<PaymentOrderCheckStatus> checkStatusList,
+                                              @Param("checkStartDate") Date checkStartDate, @Param("checkEndDate") Date checkEndDate,PageInfo pageInfo);
 
 }

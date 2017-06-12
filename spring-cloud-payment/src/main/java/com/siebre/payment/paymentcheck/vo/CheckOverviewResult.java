@@ -17,6 +17,9 @@ public class CheckOverviewResult implements Serializable {
     //失败笔数
     private int failCount;
 
+    //未对账总笔数
+    private int notCheckTotalCount;
+
     //支付信息-订单金额
     private BigDecimal payOrderTotalAmount;
 
@@ -83,5 +86,13 @@ public class CheckOverviewResult implements Serializable {
 
     public void setRefundTotalAmount(BigDecimal refundTotalAmount) {
         this.refundTotalAmount = refundTotalAmount;
+    }
+
+    public int getNotCheckTotalCount() {
+        return notCheckTotalCount;
+    }
+
+    public void setNotCheckTotalCount(int notCheckTotalCount) {
+        this.notCheckTotalCount = notCheckTotalCount;
     }
 }
