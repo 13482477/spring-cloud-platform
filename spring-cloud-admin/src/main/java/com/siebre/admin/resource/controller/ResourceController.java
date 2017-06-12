@@ -1,24 +1,17 @@
 package com.siebre.admin.resource.controller;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.ws.rs.Path;
-
+import com.siebre.admin.resource.entity.Resource;
+import com.siebre.admin.resource.service.ResourceService;
+import com.siebre.basic.web.WebResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.siebre.admin.resource.entity.Resource;
-import com.siebre.admin.resource.service.ResourceService;
-import com.siebre.basic.web.WebResult;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 public class ResourceController {
