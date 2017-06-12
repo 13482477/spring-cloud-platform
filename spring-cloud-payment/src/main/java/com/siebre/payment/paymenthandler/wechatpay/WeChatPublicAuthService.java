@@ -23,7 +23,7 @@ public class WeChatPublicAuthService {
 
     public String getOpenID(String code) {
         PaymentWay paymentWay = this.paymentWayService.getPaymentWayByCode("WECHAT_PUBLIC_PAY").getData();
-        String redirectUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=" + paymentWay.getAppId() + "&secret=" + WeChatConfig.WECHAT_PUBLIC_APPSECRET + "&code=" + code + "&grant_type=authorization_code";
+        String redirectUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=" + paymentWay.getAppId() + "&secret=" + paymentWay.getPublicKey() + "&code=" + code + "&grant_type=authorization_code";
         String content = HttpTookit.doGet(redirectUrl,null);
         JSONObject ob = JSON.parseObject(content);
         return (String) ob.get("openid");

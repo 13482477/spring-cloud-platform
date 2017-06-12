@@ -28,7 +28,5 @@ public class WeChatConfig {
     //统一退款接口
     public static final String REFUND_URL = "https://api.mch.weixin.qq.com/secapi/pay/refund";
 
-    public static final String WECHAT_PUBLIC_APPSECRET = "c58d7665b25130a281339ba98bb5269f";
-
 }
 
