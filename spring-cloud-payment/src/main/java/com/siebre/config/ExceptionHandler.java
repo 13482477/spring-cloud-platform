@@ -27,13 +27,13 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 
 		LOGGER.error(ResultCode.C500.message, ex);
 		
-		String message = "";
-		String code = "";
+		String code = "500";
+		String message = "internal error";
 		
 		MappingJackson2JsonView view = new MappingJackson2JsonView();
 		Map<String, Object> attributes = new HashMap<String, Object>();
-		attributes.put("code", code);
-		attributes.put("message", message);
+		attributes.put("returnCode", code);
+		attributes.put("returnMessage", message);
 		view.setAttributesMap(attributes);
 		mv.setView(view);
 		return mv;
