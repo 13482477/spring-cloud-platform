@@ -161,7 +161,7 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
         }else{
             params.put("out_trade_no",paymentRefundRequest.getOriginInternalNumber());
         }
-        params.put("out_refund_no",refundApplication.getApplicationNumber());
+        params.put("out_refund_no",refundApplication.getRefundApplicationNumber());
         //微信要求金额单位为分，只能为整数
         params.put("total_fee", paymentTransaction.getPaymentAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString());
         params.put("refund_fee", refundApplication.getRefundAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString());
