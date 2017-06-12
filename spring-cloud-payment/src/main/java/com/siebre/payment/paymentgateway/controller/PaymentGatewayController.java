@@ -116,7 +116,7 @@ public class PaymentGatewayController {
         RefundResponse refundResponse = new RefundResponse();
         refundResponse.setRefundStatus(application.getStatus().toString());
         refundResponse.setResponse(application.getResponse());
-        refundResponse.setApplicationNumber(application.getApplicationNumber());
+        refundResponse.setApplicationNumber(application.getRefundApplicationNumber());
         return refundResponse;
     }
 

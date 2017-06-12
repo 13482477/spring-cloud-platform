@@ -62,7 +62,7 @@ public abstract class AbstractPaymentRefundComponent implements PaymentInterface
 
         RefundApplication refundApplication = paymentRefundRequest.getRefundApplication();
         //更新状态为处理中
-        refundApplication.setApplicationNumber(refundPaymentTransaction.getInternalTransactionNumber());
+        refundApplication.setRefundApplicationNumber(refundPaymentTransaction.getInternalTransactionNumber());
         refundApplication.setStatus(RefundApplicationStatus.PROCESSING);
 
         refundPaymentTransaction.setCreateDate(new Date());
