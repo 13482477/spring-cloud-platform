@@ -143,7 +143,9 @@
 		<module>spring-cloud-admin</module>
     	<module>spring-cloud-gateway</module>
     	<module>spring-cloud-iproduct-webapp</module>
-  </modules>
+    	<module>spring-cloud-hystrix</module>
+    	<module>spring-cloud-turbine</module>
+	</modules>
 
 	<build>
 		<plugins>

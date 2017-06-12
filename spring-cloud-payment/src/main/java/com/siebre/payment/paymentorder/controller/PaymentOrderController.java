@@ -37,7 +37,7 @@ public class PaymentOrderController {
         page.setCurrentPage(paramsVo.getCurrentPage());
         page.setShowCount(paramsVo.getShowCount());
         List<TradeOrder> tradeOrders = paymentOrderService.queryOrderByPage(paramsVo, page);
-        throw new RuntimeException("error");
+        return WebResult.<List<TradeOrder>>builder().pageInfo(page).data(tradeOrders).build();
     }
 
     @ApiOperation(value="订单详情", notes = "订单详情")
