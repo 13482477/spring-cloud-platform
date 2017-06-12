@@ -150,7 +150,6 @@
 			<properties>
 				<env>dev</env>
 			</properties>
-			<activation>false</activation>
 		</profile>
 	</profiles>
 </project>
