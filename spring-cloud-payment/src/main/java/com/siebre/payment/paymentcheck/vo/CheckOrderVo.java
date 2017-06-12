@@ -39,7 +39,7 @@ public class CheckOrderVo {
     /**
      * 对账结果
      */
-    private PaymentOrderCheckStatus checkStatus;
+    private String checkStatus;
 
     /**
      * 对账时间
@@ -62,7 +62,7 @@ public class CheckOrderVo {
     private String applicationCreateTime;
 
     //投保信息-保单状态
-    private PaymentOrderPayStatus applicationPayStatus;
+    private String applicationPayStatus;
 
     //第三方-外部交易流水号
     private String externalTransactionNumber;
@@ -74,12 +74,12 @@ public class CheckOrderVo {
     private BigDecimal realAmount;
 
     //第三方-支付状态
-    private PaymentOrderPayStatus realPayStatus;
+    private String realPayStatus;
 
     /**
      * 支付信息-订单状态
      */
-    private PaymentOrderPayStatus payStatus;
+    private String payStatus;
 
     /**
      * 支付信息-创建时间
@@ -118,14 +118,6 @@ public class CheckOrderVo {
         this.amount = amount;
     }
 
-    public PaymentOrderCheckStatus getCheckStatus() {
-        return checkStatus;
-    }
-
-    public void setCheckStatus(PaymentOrderCheckStatus checkStatus) {
-        this.checkStatus = checkStatus;
-    }
-
     public String getApplicationNumber() {
         return applicationNumber;
     }
@@ -142,14 +134,6 @@ public class CheckOrderVo {
         this.premium = premium;
     }
 
-    public PaymentOrderPayStatus getApplicationPayStatus() {
-        return applicationPayStatus;
-    }
-
-    public void setApplicationPayStatus(PaymentOrderPayStatus applicationPayStatus) {
-        this.applicationPayStatus = applicationPayStatus;
-    }
-
     public String getExternalTransactionNumber() {
         return externalTransactionNumber;
     }
@@ -164,22 +148,6 @@ public class CheckOrderVo {
 
     public void setRealAmount(BigDecimal realAmount) {
         this.realAmount = realAmount;
-    }
-
-    public PaymentOrderPayStatus getRealPayStatus() {
-        return realPayStatus;
-    }
-
-    public void setRealPayStatus(PaymentOrderPayStatus realPayStatus) {
-        this.realPayStatus = realPayStatus;
-    }
-
-    public PaymentOrderPayStatus getPayStatus() {
-        return payStatus;
-    }
-
-    public void setPayStatus(PaymentOrderPayStatus payStatus) {
-        this.payStatus = payStatus;
     }
 
     public String getChannelName() {
@@ -220,5 +188,37 @@ public class CheckOrderVo {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+
+    public String getCheckStatus() {
+        return checkStatus;
+    }
+
+    public void setCheckStatus(String checkStatus) {
+        this.checkStatus = checkStatus;
+    }
+
+    public String getApplicationPayStatus() {
+        return applicationPayStatus;
+    }
+
+    public void setApplicationPayStatus(String applicationPayStatus) {
+        this.applicationPayStatus = applicationPayStatus;
+    }
+
+    public String getRealPayStatus() {
+        return realPayStatus;
+    }
+
+    public void setRealPayStatus(String realPayStatus) {
+        this.realPayStatus = realPayStatus;
+    }
+
+    public String getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(String payStatus) {
+        this.payStatus = payStatus;
     }
 }

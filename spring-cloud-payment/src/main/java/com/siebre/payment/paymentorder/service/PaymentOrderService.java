@@ -187,7 +187,7 @@ public class PaymentOrderService {
         }else if (order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)){
             orderVo.setCheckType("退款");
         }
-        orderVo.setCheckStatus(order.getCheckStatus());
+        orderVo.setCheckStatus(order.getCheckStatus().getDescription());
 
         String dateStrCreate = DateFormatUtils.format(order.getCreateTime(), "yyyy-MM-dd HH:mm:ss");
 
@@ -195,13 +195,13 @@ public class PaymentOrderService {
         orderVo.setApplicationNumber("1494469393190");
         orderVo.setPremium(order.getTotalPremium());
         orderVo.setApplicationCreateTime(dateStrCreate);
-        orderVo.setApplicationPayStatus(order.getStatus());
+        orderVo.setApplicationPayStatus(order.getStatus().getDescription());
 
         //支付信息
         orderVo.setOrderNumber(order.getOrderNumber());
         orderVo.setAmount(order.getAmount());
         orderVo.setCreateTime(dateStrCreate);
-        orderVo.setPayStatus(order.getStatus());
+        orderVo.setPayStatus(order.getStatus().getDescription());
 
         //第三方支付信息
         orderVo.setChannelCode(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelCode());
@@ -209,7 +209,7 @@ public class PaymentOrderService {
         orderVo.setExternalTransactionNumber(orderNumber);//暂时用订单号
         orderVo.setPayTime(dateStrCreate);
         orderVo.setRealAmount(order.getAmount());
-        orderVo.setRealPayStatus(order.getStatus());
+        orderVo.setRealPayStatus(order.getStatus().getDescription());
 
         return orderVo;
     }
@@ -259,7 +259,7 @@ public class PaymentOrderService {
             checkOrderVo.setChannelCode(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelCode());
             checkOrderVo.setChannelName(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelName());
             checkOrderVo.setAmount(order.getAmount());
-            checkOrderVo.setCheckStatus(order.getCheckStatus());
+            checkOrderVo.setCheckStatus(order.getCheckStatus().getDescription());
             if (order.getCheckTime() != null) {
                 String dateStr = DateFormatUtils.format(order.getCheckTime(), "yyyy-MM-dd HH:mm:ss");
                 checkOrderVo.setCheckTime(dateStr);
