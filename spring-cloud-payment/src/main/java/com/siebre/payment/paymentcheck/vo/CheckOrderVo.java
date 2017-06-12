@@ -4,7 +4,6 @@ import com.siebre.payment.entity.enums.PaymentOrderCheckStatus;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * Created by meilan on 2017/6/6.
@@ -21,6 +20,11 @@ public class CheckOrderVo {
      * 支付渠道
      */
     private String channelCode;
+
+    /**
+     * 渠道名称
+     */
+    private String channelName;
 
     /**
      * 对账类型（支付，退款）
@@ -40,7 +44,7 @@ public class CheckOrderVo {
     /**
      * 对账时间
      */
-    private Date checkTime;
+    private String checkTime;
 
     /**
      * 投保信息-投保单号
@@ -55,7 +59,7 @@ public class CheckOrderVo {
     /**
      * 投保信息-投保信息创建时间
      */
-    private Date applicationCreateTime;
+    private String applicationCreateTime;
 
     //投保信息-保单状态
     private PaymentOrderPayStatus applicationPayStatus;
@@ -64,7 +68,7 @@ public class CheckOrderVo {
     private String externalTransactionNumber;
 
     //第三方-支付时间
-    private Date payTime;
+    private String payTime;
 
     //第三方-实际支付
     private BigDecimal realAmount;
@@ -80,7 +84,7 @@ public class CheckOrderVo {
     /**
      * 支付信息-创建时间
      */
-    private Date createTime;
+    private String createTime;
 
     public String getOrderNumber() {
         return orderNumber;
@@ -122,14 +126,6 @@ public class CheckOrderVo {
         this.checkStatus = checkStatus;
     }
 
-    public Date getCheckTime() {
-        return checkTime;
-    }
-
-    public void setCheckTime(Date checkTime) {
-        this.checkTime = checkTime;
-    }
-
     public String getApplicationNumber() {
         return applicationNumber;
     }
@@ -146,14 +142,6 @@ public class CheckOrderVo {
         this.premium = premium;
     }
 
-    public Date getApplicationCreateTime() {
-        return applicationCreateTime;
-    }
-
-    public void setApplicationCreateTime(Date applicationCreateTime) {
-        this.applicationCreateTime = applicationCreateTime;
-    }
-
     public PaymentOrderPayStatus getApplicationPayStatus() {
         return applicationPayStatus;
     }
@@ -168,14 +156,6 @@ public class CheckOrderVo {
 
     public void setExternalTransactionNumber(String externalTransactionNumber) {
         this.externalTransactionNumber = externalTransactionNumber;
-    }
-
-    public Date getPayTime() {
-        return payTime;
-    }
-
-    public void setPayTime(Date payTime) {
-        this.payTime = payTime;
     }
 
     public BigDecimal getRealAmount() {
@@ -202,11 +182,43 @@ public class CheckOrderVo {
         this.payStatus = payStatus;
     }
 
-    public Date getCreateTime() {
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
+    }
+
+    public String getCheckTime() {
+        return checkTime;
+    }
+
+    public void setCheckTime(String checkTime) {
+        this.checkTime = checkTime;
+    }
+
+    public String getApplicationCreateTime() {
+        return applicationCreateTime;
+    }
+
+    public void setApplicationCreateTime(String applicationCreateTime) {
+        this.applicationCreateTime = applicationCreateTime;
+    }
+
+    public String getPayTime() {
+        return payTime;
+    }
+
+    public void setPayTime(String payTime) {
+        this.payTime = payTime;
+    }
+
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 }

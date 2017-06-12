@@ -178,7 +178,10 @@ public class PaymentOrderService {
         order.setItems(items);
 
         CheckOrderVo orderVo = new CheckOrderVo();
-        orderVo.setCheckTime(order.getCheckTime());
+        if (order.getCheckTime() != null) {
+            String dateStrCheck = DateFormatUtils.format(order.getCheckTime(), "yyyy-MM-dd HH:mm:ss");
+            orderVo.setCheckTime(dateStrCheck);
+        }
         if ( !order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)) {//非全额退款就属于支付对账类型
             orderVo.setCheckType("支付");
         }else if (order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)){
@@ -186,22 +189,25 @@ public class PaymentOrderService {
         }
         orderVo.setCheckStatus(order.getCheckStatus());
 
+        String dateStrCreate = DateFormatUtils.format(order.getCreateTime(), "yyyy-MM-dd HH:mm:ss");
+
         //投保信息
         orderVo.setApplicationNumber("1494469393190");
         orderVo.setPremium(order.getTotalPremium());
-        orderVo.setApplicationCreateTime(order.getCreateTime());
+        orderVo.setApplicationCreateTime(dateStrCreate);
         orderVo.setApplicationPayStatus(order.getStatus());
 
         //支付信息
         orderVo.setOrderNumber(order.getOrderNumber());
         orderVo.setAmount(order.getAmount());
-        orderVo.setCreateTime(order.getCreateTime());
+        orderVo.setCreateTime(dateStrCreate);
         orderVo.setPayStatus(order.getStatus());
 
         //第三方支付信息
         orderVo.setChannelCode(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelCode());
+        orderVo.setChannelName(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelName());
         orderVo.setExternalTransactionNumber(orderNumber);//暂时用订单号
-        orderVo.setPayTime(order.getCreateTime());
+        orderVo.setPayTime(dateStrCreate);
         orderVo.setRealAmount(order.getAmount());
         orderVo.setRealPayStatus(order.getStatus());
 
@@ -232,15 +238,16 @@ public class PaymentOrderService {
     }
 
     public ServiceResult<List<CheckOrderVo>> selectCheckOrderByPage(String orderNumber, List<String> channelCodeList,
-                                                                    PaymentOrderRefundStatus refundStatus, List<PaymentOrderCheckStatus> checkStatusList, PageInfo pageInfo) {
+                                                                    PaymentOrderRefundStatus refundStatus, List<PaymentOrderCheckStatus> checkStatusList,
+                                                                    Date checkStartDate, Date checkEndDate,PageInfo pageInfo) {
 
         ServiceResult<List<CheckOrderVo>> result = new ServiceResult<>();
         List<PaymentOrder> orders = new ArrayList<>();
 
         if (PaymentOrderRefundStatus.NOT_REFUND.equals(refundStatus) || PaymentOrderRefundStatus.FULL_REFUND.equals(refundStatus)) {//支付
-            orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, PaymentOrderPayStatus.PAID, refundStatus, checkStatusList, pageInfo);
+            orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, PaymentOrderPayStatus.PAID, refundStatus, checkStatusList, checkStartDate,checkEndDate,pageInfo);
         } else {
-            orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, null, null, checkStatusList, pageInfo);
+            orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, null, null, checkStatusList, checkStartDate,checkEndDate,pageInfo);
         }
 
         List<CheckOrderVo> checkOrderVos = new ArrayList<>();
@@ -250,9 +257,13 @@ public class PaymentOrderService {
             if (order.getPaymentChannelId() == null)
                 continue;
             checkOrderVo.setChannelCode(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelCode());
+            checkOrderVo.setChannelName(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelName());
             checkOrderVo.setAmount(order.getAmount());
             checkOrderVo.setCheckStatus(order.getCheckStatus());
-            checkOrderVo.setCheckTime(order.getCheckTime());
+            if (order.getCheckTime() != null) {
+                String dateStr = DateFormatUtils.format(order.getCheckTime(), "yyyy-MM-dd HH:mm:ss");
+                checkOrderVo.setCheckTime(dateStr);
+            }
             if (!order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)) {//非全额退款就属于支付对账类型
                 checkOrderVo.setCheckType("支付");
             }else if (order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)){
@@ -501,6 +512,7 @@ public class PaymentOrderService {
         int checkTotalCount = 0;//对账总笔数
         int successCount = 0;//成功笔数
         int failCount = 0;//失败笔数
+        int notCheckTotalCount = 0;//未对账总笔数
         BigDecimal payOrderTotalAmount = BigDecimal.ZERO;//支付信息-订单金额
         BigDecimal payTotalAmount = BigDecimal.ZERO;//支付信息-支付金额
         BigDecimal refundOrderTotalAmount = BigDecimal.ZERO;//退款信息-订单金额
@@ -524,12 +536,15 @@ public class PaymentOrderService {
                     failCount = failCount + 1;
                     //TODO 对账失败或异常，是否要判断并累计支付/退款方金额
                 }
+            }else {//未对账
+                notCheckTotalCount = notCheckTotalCount +1;
             }
         }
 
         checkOverviewResult.setCheckTotalCount(checkTotalCount);
         checkOverviewResult.setSuccessCount(successCount);
         checkOverviewResult.setFailCount(failCount);
+        checkOverviewResult.setNotCheckTotalCount(notCheckTotalCount);
         checkOverviewResult.setPayOrderTotalAmount(payOrderTotalAmount);
         checkOverviewResult.setPayTotalAmount(payTotalAmount);
         checkOverviewResult.setRefundOrderTotalAmount(refundOrderTotalAmount);
