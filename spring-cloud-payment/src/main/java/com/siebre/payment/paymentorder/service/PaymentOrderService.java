@@ -106,15 +106,14 @@ public class PaymentOrderService {
             }
         }
 
-
-        //设置order状态为未支付
+        //设置order状态为待支付
         paymentOrder.setStatus(PaymentOrderPayStatus.UNPAID);
-        paymentOrder.setCreateTime(new Date());
-        this.processTotalAmount(paymentOrder, orderRequest.getPaymentOrderItems());
-        //退款状态默认设置为未支付
-        paymentOrder.setRefundStatus(PaymentOrderRefundStatus.NOT_REFUND);
         //设置对账状态为未对账
         paymentOrder.setCheckStatus(PaymentOrderCheckStatus.NOT_CONFIRM);
+        //设置订单锁定状态为未锁定
+        paymentOrder.setLockStatus(PaymentOrderLockStatus.UNLOCK);
+        paymentOrder.setCreateTime(new Date());
+        this.processTotalAmount(paymentOrder, orderRequest.getPaymentOrderItems());
         this.paymentOrderMapper.insert(paymentOrder);
 
         for (PaymentOrderItem paymentOrderItem : orderRequest.getPaymentOrderItems()) {

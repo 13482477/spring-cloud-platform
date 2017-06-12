@@ -77,7 +77,7 @@ public class PaymentTransactionService {
                 paymentOrderMapper.updateByPrimaryKeySelective(paymentOrder1);
             }
         } else if (PaymentTransactionStatus.FAILED.equals(transactionStatus)) {
-            //如果查询结果返回失败，并且订单状态为支付中，更新订单状态为交易关闭
+            //如果查询结果返回失败，并且订单状态为支付中，更新订单状态为支付失败
             if (PaymentTransactionStatus.PROCESSING.equals(transaction.getPaymentStatus())) {
                 PaymentTransaction transaction1 = new PaymentTransaction();
                 transaction1.setId(transactionId);
@@ -87,7 +87,7 @@ public class PaymentTransactionService {
             if (PaymentOrderPayStatus.PAYING.equals(paymentOrder.getStatus())) {
                 PaymentOrder paymentOrder1 = new PaymentOrder();
                 paymentOrder1.setId(paymentOrder.getId());
-                paymentOrder1.setStatus(PaymentOrderPayStatus.CLOSED);
+                paymentOrder1.setStatus(PaymentOrderPayStatus.PAYERROR);
                 paymentOrderMapper.updateByPrimaryKeySelective(paymentOrder1);
             }
         }
@@ -308,10 +308,10 @@ public class PaymentTransactionService {
 
         //更新order状态
         PaymentOrder paymentOrder = this.paymentOrderMapper.selectByPrimaryKey(paymentTransaction.getPaymentOrderId());
-        paymentOrder.setStatus(PaymentOrderPayStatus.PAID);
-        //设置为未对账
-        paymentOrder.setCheckStatus(PaymentOrderCheckStatus.NOT_CONFIRM);
-        paymentOrderMapper.updateByPrimaryKeySelective(paymentOrder);
+        PaymentOrder paymentOrderForUpdate = new PaymentOrder();
+        paymentOrderForUpdate.setId(paymentOrder.getId());
+        paymentOrderForUpdate.setStatus(PaymentOrderPayStatus.PAID);
+        paymentOrderMapper.updateByPrimaryKeySelective(paymentOrderForUpdate);
 
         return ServiceResult.<PaymentTransaction>builder().success(true).data(paymentTransaction).build();
     }
@@ -394,7 +394,7 @@ public class PaymentTransactionService {
         PaymentOrder paymentOrder = this.paymentOrderMapper.selectByPrimaryKey(paymentTransaction.getPaymentOrderId());
         //退款处理中，更新order状态为处理中
         if (RefundApplicationStatus.PROCESSING.equals(refundApplication.getStatus())) {
-            paymentOrder.setRefundStatus(PaymentOrderRefundStatus.PROCESSING_REFUND);
+            paymentOrder.setStatus(PaymentOrderPayStatus.PROCESSING_REFUND);
         } else if (RefundApplicationStatus.SUCCESS.equals(refundApplication.getStatus())) {
             //更新订单退款金额
             BigDecimal totalRefundAmount = paymentOrder.getRefundAmount();
@@ -406,9 +406,9 @@ public class PaymentTransactionService {
 
             //更新订单退款状态
             if (paymentOrder.getRefundAmount().compareTo(paymentOrder.getTotalPremium()) == 0) {
-                paymentOrder.setRefundStatus(PaymentOrderRefundStatus.FULL_REFUND);
+                paymentOrder.setStatus(PaymentOrderPayStatus.FULL_REFUND);
             } else {
-                paymentOrder.setRefundStatus(PaymentOrderRefundStatus.PART_REFUND);
+                paymentOrder.setStatus(PaymentOrderPayStatus.PART_REFUND);
             }
         }
 

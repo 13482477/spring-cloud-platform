@@ -2,21 +2,27 @@ package com.siebre.payment.entity.enums;
 
 import com.siebre.basic.enumutil.BaseEnum;
 
+/**
+ * @author Huang Tianci
+ * 订单支付状态
+ */
 public enum PaymentOrderPayStatus implements BaseEnum {
 	
-	UNPAID(1, "未支付"),
+	UNPAID(1, "待支付"),
 
-	//订单支付中，不可以重新发起支付
     PAYING(2, "支付中"),
 
-	//订单支付成功状态下才可以申请退款
 	PAID(3, "支付成功"),
 
-	//订单关闭状态下，不可以退款
-    CLOSED(4, "订单关闭"),
+	PAYERROR(4, "支付失败"),
 
-	//订单支付失败，用户可以重新发起支付
-	PAYERROR(5, "支付失败"),
+	PROCESSING_REFUND(5, "退款中"),
+
+	PART_REFUND(6, "部分退款"),
+
+	FULL_REFUND(7, "全额退款"),
+
+	INVALID(8, "订单失效"),
 	;
 
 	private PaymentOrderPayStatus(int value, String description) {

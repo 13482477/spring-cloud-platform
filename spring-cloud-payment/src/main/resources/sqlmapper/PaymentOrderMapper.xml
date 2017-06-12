@@ -10,6 +10,7 @@
 		<result column="payment_client" property="paymentClient" jdbcType="INTEGER" />
 		<result column="return_trade_no" property="returnTradeNo" jdbcType="VARCHAR" />
 		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="lock_status" property="lockStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="check_status" property="checkStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
 		<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
@@ -43,6 +44,7 @@
 		<result column="payment_client" property="paymentClient" jdbcType="INTEGER" />
 		<result column="return_trade_no" property="returnTradeNo" jdbcType="VARCHAR" />
 		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="lock_status" property="lockStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
 		<result column="check_status" property="checkStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
@@ -109,6 +111,7 @@
 		pmt_payment_order.payment_client,
 		pmt_payment_order.return_trade_no,
 		pmt_payment_order.status,
+		pmt_payment_order.lock_status,
 		pmt_payment_order.check_status,
 		pmt_payment_order.payment_terminal_type,
 		pmt_payment_order.payment_channel_id,
@@ -166,7 +169,9 @@
 		business_plantform,
 		payment_client,
 		return_trade_no,
-		status,check_status,
+		status,
+		lock_status,
+		check_status,
 		payment_terminal_type,
 		payment_channel_id,
 		create_time,
@@ -196,6 +201,7 @@
 		pmt_payment_order.payment_client,
 		pmt_payment_order.return_trade_no,
 		pmt_payment_order.status,
+		pmt_payment_order.lock_status,
 		pmt_payment_order.check_status,
 		pmt_payment_order.payment_terminal_type,
 		pmt_payment_order.payment_channel_id,
@@ -239,6 +245,7 @@
 		payment_client,
 		return_trade_no,
 		status,
+		lock_status,
 		check_status,
 		payment_terminal_type,
 		payment_channel_id,
@@ -266,6 +273,7 @@
 		#{paymentClient,jdbcType=INTEGER},
 		#{returnTradeNo,jdbcType=VARCHAR},
 		#{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		#{lockStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{paymentTerminalType,jdbcType=INTEGER},
 		#{paymentChannelId,jdbcType=BIGINT},
@@ -312,6 +320,9 @@
 			</if>
 			<if test="status != null">
 				status,
+			</if>
+			<if test="lockStatus != null">
+				lock_status,
 			</if>
 			<if test="checkStatus != null">
 				check_status,
@@ -393,6 +404,9 @@
 			<if test="status != null">
 				#{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
+			<if test="lockStatus != null">
+				#{lockStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
 			<if test="checkStatus != null">
 				#{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
@@ -473,6 +487,9 @@
 			<if test="status != null">
 				status = #{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
+			<if test="lockStatus != null">
+				lock_status = #{lockStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
 			<if test="checkStatus != null">
 				check_status = #{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
@@ -539,6 +556,7 @@
 		payment_client = #{paymentClient,jdbcType=INTEGER},
 		return_trade_no = #{returnTradeNo,jdbcType=VARCHAR},
 		status = #{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		lock_status = #{lockStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		check_status = #{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		payment_terminal_type = #{paymentTerminalType,jdbcType=INTEGER},
 		payment_channel_id = #{paymentChannelId,jdbcType=BIGINT},

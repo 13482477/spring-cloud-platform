@@ -53,7 +53,7 @@ public abstract class AbstractPaymentQueryComponent implements PaymentInterfaceC
         }else if(PaymentTransactionStatus.PROCESSING.equals(paymentTransactionStatus)){
             return PaymentOrderPayStatus.PAYING;
         }else if(PaymentTransactionStatus.CLOSED.equals(paymentTransactionStatus)){
-            return PaymentOrderPayStatus.CLOSED;
+            return PaymentOrderPayStatus.INVALID;
         }
         return null;
     }
