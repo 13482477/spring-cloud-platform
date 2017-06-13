@@ -33,7 +33,7 @@ public class RefundApplicationController {
 		PageInfo page = new PageInfo();
 		page.setCurrentPage(paramsVo.getCurrentPage());
 		page.setShowCount(paramsVo.getShowCount());
-		List<Refund> refunds = refundApplicationService.qeuryRefundByPage(paramsVo, page);
+		List<Refund> refunds = refundApplicationService.queryRefundByPage(paramsVo, page);
 		return WebResult.<List<Refund>>builder().returnCode(WebResult.SUCCESS_CODE).data(refunds).pageInfo(page).build();
 	}
 

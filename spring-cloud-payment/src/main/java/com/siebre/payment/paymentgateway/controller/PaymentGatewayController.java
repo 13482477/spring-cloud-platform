@@ -142,6 +142,18 @@ public class PaymentGatewayController {
     }
 
     /**
+     * 统一退款（v2.0）
+     * @param refundRequest
+     * @return
+     */
+    @ApiOperation(value = "统一单笔退款接口(V2.0)", notes = "统一单笔退款接口(V2.0)")
+    @RequestMapping(value = "/openApi/v1/paymentGateWay/refund", method = POST)
+    public RefundResponse applicationRefund2(RefundRequest refundRequest) {
+
+        return null;
+    }
+
+    /**
      * 获取请求微信授权的url pageUrl 微信需要重定向的目标页面，会将code返回回来
      */
     @RequestMapping(value = "/paymentGateway/unifiedPay/wechatauthorize", method = GET)
