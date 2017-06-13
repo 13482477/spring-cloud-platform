@@ -765,7 +765,7 @@
 		from
 		pmt_payment_order
 		where
-		payment_channel_id is not null and status = 5
+		payment_channel_id is not null and status = 4
 		group by
 		payment_channel_id;
 	</select>
@@ -793,7 +793,7 @@
 		where
 		1 = 1
 		and payment_channel_id is not null
-		and status = 5
+		and status = 4
 		group by
 		payment_channel_id;
 	</select>
@@ -858,7 +858,7 @@
 		pmt_payment_order
 		where
 		payment_channel_id is not null
-		and status = 5
+		and status = 4
 		group by
 		payment_channel_id
 		) table2
@@ -914,11 +914,11 @@
 				#{channelCode,jdbcType=VARCHAR}
 			</foreach>
 		</if>
-		<if test="payStatus != null">
-			and pmt_payment_order.status = #{payStatus.value}
-		</if>
-		<if test="refundStatus != null">
-			and pmt_payment_order.refund_status = #{refundStatus.value}
+		<if test="payStatusList != null and payStatusList.size() != 0">
+			and pmt_payment_order.status in
+			<foreach item="payStatus" index="index" collection="payStatusList" open="(" separator="," close=")">
+				#{payStatus.value}
+			</foreach>
 		</if>
 		<if test="checkStatusList != null and checkStatusList.size() != 0">
 			and pmt_payment_order.check_status in

@@ -3,6 +3,7 @@ package com.siebre.payment.paymentcheck.controller;
 import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.entity.enums.PaymentOrderCheckStatus;
+import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.PaymentOrderRefundStatus;
 import com.siebre.payment.paymentcheck.vo.CheckOrderVo;
 import com.siebre.payment.paymentcheck.vo.CheckOverviewResult;
@@ -53,7 +54,7 @@ public class CheckOrderController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "orderNumber", dataType = "String", required = false, value = "订单号"),
             @ApiImplicitParam(paramType = "query", name = "channelCodeList", dataType = "Array", required = false, value = "渠道代码", allowableValues = "ALI_PAY,WECHAT_PAY,UNION_PAY,ALLIN_PAY,BAOFOO_PAY"),
-            @ApiImplicitParam(paramType = "query", name = "refundStatus", dataType = "String", required = false, value = "退款状态", allowableValues = "NOT_REFUND,FULL_REFUND"),
+            @ApiImplicitParam(paramType = "query", name = "payStatusList", dataType = "Array", required = false, value = "支付状态", allowableValues = "PAID,PART_REFUND,FULL_REFUND"),
             @ApiImplicitParam(paramType = "query", name = "checkStatusList", dataType = "Array", required = false, value = "对账状态", allowableValues = "NOT_CONFIRM,SUCCESS,FAIL,UNUSUAL"),
             @ApiImplicitParam(paramType = "query", name = "startDate", dataType = "Date", required = false, value = "对账开始时间"),
             @ApiImplicitParam(paramType = "query", name = "endDate", dataType = "Date", required = false, value = "对账结束时间"),
@@ -62,7 +63,7 @@ public class CheckOrderController {
     })
     @RequestMapping(value = "/api/v1/checkOrders", method = GET)
     public ServiceResult<List<CheckOrderVo>> selectCheckOrderByPage(@Param("orderNumber") String orderNumber, @RequestParam(value = "channelCodeList", required = false) ArrayList<String> channelCodeList,
-                                                                    @Param("refundStatus") PaymentOrderRefundStatus refundStatus,
+                                                                    @Param("payStatusList") ArrayList<PaymentOrderPayStatus> payStatusList,
                                                                     @RequestParam(value = "checkStatusList", required = false) ArrayList<PaymentOrderCheckStatus> checkStatusList,
                                                                     @Param("startDate")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
                                                                     @Param("endDate")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
@@ -70,7 +71,7 @@ public class CheckOrderController {
         PageInfo pageInfo = new PageInfo();
         pageInfo.setShowCount(showCount == null ? 10 : showCount);
         pageInfo.setCurrentPage(currentPage == null ? 1 : currentPage);
-        return paymentOrderService.selectCheckOrderByPage(orderNumber, channelCodeList, refundStatus, checkStatusList, startDate,endDate,pageInfo);
+        return paymentOrderService.selectCheckOrderByPage(orderNumber, channelCodeList, payStatusList, checkStatusList, startDate,endDate,pageInfo);
     }
 
     @ApiOperation(value = "对账明细列表详情", notes = "对账明细列表详情")

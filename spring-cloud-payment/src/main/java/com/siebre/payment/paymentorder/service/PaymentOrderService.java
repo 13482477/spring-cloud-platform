@@ -181,9 +181,13 @@ public class PaymentOrderService {
             String dateStrCheck = DateFormatUtils.format(order.getCheckTime(), "yyyy-MM-dd HH:mm:ss");
             orderVo.setCheckTime(dateStrCheck);
         }
-        if ( !order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)) {//非全额退款就属于支付对账类型
+        if (order.getStatus().equals(PaymentOrderPayStatus.PAID)) {
+            orderVo.setAmount(order.getAmount());
+            orderVo.setRealAmount(order.getAmount());
             orderVo.setCheckType("支付");
-        }else if (order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)){
+        }else {
+            orderVo.setAmount(order.getRefundAmount());
+            orderVo.setRealAmount(order.getRefundAmount());
             orderVo.setCheckType("退款");
         }
         orderVo.setCheckStatus(order.getCheckStatus().getDescription());
@@ -198,7 +202,7 @@ public class PaymentOrderService {
 
         //支付信息
         orderVo.setOrderNumber(order.getOrderNumber());
-        orderVo.setAmount(order.getAmount());
+        //orderVo.setAmount(order.getAmount());
         orderVo.setCreateTime(dateStrCreate);
         orderVo.setPayStatus(order.getStatus().getDescription());
 
@@ -207,7 +211,7 @@ public class PaymentOrderService {
         orderVo.setChannelName(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelName());
         orderVo.setExternalTransactionNumber(orderNumber);//暂时用订单号
         orderVo.setPayTime(dateStrCreate);
-        orderVo.setRealAmount(order.getAmount());
+        //orderVo.setRealAmount(order.getAmount());
         orderVo.setRealPayStatus(order.getStatus().getDescription());
 
         return orderVo;
@@ -237,17 +241,11 @@ public class PaymentOrderService {
     }
 
     public ServiceResult<List<CheckOrderVo>> selectCheckOrderByPage(String orderNumber, List<String> channelCodeList,
-                                                                    PaymentOrderRefundStatus refundStatus, List<PaymentOrderCheckStatus> checkStatusList,
+                                                                    List<PaymentOrderPayStatus> payStatusList, List<PaymentOrderCheckStatus> checkStatusList,
                                                                     Date checkStartDate, Date checkEndDate,PageInfo pageInfo) {
 
         ServiceResult<List<CheckOrderVo>> result = new ServiceResult<>();
-        List<PaymentOrder> orders = new ArrayList<>();
-
-        if (PaymentOrderRefundStatus.NOT_REFUND.equals(refundStatus) || PaymentOrderRefundStatus.FULL_REFUND.equals(refundStatus)) {//支付
-            orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, PaymentOrderPayStatus.PAID, refundStatus, checkStatusList, checkStartDate,checkEndDate,pageInfo);
-        } else {
-            orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, null, null, checkStatusList, checkStartDate,checkEndDate,pageInfo);
-        }
+        List<PaymentOrder> orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, payStatusList, checkStatusList, checkStartDate,checkEndDate,pageInfo);
 
         List<CheckOrderVo> checkOrderVos = new ArrayList<>();
         for (PaymentOrder order : orders) {
@@ -257,16 +255,18 @@ public class PaymentOrderService {
                 continue;
             checkOrderVo.setChannelCode(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelCode());
             checkOrderVo.setChannelName(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelName());
-            checkOrderVo.setAmount(order.getAmount());
+            if (order.getStatus().equals(PaymentOrderPayStatus.PAID)) {
+                checkOrderVo.setAmount(order.getAmount());
+                checkOrderVo.setCheckType("支付");
+            }else {
+                checkOrderVo.setAmount(order.getRefundAmount());
+                checkOrderVo.setCheckType("退款");
+            }
+
             checkOrderVo.setCheckStatus(order.getCheckStatus().getDescription());
             if (order.getCheckTime() != null) {
                 String dateStr = DateFormatUtils.format(order.getCheckTime(), "yyyy-MM-dd HH:mm:ss");
                 checkOrderVo.setCheckTime(dateStr);
-            }
-            if (!order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)) {//非全额退款就属于支付对账类型
-                checkOrderVo.setCheckType("支付");
-            }else if (order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)){
-                checkOrderVo.setCheckType("退款");
             }
 
             checkOrderVos.add(checkOrderVo);
@@ -522,14 +522,12 @@ public class PaymentOrderService {
                 checkTotalCount = checkTotalCount + 1;
                 if (order.getCheckStatus().equals(PaymentOrderCheckStatus.SUCCESS)) {//对账成功
                     successCount = successCount + 1;
-                    if (order.getStatus().equals(PaymentOrderPayStatus.PAID) && order.getRefundStatus().equals(PaymentOrderRefundStatus.NOT_REFUND)) {//支付成功且未退款
+                    if (order.getStatus().equals(PaymentOrderPayStatus.PAID)) {//支付成功且未退款
                         payOrderTotalAmount = payOrderTotalAmount.add(order.getAmount());
                         payTotalAmount = payTotalAmount.add(order.getAmount());
-                    } else if (order.getRefundStatus().equals(PaymentOrderRefundStatus.FULL_REFUND)) {//全额退款成功
-                        //payOrderTotalAmount.add(order.getAmount());  TODO 退款成功，是否要累计支付对账总金额
-                        //payTotalAmount.add(order.getAmount());
-                        refundOrderTotalAmount = refundOrderTotalAmount.add(order.getAmount());
-                        refundTotalAmount = refundTotalAmount.add(order.getAmount());
+                    } else if (order.getStatus().equals(PaymentOrderPayStatus.PART_REFUND) || order.getStatus().equals(PaymentOrderPayStatus.FULL_REFUND)) {//部分退款，全额退款
+                        refundOrderTotalAmount = refundOrderTotalAmount.add(order.getRefundAmount());
+                        refundTotalAmount = refundTotalAmount.add(order.getRefundAmount());
                     }
                 } else {//对账失败，异常
                     failCount = failCount + 1;
