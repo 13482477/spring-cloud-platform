@@ -43,7 +43,6 @@ public interface PaymentOrderMapper {
      */
     List<PaymentOrder> selectOrderByPage(@Param("orderNumber") String orderNumber, @Param("statusList") List<PaymentOrderPayStatus> orderPayStatusList,
                                          @Param("channelCodeList") List<String> channelCodeList,
-                                         @Param("refundStatusList") List<PaymentOrderRefundStatus> refundStatusList,
                                          @Param("startDate") Date startDate, @Param("endDate") Date endDate, PageInfo pageInfo);
 
     /**

@@ -44,7 +44,6 @@ public class RefundApplicationController {
 		page.setCurrentPage(paramsVo.getCurrentPage());
 		page.setShowCount(paramsVo.getShowCount());
 		paramsVo.getPayStatusList().add(PaymentOrderPayStatus.PAID);
-		paramsVo.getRefundStatusList().add(PaymentOrderRefundStatus.NOT_REFUND);
 		List<TradeOrder> tradeOrders = paymentOrderService.queryOrderByPage(paramsVo, page);
 		return WebResult.<List<TradeOrder>>builder().returnCode(WebResult.SUCCESS_CODE).data(tradeOrders).pageInfo(page).build();
 	}

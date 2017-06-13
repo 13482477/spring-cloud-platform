@@ -40,9 +40,9 @@ public class RefundApplicationService {
     private SerialNumberMapper serialNumberMapper;
 
     public ServiceResult<List<RefundApplication>> selectRefundList(String orderNumber, String refundNumber,
-                                                                   List<String> channelCodeList, List<PaymentOrderRefundStatus> refundStatusList,
+                                                                   List<String> channelCodeList,
                                                                    Date startDate, Date endDate, PageInfo pageInfo) {
-        List<RefundApplication> list = refundApplicationMapper.selectRefundList(orderNumber, refundNumber, channelCodeList, refundStatusList, startDate, endDate, pageInfo);
+        List<RefundApplication> list = refundApplicationMapper.selectRefundList(orderNumber, refundNumber, channelCodeList, startDate, endDate, pageInfo);
         ServiceResult<List<RefundApplication>> result = new ServiceResult<>();
         result.setData(list);
         result.setPageInfo(pageInfo);
@@ -106,7 +106,7 @@ public class RefundApplicationService {
         Date startDate = paramsVo.getStartDate();
         Date endDate = paramsVo.getEndDate();
         ServiceResult<List<RefundApplication>> refundsListResult = this.selectRefundList(orderNumber, refundNumber, paramsVo.getChannelCodeList(),
-                paramsVo.getRefundStatusList(), startDate, endDate, page);
+               startDate, endDate, page);
         List<RefundApplication> refundsList = refundsListResult.getData();
         page.setTotalPage(refundsListResult.getPageInfo().getTotalPage());
         List<Refund> result = new ArrayList<>();

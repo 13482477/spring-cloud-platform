@@ -231,10 +231,9 @@ public class PaymentOrderService {
     }
 
     public ServiceResult<List<PaymentOrder>> getOrderListForPage(String orderNumber, List<PaymentOrderPayStatus> orderPayStatusList, List<String> channelCodeList,
-                                                                 List<PaymentOrderRefundStatus> refundStatusList,
                                                                  Date startDate, Date endDate, PageInfo page) {
         ServiceResult<List<PaymentOrder>> result = new ServiceResult<>();
-        List<PaymentOrder> orders = paymentOrderMapper.selectOrderByPage(orderNumber, orderPayStatusList, channelCodeList, refundStatusList, startDate, endDate, page);
+        List<PaymentOrder> orders = paymentOrderMapper.selectOrderByPage(orderNumber, orderPayStatusList, channelCodeList, startDate, endDate, page);
         result.setData(orders);
         result.setPageInfo(page);
         return result;
@@ -555,7 +554,7 @@ public class PaymentOrderService {
         Date startDate = paramsVo.getStartDate();
         Date endDate = paramsVo.getEndDate();
         ServiceResult<List<PaymentOrder>> rpcResult = this.getOrderListForPage(orderNumber, paramsVo.getPayStatusList(), paramsVo.getChannelCodeList(),
-                paramsVo.getRefundStatusList(), startDate, endDate, page);
+                 startDate, endDate, page);
         page.setTotalResult(rpcResult.getPageInfo().getTotalResult());
         List<TradeOrder> orders = new ArrayList<>();
         if (rpcResult.getData() == null) {
