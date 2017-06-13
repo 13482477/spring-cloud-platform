@@ -10,11 +10,11 @@
 		<result column="payment_client" property="paymentClient" jdbcType="INTEGER" />
 		<result column="return_trade_no" property="returnTradeNo" jdbcType="VARCHAR" />
 		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="lock_status" property="lockStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="check_status" property="checkStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
 		<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
-		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-		<result column="refund_status" property="refundStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
 		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
 		<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
 		<result column="selling_channel" property="sellingChannel" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
@@ -43,11 +43,11 @@
 		<result column="payment_client" property="paymentClient" jdbcType="INTEGER" />
 		<result column="return_trade_no" property="returnTradeNo" jdbcType="VARCHAR" />
 		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="lock_status" property="lockStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
 		<result column="check_status" property="checkStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
 		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-		<result column="refund_status" property="refundStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
 		<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
 		<result column="selling_channel" property="sellingChannel" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
@@ -109,11 +109,11 @@
 		pmt_payment_order.payment_client,
 		pmt_payment_order.return_trade_no,
 		pmt_payment_order.status,
+		pmt_payment_order.lock_status,
 		pmt_payment_order.check_status,
 		pmt_payment_order.payment_terminal_type,
 		pmt_payment_order.payment_channel_id,
 		pmt_payment_order.create_time,
-		pmt_payment_order.refund_status,
 		pmt_payment_order.refund_amount,
 		pmt_payment_order.payment_way_code,
 		pmt_payment_order.selling_channel,
@@ -166,11 +166,12 @@
 		business_plantform,
 		payment_client,
 		return_trade_no,
-		status,check_status,
+		status,
+		lock_status,
+		check_status,
 		payment_terminal_type,
 		payment_channel_id,
 		create_time,
-		refund_status,
 		selling_channel,
 		refund_amount,
 		payment_way_code,
@@ -196,11 +197,11 @@
 		pmt_payment_order.payment_client,
 		pmt_payment_order.return_trade_no,
 		pmt_payment_order.status,
+		pmt_payment_order.lock_status,
 		pmt_payment_order.check_status,
 		pmt_payment_order.payment_terminal_type,
 		pmt_payment_order.payment_channel_id,
 		pmt_payment_order.create_time,
-		pmt_payment_order.refund_status,
 		pmt_payment_order.refund_amount,
 		pmt_payment_order.payment_way_code,
 		pmt_payment_order.selling_channel,
@@ -239,6 +240,7 @@
 		payment_client,
 		return_trade_no,
 		status,
+		lock_status,
 		check_status,
 		payment_terminal_type,
 		payment_channel_id,
@@ -246,7 +248,6 @@
 		refund_amount,
 		payment_way_code,
 		selling_channel,
-		refund_status,
 		message_id,
 		amount,
 		check_time,
@@ -266,6 +267,7 @@
 		#{paymentClient,jdbcType=INTEGER},
 		#{returnTradeNo,jdbcType=VARCHAR},
 		#{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		#{lockStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{paymentTerminalType,jdbcType=INTEGER},
 		#{paymentChannelId,jdbcType=BIGINT},
@@ -273,7 +275,6 @@
 		#{refundAmount,jdbcType=DECIMAL},
 		#{paymentWayCode,jdbcType=VARCHAR},
 		#{sellingChannel,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
-		#{refundStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{messageId,jdbcType=VARCHAR},
 		#{amount,jdbcType=DECIMAL},
 		#{checkTime,jdbcType=TIMESTAMP},
@@ -313,6 +314,9 @@
 			<if test="status != null">
 				status,
 			</if>
+			<if test="lockStatus != null">
+				lock_status,
+			</if>
 			<if test="checkStatus != null">
 				check_status,
 			</if>
@@ -330,9 +334,6 @@
 			</if>
 			<if test="paymentWayCode!=null">
 				payment_way_code,
-			</if>
-			<if test="refundStatus!=null">
-				refund_status,
 			</if>
 			<if test="sellingChannel!=null">
 				selling_channel,
@@ -393,6 +394,9 @@
 			<if test="status != null">
 				#{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
+			<if test="lockStatus != null">
+				#{lockStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
 			<if test="checkStatus != null">
 				#{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
@@ -410,9 +414,6 @@
 			</if>
 			<if test="paymentWayCode!=null">
 				#{paymentWayCode,jdbcType=VARCHAR},
-			</if>
-			<if test="refundStatus!=null">
-				#{refundStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
 			<if test="sellingChannel!=null">
 				#{sellingChannel,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
@@ -473,6 +474,9 @@
 			<if test="status != null">
 				status = #{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
+			<if test="lockStatus != null">
+				lock_status = #{lockStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
 			<if test="checkStatus != null">
 				check_status = #{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
@@ -490,9 +494,6 @@
 			</if>
 			<if test="paymentWayCode!=null">
 				payment_way_code = #{paymentWayCode,jdbcType=VARCHAR},
-			</if>
-			<if test="refundStatus!=null">
-				refund_status = #{refundStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
 			<if test="sellingChannel!=null">
 				selling_channel = #{sellingChannel,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
@@ -539,13 +540,13 @@
 		payment_client = #{paymentClient,jdbcType=INTEGER},
 		return_trade_no = #{returnTradeNo,jdbcType=VARCHAR},
 		status = #{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		lock_status = #{lockStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		check_status = #{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		payment_terminal_type = #{paymentTerminalType,jdbcType=INTEGER},
 		payment_channel_id = #{paymentChannelId,jdbcType=BIGINT},
 		create_time = #{createTime,jdbcType=VARCHAR},
 		refund_amount = #{refundAmount,jdbcType=INTEGER},
 		payment_way_code = #{paymentWayCode,jdbcType=VARCHAR},
-		refund_status = #{refundStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		selling_channel = #{sellingChannel,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		message_id = #{messageId,jdbcType=VARCHAR},
 		amount = #{amount,jdbcType=DECIMAL},
@@ -621,12 +622,6 @@
 			and pmt_payment_channel.channel_code in
 			<foreach item="channelCode" index="index" collection="channelCodeList" open="(" separator="," close=")">
 				#{channelCode,jdbcType=VARCHAR}
-			</foreach>
-		</if>
-		<if test="refundStatusList != null and refundStatusList.size() != 0">
-			and pmt_payment_order.refund_status in
-			<foreach item="refundStatus" index="index" collection="refundStatusList" open="(" separator="," close=")">
-				#{refundStatus.value}
 			</foreach>
 		</if>
 		<if test="startDate != null">
@@ -747,7 +742,7 @@
 		from
 		pmt_payment_order
 		where
-		payment_channel_id is not null and status = 5
+		payment_channel_id is not null and status = 4
 		group by
 		payment_channel_id;
 	</select>
@@ -775,7 +770,7 @@
 		where
 		1 = 1
 		and payment_channel_id is not null
-		and status = 5
+		and status = 4
 		group by
 		payment_channel_id;
 	</select>
@@ -840,7 +835,7 @@
 		pmt_payment_order
 		where
 		payment_channel_id is not null
-		and status = 5
+		and status = 4
 		group by
 		payment_channel_id
 		) table2
@@ -896,11 +891,11 @@
 				#{channelCode,jdbcType=VARCHAR}
 			</foreach>
 		</if>
-		<if test="payStatus != null">
-			and pmt_payment_order.status = #{payStatus.value}
-		</if>
-		<if test="refundStatus != null">
-			and pmt_payment_order.refund_status = #{refundStatus.value}
+		<if test="payStatusList != null and payStatusList.size() != 0">
+			and pmt_payment_order.status in
+			<foreach item="payStatus" index="index" collection="payStatusList" open="(" separator="," close=")">
+				#{payStatus.value}
+			</foreach>
 		</if>
 		<if test="checkStatusList != null and checkStatusList.size() != 0">
 			and pmt_payment_order.check_status in

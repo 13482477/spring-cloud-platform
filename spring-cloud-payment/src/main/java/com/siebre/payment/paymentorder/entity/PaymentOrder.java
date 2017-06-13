@@ -33,46 +33,24 @@ public class PaymentOrder extends BaseObject {
 
     private String returnTradeNo;
 
-    private PaymentOrderPayStatus status;
-
     private Date createTime;
 
     private Integer paymentTerminalType;
-
-
 
     /**
      * 用户可以先选择支付方式，该字段用来保存支付方式的code
      */
     private String paymentWayCode;
 
-    /**
-     * 对账状态
-     */
-    private PaymentOrderCheckStatus checkStatus;
-
-    private Date checkTime;//对账时间
-
-    //退款状态
-    private PaymentOrderRefundStatus refundStatus;
-
-    //退款金额
-    private BigDecimal refundAmount;
-
     //销售渠道
     private SellingChannel sellingChannel;
-
-    /**
-     * 前端唯一标识一次提交订单的字段
-     */
-    private String messageId;
-
-
 
     /**
      * 统一支付接口2.0字段
      * ------start-------
      */
+    //前端唯一标识一次提交订单的字段
+    private String messageId;
     private String notificationUrl;
     //外部订单交易编号
     private String externalOrderNumber;
@@ -88,6 +66,25 @@ public class PaymentOrder extends BaseObject {
 
     //-------finish---------
 
+    //订单支付状态
+    private PaymentOrderPayStatus status;
+
+    //订单锁定状态
+    private PaymentOrderLockStatus lockStatus;
+
+    //退款状态
+    /*@Deprecated
+    private PaymentOrderRefundStatus refundStatus;*/
+
+    //退款金额
+    private BigDecimal refundAmount;
+
+    /**
+     * 对账状态
+     */
+    private PaymentOrderCheckStatus checkStatus;
+
+    private Date checkTime;//对账时间
 
     private List<PaymentOrderItem> items = new ArrayList<PaymentOrderItem>();
 
@@ -189,13 +186,15 @@ public class PaymentOrder extends BaseObject {
         this.paymentTransactions = paymentTransactions;
     }
 
+    /*@Deprecated
     public PaymentOrderRefundStatus getRefundStatus() {
         return refundStatus;
     }
 
+    @Deprecated
     public void setRefundStatus(PaymentOrderRefundStatus refundStatus) {
         this.refundStatus = refundStatus;
-    }
+    }*/
 
     public BigDecimal getRefundAmount() {
         return refundAmount;
@@ -317,7 +316,15 @@ public class PaymentOrder extends BaseObject {
         this.externalOrderNumber = externalOrderNumber;
     }
 
-    @Override
+    public PaymentOrderLockStatus getLockStatus() {
+        return lockStatus;
+    }
+
+    public void setLockStatus(PaymentOrderLockStatus lockStatus) {
+        this.lockStatus = lockStatus;
+    }
+
+    /*@Override
     public String toString() {
         return "PaymentOrder{" +
                 "orderNumber='" + orderNumber + '\'' +
@@ -337,5 +344,5 @@ public class PaymentOrder extends BaseObject {
                 ", items=" + items +
                 ", paymentTransactions=" + paymentTransactions +
                 '}';
-    }
+    }*/
 }

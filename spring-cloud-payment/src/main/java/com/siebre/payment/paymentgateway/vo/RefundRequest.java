@@ -16,6 +16,13 @@ public class RefundRequest implements Serializable{
 
     private String reason;
 
+    //统一退款2.0版本
+    private String messageId;
+
+    private String notificationUrl;
+
+    private String refundReason;
+
     public String getOrderNumber() {
         return orderNumber;
     }
@@ -38,5 +45,29 @@ public class RefundRequest implements Serializable{
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
+    public String getNotificationUrl() {
+        return notificationUrl;
+    }
+
+    public void setNotificationUrl(String notificationUrl) {
+        this.notificationUrl = notificationUrl;
+    }
+
+    public String getRefundReason() {
+        return refundReason;
+    }
+
+    public void setRefundReason(String refundReason) {
+        this.refundReason = refundReason;
     }
 }

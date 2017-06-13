@@ -34,9 +34,6 @@ public class OrderQueryParamsVo implements Serializable {
     @ApiModelProperty(value = "订单支付状态", required = false)
     private List<PaymentOrderPayStatus> payStatusList = new ArrayList<>();
 
-    @ApiModelProperty(value = "订单退款状态", required = false)
-    private List<PaymentOrderRefundStatus> refundStatusList = new ArrayList<>();
-
     @ApiModelProperty(value = "开始日期", required = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startDate;
@@ -91,14 +88,6 @@ public class OrderQueryParamsVo implements Serializable {
 
     public void setPayStatusList(List<PaymentOrderPayStatus> payStatusList) {
         this.payStatusList = payStatusList;
-    }
-
-    public List<PaymentOrderRefundStatus> getRefundStatusList() {
-        return refundStatusList;
-    }
-
-    public void setRefundStatusList(List<PaymentOrderRefundStatus> refundStatusList) {
-        this.refundStatusList = refundStatusList;
     }
 
     public Date getStartDate() {

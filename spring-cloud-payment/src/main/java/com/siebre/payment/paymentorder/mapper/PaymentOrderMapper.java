@@ -43,7 +43,6 @@ public interface PaymentOrderMapper {
      */
     List<PaymentOrder> selectOrderByPage(@Param("orderNumber") String orderNumber, @Param("statusList") List<PaymentOrderPayStatus> orderPayStatusList,
                                          @Param("channelCodeList") List<String> channelCodeList,
-                                         @Param("refundStatusList") List<PaymentOrderRefundStatus> refundStatusList,
                                          @Param("startDate") Date startDate, @Param("endDate") Date endDate, PageInfo pageInfo);
 
     /**
@@ -91,7 +90,7 @@ public interface PaymentOrderMapper {
 
     //对账明细列表查询
     List<PaymentOrder> selectCheckOrderByPage(@Param("orderNumber") String orderNumber, @Param("channelCodeList") List<String> channelCodeList,
-                                              @Param("payStatus") PaymentOrderPayStatus payStatus, @Param("refundStatus") PaymentOrderRefundStatus refundStatus,
+                                              @Param("payStatusList") List<PaymentOrderPayStatus> payStatusList,
                                               @Param("checkStatusList") List<PaymentOrderCheckStatus> checkStatusList,
                                               @Param("checkStartDate") Date checkStartDate, @Param("checkEndDate") Date checkEndDate,PageInfo pageInfo);
 
