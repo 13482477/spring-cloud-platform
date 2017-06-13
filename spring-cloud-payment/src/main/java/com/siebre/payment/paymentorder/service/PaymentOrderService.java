@@ -647,8 +647,8 @@ public class PaymentOrderService {
             detail.addOrderItems(transItemVo(paymentOrderItem));
         }
 
-        if (paymentOrder.getRefundStatus() != null) {
-            detail.setRefundStatus(paymentOrder.getRefundStatus().getDescription());
+        if (paymentOrder.getLockStatus() != null) {
+            detail.setLockStatus(paymentOrder.getLockStatus().getDescription());
         }
 
         return detail;

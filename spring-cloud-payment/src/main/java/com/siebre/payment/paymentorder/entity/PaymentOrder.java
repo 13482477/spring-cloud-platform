@@ -73,8 +73,8 @@ public class PaymentOrder extends BaseObject {
     private PaymentOrderLockStatus lockStatus;
 
     //退款状态
-    @Deprecated
-    private PaymentOrderRefundStatus refundStatus;
+    /*@Deprecated
+    private PaymentOrderRefundStatus refundStatus;*/
 
     //退款金额
     private BigDecimal refundAmount;
@@ -186,7 +186,7 @@ public class PaymentOrder extends BaseObject {
         this.paymentTransactions = paymentTransactions;
     }
 
-    @Deprecated
+    /*@Deprecated
     public PaymentOrderRefundStatus getRefundStatus() {
         return refundStatus;
     }
@@ -194,7 +194,7 @@ public class PaymentOrder extends BaseObject {
     @Deprecated
     public void setRefundStatus(PaymentOrderRefundStatus refundStatus) {
         this.refundStatus = refundStatus;
-    }
+    }*/
 
     public BigDecimal getRefundAmount() {
         return refundAmount;
@@ -324,7 +324,7 @@ public class PaymentOrder extends BaseObject {
         this.lockStatus = lockStatus;
     }
 
-    @Override
+    /*@Override
     public String toString() {
         return "PaymentOrder{" +
                 "orderNumber='" + orderNumber + '\'' +
@@ -344,5 +344,5 @@ public class PaymentOrder extends BaseObject {
                 ", items=" + items +
                 ", paymentTransactions=" + paymentTransactions +
                 '}';
-    }
+    }*/
 }

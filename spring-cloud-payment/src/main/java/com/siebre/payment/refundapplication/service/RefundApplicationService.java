@@ -119,7 +119,7 @@ public class RefundApplicationService {
             refund.setRefundAmount(refundApp.getRefundAmount().toString());
             refund.setRefundStatus(refundApp.getStatus().getDescription());
             if(RefundApplicationStatus.SUCCESS.equals(refundApp.getStatus())){
-                refund.setOrderRefundStatus(refundApp.getPaymentOrder().getRefundStatus().getDescription());
+                refund.setOrderRefundStatus(refundApp.getPaymentOrder().getStatus().getDescription());
             }
             if(refundApp.getCreateDate() != null) {
                 String dateStr = DateFormatUtils.format(refundApp.getCreateDate(), "yyyy-MM-dd HH:mm:ss");

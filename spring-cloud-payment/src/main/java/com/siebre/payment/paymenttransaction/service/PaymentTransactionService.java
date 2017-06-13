@@ -369,9 +369,9 @@ public class PaymentTransactionService {
 
         //更新订单退款状态
         if (paymentOrder.getRefundAmount().compareTo(paymentOrder.getTotalPremium()) == 0) {
-            paymentOrder.setRefundStatus(PaymentOrderRefundStatus.FULL_REFUND);
+            paymentOrder.setStatus(PaymentOrderPayStatus.FULL_REFUND);
         } else {
-            paymentOrder.setRefundStatus(PaymentOrderRefundStatus.PART_REFUND);
+            paymentOrder.setStatus(PaymentOrderPayStatus.PART_REFUND);
         }
 
         //更新退款申请状态
