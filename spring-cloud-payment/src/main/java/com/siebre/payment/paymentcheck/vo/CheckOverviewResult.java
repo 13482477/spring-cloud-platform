@@ -17,6 +17,9 @@ public class CheckOverviewResult implements Serializable {
     //失败笔数
     private int failCount;
 
+    //异常笔数
+    private int unusualCount;
+
     //未对账总笔数
     private int notCheckTotalCount;
 
@@ -54,6 +57,14 @@ public class CheckOverviewResult implements Serializable {
 
     public void setFailCount(int failCount) {
         this.failCount = failCount;
+    }
+
+    public int getUnusualCount() {
+        return unusualCount;
+    }
+
+    public void setUnusualCount(int unusualCount) {
+        this.unusualCount = unusualCount;
     }
 
     public BigDecimal getPayOrderTotalAmount() {

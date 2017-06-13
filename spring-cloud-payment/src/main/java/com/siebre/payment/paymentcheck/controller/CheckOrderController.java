@@ -38,15 +38,21 @@ public class CheckOrderController {
 
     @ApiOperation(value = "对账总览", notes = "对账总览")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(paramType = "query", name = "channelId", dataType = "Long", required = false, value = "渠道编号"),
+            @ApiImplicitParam(paramType = "query", name = "orderNumber", dataType = "String", required = false, value = "订单号"),
+            @ApiImplicitParam(paramType = "query", name = "channelCodeList", dataType = "Array", required = false, value = "渠道代码", allowableValues = "ALI_PAY,WECHAT_PAY,UNION_PAY,ALLIN_PAY,BAOFOO_PAY"),
+            @ApiImplicitParam(paramType = "query", name = "payStatusList", dataType = "Array", required = false, value = "支付状态", allowableValues = "PAID,PART_REFUND,FULL_REFUND"),
+            @ApiImplicitParam(paramType = "query", name = "checkStatusList", dataType = "Array", required = false, value = "对账状态", allowableValues = "NOT_CONFIRM,SUCCESS,FAIL,UNUSUAL"),
             @ApiImplicitParam(paramType = "query", name = "startDate", dataType = "Date", required = false, value = "对账开始时间"),
             @ApiImplicitParam(paramType = "query", name = "endDate", dataType = "Date", required = false, value = "对账结束时间")
     })
     @RequestMapping(value = "/api/v1/checkOrders/Overview", method = GET)
-    public ServiceResult<CheckOverviewResult> checkOverview(@Param("channelId") Long channelId, @Param("startDate")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
+    public ServiceResult<CheckOverviewResult> checkOverview(@Param("orderNumber") String orderNumber,@RequestParam(value = "channelCodeList", required = false) ArrayList<String> channelCodeList,
+                                                            @RequestParam(value = "payStatusList", required = false) ArrayList<PaymentOrderPayStatus> payStatusList,
+                                                            @RequestParam(value = "checkStatusList", required = false) ArrayList<PaymentOrderCheckStatus> checkStatusList,
+                                                            @Param("startDate")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
                                                             @Param("endDate")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate) {
 
-        CheckOverviewResult checkOverviewResult = paymentOrderService.getOrdersByChannelAndDate(channelId, startDate, endDate);
+        CheckOverviewResult checkOverviewResult = paymentOrderService.getOrdersOverview(orderNumber, channelCodeList, payStatusList, checkStatusList, startDate,endDate);
         return ServiceResult.<CheckOverviewResult>builder().success(Boolean.TRUE).data(checkOverviewResult).message(ServiceResult.SUCCESS_MESSAGE).build();
     }
 

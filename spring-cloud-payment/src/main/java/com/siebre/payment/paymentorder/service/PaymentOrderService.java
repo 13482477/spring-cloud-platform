@@ -503,14 +503,17 @@ public class PaymentOrderService {
         return ServiceResult.<List<PaymentChannelTransactionVo>>builder().success(true).data(result).build();
     }
 
-    public CheckOverviewResult getOrdersByChannelAndDate(Long channelId, Date checkStartDate, Date checkEndDate) {
+    public CheckOverviewResult getOrdersOverview(String orderNumber, List<String> channelCodeList,
+                                                         List<PaymentOrderPayStatus> payStatusList, List<PaymentOrderCheckStatus> checkStatusList,
+                                                         Date checkStartDate, Date checkEndDate) {
 
-        List<PaymentOrder> orders = this.paymentOrderMapper.getOrdersByChannelAndDate(channelId, checkStartDate, checkEndDate);
+        List<PaymentOrder> orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, payStatusList, checkStatusList, checkStartDate,checkEndDate,null);
 
         CheckOverviewResult checkOverviewResult = new CheckOverviewResult();
         int checkTotalCount = 0;//对账总笔数
         int successCount = 0;//成功笔数
         int failCount = 0;//失败笔数
+        int unusualCount = 0;//异常笔数
         int notCheckTotalCount = 0;//未对账总笔数
         BigDecimal payOrderTotalAmount = BigDecimal.ZERO;//支付信息-订单金额
         BigDecimal payTotalAmount = BigDecimal.ZERO;//支付信息-支付金额
@@ -529,9 +532,10 @@ public class PaymentOrderService {
                         refundOrderTotalAmount = refundOrderTotalAmount.add(order.getRefundAmount());
                         refundTotalAmount = refundTotalAmount.add(order.getRefundAmount());
                     }
-                } else {//对账失败，异常
+                } else if (order.getCheckStatus().equals(PaymentOrderCheckStatus.FAIL)){//对账失败
                     failCount = failCount + 1;
-                    //TODO 对账失败或异常，是否要判断并累计支付/退款方金额
+                } else if (order.getCheckStatus().equals(PaymentOrderCheckStatus.FAIL)) {//对账异常
+                    unusualCount = unusualCount + 1;
                 }
             }else {//未对账
                 notCheckTotalCount = notCheckTotalCount +1;

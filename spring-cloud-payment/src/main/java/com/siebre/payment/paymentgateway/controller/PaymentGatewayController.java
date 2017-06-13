@@ -109,7 +109,7 @@ public class PaymentGatewayController {
      * @param servletRequest
      * @return
      */
-    @ApiOperation(value = "统一单笔退款接口", notes = "统一单笔退款接口")
+    @ApiOperation(value = "统一单笔退款接口(V1.0)", notes = "统一单笔退款接口(V1.0)")
     @RequestMapping(value = "/openApi/v1/paymentGateWay/refund", method = POST)
     public RefundResponse applicationRefund(@RequestBody RefundRequest refundRequest, HttpServletRequest servletRequest) {
         //判断订单是否锁定
