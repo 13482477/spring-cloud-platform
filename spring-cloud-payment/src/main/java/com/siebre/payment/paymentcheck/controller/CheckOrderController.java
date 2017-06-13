@@ -39,12 +39,12 @@ public class CheckOrderController {
     @ApiOperation(value = "对账总览", notes = "对账总览")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "channelId", dataType = "Long", required = false, value = "渠道编号"),
-            @ApiImplicitParam(paramType = "query", name = "startDate", dataType = "Date", required = true, value = "对账开始时间"),
-            @ApiImplicitParam(paramType = "query", name = "endDate", dataType = "Date", required = true, value = "对账结束时间")
+            @ApiImplicitParam(paramType = "query", name = "startDate", dataType = "Date", required = false, value = "对账开始时间"),
+            @ApiImplicitParam(paramType = "query", name = "endDate", dataType = "Date", required = false, value = "对账结束时间")
     })
     @RequestMapping(value = "/api/v1/checkOrders/Overview", method = GET)
-    public ServiceResult<CheckOverviewResult> checkOverview(@Param("channelId") Long channelId, @RequestParam(value = "startDate")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
-                                                            @RequestParam(value = "endDate")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate) {
+    public ServiceResult<CheckOverviewResult> checkOverview(@Param("channelId") Long channelId, @Param("startDate")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
+                                                            @Param("endDate")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate) {
 
         CheckOverviewResult checkOverviewResult = paymentOrderService.getOrdersByChannelAndDate(channelId, startDate, endDate);
         return ServiceResult.<CheckOverviewResult>builder().success(Boolean.TRUE).data(checkOverviewResult).message(ServiceResult.SUCCESS_MESSAGE).build();

@@ -14,7 +14,7 @@
 		<result column="check_status" property="checkStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
 		<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
-		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
 		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
 		<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
 		<result column="selling_channel" property="sellingChannel" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />

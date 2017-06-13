@@ -41,7 +41,6 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         paymentOrder.setCheckTime(date);
         paymentOrder.setCheckStatus(PaymentOrderCheckStatus.SUCCESS);
         paymentOrder.setStatus(PaymentOrderPayStatus.PAID);
-        paymentOrder.setRefundStatus(PaymentOrderRefundStatus.NOT_REFUND);
 
         paymentOrder.setPaymentMethod(PaymentMethod.NET_GATEWAY);
         paymentOrder.setPaymentProvider(PaymentProvider.ALIPAY);
@@ -62,7 +61,6 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         assertTrue(order.getCheckTime().equals(paymentOrder.getCheckTime()));
         assertTrue(order.getCheckStatus().equals(paymentOrder.getCheckStatus()));
         assertTrue(order.getStatus().equals(paymentOrder.getStatus()));
-        assertTrue(order.getRefundStatus().equals(paymentOrder.getRefundStatus()));
         assertTrue(order.getPaymentMethod().equals(paymentOrder.getPaymentMethod()));
         assertTrue(order.getPaymentProvider().equals(paymentOrder.getPaymentProvider()));
         assertTrue(order.getCurrency().equals(paymentOrder.getCurrency()));

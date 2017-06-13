@@ -262,6 +262,7 @@ public class PaymentOrderService {
                 checkOrderVo.setCheckType("退款");
             }
 
+            checkOrderVo.setPayStatus(order.getStatus().getDescription());
             checkOrderVo.setCheckStatus(order.getCheckStatus().getDescription());
             if (order.getCheckTime() != null) {
                 String dateStr = DateFormatUtils.format(order.getCheckTime(), "yyyy-MM-dd HH:mm:ss");
