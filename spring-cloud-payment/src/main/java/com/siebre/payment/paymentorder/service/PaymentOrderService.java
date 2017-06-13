@@ -575,8 +575,8 @@ public class PaymentOrderService {
             if (null != paymentOrder.getPaymentChannel()) {
                 order.setPayChannel(paymentOrder.getPaymentChannel().getChannelName());
             }
-            if (paymentOrder.getRefundStatus() != null) {
-                order.setRefundStatus(paymentOrder.getRefundStatus().getDescription());
+            if (paymentOrder.getLockStatus() != null) {
+                order.setLockStatus(paymentOrder.getLockStatus().getDescription());
             }
             orders.add(order);
         }
