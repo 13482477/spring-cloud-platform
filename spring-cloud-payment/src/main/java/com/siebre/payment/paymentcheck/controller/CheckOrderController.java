@@ -63,7 +63,7 @@ public class CheckOrderController {
     })
     @RequestMapping(value = "/api/v1/checkOrders", method = GET)
     public ServiceResult<List<CheckOrderVo>> selectCheckOrderByPage(@Param("orderNumber") String orderNumber, @RequestParam(value = "channelCodeList", required = false) ArrayList<String> channelCodeList,
-                                                                    @Param("payStatusList") ArrayList<PaymentOrderPayStatus> payStatusList,
+                                                                    @RequestParam(value = "payStatusList", required = false) ArrayList<PaymentOrderPayStatus> payStatusList,
                                                                     @RequestParam(value = "checkStatusList", required = false) ArrayList<PaymentOrderCheckStatus> checkStatusList,
                                                                     @Param("startDate")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
                                                                     @Param("endDate")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
