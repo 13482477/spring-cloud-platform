@@ -147,7 +147,7 @@ public class PaymentGatewayController {
      * @return
      */
     @ApiOperation(value = "统一单笔退款接口(V2.0)", notes = "统一单笔退款接口(V2.0)")
-    @RequestMapping(value = "/openApi/v1/paymentGateWay/refund", method = POST)
+    @RequestMapping(value = "/openApi/v2/paymentGateWay/refund", method = POST)
     public RefundResponse applicationRefund2(RefundRequest refundRequest) {
 
         return null;
