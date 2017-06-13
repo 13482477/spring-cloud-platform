@@ -1,6 +1,7 @@
 package com.siebre.payment.paymentorder.mapper;
 
 import com.siebre.base.DbTestConfig;
+import com.siebre.basic.query.PageInfo;
 import com.siebre.payment.entity.enums.*;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import org.junit.After;
@@ -14,6 +15,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -178,7 +180,11 @@ public class PaymentOrderMapperTest extends DbTestConfig {
     @Test
     @Transactional
     public void selectOrderByPage() throws Exception {
-
+        PageInfo page = new PageInfo();
+        page.setCurrentPage(1);
+        page.setShowCount(10);
+        List list =paymentOrderMapper.selectOrderByPage("",null,null,null,null, page);
+        System.out.println(list);
     }
 
     @Test
