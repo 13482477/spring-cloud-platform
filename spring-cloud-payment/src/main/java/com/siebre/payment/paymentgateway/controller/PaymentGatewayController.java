@@ -1,7 +1,9 @@
 package com.siebre.payment.paymentgateway.controller;
 
 import com.siebre.basic.applicationcontext.SpringContextUtil;
+import com.siebre.basic.service.ServiceResult;
 import com.siebre.basic.utils.HttpServletRequestUtil;
+import com.siebre.basic.web.WebResult;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.enums.PaymentOrderLockStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
@@ -148,9 +150,9 @@ public class PaymentGatewayController {
      */
     @ApiOperation(value = "统一单笔退款接口(V2.0)", notes = "统一单笔退款接口(V2.0)")
     @RequestMapping(value = "/openApi/v2/paymentGateWay/refund", method = POST)
-    public RefundResponse applicationRefund2(RefundRequest refundRequest) {
-
-        return null;
+    public ServiceResult<RefundResponse> applicationRefund2(RefundRequest refundRequest) {
+        RefundResponse refundResponse = refundApplicationService.doRefund(refundRequest);
+        return ServiceResult.<RefundResponse>builder().success(Boolean.TRUE).data(refundResponse).message(ServiceResult.SUCCESS_MESSAGE).build();
     }
 
     /**

@@ -128,9 +128,11 @@ public class RefundApplicationService {
 
         RefundApplication application = new RefundApplication();
         application.setStatus(RefundApplicationStatus.APPLICATION);
-        application.setRequest(refundRequest.getReason());
+        application.setRequest(refundRequest.getRefundReason());
         application.setOrderNumber(refundRequest.getOrderNumber());
         application.setRefundAmount(refundRequest.getRefundAmount());
+        application.setMessageId(refundRequest.getMessageId());
+        application.setNotificationUrl(refundRequest.getNotificationUrl());
         // 创建RefundApplication
         refundApplicationService.createRefundApplication(application);
         if (RefundApplicationStatus.APPLICATION.equals(application.getStatus())) {
@@ -140,9 +142,10 @@ public class RefundApplicationService {
             application = refundResponse.getRefundApplication();
         }
         RefundResponse refundResponse = new RefundResponse();
-        refundResponse.setRefundStatus(application.getStatus().toString());
-        refundResponse.setResponse(application.getResponse());
-        refundResponse.setApplicationNumber(application.getRefundApplicationNumber());
+        refundResponse.setReturnCode(application.getStatus().toString());
+        refundResponse.setReturnMessage(application.getResponse());
+        refundResponse.setRefundAmount(application.getRefundAmount());
+        //refundResponse.setApplicationNumber(application.getRefundApplicationNumber());
         return refundResponse;
     }
 
