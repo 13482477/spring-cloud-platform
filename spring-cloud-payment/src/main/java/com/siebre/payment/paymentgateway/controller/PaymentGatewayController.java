@@ -76,7 +76,7 @@ public class PaymentGatewayController {
     @ApiOperation(value = "统一支付接口(V1.0)", notes = "统一支付接口(V1.0)")
     @RequestMapping(value = "/openApi/v1/paymentGateway/unifiedPay", method = POST)
     public UnifiedPayResponse unipay(@RequestBody UnifiedPayRequest unipayRequest, HttpServletRequest request) {
-        PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrder(unipayRequest.getOrderNumber());
+        /*PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrder(unipayRequest.getOrderNumber());
         if(PaymentOrderLockStatus.LOCK.equals(paymentOrder.getLockStatus())){
             UnifiedPayResponse response = new UnifiedPayResponse();
             response.setBody("支付失败，订单已被锁定");
@@ -94,7 +94,8 @@ public class PaymentGatewayController {
         UnifiedPayResponse response = new UnifiedPayResponse();
         response.setPaymentUrl(paymentResponse.getPayUrl());
         response.setBody(paymentResponse.getBody());
-        return response;
+        return response;*/
+        return null;
     }
 
     @ApiOperation(value = "统一支付接口(V2.0)", notes = "统一支付接口(V2.0)")

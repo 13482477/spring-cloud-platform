@@ -3,6 +3,8 @@ package com.siebre.payment.paymenthandler.basic.payment;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
+import com.siebre.payment.paymentchannel.entity.PaymentChannel;
+import com.siebre.payment.paymentchannel.service.PaymentChannelService;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
@@ -35,6 +37,9 @@ public abstract class AbstractPaymentComponent implements PaymentInterfaceCompon
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
+    private PaymentChannelService paymentChannelService;
+
+    @Autowired
     protected PaymentTransactionService paymentTransactionService;
 
     @Autowired
@@ -59,6 +64,8 @@ public abstract class AbstractPaymentComponent implements PaymentInterfaceCompon
     public PaymentResponse handle(PaymentRequest request) {
         PaymentWay paymentWay = this.paymentWayService.getPaymentWayByCode(request.getPaymentWayCode()).getData();
 
+        PaymentChannel channel = this.paymentChannelService.queryById(paymentWay.getPaymentChannelId()).getData();
+
         PaymentOrder paymentOrder = paymentOrderMapper.selectByOrderNumber(request.getOrderNumber());
 
         /**
@@ -81,7 +88,7 @@ public abstract class AbstractPaymentComponent implements PaymentInterfaceCompon
         PaymentOrder orderForUpdate = new PaymentOrder();
         orderForUpdate.setId(paymentOrder.getId());
         orderForUpdate.setStatus(PaymentOrderPayStatus.PAYING);
-        orderForUpdate.setPaymentChannelId(paymentWay.getPaymentChannelId());
+        orderForUpdate.setChannelCode(channel.getChannelCode());
         orderForUpdate.setPaymentWayCode(paymentWay.getCode());
         this.paymentOrderMapper.updateByPrimaryKeySelective(orderForUpdate);
 

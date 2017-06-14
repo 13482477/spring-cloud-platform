@@ -6,17 +6,13 @@
 		<result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT" />
 		<result column="application_number" property="applicationNumber" jdbcType="VARCHAR" />
 		<result column="policy_number" property="policyNumber" jdbcType="VARCHAR" />
-		<result column="insured_amount" property="insuredAmount" jdbcType="DECIMAL" />
 		<result column="gross_premium" property="grossPremium" jdbcType="DECIMAL" />
 		<result column="applicant_id" property="applicantId" jdbcType="BIGINT" />
 		<result column="product_name" property="productName" jdbcType="VARCHAR" />
 		<result column="insured_person_id" property="insuredPersonId" jdbcType="BIGINT" />
-		<result column="same_person" property="samePerson" jdbcType="VARCHAR" />
 		<result column="product_code" property="productCode" jdbcType="VARCHAR" />
 		<result column="inception_date" property="inceptionDate" jdbcType="TIMESTAMP" />
 		<result column="planned_end_date" property="plannedEndDate" jdbcType="TIMESTAMP" />
-		<result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
-		<result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
 		<association property="applicant" javaType="com.siebre.payment.policyrole.entity.PolicyRole" notNullColumn="id" columnPrefix="applicant_">
 			<id column="id" property="id" jdbcType="BIGINT" />
 			<result column="name" property="name" jdbcType="VARCHAR" />
@@ -56,16 +52,13 @@
 		payment_order_id,
 		application_number,
 		policy_number,
-		insured_amount,
 		gross_premium,
 		applicant_id,
 		insured_person_id,
 		product_name,
-		same_person,
 		product_code,
 		inception_date,
-		planned_end_date,
-		start_date, end_date
+		planned_end_date
 	</sql>
 
 	<sql id="resultMap_Column_List">
@@ -73,17 +66,13 @@
 		pmt_payment_order_item.payment_order_id,
 		pmt_payment_order_item.application_number,
 		pmt_payment_order_item.policy_number,
-		pmt_payment_order_item.insured_amount,
 		pmt_payment_order_item.gross_premium,
 		pmt_payment_order_item.applicant_id,
 		pmt_payment_order_item.insured_person_id,
 		pmt_payment_order_item.product_name,
-		pmt_payment_order_item.same_person,
 		pmt_payment_order_item.product_code,
 		pmt_payment_order_item.inception_date,
 		pmt_payment_order_item.planned_end_date,
-		pmt_payment_order_item.start_date,
-		pmt_payment_order_item.end_date,
 
 		applicant.id applicant_id,
 		applicant.name applicant_name,
@@ -132,17 +121,16 @@
 
 	<insert id="insert" parameterType="com.siebre.payment.paymentorderitem.entity.PaymentOrderItem" useGeneratedKeys="true" keyProperty="id">
 		insert into pmt_payment_order_item (id, payment_order_id, application_number,
-		policy_number, insured_amount, gross_premium,
+		policy_number, gross_premium,
 		applicant_id, insured_person_id, product_name,
-		same_person, product_code,
-		inception_date, planned_end_date, start_date, end_date
+		product_code,
+		inception_date, planned_end_date
 		)
 		values (#{id,jdbcType=BIGINT}, #{paymentOrderId,jdbcType=BIGINT}, #{applicationNumber,jdbcType=VARCHAR},
-		#{policyNumber,jdbcType=VARCHAR}, #{insuredAmount,jdbcType=DECIMAL}, #{grossPremium,jdbcType=DECIMAL},
+		#{policyNumber,jdbcType=VARCHAR}, #{grossPremium,jdbcType=DECIMAL},
 		#{applicantId,jdbcType=BIGINT}, #{insuredPersonId,jdbcType=BIGINT}, #{productName,jdbcType=VARCHAR},
-		#{samePerson,jdbcType=VARCHAR}, #{productCode,jdbcType=VARCHAR},
-		#{inceptionDate,jdbcType=TIMESTAMP},#{plannedEndDate,jdbcType=TIMESTAMP},
-		#{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}
+		#{productCode,jdbcType=VARCHAR},
+		#{inceptionDate,jdbcType=TIMESTAMP},#{plannedEndDate,jdbcType=TIMESTAMP}
 		)
 	</insert>
 
@@ -161,9 +149,6 @@
 			<if test="policyNumber != null">
 				policy_number,
 			</if>
-			<if test="insuredAmount != null">
-				insured_amount,
-			</if>
 			<if test="grossPremium != null">
 				gross_premium,
 			</if>
@@ -176,9 +161,6 @@
 			<if test="productName != null">
 				product_name,
 			</if>
-			<if test="samePerson != null">
-				same_person,
-			</if>
 			<if test="productCode != null">
 				product_code,
 			</if>
@@ -187,12 +169,6 @@
 			</if>
 			<if test="plannedEndDate != null">
 				planned_end_date,
-			</if>
-			<if test="startDate != null">
-				start_date,
-			</if>
-			<if test="endDate != null">
-				end_date,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -208,9 +184,6 @@
 			<if test="policyNumber != null">
 				#{policyNumber,jdbcType=VARCHAR},
 			</if>
-			<if test="insuredAmount != null">
-				#{insuredAmount,jdbcType=DECIMAL},
-			</if>
 			<if test="grossPremium != null">
 				#{grossPremium,jdbcType=DECIMAL},
 			</if>
@@ -223,9 +196,6 @@
 			<if test="productName != null">
 				#{productName,jdbcType=VARCHAR},
 			</if>
-			<if test="samePerson != null">
-				#{samePerson,jdbcType=VARCHAR},
-			</if>
 			<if test="productCode != null">
 				#{productCode,jdbcType=VARCHAR},
 			</if>
@@ -234,12 +204,6 @@
 			</if>
 			<if test="plannedEndDate != null">
 				#{plannedEndDate,jdbcType=TIMESTAMP},
-			</if>
-			<if test="startDate != null">
-				#{startDate,jdbcType=TIMESTAMP},
-			</if>
-			<if test="endDate != null">
-				#{endDate,jdbcType=TIMESTAMP},
 			</if>
 		</trim>
 	</insert>
@@ -256,9 +220,6 @@
 			<if test="policyNumber != null">
 				policy_number = #{policyNumber,jdbcType=VARCHAR},
 			</if>
-			<if test="insuredAmount != null">
-				insured_amount = #{insuredAmount,jdbcType=DECIMAL},
-			</if>
 			<if test="grossPremium != null">
 				gross_premium = #{grossPremium,jdbcType=DECIMAL},
 			</if>
@@ -271,9 +232,6 @@
 			<if test="productName != null">
 				product_name = #{productName,jdbcType=VARCHAR},
 			</if>
-			<if test="samePerson != null">
-				same_person = #{samePerson,jdbcType=VARCHAR},
-			</if>
 			<if test="productCode != null">
 				product_code = #{productCode,jdbcType=VARCHAR},
 			</if>
@@ -282,12 +240,6 @@
 			</if>
 			<if test="plannedEndDate != null">
 				planned_end_date = #{plannedEndDate,jdbcType=TIMESTAMP},
-			</if>
-			<if test="startDate != null">
-				start_date = #{startDate,jdbcType=TIMESTAMP},
-			</if>
-			<if test="endDate != null">
-				end_date = #{endDate,jdbcType=TIMESTAMP},
 			</if>
 		</set>
 		where id = #{id,jdbcType=BIGINT}
@@ -298,17 +250,13 @@
 		set payment_order_id = #{paymentOrderId,jdbcType=BIGINT},
 		application_number = #{applicationNumber,jdbcType=VARCHAR},
 		policy_number = #{policyNumber,jdbcType=VARCHAR},
-		insured_amount = #{insuredAmount,jdbcType=DECIMAL},
 		gross_premium = #{grossPremium,jdbcType=DECIMAL},
 		applicant_id = #{applicantId,jdbcType=BIGINT},
 		insured_person_id = #{insuredPersonId,jdbcType=BIGINT},
 		product_name = #{productName,jdbcType=VARCHAR},
-		same_person = #{samePerson,jdbcType=VARCHAR},
 		product_code = #{productCode,jdbcType=VARCHAR},
 		inception_date = #{inceptionDate,jdbcType=TIMESTAMP},
-		planned_end_date = #{plannedEndDate,jdbcType=TIMESTAMP},
-		start_date = #{startDate,jdbcType=TIMESTAMP},
-		end_date = #{endDate,jdbcType=TIMESTAMP}
+		planned_end_date = #{plannedEndDate,jdbcType=TIMESTAMP}
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 

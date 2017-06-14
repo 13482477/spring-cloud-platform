@@ -285,7 +285,6 @@
 				<result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT" />
 				<result column="application_number" property="applicationNumber" jdbcType="VARCHAR" />
 				<result column="policy_number" property="policyNumber" jdbcType="VARCHAR" />
-				<result column="insured_amount" property="insuredAmount" jdbcType="DECIMAL" />
 				<result column="premium" property="premium" jdbcType="DECIMAL" />
 				<result column="applicant_id" property="applicantId" jdbcType="BIGINT" />
 				<result column="insured_person_id" property="insuredPersonId" jdbcType="BIGINT" />
@@ -322,7 +321,6 @@
 		pmt_payment_order_item.payment_order_id paymentOrder_paymentOrderItem_payment_order_id,
 		pmt_payment_order_item.application_number paymentOrder_paymentOrderItem_application_number,
 		pmt_payment_order_item.policy_number paymentOrder_paymentOrderItem_policy_number,
-		pmt_payment_order_item.insured_amount paymentOrder_paymentOrderItem_insured_amount,
 		pmt_payment_order_item.gross_premium paymentOrder_paymentOrderItem_gross_premium,
 		pmt_payment_order_item.applicant_id paymentOrder_paymentOrderItem_applicant_id,
 		pmt_payment_order_item.insured_person_id paymentOrder_paymentOrderItem_insured_person_id,

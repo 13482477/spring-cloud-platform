@@ -118,17 +118,17 @@ public class PaymentOrderService {
 
         for (PaymentOrderItem paymentOrderItem : orderRequest.getPaymentOrderItems()) {
             paymentOrderItem.setPaymentOrderId(paymentOrder.getId());
-            //save applicant
-            PolicyRole applicant = paymentOrderItem.getApplicant();
-            applicant.setPolicyRoleType(PolicyRoleType.POLICY_HOLDER);
-            policyRoleMapper.insert(applicant);
-            paymentOrderItem.setApplicantId(applicant.getId());
             //save insured
-            if ("n".equalsIgnoreCase(paymentOrderItem.getSamePerson())) {
-                PolicyRole insuredPerson = paymentOrderItem.getInsured();
-                insuredPerson.setPolicyRoleType(PolicyRoleType.INSURED_PERSON);
-                policyRoleMapper.insert(insuredPerson);
-                paymentOrderItem.setInsuredPersonId(insuredPerson.getId());
+            PolicyRole insuredPerson = paymentOrderItem.getInsured();
+            insuredPerson.setPolicyRoleType(PolicyRoleType.INSURED_PERSON);
+            policyRoleMapper.insert(insuredPerson);
+            paymentOrderItem.setInsuredPersonId(insuredPerson.getId());
+            //save applicant
+            if ("SELF".equalsIgnoreCase(insuredPerson.getRelatedToApplicant())) {
+                PolicyRole applicant = paymentOrderItem.getApplicant();
+                applicant.setPolicyRoleType(PolicyRoleType.POLICY_HOLDER);
+                policyRoleMapper.insert(applicant);
+                paymentOrderItem.setApplicantId(applicant.getId());
             }
             paymentOrderItemMapper.insert(paymentOrderItem);
             //save libilities
@@ -147,28 +147,22 @@ public class PaymentOrderService {
      * @param paymentOrderItems
      */
     private void processTotalAmount(PaymentOrder paymentOrder, List<PaymentOrderItem> paymentOrderItems) {
-        BigDecimal totalInsuredAmount = BigDecimal.ZERO;
         BigDecimal totalPremium = BigDecimal.ZERO;
 
         for (PaymentOrderItem paymentOrderItem : paymentOrderItems) {
             this.processPolicyLibilityAmount(paymentOrderItem);
             totalPremium = totalPremium.add(paymentOrderItem.getGrossPremium());
-            totalInsuredAmount = totalInsuredAmount.add(paymentOrderItem.getInsuredAmount());
         }
-        paymentOrder.setTotalInsuredAmount(totalInsuredAmount);
         paymentOrder.setTotalPremium(totalPremium);
     }
 
 
     private void processPolicyLibilityAmount(PaymentOrderItem paymentOrderItem) {
-        BigDecimal totalInsuredAmount = BigDecimal.ZERO;
         BigDecimal totalPremium = BigDecimal.ZERO;
         for (PolicyLibility libility : paymentOrderItem.getLibilities()) {
             totalPremium = totalPremium.add(libility.getPremium());
-            totalInsuredAmount = totalInsuredAmount.add(libility.getInsuredAmount());
         }
         paymentOrderItem.setGrossPremium(totalPremium);
-        paymentOrderItem.setInsuredAmount(totalInsuredAmount);
     }
 
     public CheckOrderVo queryPaymentOrderForCheckDetail(String orderNumber) {
@@ -207,8 +201,9 @@ public class PaymentOrderService {
         orderVo.setPayStatus(order.getStatus().getDescription());
 
         //第三方支付信息
-        orderVo.setChannelCode(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelCode());
-        orderVo.setChannelName(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelName());
+        PaymentChannel paymentChannel = paymentChannelMapper.selectByChannelCode(order.getChannelCode());
+        orderVo.setChannelCode(paymentChannel.getChannelCode());
+        orderVo.setChannelName(paymentChannel.getChannelName());
         orderVo.setExternalTransactionNumber(orderNumber);//暂时用订单号
         orderVo.setPayTime(dateStrCreate);
         //orderVo.setRealAmount(order.getAmount());
@@ -250,10 +245,11 @@ public class PaymentOrderService {
         for (PaymentOrder order : orders) {
             CheckOrderVo checkOrderVo = new CheckOrderVo();
             checkOrderVo.setOrderNumber(order.getOrderNumber());
-            if (order.getPaymentChannelId() == null)
+            if (order.getChannelCode() == null)
                 continue;
-            checkOrderVo.setChannelCode(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelCode());
-            checkOrderVo.setChannelName(paymentChannelMapper.selectByPrimaryKey(order.getPaymentChannelId()).getChannelName());
+            PaymentChannel paymentChannel = paymentChannelMapper.selectByChannelCode(order.getChannelCode());
+            checkOrderVo.setChannelCode(paymentChannel.getChannelCode());
+            checkOrderVo.setChannelName(paymentChannel.getChannelName());
             if (order.getStatus().equals(PaymentOrderPayStatus.PAID)) {
                 checkOrderVo.setAmount(order.getAmount());
                 checkOrderVo.setCheckType("支付");

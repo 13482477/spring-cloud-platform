@@ -54,9 +54,7 @@ public class PaymentOrder extends BaseObject {
     private String notificationUrl;
     //外部订单交易编号
     private String externalOrderNumber;
-    private PaymentMethod paymentMethod;
-    private PaymentProvider paymentProvider;
-    private Long paymentChannelId;
+    private String channelCode;
 
     private PaymentChannel paymentChannel;
     private String currency;
@@ -71,10 +69,6 @@ public class PaymentOrder extends BaseObject {
 
     //订单锁定状态
     private PaymentOrderLockStatus lockStatus;
-
-    //退款状态
-    /*@Deprecated
-    private PaymentOrderRefundStatus refundStatus;*/
 
     //退款金额
     private BigDecimal refundAmount;
@@ -186,30 +180,12 @@ public class PaymentOrder extends BaseObject {
         this.paymentTransactions = paymentTransactions;
     }
 
-    /*@Deprecated
-    public PaymentOrderRefundStatus getRefundStatus() {
-        return refundStatus;
-    }
-
-    @Deprecated
-    public void setRefundStatus(PaymentOrderRefundStatus refundStatus) {
-        this.refundStatus = refundStatus;
-    }*/
-
     public BigDecimal getRefundAmount() {
         return refundAmount;
     }
 
     public void setRefundAmount(BigDecimal refundAmount) {
         this.refundAmount = refundAmount;
-    }
-
-    public Long getPaymentChannelId() {
-        return paymentChannelId;
-    }
-
-    public void setPaymentChannelId(Long paymentChannelId) {
-        this.paymentChannelId = paymentChannelId;
     }
 
     public void setPaymentChannel(PaymentChannel paymentChannel) {
@@ -268,22 +244,6 @@ public class PaymentOrder extends BaseObject {
         this.paymentAccountId = paymentAccountId;
     }
 
-    public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
-    public PaymentProvider getPaymentProvider() {
-        return paymentProvider;
-    }
-
-    public void setPaymentProvider(PaymentProvider paymentProvider) {
-        this.paymentProvider = paymentProvider;
-    }
-
     public String getCurrency() {
         return currency;
     }
@@ -324,25 +284,11 @@ public class PaymentOrder extends BaseObject {
         this.lockStatus = lockStatus;
     }
 
-    /*@Override
-    public String toString() {
-        return "PaymentOrder{" +
-                "orderNumber='" + orderNumber + '\'' +
-                ", totalInsuredAmount=" + totalInsuredAmount +
-                ", totalPremium=" + totalPremium +
-                ", businessPlantform=" + businessPlantform +
-                ", paymentClient=" + paymentClient +
-                ", returnTradeNo='" + returnTradeNo + '\'' +
-                ", status=" + status +
-                ", createTime=" + createTime +
-                ", paymentTerminalType=" + paymentTerminalType +
-                ", paymentChannelId='" + paymentChannelId + '\'' +
-                ", paymentChannel=" + paymentChannel +
-                ", checkStatus=" + checkStatus +
-                ", refundStatus=" + refundStatus +
-                ", refundAmount=" + refundAmount +
-                ", items=" + items +
-                ", paymentTransactions=" + paymentTransactions +
-                '}';
-    }*/
+    public String getChannelCode() {
+        return channelCode;
+    }
+
+    public void setChannelCode(String channelCode) {
+        this.channelCode = channelCode;
+    }
 }

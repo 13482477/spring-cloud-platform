@@ -13,7 +13,7 @@
 		<result column="lock_status" property="lockStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="check_status" property="checkStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
-		<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
 		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
 		<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
@@ -21,8 +21,6 @@
 		<result column="message_id" property="messageId" jdbcType="VARCHAR" />
 		<result column="amount" property="amount" jdbcType="DECIMAL" />
 		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
-		<result column="payment_method" property="paymentMethod" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
-		<result column="payment_provider" property="paymentProvider" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="currency" property="currency" jdbcType="VARCHAR" />
 		<result column="payment_account_id" property="paymentAccountId" jdbcType="BIGINT" />
 		<result column="notification_url" property="notificationUrl" jdbcType="VARCHAR" />
@@ -46,7 +44,7 @@
 		<result column="lock_status" property="lockStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
 		<result column="check_status" property="checkStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
-		<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
 		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
 		<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
@@ -54,8 +52,6 @@
 		<result column="message_id" property="messageId" jdbcType="VARCHAR" />
 		<result column="amount" property="amount" jdbcType="DECIMAL" />
 		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
-		<result column="payment_method" property="paymentMethod" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
-		<result column="payment_provider" property="paymentProvider" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="currency" property="currency" jdbcType="VARCHAR" />
 		<result column="payment_account_id" property="paymentAccountId" jdbcType="BIGINT" />
 		<result column="notification_url" property="notificationUrl" jdbcType="VARCHAR" />
@@ -66,14 +62,10 @@
 			<result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT" />
 			<result column="application_number" property="applicationNumber" jdbcType="VARCHAR" />
 			<result column="policy_number" property="policyNumber" jdbcType="VARCHAR" />
-			<result column="insured_amount" property="insuredAmount" jdbcType="DECIMAL" />
 			<result column="premium" property="premium" jdbcType="DECIMAL" />
 			<result column="applicant_id" property="applicantId" jdbcType="BIGINT" />
 			<result column="insured_person_id" property="insuredPersonId" jdbcType="BIGINT" />
 			<result column="product_name" property="productName" jdbcType="VARCHAR" />
-			<result column="same_person" property="samePerson" jdbcType="VARCHAR" />
-			<result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
-			<result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
 		</collection>
 		<collection property="paymentTransactions" notNullColumn="id" javaType="com.siebre.payment.paymenttransaction.entity.PaymentTransaction" columnPrefix="paymentTransaction_">
 			<id column="id" property="id" jdbcType="BIGINT" />
@@ -112,7 +104,7 @@
 		pmt_payment_order.lock_status,
 		pmt_payment_order.check_status,
 		pmt_payment_order.payment_terminal_type,
-		pmt_payment_order.payment_channel_id,
+		pmt_payment_order.channel_code,
 		pmt_payment_order.create_time,
 		pmt_payment_order.refund_amount,
 		pmt_payment_order.payment_way_code,
@@ -120,8 +112,6 @@
 		pmt_payment_order.message_id,
 		pmt_payment_order.amount,
 		pmt_payment_order.check_time,
-		pmt_payment_order.payment_method,
-		pmt_payment_order.payment_provider,
 		pmt_payment_order.currency,
 		pmt_payment_order.payment_account_id,
 		pmt_payment_order.notification_url,
@@ -131,14 +121,10 @@
 		pmt_payment_order_item.payment_order_id paymentOrderItem_payment_order_id,
 		pmt_payment_order_item.application_number paymentOrderItem_application_number,
 		pmt_payment_order_item.policy_number paymentOrderItem_policy_number,
-		pmt_payment_order_item.insured_amount paymentOrderItem_insured_amount,
 		pmt_payment_order_item.gross_premium paymentOrderItem_gross_premium,
 		pmt_payment_order_item.applicant_id paymentOrderItem_applicant_id,
 		pmt_payment_order_item.insured_person_id paymentOrderItem_insured_person_id,
 		pmt_payment_order_item.product_name paymentOrderItem_product_name,
-		pmt_payment_order_item.same_person paymentOrderItem_same_person,
-		pmt_payment_order_item.start_date paymentOrderItem_start_date,
-		pmt_payment_order_item.end_date paymentOrderItem_end_date,
 		pmt_payment_transaction.id paymentTransaction_id,
 		pmt_payment_transaction.payment_channel_id paymentTransaction_payment_channel_id,
 		pmt_payment_transaction.payment_way_id paymentTransaction_payment_way_id,
@@ -170,7 +156,7 @@
 		lock_status,
 		check_status,
 		payment_terminal_type,
-		payment_channel_id,
+		channel_code,
 		create_time,
 		selling_channel,
 		refund_amount,
@@ -179,8 +165,6 @@
 		message_id,
 		amount,
 		check_time,
-		payment_method,
-		payment_provider,
 		currency,
 		payment_account_id,
 		notification_url,
@@ -200,7 +184,7 @@
 		pmt_payment_order.lock_status,
 		pmt_payment_order.check_status,
 		pmt_payment_order.payment_terminal_type,
-		pmt_payment_order.payment_channel_id,
+		pmt_payment_order.channel_code,
 		pmt_payment_order.create_time,
 		pmt_payment_order.refund_amount,
 		pmt_payment_order.payment_way_code,
@@ -208,8 +192,6 @@
 		pmt_payment_order.message_id,
 		pmt_payment_order.amount,
 		pmt_payment_order.check_time,
-		pmt_payment_order.payment_method,
-		pmt_payment_order.payment_provider,
 		pmt_payment_order.currency,
 		pmt_payment_order.payment_account_id,
 		pmt_payment_order.notification_url,
@@ -243,7 +225,7 @@
 		lock_status,
 		check_status,
 		payment_terminal_type,
-		payment_channel_id,
+		channel_code,
 		create_time,
 		refund_amount,
 		payment_way_code,
@@ -251,8 +233,6 @@
 		message_id,
 		amount,
 		check_time,
-		payment_method,
-		payment_provider,
 		currency,
 		payment_account_id,
 		notification_url,
@@ -270,7 +250,7 @@
 		#{lockStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{paymentTerminalType,jdbcType=INTEGER},
-		#{paymentChannelId,jdbcType=BIGINT},
+		#{channelCode,jdbcType=VARCHAR},
 		#{createTime,jdbcType=TIMESTAMP},
 		#{refundAmount,jdbcType=DECIMAL},
 		#{paymentWayCode,jdbcType=VARCHAR},
@@ -278,8 +258,6 @@
 		#{messageId,jdbcType=VARCHAR},
 		#{amount,jdbcType=DECIMAL},
 		#{checkTime,jdbcType=TIMESTAMP},
-		#{paymentMethod,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
-		#{paymentProvider,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{currency,jdbcType=VARCHAR},
 		#{paymentAccountId,jdbcType=BIGINT},
 		#{notificationUrl,jdbcType=VARCHAR},
@@ -323,8 +301,8 @@
 			<if test="paymentTerminalType != null">
 				payment_terminal_type,
 			</if>
-			<if test="paymentChannelId != null">
-				payment_channel_id,
+			<if test="channelCode != null">
+				channel_code,
 			</if>
 			<if test="createTime != null">
 				create_time,
@@ -346,12 +324,6 @@
 			</if>
 			<if test="checkTime!=null">
 				check_time,
-			</if>
-			<if test="paymentMethod!=null">
-				payment_method,
-			</if>
-			<if test="paymentProvider!=null">
-				payment_provider,
 			</if>
 			<if test="currency!=null">
 				currency,
@@ -403,8 +375,8 @@
 			<if test="paymentTerminalType != null">
 				#{paymentTerminalType,jdbcType=INTEGER},
 			</if>
-			<if test="paymentChannelId != null">
-				#{paymentChannelId,jdbcType=BIGINT},
+			<if test="channelCode != null">
+				#{channelCode,jdbcType=VARCHAR},
 			</if>
 			<if test="createTime != null">
 				#{createTime,jdbcType=TIMESTAMP},
@@ -426,12 +398,6 @@
 			</if>
 			<if test="checkTime!=null">
 				#{checkTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="paymentMethod!=null">
-				#{paymentMethod,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
-			</if>
-			<if test="paymentProvider!=null">
-				#{paymentProvider,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
 			<if test="currency!=null">
 				#{currency,jdbcType=VARCHAR},
@@ -483,8 +449,8 @@
 			<if test="paymentTerminalType != null">
 				payment_terminal_type = #{paymentTerminalType,jdbcType=INTEGER},
 			</if>
-			<if test="paymentChannelId != null">
-				payment_channel_id = #{paymentChannelId,jdbcType=BIGINT},
+			<if test="channelCode != null">
+				channel_code = #{channelCode,jdbcType=VARCHAR},
 			</if>
 			<if test="createTime != null">
 				create_time = #{createTime,jdbcType=VARCHAR},
@@ -506,12 +472,6 @@
 			</if>
 			<if test="checkTime != null">
 				check_time = #{checkTime,jdbcType=VARCHAR},
-			</if>
-			<if test="paymentMethod!=null">
-				payment_method = #{paymentMethod,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
-			</if>
-			<if test="paymentProvider!=null">
-				payment_provider = #{paymentProvider,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
 			<if test="currency!=null">
 				currency = #{currency,jdbcType=VARCHAR},
@@ -543,7 +503,7 @@
 		lock_status = #{lockStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		check_status = #{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		payment_terminal_type = #{paymentTerminalType,jdbcType=INTEGER},
-		payment_channel_id = #{paymentChannelId,jdbcType=BIGINT},
+		channel_code = #{channelCode,jdbcType=VARCHAR},
 		create_time = #{createTime,jdbcType=VARCHAR},
 		refund_amount = #{refundAmount,jdbcType=INTEGER},
 		payment_way_code = #{paymentWayCode,jdbcType=VARCHAR},
@@ -551,8 +511,6 @@
 		message_id = #{messageId,jdbcType=VARCHAR},
 		amount = #{amount,jdbcType=DECIMAL},
 		check_time = #{checkTime,jdbcType=VARCHAR},
-		payment_method = #{paymentMethod,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
-		payment_provider = #{paymentProvider,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		currency = #{currency,jdbcType=VARCHAR},
 		payment_account_id = #{paymentAccountId,jdbcType=BIGINT},
 		notification_url = #{notificationUrl,jdbcType=VARCHAR},
@@ -607,7 +565,7 @@
 		from
 		pmt_payment_order
 		left join
-		pmt_payment_channel on pmt_payment_order.payment_channel_id = pmt_payment_channel.id
+		pmt_payment_channel on pmt_payment_order.channel_code = pmt_payment_channel.channel_code
 		WHERE 1 = 1
 		<if test="orderNumber != null and orderNumber != ''">
 			and pmt_payment_order.order_number = #{orderNumber,jdbcType=VARCHAR}
@@ -727,52 +685,52 @@
 	<select id="getChannelSuccessedCount" resultType="java.util.HashMap">
 		select
 		count(*) count,
-		payment_channel_id paymentChannelId
+		channel_code channelCode
 		from
 		pmt_payment_order
 		where
-		payment_channel_id is not null and status = 3
+		channel_code is not null and status = 3
 		group by
-		payment_channel_id;
+		channel_code;
 	</select>
 	<select id="getChannelFailCount" resultType="java.util.HashMap">
 		select
 		count(*) count,
-		payment_channel_id paymentChannelId
+		channel_code channelCode
 		from
 		pmt_payment_order
 		where
-		payment_channel_id is not null and status = 4
+		channel_code is not null and status = 4
 		group by
-		payment_channel_id;
+		channel_code;
 	</select>
 
 	<select id="getChannelSuccessedAmount" resultType="java.util.HashMap">
 		select
 		sum(total_premium) totalAmount,
-		payment_channel_id paymentChannelId
+		channel_code channelCode
 		from
 		pmt_payment_order
 		where
 		1 = 1
-		and payment_channel_id is not null
+		and channel_code is not null
 		and status = 3
 		group by
-		payment_channel_id;
+		channel_code;
 	</select>
 
 	<select id="getChannelFailAmount" resultType="java.util.HashMap">
 		select
 		sum(total_premium) totalAmount,
-		payment_channel_id paymentChannelId
+		channel_code channelCode
 		from
 		pmt_payment_order
 		where
 		1 = 1
-		and payment_channel_id is not null
+		and channel_code is not null
 		and status = 4
 		group by
-		payment_channel_id;
+		channel_code;
 	</select>
 
 	<select id="getPaymentWayCount" resultType="java.util.HashMap">
@@ -814,64 +772,43 @@
 		pmt_payment_channel paymentChannel left join
 		(
 		select
-		payment_channel_id,
+		channel_code,
 		count(*) successCount,
 		sum(total_premium) successAmount
 		from
 		pmt_payment_order
 		where
-		payment_channel_id is not null
+		channel_code is not null
 		and status = 3
 		group by
-		payment_channel_id
+		channel_code
 		) table1
-		on paymentChannel.id = table1.payment_channel_id
+		on paymentChannel.channel_code = table1.channel_code
 		left join
 		(select
-		payment_channel_id,
+		channel_code,
 		count(*) faildCount,
 		sum(total_premium) faildAmount
 		from
 		pmt_payment_order
 		where
-		payment_channel_id is not null
+		channel_code is not null
 		and status = 4
 		group by
-		payment_channel_id
+		channel_code
 		) table2
-		on paymentChannel.id = table2.payment_channel_id
+		on paymentChannel.channel_code = table2.channel_code
 		left join
 		(
 		select
-		payment_channel_id ,
+		channel_code ,
 		count(*) totalCount
 		from
 		pmt_payment_order
 		group by
-		payment_channel_id
+		channel_code
 		) table3
-		on paymentChannel.id = table3.payment_channel_id
-	</select>
-
-	<select id="getOrdersByChannelAndDate" resultMap="BaseResultMap">
-		select
-		<include refid="colnum_for_page"/>
-		from
-		pmt_payment_order
-		left join
-		pmt_payment_channel on pmt_payment_order.payment_channel_id = pmt_payment_channel.id
-		WHERE 1 = 1
-		<if test="channelId != null and channelId != ''">
-			and pmt_payment_order.payment_channel_id = #{channelId,jdbcType=VARCHAR}
-		</if>
-		<if test="checkStartDate != null">
-			and pmt_payment_order.create_time &gt; #{checkStartDate,jdbcType=VARCHAR}
-		</if>
-		<if test="checkEndDate != null">
-			and pmt_payment_order.create_time &lt; #{checkEndDate,jdbcType=VARCHAR}
-		</if>
-		order by
-		pmt_payment_order.create_time desc
+		on paymentChannel.channel_code = table3.channel_code
 	</select>
 
 	<select id="selectCheckOrderByPage" resultMap="BaseResultMap">
@@ -880,7 +817,7 @@
 		from
 		pmt_payment_order
 		left join
-		pmt_payment_channel on pmt_payment_order.payment_channel_id = pmt_payment_channel.id
+		pmt_payment_channel on pmt_payment_order.channel_code = pmt_payment_channel.channel_code
 		WHERE 1 = 1
 		<if test="orderNumber != null and orderNumber != ''">
 			and pmt_payment_order.order_number = #{orderNumber,jdbcType=VARCHAR}
