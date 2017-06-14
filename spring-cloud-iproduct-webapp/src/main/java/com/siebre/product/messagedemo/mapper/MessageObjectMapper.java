@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.siebre.basic.query.PageInfo;
 import com.siebre.product.messagedemo.entity.MessageObject;
 
-@Repository
 public interface MessageObjectMapper {
     int deleteByPrimaryKey(Long id);
 

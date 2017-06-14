@@ -37,20 +37,6 @@ public class DatasourceConfig {
 		return ds;
 	}
 
-	@Bean("slave")
-	@Autowired
-	public DataSource slave(Environment env) {
-		DataSource ds = new DataSource();
-		ds.setDriverClassName(env.getProperty("jdbc.mysql.Driver"));
-		ds.setUrl(env.getProperty("jdbc.slave.url"));
-		ds.setUsername(env.getProperty("jdbc.slave.username"));
-		ds.setPassword(env.getProperty("jdbc.slave.password"));
-		
-		setCommonConfiguration(env, ds);
-		
-		return ds;
-	}
-	
 	private void setCommonConfiguration(Environment env, DataSource ds) {
 		//common configuration
 		ds.setMaxActive(env.getProperty("jdbc.maxActive", Integer.class));
@@ -72,16 +58,6 @@ public class DatasourceConfig {
 		ds.setMinEvictableIdleTimeMillis(30);
 		ds.setJmxEnabled(true);
 		ds.setName("jdbcPool");
-	}
-	
-	@Bean
-	@Autowired 
-	public DynamicDataSource dataSource(@Qualifier("master") DataSource master, @Qualifier("slave") DataSource slave) {
-		DynamicDataSource dds = new DynamicDataSource();
-		dds.setMaster(master);
-		dds.setSlaves(Arrays.asList(slave));
-		
-		return dds;
 	}
 	
 //	@Bean
