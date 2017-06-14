@@ -5,10 +5,12 @@
 		<id column="id" property="id" jdbcType="BIGINT"/>
 		<result column="order_number" property="orderNumber" jdbcType="VARCHAR"/>
 		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL"/>
-		<result column="application_number" property="applicationNumber" jdbcType="VARCHAR"/>
+		<result column="refund_application_number" property="refundApplicationNumber" jdbcType="VARCHAR"/>
 		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
 		<result column="request" property="request" jdbcType="VARCHAR"/>
 		<result column="response" property="response" jdbcType="VARCHAR"/>
+		<result column="message_id" property="messageId" jdbcType="VARCHAR"/>
+		<result column="notification_url" property="notificationUrl" jdbcType="VARCHAR"/>
 		<result column="create_user" property="createUser" jdbcType="VARCHAR"/>
 		<result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
@@ -19,10 +21,12 @@
 		<id column="id" property="id" jdbcType="BIGINT"/>
 		<result column="order_number" property="orderNumber" jdbcType="VARCHAR"/>
 		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL"/>
-		<result column="application_number" property="applicationNumber" jdbcType="VARCHAR"/>
+		<result column="refund_application_number" property="refundApplicationNumber" jdbcType="VARCHAR"/>
 		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler"/>
 		<result column="request" property="request" jdbcType="VARCHAR"/>
 		<result column="response" property="response" jdbcType="VARCHAR"/>
+		<result column="message_id" property="messageId" jdbcType="VARCHAR"/>
+		<result column="notification_url" property="notificationUrl" jdbcType="VARCHAR"/>
 		<result column="create_user" property="createUser" jdbcType="VARCHAR"/>
 		<result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
@@ -40,7 +44,6 @@
 			<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
 			<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
 			<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-			<result column="refund_status" property="refundStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
 			<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
 			<association property="paymentChannel" javaType="com.siebre.payment.paymentchannel.entity.PaymentChannel" columnPrefix="paymentChannel_">
@@ -70,7 +73,7 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		id, order_number, refund_amount, application_number, status, request, response, create_user,
+		id, order_number, refund_amount, refund_application_number, status, request, response, message_id, notification_url, create_user,
 		update_user, create_date, update_date
 	</sql>
 
@@ -78,10 +81,12 @@
 		pmt_refund_application.id,
 		pmt_refund_application.order_number,
 		pmt_refund_application.refund_amount,
-		pmt_refund_application.application_number,
+		pmt_refund_application.refund_application_number,
 		pmt_refund_application.status,
 		pmt_refund_application.request,
 		pmt_refund_application.response,
+		pmt_refund_application.message_id,
+		pmt_refund_application.notification_url,
 		pmt_refund_application.create_user,
 		pmt_refund_application.update_user,
 		pmt_refund_application.create_date,
@@ -98,7 +103,6 @@
 		pmt_payment_order.payment_terminal_type            paymentOrder_payment_terminal_type,
 		pmt_payment_order.payment_channel_id               paymentOrder_payment_channel_id,
 		pmt_payment_order.create_time                      paymentOrder_create_time,
-		pmt_payment_order.refund_status                    paymentOrder_refund_status,
 		pmt_payment_order.refund_amount                    paymentOrder_refund_amount,
 		pmt_payment_order.payment_way_code                 paymentOrder_payment_way_code,
 		pmt_payment_channel.channel_name                   paymentOrder_paymentChannel_channel_name,
@@ -144,24 +148,18 @@
 		left JOIN
 		pmt_payment_channel on pmt_payment_order.payment_channel_id = pmt_payment_channel.id
 		left JOIN
-		pmt_payment_transaction on pmt_refund_application.application_number = pmt_payment_transaction.internal_transaction_number
+		pmt_payment_transaction on pmt_refund_application.refund_application_number = pmt_payment_transaction.internal_transaction_number
 		where 1=1
 		<if test="orderNumber!=null and orderNumber!=''">
 			and pmt_refund_application.order_number =#{orderNumber}
 		</if>
 		<if test="refundNumber!=null and refundNumber!=''">
-			and pmt_refund_application.application_number = #{refundNumber}
+			and pmt_refund_application.refund_application_number = #{refundNumber}
 		</if>
 		<if test="channelCodeList != null and channelCodeList.size() != 0">
 			and pmt_payment_channel.channel_code in
 			<foreach item="channelCode" index="index" collection="channelCodeList" open="(" separator="," close=")">
 				#{channelCode}
-			</foreach>
-		</if>
-		<if test="refundStatusList != null and refundStatusList.size() != 0">
-			and pmt_payment_order.refund_status in
-			<foreach item="refundStatus" index="index" collection="refundStatusList" open="(" separator="," close=")">
-				#{refundStatus.value}
 			</foreach>
 		</if>
 		<if test="startDate != null">
@@ -182,8 +180,8 @@
 		<if test="orderNumber!=null and orderNumber!=''">
 			and pmt_refund_application.order_number =#{orderNumber}
 		</if>
-		<if test="applicationNumber!=null and applicationNumber!=''">
-			and pmt_refund_application.application_number = #{applicationNumber}
+		<if test="refundApplicationNumber!=null and refundApplicationNumber!=''">
+			and pmt_refund_application.refund_application_number = #{refundApplicationNumber}
 		</if>
 	</select>
 
@@ -193,14 +191,15 @@
 	</delete>
 	<insert id="insert" parameterType="com.siebre.payment.refundapplication.entity.RefundApplication" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO pmt_refund_application (id, order_number, refund_amount,
-		application_number, status, request,
-		response, create_user, update_user,
+		refund_application_number, status, request,
+		response, message_id, notification_url, create_user, update_user,
 		create_date, update_date)
 		VALUES (#{id,jdbcType=BIGINT}, #{orderNumber,jdbcType=VARCHAR}, #{refundAmount,jdbcType=DECIMAL},
-		#{applicationNumber,jdbcType=VARCHAR},
+		#{refundApplicationNumber,jdbcType=VARCHAR},
 		#{status.value},
 		#{request,jdbcType=VARCHAR},
-		#{response,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR},
+		#{response,jdbcType=VARCHAR}, #{messageId,jdbcType=VARCHAR},#{notificationUrl,jdbcType=VARCHAR},
+		#{createUser,jdbcType=VARCHAR},
 		#{updateUser,jdbcType=VARCHAR},
 		#{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
 	</insert>
@@ -216,8 +215,8 @@
 			<if test="refundAmount != null">
 				refund_amount,
 			</if>
-			<if test="applicationNumber != null">
-				application_number,
+			<if test="refundApplicationNumber != null">
+				refund_application_number,
 			</if>
 			<if test="status != null">
 				status,
@@ -227,6 +226,12 @@
 			</if>
 			<if test="response != null">
 				response,
+			</if>
+			<if test="messageId != null">
+				message_id,
+			</if>
+			<if test="notificationUrl != null">
+				notification_url,
 			</if>
 			<if test="createUser != null">
 				create_user,
@@ -251,8 +256,8 @@
 			<if test="refundAmount != null">
 				#{refundAmount,jdbcType=DECIMAL},
 			</if>
-			<if test="applicationNumber != null">
-				#{applicationNumber,jdbcType=VARCHAR},
+			<if test="refundApplicationNumber != null">
+				#{refundApplicationNumber,jdbcType=VARCHAR},
 			</if>
 			<if test="status != null">
 				#{status.value},
@@ -262,6 +267,12 @@
 			</if>
 			<if test="response != null">
 				#{response,jdbcType=VARCHAR},
+			</if>
+			<if test="messageId != null">
+				#{messageId,jdbcType=VARCHAR},
+			</if>
+			<if test="notificationUrl != null">
+				#{notificationUrl,jdbcType=VARCHAR},
 			</if>
 			<if test="createUser != null">
 				#{createUser,jdbcType=VARCHAR},
@@ -287,8 +298,8 @@
 			<if test="refundAmount != null">
 				refund_amount = #{refundAmount,jdbcType=DECIMAL},
 			</if>
-			<if test="applicationNumber != null">
-				application_number = #{applicationNumber,jdbcType=VARCHAR},
+			<if test="refundApplicationNumber != null">
+				refund_application_number = #{refundApplicationNumber,jdbcType=VARCHAR},
 			</if>
 			<if test="status != null">
 				status = #{status.value},
@@ -298,6 +309,12 @@
 			</if>
 			<if test="response != null">
 				response = #{response,jdbcType=VARCHAR},
+			</if>
+			<if test="messageId != null">
+				message_id = #{messageId,jdbcType=VARCHAR},
+			</if>
+			<if test="notificationUrl != null">
+				notification_url = #{notificationUrl,jdbcType=VARCHAR},
 			</if>
 			<if test="createUser != null">
 				create_user = #{createUser,jdbcType=VARCHAR},
@@ -318,10 +335,12 @@
 		UPDATE pmt_refund_application
 		SET order_number       = #{orderNumber,jdbcType=VARCHAR},
 		refund_amount      = #{refundAmount,jdbcType=DECIMAL},
-		application_number = #{applicationNumber,jdbcType=VARCHAR},
+		refund_application_number = #{refundApplicationNumber,jdbcType=VARCHAR},
 		status             = #{status.value},
 		request            = #{request,jdbcType=VARCHAR},
 		response           = #{response,jdbcType=VARCHAR},
+		message_id          = #{messageId,jdbcType=VARCHAR},
+		notification_url    = #{notificationUrl,jdbcType=VARCHAR},
 		create_user        = #{createUser,jdbcType=VARCHAR},
 		update_user        = #{updateUser,jdbcType=VARCHAR},
 		create_date        = #{createDate,jdbcType=TIMESTAMP},

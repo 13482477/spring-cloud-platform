@@ -20,6 +20,11 @@ public class RefundResponse implements Serializable {
 
     private BigDecimal refundAmount;
 
+    //统一退款v2.0
+    private String returnCode;
+
+    private String returnMessage;
+
     public String getRefundStatus() {
         return refundStatus;
     }
@@ -52,5 +57,19 @@ public class RefundResponse implements Serializable {
         this.refundAmount = refundAmount;
     }
 
+    public String getReturnCode() {
+        return returnCode;
+    }
 
+    public void setReturnCode(String returnCode) {
+        this.returnCode = returnCode;
+    }
+
+    public String getReturnMessage() {
+        return returnMessage;
+    }
+
+    public void setReturnMessage(String returnMessage) {
+        this.returnMessage = returnMessage;
+    }
 }

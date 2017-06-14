@@ -61,9 +61,9 @@ public class TradeOrderDetail extends TradeOrder{
     private String transactionStatus;
 
     /**
-     * 退款状态
+     * 锁定状态
      */
-    private String refundStatus;
+    private String lockStatus;
 
     /**
      * 退款金额
@@ -177,12 +177,14 @@ public class TradeOrderDetail extends TradeOrder{
         this.checkStatus = checkStatus;
     }
 
-    public String getRefundStatus() {
-        return refundStatus;
+    @Override
+    public String getLockStatus() {
+        return lockStatus;
     }
 
-    public void setRefundStatus(String refundStatus) {
-        this.refundStatus = refundStatus;
+    @Override
+    public void setLockStatus(String lockStatus) {
+        this.lockStatus = lockStatus;
     }
 
     public String getRefundAmount() {

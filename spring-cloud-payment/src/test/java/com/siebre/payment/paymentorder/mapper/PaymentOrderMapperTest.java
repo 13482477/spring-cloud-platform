@@ -1,6 +1,7 @@
 package com.siebre.payment.paymentorder.mapper;
 
 import com.siebre.base.DbTestConfig;
+import com.siebre.basic.query.PageInfo;
 import com.siebre.payment.entity.enums.*;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import org.junit.After;
@@ -14,6 +15,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -41,7 +43,8 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         paymentOrder.setCheckTime(date);
         paymentOrder.setCheckStatus(PaymentOrderCheckStatus.SUCCESS);
         paymentOrder.setStatus(PaymentOrderPayStatus.PAID);
-        paymentOrder.setRefundStatus(PaymentOrderRefundStatus.NOT_REFUND);
+        paymentOrder.setLockStatus(PaymentOrderLockStatus.UNLOCK);
+        //paymentOrder.setRefundStatus(PaymentOrderRefundStatus.NOT_REFUND);
 
         paymentOrder.setPaymentMethod(PaymentMethod.NET_GATEWAY);
         paymentOrder.setPaymentProvider(PaymentProvider.ALIPAY);
@@ -62,7 +65,6 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         assertTrue(order.getCheckTime().equals(paymentOrder.getCheckTime()));
         assertTrue(order.getCheckStatus().equals(paymentOrder.getCheckStatus()));
         assertTrue(order.getStatus().equals(paymentOrder.getStatus()));
-        assertTrue(order.getRefundStatus().equals(paymentOrder.getRefundStatus()));
         assertTrue(order.getPaymentMethod().equals(paymentOrder.getPaymentMethod()));
         assertTrue(order.getPaymentProvider().equals(paymentOrder.getPaymentProvider()));
         assertTrue(order.getCurrency().equals(paymentOrder.getCurrency()));
@@ -180,7 +182,11 @@ public class PaymentOrderMapperTest extends DbTestConfig {
     @Test
     @Transactional
     public void selectOrderByPage() throws Exception {
-
+        PageInfo page = new PageInfo();
+        page.setCurrentPage(1);
+        page.setShowCount(10);
+        List list =paymentOrderMapper.selectOrderByPage("",null,null,null,null, page);
+        System.out.println(list);
     }
 
     @Test

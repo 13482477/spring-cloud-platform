@@ -20,12 +20,12 @@ public interface RefundApplicationMapper {
 
     RefundApplication selectByPrimaryKey(Long id);
 
-    RefundApplication selectByBusinessNumber(@Param("orderNumber") String orderNumber, @Param("applicationNumber") String applicationNumber);
+    RefundApplication selectByBusinessNumber(@Param("orderNumber") String orderNumber, @Param("refundApplicationNumber") String refundApplicationNumber);
 
     List<RefundApplication> selectByPage(PageInfo pageinfo);
 
     List<RefundApplication> selectRefundList(@Param("orderNumber") String orderNumber, @Param("refundNumber") String refundNumber,
-                                             @Param("channelCodeList") List<String> channelCodeList, @Param("refundStatusList") List<PaymentOrderRefundStatus> refundStatusList,
+                                             @Param("channelCodeList") List<String> channelCodeList,
                                              @Param("startDate") Date startDate, @Param("endDate") Date endDate, PageInfo pageinfo);
 
     int updateByPrimaryKeySelective(RefundApplication record);
