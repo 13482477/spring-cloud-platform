@@ -3,12 +3,15 @@ package com.siebre.payment.paymentorder.service;
 import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.entity.enums.*;
+import com.siebre.payment.paymentaccount.entity.BankAccount;
+import com.siebre.payment.paymentaccount.entity.PaymentAccount;
+import com.siebre.payment.paymentaccount.entity.WeChatAccount;
+import com.siebre.payment.paymentaccount.service.PaymentAccountService;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper;
 import com.siebre.payment.paymentcheck.vo.CheckOrderVo;
 import com.siebre.payment.paymentcheck.vo.CheckOverviewResult;
-import com.siebre.payment.paymentgateway.vo.PaymentOrderRequest;
-import com.siebre.payment.paymentgateway.vo.PaymentOrderResponse;
+import com.siebre.payment.paymentgateway.vo.*;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
 import com.siebre.payment.paymentorder.vo.OrderQueryParamsVo;
@@ -25,6 +28,7 @@ import com.siebre.payment.policyrole.mapper.PolicyRoleMapper;
 import com.siebre.payment.serialnumber.service.SerialNumberService;
 import com.siebre.payment.statistics.vo.DonutVo;
 import com.siebre.payment.statistics.vo.PaymentChannelTransactionVo;
+import com.siebre.payment.utils.MsgUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -46,6 +50,9 @@ public class PaymentOrderService {
 
     @Autowired
     private PaymentOrderMapper paymentOrderMapper;
+
+    @Autowired
+    private PaymentAccountService paymentAccountService;
 
     @Autowired
     @Qualifier("serialNumberService")
@@ -77,6 +84,149 @@ public class PaymentOrderService {
     }
 
     /**
+     * 该方法用于创建order
+     * 1.校验必要信息
+     * 2.Vo装换成数据库对象模型
+     * 3.保存
+     *
+     * @param unifiedPayRequest
+     * @return
+     */
+    @Transactional("db")
+    public PaymentOrderResponse creatPaymentOrder(UnifiedPayRequest unifiedPayRequest) {
+        //必填项校验
+        MsgUtil validateInfo = validateNecessaryInfo(unifiedPayRequest);
+        if (ReturnCode.FAIL.equals(validateInfo.getResult())) {
+            return PaymentOrderResponse.FAIL(validateInfo.getMsg());
+        }
+        //幂等性校验
+        MsgUtil mdxMsf = idempotencyValidate(unifiedPayRequest.getMessageId());
+        if (ReturnCode.FAIL.equals(mdxMsf.getResult())) {
+            return PaymentOrderResponse.FAIL(validateInfo.getMsg());
+        }
+        //模型转换
+        PaymentOrder paymentOrder = transfer(unifiedPayRequest);
+        saveNewOrder(paymentOrder);
+        return PaymentOrderResponse.SUCCESS("创建成功", paymentOrder);
+    }
+
+    private void initOrderDate(PaymentOrder paymentOrder) {
+        paymentOrder.setOrderNumber(serialNumberService.nextValue("sale_order"));
+        //设置order状态为待支付
+        paymentOrder.setStatus(PaymentOrderPayStatus.UNPAID);
+        //设置对账状态为未对账
+        paymentOrder.setCheckStatus(PaymentOrderCheckStatus.NOT_CONFIRM);
+        //设置订单锁定状态为未锁定
+        paymentOrder.setLockStatus(PaymentOrderLockStatus.UNLOCK);
+        paymentOrder.setRefundAmount(BigDecimal.ZERO);
+        paymentOrder.setCreateTime(new Date());
+    }
+
+    private void saveNewOrder(PaymentOrder paymentOrder) {
+        //初始化Order的一些状态
+        initOrderDate(paymentOrder);
+        this.paymentOrderMapper.insert(paymentOrder);
+        for (PaymentOrderItem paymentOrderItem : paymentOrder.getItems()) {
+            paymentOrderItem.setPaymentOrderId(paymentOrder.getId());
+            //save insured
+            PolicyRole insured = paymentOrderItem.getInsured();
+            insured.setPolicyRoleType(PolicyRoleType.INSURED);
+            policyRoleMapper.insert(insured);
+            paymentOrderItem.setInsuredPersonId(insured.getId());
+            //save applicant
+            if ("SELF".equalsIgnoreCase(insured.getRelatedToApplicant())) {
+                PolicyRole applicant = paymentOrderItem.getApplicant();
+                applicant.setPolicyRoleType(PolicyRoleType.APPLICANT);
+                policyRoleMapper.insert(applicant);
+                paymentOrderItem.setApplicantId(applicant.getId());
+            }
+            //save item
+            paymentOrderItemMapper.insert(paymentOrderItem);
+        }
+    }
+
+    /**
+     * 幂等性校验
+     * @param messageId
+     * @return
+     */
+    private MsgUtil idempotencyValidate(String messageId) {
+        PaymentOrder order = paymentOrderMapper.selectByMessageId(messageId);
+        if (order != null) {
+            return new MsgUtil(ReturnCode.FAIL, "该订单已创建");
+        }
+        return new MsgUtil(ReturnCode.SUCCESS, "");
+    }
+
+    /**
+     * UnifiedPayRequest模型转换为PaymentOrder
+     * @param unifiedPayRequest
+     * @return
+     */
+    private PaymentOrder transfer(UnifiedPayRequest unifiedPayRequest) {
+        PaymentOrder paymentOrder = new PaymentOrder();
+        paymentOrder.setMessageId(unifiedPayRequest.getMessageId());
+        paymentOrder.setNotificationUrl(unifiedPayRequest.getNotificationUrl());
+
+        UnifiedPayOrder unifiedPayOrder = unifiedPayRequest.getPaymentOrder();
+        paymentOrder.setPaymentWayCode(unifiedPayOrder.getPaymentWayCode());
+        paymentOrder.setAmount(unifiedPayOrder.getAmount());
+        paymentOrder.setCurrency(unifiedPayOrder.getCurrency());
+        paymentOrder.setSummary(unifiedPayOrder.getSummary());
+
+        PaymentAccount paymentAccount = null;
+        if (unifiedPayOrder.getBankAccount() != null) {
+            paymentAccount = paymentAccountService.transferToPaymentAccount(unifiedPayOrder.getBankAccount());
+        } else if (unifiedPayOrder.getWeChatAccount() != null) {
+            paymentAccount = paymentAccountService.transferToPaymentAccount(unifiedPayOrder.getWeChatAccount());
+        }
+        paymentOrder.setPaymentAccount(paymentAccount);
+
+        List<UnifiedPayItem> items = unifiedPayOrder.getItems();
+        List<PaymentOrderItem> orderItems = new ArrayList<>();
+        for (UnifiedPayItem unifiedPayItem : items) {
+            PaymentOrderItem orderItem = new PaymentOrderItem();
+            orderItem.setApplicant(unifiedPayItem.getApplicant());
+            orderItem.setApplicationNumber(unifiedPayItem.getApplicationNumber());
+            orderItem.setGrossPremium(unifiedPayItem.getGrossPremium());
+            orderItem.setInceptionDate(unifiedPayItem.getInceptionDate());
+            orderItem.setInsured(unifiedPayItem.getInsured());
+            orderItem.setPlannedEndDate(unifiedPayItem.getPlannedEndDate());
+            orderItem.setPolicyNumber(unifiedPayItem.getPolicyNumber());
+            orderItem.setProductCode(unifiedPayItem.getProductCode());
+            orderItem.setProductName(unifiedPayItem.getProductName());
+            orderItems.add(orderItem);
+        }
+        paymentOrder.setItems(orderItems);
+
+        return paymentOrder;
+    }
+
+    /**
+     * 校验前端传递的模型是否缺一些必要信息
+     * @param unifiedPayRequest
+     * @return
+     */
+    private MsgUtil validateNecessaryInfo(UnifiedPayRequest unifiedPayRequest) {
+        if (StringUtils.isBlank(unifiedPayRequest.getMessageId())) {
+            return new MsgUtil(ReturnCode.FAIL, "messageId不能为空");
+        }
+        if (StringUtils.isBlank(unifiedPayRequest.getPaymentOrder().getPaymentWayCode())) {
+            return new MsgUtil(ReturnCode.FAIL, "paymentWayCode不能为空");
+        }
+        UnifiedPayOrder unifiedPayOrder = unifiedPayRequest.getPaymentOrder();
+        if (unifiedPayOrder == null) {
+            return new MsgUtil(ReturnCode.FAIL, "订单信息不能为空");
+        }
+        BankAccount bankAccount = unifiedPayOrder.getBankAccount();
+        WeChatAccount weChatAccount = unifiedPayOrder.getWeChatAccount();
+        if (bankAccount == null && weChatAccount == null) {
+            return new MsgUtil(ReturnCode.FAIL, "账户信息不能为空");
+        }
+        return new MsgUtil(ReturnCode.SUCCESS, "");
+    }
+
+    /**
      * 创建order和order item   libility    applicant   insurePerson
      *
      * @param orderRequest
@@ -86,17 +236,16 @@ public class PaymentOrderService {
     @Transactional("db")
     public PaymentOrderResponse createPaymentOrderAndItems(PaymentOrderRequest orderRequest, HttpServletRequest request) {
         //幂等性校验
-        String messageId = orderRequest.getMessageId();
-        PaymentOrder order = paymentOrderMapper.selectByMessageId(messageId);
-        if (order != null) {
-            List<PaymentOrderItem> items = paymentOrderItemMapper.selectByPaymentOrderId(order.getId());
-            return PaymentOrderResponse.SUCCESS("创建成功", order, items);
+        MsgUtil validateMsg = idempotencyValidate(orderRequest.getMessageId());
+        if(ReturnCode.FAIL.equals(validateMsg.getResult())){
+            PaymentOrder order = paymentOrderMapper.selectByMessageId(orderRequest.getMessageId());
+            return PaymentOrderResponse.SUCCESS("创建成功", order);
         }
 
         //保存order
         PaymentOrder paymentOrder = new PaymentOrder();
+        initOrderDate(paymentOrder);
         paymentOrder.setPaymentWayCode(orderRequest.getPaymentWayCode());
-        paymentOrder.setOrderNumber(serialNumberService.nextValue("sale_order"));
         paymentOrder.setItems(orderRequest.getPaymentOrderItems());
         if (orderRequest.getSellingChannel() != null) {
             if (orderRequest.getSellingChannel().equals("MOBILE_SALE_APP")) {
@@ -106,13 +255,6 @@ public class PaymentOrderService {
             }
         }
 
-        //设置order状态为待支付
-        paymentOrder.setStatus(PaymentOrderPayStatus.UNPAID);
-        //设置对账状态为未对账
-        paymentOrder.setCheckStatus(PaymentOrderCheckStatus.NOT_CONFIRM);
-        //设置订单锁定状态为未锁定
-        paymentOrder.setLockStatus(PaymentOrderLockStatus.UNLOCK);
-        paymentOrder.setCreateTime(new Date());
         this.processTotalAmount(paymentOrder, orderRequest.getPaymentOrderItems());
         this.paymentOrderMapper.insert(paymentOrder);
 
@@ -120,13 +262,13 @@ public class PaymentOrderService {
             paymentOrderItem.setPaymentOrderId(paymentOrder.getId());
             //save insured
             PolicyRole insuredPerson = paymentOrderItem.getInsured();
-            insuredPerson.setPolicyRoleType(PolicyRoleType.INSURED_PERSON);
+            insuredPerson.setPolicyRoleType(PolicyRoleType.INSURED);
             policyRoleMapper.insert(insuredPerson);
             paymentOrderItem.setInsuredPersonId(insuredPerson.getId());
             //save applicant
             if ("SELF".equalsIgnoreCase(insuredPerson.getRelatedToApplicant())) {
                 PolicyRole applicant = paymentOrderItem.getApplicant();
-                applicant.setPolicyRoleType(PolicyRoleType.POLICY_HOLDER);
+                applicant.setPolicyRoleType(PolicyRoleType.APPLICANT);
                 policyRoleMapper.insert(applicant);
                 paymentOrderItem.setApplicantId(applicant.getId());
             }
@@ -137,7 +279,7 @@ public class PaymentOrderService {
                 policyLibilityMapper.insert(libility);
             }
         }
-        return PaymentOrderResponse.SUCCESS("创建成功", paymentOrder, orderRequest.getPaymentOrderItems());
+        return PaymentOrderResponse.SUCCESS("创建成功", paymentOrder);
     }
 
     /**
@@ -179,7 +321,7 @@ public class PaymentOrderService {
             orderVo.setAmount(order.getAmount());
             orderVo.setRealAmount(order.getAmount());
             orderVo.setCheckType("支付");
-        }else {
+        } else {
             orderVo.setAmount(order.getRefundAmount());
             orderVo.setRealAmount(order.getRefundAmount());
             orderVo.setCheckType("退款");
@@ -236,10 +378,10 @@ public class PaymentOrderService {
 
     public ServiceResult<List<CheckOrderVo>> selectCheckOrderByPage(String orderNumber, List<String> channelCodeList,
                                                                     List<PaymentOrderPayStatus> payStatusList, List<PaymentOrderCheckStatus> checkStatusList,
-                                                                    Date checkStartDate, Date checkEndDate,PageInfo pageInfo) {
+                                                                    Date checkStartDate, Date checkEndDate, PageInfo pageInfo) {
 
         ServiceResult<List<CheckOrderVo>> result = new ServiceResult<>();
-        List<PaymentOrder> orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, payStatusList, checkStatusList, checkStartDate,checkEndDate,pageInfo);
+        List<PaymentOrder> orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, payStatusList, checkStatusList, checkStartDate, checkEndDate, pageInfo);
 
         List<CheckOrderVo> checkOrderVos = new ArrayList<>();
         for (PaymentOrder order : orders) {
@@ -253,7 +395,7 @@ public class PaymentOrderService {
             if (order.getStatus().equals(PaymentOrderPayStatus.PAID)) {
                 checkOrderVo.setAmount(order.getAmount());
                 checkOrderVo.setCheckType("支付");
-            }else {
+            } else {
                 checkOrderVo.setAmount(order.getRefundAmount());
                 checkOrderVo.setCheckType("退款");
             }
@@ -500,10 +642,10 @@ public class PaymentOrderService {
     }
 
     public CheckOverviewResult getOrdersOverview(String orderNumber, List<String> channelCodeList,
-                                                         List<PaymentOrderPayStatus> payStatusList, List<PaymentOrderCheckStatus> checkStatusList,
-                                                         Date checkStartDate, Date checkEndDate) {
+                                                 List<PaymentOrderPayStatus> payStatusList, List<PaymentOrderCheckStatus> checkStatusList,
+                                                 Date checkStartDate, Date checkEndDate) {
 
-        List<PaymentOrder> orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, payStatusList, checkStatusList, checkStartDate,checkEndDate,null);
+        List<PaymentOrder> orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, payStatusList, checkStatusList, checkStartDate, checkEndDate, null);
 
         CheckOverviewResult checkOverviewResult = new CheckOverviewResult();
         int checkTotalCount = 0;//对账总笔数
@@ -517,7 +659,7 @@ public class PaymentOrderService {
         BigDecimal refundTotalAmount = BigDecimal.ZERO;//退款信息-退款金额
 
         for (PaymentOrder order : orders) {
-            if ( !order.getCheckStatus().equals(PaymentOrderCheckStatus.NOT_CONFIRM)) {//已对账
+            if (!order.getCheckStatus().equals(PaymentOrderCheckStatus.NOT_CONFIRM)) {//已对账
                 checkTotalCount = checkTotalCount + 1;
                 if (order.getCheckStatus().equals(PaymentOrderCheckStatus.SUCCESS)) {//对账成功
                     successCount = successCount + 1;
@@ -528,13 +670,13 @@ public class PaymentOrderService {
                         refundOrderTotalAmount = refundOrderTotalAmount.add(order.getRefundAmount());
                         refundTotalAmount = refundTotalAmount.add(order.getRefundAmount());
                     }
-                } else if (order.getCheckStatus().equals(PaymentOrderCheckStatus.FAIL)){//对账失败
+                } else if (order.getCheckStatus().equals(PaymentOrderCheckStatus.FAIL)) {//对账失败
                     failCount = failCount + 1;
                 } else if (order.getCheckStatus().equals(PaymentOrderCheckStatus.FAIL)) {//对账异常
                     unusualCount = unusualCount + 1;
                 }
-            }else {//未对账
-                notCheckTotalCount = notCheckTotalCount +1;
+            } else {//未对账
+                notCheckTotalCount = notCheckTotalCount + 1;
             }
         }
 
@@ -555,7 +697,7 @@ public class PaymentOrderService {
         Date startDate = paramsVo.getStartDate();
         Date endDate = paramsVo.getEndDate();
         ServiceResult<List<PaymentOrder>> rpcResult = this.getOrderListForPage(orderNumber, paramsVo.getPayStatusList(), paramsVo.getChannelCodeList(),
-                 startDate, endDate, page);
+                startDate, endDate, page);
         page.setTotalResult(rpcResult.getPageInfo().getTotalResult());
         List<TradeOrder> orders = new ArrayList<>();
         if (rpcResult.getData() == null) {
@@ -589,7 +731,7 @@ public class PaymentOrderService {
         }
         TradeOrderDetail detail = new TradeOrderDetail();
         detail.setOrderNumber(paymentOrder.getOrderNumber());
-        if(paymentOrder.getSellingChannel() != null) {
+        if (paymentOrder.getSellingChannel() != null) {
             detail.setSaleChannel(paymentOrder.getSellingChannel().getDescription());
         }
         if (paymentOrder.getCreateTime() != null) {

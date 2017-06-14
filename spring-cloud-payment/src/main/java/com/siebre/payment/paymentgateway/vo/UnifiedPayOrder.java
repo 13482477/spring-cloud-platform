@@ -2,7 +2,6 @@ package com.siebre.payment.paymentgateway.vo;
 
 import com.siebre.payment.paymentaccount.entity.BankAccount;
 import com.siebre.payment.paymentaccount.entity.WeChatAccount;
-import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -31,7 +30,7 @@ public class UnifiedPayOrder implements Serializable {
     private String currency;
 
     @ApiModelProperty(value = "保单信息", required = true)
-    private List<PaymentOrderItem> items;
+    private List<UnifiedPayItem> items;
 
     @ApiModelProperty(value = "提示信息", required = false)
     private String summary;
@@ -76,11 +75,11 @@ public class UnifiedPayOrder implements Serializable {
         this.currency = currency;
     }
 
-    public List<PaymentOrderItem> getItems() {
+    public List<UnifiedPayItem> getItems() {
         return items;
     }
 
-    public void setItems(List<PaymentOrderItem> items) {
+    public void setItems(List<UnifiedPayItem> items) {
         this.items = items;
     }
 

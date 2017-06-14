@@ -8,17 +8,17 @@ import com.siebre.basic.enumutil.BaseEnum;
  */
 public enum PolicyRoleType implements BaseEnum {
 
-    POLICY_HOLDER(1,"投保人"),
+    APPLICANT(1,"投保人"),
 
-    INSURED_PERSON(2, "被保人"),
+    INSURED(2, "被保人"),
     ;
 
     public static PolicyRoleType valueOf(int value){
         switch (value) {
             case 1:
-                return POLICY_HOLDER;
+                return APPLICANT;
             case 2:
-                return INSURED_PERSON;
+                return INSURED;
             default:
                 return null;
         }

@@ -1,5 +1,6 @@
 package com.siebre.payment.paymenthandler.payment;
 
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ public class PaymentRequest {
 	 */
 	private String accountName;
 
+	private PaymentOrder paymentOrder;
+
 	public String getAccountNo() {
 		return accountNo;
 	}
@@ -40,8 +43,6 @@ public class PaymentRequest {
 	public void setAccountName(String accountName) {
 		this.accountName = accountName;
 	}
-
-	private List<PaymentOrderItem> paymentOrderItems = new ArrayList<PaymentOrderItem>();
 
 	public String getPaymentWayCode() {
 		return paymentWayCode;
@@ -59,14 +60,6 @@ public class PaymentRequest {
 		this.orderNumber = orderNumber;
 	}
 
-	public List<PaymentOrderItem> getPaymentOrderItems() {
-		return paymentOrderItems;
-	}
-
-	public void setPaymentOrderItems(List<PaymentOrderItem> paymentOrderItems) {
-		this.paymentOrderItems = paymentOrderItems;
-	}
-
 	public String getIp() {
 		return ip;
 	}
@@ -81,5 +74,13 @@ public class PaymentRequest {
 
 	public void setOpenid(String openid) {
 		this.openid = openid;
+	}
+
+	public PaymentOrder getPaymentOrder() {
+		return paymentOrder;
+	}
+
+	public void setPaymentOrder(PaymentOrder paymentOrder) {
+		this.paymentOrder = paymentOrder;
 	}
 }

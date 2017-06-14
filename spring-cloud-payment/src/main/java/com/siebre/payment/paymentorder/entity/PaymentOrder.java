@@ -2,6 +2,7 @@ package com.siebre.payment.paymentorder.entity;
 
 import com.siebre.basic.model.BaseObject;
 import com.siebre.payment.entity.enums.*;
+import com.siebre.payment.paymentaccount.entity.PaymentAccount;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
@@ -60,6 +61,7 @@ public class PaymentOrder extends BaseObject {
     private String currency;
     //账户信息
     private Long paymentAccountId;
+    private PaymentAccount paymentAccount;
     private String summary;
 
     //-------finish---------
@@ -242,6 +244,14 @@ public class PaymentOrder extends BaseObject {
 
     public void setPaymentAccountId(Long paymentAccountId) {
         this.paymentAccountId = paymentAccountId;
+    }
+
+    public PaymentAccount getPaymentAccount() {
+        return paymentAccount;
+    }
+
+    public void setPaymentAccount(PaymentAccount paymentAccount) {
+        this.paymentAccount = paymentAccount;
     }
 
     public String getCurrency() {

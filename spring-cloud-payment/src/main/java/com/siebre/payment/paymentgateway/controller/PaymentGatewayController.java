@@ -7,6 +7,7 @@ import com.siebre.basic.web.WebResult;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.enums.PaymentOrderLockStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
+import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymentgateway.vo.*;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.config.HandlerBeanNameConfig;
@@ -92,7 +93,7 @@ public class PaymentGatewayController {
         AbstractPaymentComponent paymentComponent = (AbstractPaymentComponent) SpringContextUtil.getBean(handlerBeanName);
         PaymentResponse paymentResponse = paymentComponent.handle(paymentRequest);
         UnifiedPayResponse response = new UnifiedPayResponse();
-        response.setPaymentUrl(paymentResponse.getPayUrl());
+        response.setRedirectUrl(paymentResponse.getPayUrl());
         response.setBody(paymentResponse.getBody());
         return response;*/
         return null;
@@ -100,9 +101,50 @@ public class PaymentGatewayController {
 
     @ApiOperation(value = "统一支付接口(V2.0)", notes = "统一支付接口(V2.0)")
     @RequestMapping(value = "/openApi/v2/paymentGateway/unifiedPay", method = POST)
-    public Object unipayV2(@RequestBody UnifiedPayRequest unifiedPayRequest, HttpServletRequest request) {
+    public UnifiedPayResponse unipayV2(@RequestBody UnifiedPayRequest unifiedPayRequest, HttpServletRequest request) {
+        PaymentOrderResponse orderResponse = paymentOrderService.creatPaymentOrder(unifiedPayRequest);
+        if (ReturnCode.FAIL.getDescription().equals(orderResponse.getReturnCode())) {
+            return new UnifiedPayResponse();
+        }
+        String handlerBeanName = HandlerBeanNameConfig.PAY_MAPPING.get(unifiedPayRequest.getPaymentOrder().getPaymentWayCode());
+        PaymentRequest paymentRequest = assemblePaymentRequest(request, orderResponse);
+        AbstractPaymentComponent paymentComponent = (AbstractPaymentComponent) SpringContextUtil.getBean(handlerBeanName);
+        PaymentResponse paymentResponse = paymentComponent.handle(paymentRequest);
+        UnifiedPayResponse response = assembleUnifiedPayResponse(paymentResponse);
+        return response;
+    }
 
-        return null;
+    private UnifiedPayResponse assembleUnifiedPayResponse(PaymentResponse paymentResponse) {
+        UnifiedPayResponse response = new UnifiedPayResponse();
+        response.setMessageId(paymentResponse.getPaymentOrder().getMessageId());
+        response.setRedirectUrl(paymentResponse.getPayUrl());
+        response.setReturnCode(paymentResponse.getReturnCode());
+        response.setReturnMessage(paymentResponse.getReturnMessage());
+        response.setSubsequentAction(paymentResponse.getSubsequentAction());
+        if (paymentResponse.getWechatJsApiParams() != null) {
+            response.setWechatJsApiParams(paymentResponse.getWechatJsApiParams());
+        }
+        response.setPaymentOrder(assembleUnifiedPayResOrder(paymentResponse.getPaymentOrder()));
+        return response;
+    }
+
+    private PaymentRequest assemblePaymentRequest(HttpServletRequest request, PaymentOrderResponse orderResponse) {
+        PaymentRequest paymentRequest = new PaymentRequest();
+        paymentRequest.setPaymentWayCode(orderResponse.getPaymentOrder().getPaymentWayCode());
+        paymentRequest.setOrderNumber(orderResponse.getPaymentOrder().getOrderNumber());
+        paymentRequest.setIp(HttpServletRequestUtil.getIpAddress(request));
+        paymentRequest.setOpenid(orderResponse.getPaymentOrder().getPaymentAccount().getOpenid());
+        paymentRequest.setPaymentOrder(orderResponse.getPaymentOrder());
+        return paymentRequest;
+    }
+
+    private UnifiedPayResOrder assembleUnifiedPayResOrder(PaymentOrder paymentOrder) {
+        UnifiedPayResOrder resOrder = new UnifiedPayResOrder();
+        resOrder.setPaymentWayCode(paymentOrder.getPaymentWayCode());
+        resOrder.setOrderNumber(paymentOrder.getOrderNumber());
+        resOrder.setStatus(paymentOrder.getStatus().getDescription());
+        resOrder.setCreatedOn(paymentOrder.getCreateTime());
+        return resOrder;
     }
 
     /**
@@ -146,6 +188,7 @@ public class PaymentGatewayController {
 
     /**
      * 统一退款（v2.0）
+     *
      * @param refundRequest
      * @return
      */
