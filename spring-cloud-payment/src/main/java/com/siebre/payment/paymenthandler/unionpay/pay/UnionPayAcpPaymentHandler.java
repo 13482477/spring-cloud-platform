@@ -28,7 +28,9 @@ public class UnionPayAcpPaymentHandler extends AbstractPaymentComponent {
 
         String paymentUrl = this.getPaymentUrl(paymentWay, requestParams);
 
-        return PaymentResponse.builder().payUrl(paymentUrl).build();
+        PaymentResponse response = new PaymentResponse();
+        response.setPayUrl(paymentUrl);
+        return response;
     }
 
     private Map<String, String> generateParamsMap(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {

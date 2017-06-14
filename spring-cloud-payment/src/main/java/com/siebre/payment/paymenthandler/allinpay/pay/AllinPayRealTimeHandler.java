@@ -42,12 +42,15 @@ public class AllinPayRealTimeHandler extends AbstractPaymentComponent {
         String trx_code = "100011";//交易代码
         boolean isTLTFront = false;//是否发送至前置机（由前置机进行签名）如不特别说明，商户技术不要设置为true
 
-        Map<String, Object> result = singleTranx(request, paymentInterface.getRequestUrl(), trx_code, isTLTFront, paymentWay, paymentTransaction);
+        Map<String, String> result = singleTranx(request, paymentInterface.getRequestUrl(), trx_code, isTLTFront, paymentWay, paymentTransaction);
 
-        return PaymentResponse.builder().body(result).build();
+        PaymentResponse response = new PaymentResponse();
+        response.setReturnCode(result.get("transaction_result"));
+        response.setReturnMessage(result.get("msg"));
+        return response;// PaymentResponse.builder().body(result).build();
     }
 
-    private Map<String, Object> singleTranx(PaymentRequest request, String url, String trx_code, boolean isTLTFront, PaymentWay paymentWay, PaymentTransaction paymentTransaction) {
+    private Map<String, String> singleTranx(PaymentRequest request, String url, String trx_code, boolean isTLTFront, PaymentWay paymentWay, PaymentTransaction paymentTransaction) {
         String xml = "";
         AipgReq aipg = new AipgReq();
         InfoReq info = allinPayTranx.makeReq(trx_code, paymentWay);
@@ -72,7 +75,7 @@ public class AllinPayRealTimeHandler extends AbstractPaymentComponent {
         xml = XmlTools.buildXml(aipg, true);
         logger.info("request data: {}", xml);
         
-        Map<String, Object> result = allinPayTranx.dealRetForPay(allinPayTranx.sendToTlt(xml, isTLTFront, url,paymentWay),trx_code, paymentTransaction, paymentWay);
+        Map<String, String> result = allinPayTranx.dealRetForPay(allinPayTranx.sendToTlt(xml, isTLTFront, url,paymentWay),trx_code, paymentTransaction, paymentWay);
 
         return result;
 

@@ -37,7 +37,10 @@ public class AlipayTradeWapPaymentHandler extends AbstractPaymentComponent {
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
-        return PaymentResponse.builder().payUrl(paymentInterface.getRequestUrl()).body(form).build();
+
+        PaymentResponse response = new PaymentResponse();
+        response.setPayUrl(paymentInterface.getRequestUrl() + "?" + form);
+        return response;
     }
 
     /**

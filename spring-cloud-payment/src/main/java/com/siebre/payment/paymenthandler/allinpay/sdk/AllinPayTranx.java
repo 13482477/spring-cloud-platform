@@ -10,6 +10,7 @@ import com.allinpay.XmlTools;
 import com.siebre.basic.exception.SiebreRuntimeException;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
+import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
@@ -42,12 +43,12 @@ public class AllinPayTranx {
     /**
      * 支付返回报文处理逻辑
      */
-    public Map<String, Object> dealRetForPay(String retXml, String trxcode, PaymentTransaction paymentTransaction, PaymentWay paymentWay) {
+    public Map<String, String> dealRetForPay(String retXml, String trxcode, PaymentTransaction paymentTransaction, PaymentWay paymentWay) {
 
         AipgRsp aipgrsp = null;
         aipgrsp = XSUtil.parseRsp(retXml);
 
-        Map<String, Object> result = new HashMap<>();
+        Map<String, String> result = new HashMap<>();
         String internalTransactionNumber = paymentTransaction.getInternalTransactionNumber();
         String externalTransactionNumber = aipgrsp.getINFO().getREQ_SN();
         //实时交易结果返回处理逻辑(包括单笔实时代收，单笔实时代付，单笔实时身份验证)
@@ -62,8 +63,9 @@ public class AllinPayTranx {
                     BigDecimal total_fee = paymentTransaction.getPaymentAmount();
                     paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee);
 
-                    result.put("transaction_result", "success");
+                    result.put("transaction_result", ReturnCode.SUCCESS.getDescription());
                     result.put("orderNumber", internalTransactionNumber);
+                    result.put("msg", ret.getERR_MSG());
                     return result;
                 } else {
                     logger.info("transaction fail(last result)");
@@ -86,8 +88,9 @@ public class AllinPayTranx {
         }
 
         paymentTransactionService.setFailStatus(internalTransactionNumber,externalTransactionNumber);
-        result.put("transaction_result", "fail");
+        result.put("transaction_result", ReturnCode.FAIL.getDescription());
         result.put("orderNumber", internalTransactionNumber);
+        result.put("msg", aipgrsp.getINFO().getERR_MSG());
         return result;
     }
 

@@ -68,7 +68,9 @@ public class BaofooQuickPaymentHandler extends AbstractPaymentComponent {
             result.put("transaction_result","fail");
         }
 
-        return PaymentResponse.builder().body(result).build();
+        //TODO
+
+        return null; //PaymentResponse.builder().body(result).build();
         //return PaymentResponse.builder().payUrl(paymentInterface.getRequestUrl()).body(response).build();
     }
 }

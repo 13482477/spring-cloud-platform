@@ -56,7 +56,9 @@ public class BaofooWithholdingHandler extends AbstractPaymentComponent {
             result.put("transaction_result","fail");
         }
 
-        return PaymentResponse.builder().body(result).build();
+        //TODO
+        PaymentResponse response = new PaymentResponse();
+        return response; // PaymentResponse.builder().body(result).build();
     }
 
     private Map<String, Object> requestParams(PaymentTransaction paymentTransaction,PaymentWay paymentWay,PaymentOrder paymentOrder){

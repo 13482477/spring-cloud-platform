@@ -1,6 +1,8 @@
 package com.siebre.payment.paymenthandler.wechatpay.pay;
 
 import com.siebre.payment.entity.enums.EncryptionMode;
+import com.siebre.payment.entity.enums.ReturnCode;
+import com.siebre.payment.paymentgateway.vo.WechatJsApiParams;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
@@ -36,20 +38,23 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
         this.processSign(params, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
         String prepayId = this.getPrepayId(paymentWay, params);
         //生成JSAPI页面调用的支付参数并签名
-        Map<String, String> jsApiParams = generateJsapiParams(paymentWay, prepayId);
+        WechatJsApiParams jsApiParams = generateJsapiParams(paymentWay, prepayId);
         this.processSign2(jsApiParams, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
-        return PaymentResponse.builder().body(jsApiParams).build();
+        PaymentResponse response = new PaymentResponse();
+        response.setReturnCode(ReturnCode.SUCCESS.getDescription());
+        response.setWechatJsApiParams(jsApiParams);
+        return response;
     }
 
-    private Map<String, String> generateJsapiParams(PaymentWay paymentWay, String prepayId) {
-        HashMap<String, String> paramMap = new HashMap<>();
-        paramMap.put("appId", paymentWay.getAppId());
-        paramMap.put("timeStamp", Long.valueOf(new Date().getTime()).toString());
-        paramMap.put("nonceStr", String.valueOf(UUID.randomUUID()).substring(0, 31));
+    private WechatJsApiParams generateJsapiParams(PaymentWay paymentWay, String prepayId) {
+        WechatJsApiParams wechatJsApiParams = new WechatJsApiParams();
+        wechatJsApiParams.setAppId(paymentWay.getAppId());
+        wechatJsApiParams.setTimeStamp(Long.valueOf(new Date().getTime()));
+        wechatJsApiParams.setNonceStr(String.valueOf(UUID.randomUUID()).substring(0, 31));
         StringBuilder sb = new StringBuilder().append("prepay_id=").append(prepayId);
-        paramMap.put("package", sb.toString());
-        paramMap.put("signType", paymentWay.getEncryptionMode().getDescription());
-        return paramMap;
+        wechatJsApiParams.setPackageSrt(sb.toString());
+        wechatJsApiParams.setSignType(paymentWay.getEncryptionMode().getDescription());
+        return wechatJsApiParams;
     }
 
 
@@ -102,7 +107,13 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
         }
     }
 
-    private void processSign2(Map<String, String> params, EncryptionMode encryptionMode, String secretKey) {
+    private void processSign2(WechatJsApiParams wechatJsApiParams, EncryptionMode encryptionMode, String secretKey) {
+        Map<String, String> params = new HashMap<>();
+        params.put("appId", wechatJsApiParams.getAppId());
+        params.put("timeStamp", wechatJsApiParams.getTimeStamp().toString());
+        params.put("nonceStr", wechatJsApiParams.getNonceStr());
+        params.put("package", wechatJsApiParams.getPackageSrt());
+        params.put("signType", wechatJsApiParams.getSignType());
         if (EncryptionMode.MD5.equals(encryptionMode)) {
             String sign = WeChatParamConvert.signMd5(params, secretKey);
             logger.info("Wechat sign key generated, original paramerers={},encryptionMode={}, secretKey={},sign={}", params.toString(), encryptionMode.getDescription(), secretKey, sign);

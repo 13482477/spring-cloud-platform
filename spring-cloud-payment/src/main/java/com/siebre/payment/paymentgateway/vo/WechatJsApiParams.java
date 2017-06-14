@@ -1,5 +1,8 @@
 package com.siebre.payment.paymentgateway.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 import java.io.Serializable;
 
 /**
@@ -12,13 +15,18 @@ public class WechatJsApiParams implements Serializable {
 
     private String nonceStr;
 
+    @Deprecated
     private String paySign;
 
-    private String prepay_id;
+    @JsonProperty("package")
+    private String packageSrt;
 
     private String signType;
 
     private Long timeStamp;
+
+    public WechatJsApiParams() {
+    }
 
     public String getAppId() {
         return appId;
@@ -36,20 +44,14 @@ public class WechatJsApiParams implements Serializable {
         this.nonceStr = nonceStr;
     }
 
+    @Deprecated
     public String getPaySign() {
         return paySign;
     }
 
+    @Deprecated
     public void setPaySign(String paySign) {
         this.paySign = paySign;
-    }
-
-    public String getPrepay_id() {
-        return prepay_id;
-    }
-
-    public void setPrepay_id(String prepay_id) {
-        this.prepay_id = prepay_id;
     }
 
     public String getSignType() {
@@ -66,5 +68,13 @@ public class WechatJsApiParams implements Serializable {
 
     public void setTimeStamp(Long timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public String getPackageSrt() {
+        return packageSrt;
+    }
+
+    public void setPackageSrt(String packageSrt) {
+        this.packageSrt = packageSrt;
     }
 }

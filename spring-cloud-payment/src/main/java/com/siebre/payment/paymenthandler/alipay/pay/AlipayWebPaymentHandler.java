@@ -30,7 +30,9 @@ public class AlipayWebPaymentHandler extends AbstractPaymentComponent {
 
 		String url = this.getPaymentUrl(paymentWay, paramsMap);
 
-		return PaymentResponse.builder().payUrl(url).build();
+		PaymentResponse response = new PaymentResponse();
+		response.setPayUrl(url);
+		return response;
 	}
 
 	private Map<String, String> generateParamsMap(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder,PaymentTransaction paymentTransaction) {
