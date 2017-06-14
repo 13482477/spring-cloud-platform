@@ -14,7 +14,7 @@ import org.springframework.context.annotation.ImportResource;
 @EnableDiscoveryClient
 @EnableFeignClients
 @SpringBootApplication(exclude = {SessionAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class})
-@ImportResource({"classpath:spring/applicationContext-*.xml"})
+//@ImportResource({"classpath:spring/applicationContext-*.xml"})
 public class Application {
 	
 	public static void main(String[] args) {
