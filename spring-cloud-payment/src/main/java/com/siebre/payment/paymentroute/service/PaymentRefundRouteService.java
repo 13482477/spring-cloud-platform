@@ -41,7 +41,7 @@ public class PaymentRefundRouteService {
     @Autowired
     private PaymentTransactionService paymentTransactionService;
 
-    public PaymentRefundResponse route(PaymentRefundRequest paymentRefundRequest) {
+    public void route(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse) {
 
         PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrder(paymentRefundRequest.getRefundApplication().getOrderNumber());
         paymentRefundRequest.setPaymentOrder(paymentOrder);
@@ -70,8 +70,7 @@ public class PaymentRefundRouteService {
         logger.info("加载" + handleBeanName);
         AbstractPaymentRefundComponent paymentRefundHandler = (AbstractPaymentRefundComponent) SpringContextUtil.getBean(handleBeanName);
 
-        PaymentRefundResponse paymentRefundResponse = paymentRefundHandler.handle(paymentRefundRequest, paymentTransaction, paymentOrder, paymentWay, paymentInterface);
+        paymentRefundHandler.handle(paymentRefundRequest, refundResponse, paymentTransaction, paymentOrder, paymentWay, paymentInterface);
 
-        return paymentRefundResponse;
     }
 }

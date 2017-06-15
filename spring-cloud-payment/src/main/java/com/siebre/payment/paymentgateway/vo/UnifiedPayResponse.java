@@ -1,7 +1,5 @@
 package com.siebre.payment.paymentgateway.vo;
 
-import com.siebre.payment.paymentorder.entity.PaymentOrder;
-
 import java.io.Serializable;
 
 public class UnifiedPayResponse implements Serializable{
@@ -18,7 +16,7 @@ public class UnifiedPayResponse implements Serializable{
 
 	private String subsequentAction;
 
-	private WechatJsApiParams wechatJsApiParams;
+	private WechatJsApiParams weChatJsApiParams;
 
 	private UnifiedPayResOrder paymentOrder;
 
@@ -75,12 +73,12 @@ public class UnifiedPayResponse implements Serializable{
 		this.subsequentAction = subsequentAction;
 	}
 
-	public WechatJsApiParams getWechatJsApiParams() {
-		return wechatJsApiParams;
+	public WechatJsApiParams getWeChatJsApiParams() {
+		return weChatJsApiParams;
 	}
 
-	public void setWechatJsApiParams(WechatJsApiParams wechatJsApiParams) {
-		this.wechatJsApiParams = wechatJsApiParams;
+	public void setWeChatJsApiParams(WechatJsApiParams weChatJsApiParams) {
+		this.weChatJsApiParams = weChatJsApiParams;
 	}
 
 	public UnifiedPayResOrder getPaymentOrder() {

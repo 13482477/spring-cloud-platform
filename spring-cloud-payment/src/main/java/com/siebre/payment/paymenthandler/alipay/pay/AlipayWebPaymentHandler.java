@@ -23,16 +23,16 @@ import java.util.Map;
 public class AlipayWebPaymentHandler extends AbstractPaymentComponent {
 
 	@Override
-	protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
+	protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
+		PaymentOrder paymentOrder = request.getPaymentOrder();
+
 		Map<String, String> paramsMap = this.generateParamsMap(request, paymentWay, paymentInterface, paymentOrder, paymentTransaction);
 
 		this.processSign(paramsMap, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
 
 		String url = this.getPaymentUrl(paymentWay, paramsMap);
 
-		PaymentResponse response = new PaymentResponse();
 		response.setPayUrl(url);
-		return response;
 	}
 
 	private Map<String, String> generateParamsMap(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder,PaymentTransaction paymentTransaction) {

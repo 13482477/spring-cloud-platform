@@ -3,8 +3,6 @@ package com.siebre.payment.paymentgateway.controller;
 import com.siebre.basic.applicationcontext.SpringContextUtil;
 import com.siebre.basic.service.ServiceResult;
 import com.siebre.basic.utils.HttpServletRequestUtil;
-import com.siebre.basic.web.WebResult;
-import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.enums.PaymentOrderLockStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
 import com.siebre.payment.entity.enums.ReturnCode;
@@ -14,7 +12,6 @@ import com.siebre.payment.paymenthandler.config.HandlerBeanNameConfig;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
 import com.siebre.payment.paymenthandler.wechatpay.WeChatPublicAuthService;
-import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.service.PaymentOrderService;
 import com.siebre.payment.paymentroute.service.PaymentRefundRouteService;
@@ -102,27 +99,31 @@ public class PaymentGatewayController {
     @ApiOperation(value = "统一支付接口(V2.0)", notes = "统一支付接口(V2.0)")
     @RequestMapping(value = "/openApi/v2/paymentGateway/unifiedPay", method = POST)
     public UnifiedPayResponse unipayV2(@RequestBody UnifiedPayRequest unifiedPayRequest, HttpServletRequest request) {
+        UnifiedPayResponse response = new UnifiedPayResponse();
         PaymentOrderResponse orderResponse = paymentOrderService.creatPaymentOrder(unifiedPayRequest);
         if (ReturnCode.FAIL.getDescription().equals(orderResponse.getReturnCode())) {
-            return new UnifiedPayResponse();
+            response.setReturnCode(orderResponse.getReturnCode());
+            response.setReturnMessage(orderResponse.getReturnMessage());
+            return response;
         }
         String handlerBeanName = HandlerBeanNameConfig.PAY_MAPPING.get(unifiedPayRequest.getPaymentOrder().getPaymentWayCode());
         PaymentRequest paymentRequest = assemblePaymentRequest(request, orderResponse);
+        PaymentResponse paymentResponse = new PaymentResponse();
         AbstractPaymentComponent paymentComponent = (AbstractPaymentComponent) SpringContextUtil.getBean(handlerBeanName);
-        PaymentResponse paymentResponse = paymentComponent.handle(paymentRequest);
-        UnifiedPayResponse response = assembleUnifiedPayResponse(paymentResponse);
+        paymentComponent.handle(paymentRequest, paymentResponse);
+        response = assembleUnifiedPayResponse(unifiedPayRequest, paymentResponse);
         return response;
     }
 
-    private UnifiedPayResponse assembleUnifiedPayResponse(PaymentResponse paymentResponse) {
+    private UnifiedPayResponse assembleUnifiedPayResponse(UnifiedPayRequest unifiedPayRequest, PaymentResponse paymentResponse) {
         UnifiedPayResponse response = new UnifiedPayResponse();
-        response.setMessageId(paymentResponse.getPaymentOrder().getMessageId());
+        response.setMessageId(unifiedPayRequest.getMessageId());
         response.setRedirectUrl(paymentResponse.getPayUrl());
         response.setReturnCode(paymentResponse.getReturnCode());
         response.setReturnMessage(paymentResponse.getReturnMessage());
         response.setSubsequentAction(paymentResponse.getSubsequentAction());
         if (paymentResponse.getWechatJsApiParams() != null) {
-            response.setWechatJsApiParams(paymentResponse.getWechatJsApiParams());
+            response.setWeChatJsApiParams(paymentResponse.getWechatJsApiParams());
         }
         response.setPaymentOrder(assembleUnifiedPayResOrder(paymentResponse.getPaymentOrder()));
         return response;
@@ -175,8 +176,9 @@ public class PaymentGatewayController {
         refundApplicationService.createRefundApplication(application);
         if (RefundApplicationStatus.APPLICATION.equals(application.getStatus())) {
             PaymentRefundRequest paymentRefundRequest = new PaymentRefundRequest();
+            PaymentRefundResponse refundResponse = new PaymentRefundResponse();
             paymentRefundRequest.setRefundApplication(application);
-            PaymentRefundResponse refundResponse = paymentRefundRouteService.route(paymentRefundRequest);
+            paymentRefundRouteService.route(paymentRefundRequest, refundResponse);
             application = refundResponse.getRefundApplication();
         }
         RefundResponse refundResponse = new RefundResponse();

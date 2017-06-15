@@ -1,6 +1,7 @@
 package com.siebre.payment.paymenthandler.wechatpay.pay;
 
 import com.siebre.payment.entity.enums.EncryptionMode;
+import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
@@ -28,17 +29,15 @@ import java.util.UUID;
 public class WeChatScanPaymentHandler extends AbstractPaymentComponent {
 
 	@Override
-	protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
+	protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
 
 		Map<String, String> params = this.generateParamsMap(request, paymentWay, paymentInterface, paymentTransaction);
 
 		this.processSign(params, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
 
-		String paymentUrl = this.getPaymentUrl(paymentWay, params);
+		this.getPaymentUrl(response, paymentWay, params);
 
-		PaymentResponse response = new PaymentResponse();
-		response.setPayUrl(paymentUrl);
-		return response;
+
 	}
 
 	private Map<String, String> generateParamsMap(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
@@ -50,7 +49,7 @@ public class WeChatScanPaymentHandler extends AbstractPaymentComponent {
 		paramMap.put("body", "保险产品"); // 商品描述
 		// 商户订单号：用户id + “|” + 随机16位字符
 		paramMap.put("out_trade_no", paymentTransaction.getInternalTransactionNumber());
-		paramMap.put("total_fee", paymentTransaction.getPaymentAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString()); // 金额必须为整数
+		paramMap.put("total_fee", request.getPaymentOrder().getAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString()); // 金额必须为整数
 		// 单位为分
 		paramMap.put("spbill_create_ip", request.getIp()); // 本机的Ip
 		Date current = new Date();
@@ -62,8 +61,7 @@ public class WeChatScanPaymentHandler extends AbstractPaymentComponent {
 		return paramMap;
 	}
 
-	@Override
-	protected String getPaymentUrl(PaymentWay paymentWay, Map<String, String> params) {
+	protected void getPaymentUrl(PaymentResponse response, PaymentWay paymentWay, Map<String, String> params) {
 		String payXml = ConvertToXML.toXml(params);
 
 		String wechatPaymentUrl = getPaymentGateWayUrl(paymentWay);
@@ -72,11 +70,16 @@ public class WeChatScanPaymentHandler extends AbstractPaymentComponent {
 		Map<String, String> resultMap = ConvertToXML.toMap(payResultXml);
 
 		//TODO xml异常错误处理
-
-		String url = resultMap.get("code_url");
-		logger.info("WechatScan url generated, url={}", url);
-
-		return url;
+		if("FAIL".equals(resultMap.get("return_code"))) {
+			logger.error("获取微信支付地址失败，原因：{}", resultMap.get("return_msg"));
+			response.setReturnCode(ReturnCode.FAIL.getDescription());
+			response.setReturnMessage(resultMap.get("return_msg"));
+		} else {
+			String url = resultMap.get("code_url");
+			response.setPayUrl(url);
+			response.setReturnCode(ReturnCode.SUCCESS.getDescription());
+			logger.info("WechatScan url generated, url={}", url);
+		}
 	}
 
 

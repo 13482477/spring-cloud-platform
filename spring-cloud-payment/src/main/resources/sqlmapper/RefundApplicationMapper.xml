@@ -42,7 +42,7 @@
 			<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="check_status" property="checkStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
-			<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
+			<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
 			<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
 			<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
 			<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
@@ -101,7 +101,7 @@
 		pmt_payment_order.status                           paymentOrder_status,
 		pmt_payment_order.check_status                     paymentOrder_check_status,
 		pmt_payment_order.payment_terminal_type            paymentOrder_payment_terminal_type,
-		pmt_payment_order.payment_channel_id               paymentOrder_payment_channel_id,
+		pmt_payment_order.channel_code                     paymentOrder_channel_code,
 		pmt_payment_order.create_time                      paymentOrder_create_time,
 		pmt_payment_order.refund_amount                    paymentOrder_refund_amount,
 		pmt_payment_order.payment_way_code                 paymentOrder_payment_way_code,
@@ -146,7 +146,7 @@
 		left JOIN
 		pmt_payment_order on pmt_refund_application.order_number = pmt_payment_order.order_number
 		left JOIN
-		pmt_payment_channel on pmt_payment_order.payment_channel_id = pmt_payment_channel.id
+		pmt_payment_channel on pmt_payment_order.channel_code = pmt_payment_channel.code
 		left JOIN
 		pmt_payment_transaction on pmt_refund_application.refund_application_number = pmt_payment_transaction.internal_transaction_number
 		where 1=1

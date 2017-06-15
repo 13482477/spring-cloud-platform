@@ -21,28 +21,26 @@ import java.util.Map;
  * Version:1.0
  */
 @Service("unionPayPaymentQueryHandler")
-public class UnionPayPaymentQueryHandler extends AbstractPaymentQueryComponent{
+public class UnionPayPaymentQueryHandler extends AbstractPaymentQueryComponent {
 
     @Override
-    protected PaymentQueryResponse handleInternal(PaymentQueryRequest request) {
+    protected void handleInternal(PaymentQueryRequest request, PaymentQueryResponse response) {
         logger.info("进入银联支付查询");
 
-        PaymentWay paymentWay =request.getPaymentWay();
+        PaymentWay paymentWay = request.getPaymentWay();
 
         PaymentInterface paymentInterface = request.getPaymentInterface();
 
         String url = paymentInterface.getRequestUrl();
 
-        Map<String,String> requestParams = generateParamsMap(request,paymentWay,request.getPaymentTransaction());
+        Map<String, String> requestParams = generateParamsMap(request, paymentWay, request.getPaymentTransaction());
 
 
-        PaymentTransactionStatus status = doPost(url,requestParams);
-        PaymentQueryResponse response = new PaymentQueryResponse();
+        PaymentTransactionStatus status = doPost(url, requestParams);
         response.setStatus(status);
-        return response;
     }
 
-    private Map<String,String> generateParamsMap(PaymentQueryRequest request, PaymentWay paymentWay, PaymentTransaction paymentTransaction){
+    private Map<String, String> generateParamsMap(PaymentQueryRequest request, PaymentWay paymentWay, PaymentTransaction paymentTransaction) {
         Map<String, String> requestData = new HashMap<String, String>();
 
         /***银联全渠道系统，产品参数，除了encoding自行选择外其他不需修改***/
@@ -66,21 +64,21 @@ public class UnionPayPaymentQueryHandler extends AbstractPaymentQueryComponent{
     }
 
 
-    private PaymentTransactionStatus doPost(String url,Map<String,String> requestParams){
-        String responseContent = HttpTookit.doPost(url,requestParams);
-        logger.info("responseContent:{}",responseContent);
-        Map<String,String> result = UnionPayUtil.responseToMap(responseContent);
+    private PaymentTransactionStatus doPost(String url, Map<String, String> requestParams) {
+        String responseContent = HttpTookit.doPost(url, requestParams);
+        logger.info("responseContent:{}", responseContent);
+        Map<String, String> result = UnionPayUtil.responseToMap(responseContent);
 
         String respCode = result.get("respCode");
-        if("00".equals(respCode)){
+        if ("00".equals(respCode)) {
             //交易成功，更新商户订单状态
             return PaymentTransactionStatus.SUCCESS;
-        }else if("03".equals(respCode)||
-                "04".equals(respCode)||
+        } else if ("03".equals(respCode) ||
+                "04".equals(respCode) ||
                 "05".equals(respCode)) {
             //需再次发起交易状态查询交易
             return PaymentTransactionStatus.PROCESSING;
-        }else{
+        } else {
             //其他应答码为失败请排查原因
             return PaymentTransactionStatus.FAILED;
         }

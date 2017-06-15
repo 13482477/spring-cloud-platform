@@ -37,17 +37,15 @@ public class AllinPayRealTimeHandler extends AbstractPaymentComponent {
     private AllinPayTranx allinPayTranx ;
 
     @Override
-    protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
+    protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
 
         String trx_code = "100011";//交易代码
         boolean isTLTFront = false;//是否发送至前置机（由前置机进行签名）如不特别说明，商户技术不要设置为true
 
         Map<String, String> result = singleTranx(request, paymentInterface.getRequestUrl(), trx_code, isTLTFront, paymentWay, paymentTransaction);
 
-        PaymentResponse response = new PaymentResponse();
         response.setReturnCode(result.get("transaction_result"));
         response.setReturnMessage(result.get("msg"));
-        return response;// PaymentResponse.builder().body(result).build();
     }
 
     private Map<String, String> singleTranx(PaymentRequest request, String url, String trx_code, boolean isTLTFront, PaymentWay paymentWay, PaymentTransaction paymentTransaction) {

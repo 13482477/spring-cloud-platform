@@ -53,9 +53,11 @@ public class QueryApplicationService {
         paymentQueryRequest.setPaymentWay(paymentWay);
         paymentQueryRequest.setPaymentInterface(paymentInterface);
 
+        PaymentQueryResponse paymentQueryResponse = new PaymentQueryResponse();
+
         String handlerBeanName = HandlerBeanNameConfig.QUERY_MAPPING.get(paymentWay.getCode());
         AbstractPaymentQueryComponent paymentComponent = (AbstractPaymentQueryComponent) SpringContextUtil.getBean(handlerBeanName);
-        PaymentQueryResponse paymentQueryResponse = paymentComponent.handle(paymentQueryRequest);
+        paymentComponent.handle(paymentQueryRequest, paymentQueryResponse);
 
         PaymentOrderQueryResponse paymentOrderQueryResponse = new PaymentOrderQueryResponse();
         paymentOrderQueryResponse.setStatus(paymentQueryResponse.getStatus());

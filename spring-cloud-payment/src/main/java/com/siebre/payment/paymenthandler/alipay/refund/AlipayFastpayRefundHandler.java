@@ -37,7 +37,7 @@ public class AlipayFastpayRefundHandler extends AbstractPaymentRefundComponent {
     PaymentWayMapper paymentWayMapper;
 
     @Override
-    protected PaymentRefundResponse handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentTransaction paymentTransaction,
+    protected void handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse response, PaymentTransaction paymentTransaction,
                                                    PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface) {
         //TODO 待优化  即时到账退款接口使用的是手机网关退款接口
         paymentWay = paymentWayMapper.getPaymentWayByCode("ALIPAY_TRADE_WAP_PAY");
@@ -47,7 +47,7 @@ public class AlipayFastpayRefundHandler extends AbstractPaymentRefundComponent {
 
         AlipayTradeRefundRequest alipayRequest = buildAlipayRefundRequest(paymentRefundRequest, paymentWay, paymentTransaction);
 
-        return processRefund(paymentRefundRequest, alipayClient, alipayRequest);
+        processRefund(paymentRefundRequest, response, alipayClient, alipayRequest);
     }
 
     /**
@@ -86,8 +86,7 @@ public class AlipayFastpayRefundHandler extends AbstractPaymentRefundComponent {
         return JsonUtil.mapToJson(params);
     }
 
-    private PaymentRefundResponse processRefund(PaymentRefundRequest paymentRefundRequest, AlipayClient alipayClient, AlipayTradeRefundRequest alipayRequest) {
-        PaymentRefundResponse refundResponse = new PaymentRefundResponse();
+    private void processRefund(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse, AlipayClient alipayClient, AlipayTradeRefundRequest alipayRequest) {
         PaymentTransaction refundTransaction = paymentRefundRequest.getRefundTransaction();
         RefundApplication refundApplication = paymentRefundRequest.getRefundApplication();
 
@@ -114,8 +113,6 @@ public class AlipayFastpayRefundHandler extends AbstractPaymentRefundComponent {
 
         refundResponse.setRefundApplication(refundApplication);
         refundResponse.setPaymentTransaction(refundTransaction);
-
-        return refundResponse;
     }
 
     /**

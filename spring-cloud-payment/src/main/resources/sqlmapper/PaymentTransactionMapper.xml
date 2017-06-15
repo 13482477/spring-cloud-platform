@@ -316,7 +316,7 @@
 		pmt_payment_order.return_trade_no paymentOrder_return_trade_no,
 		pmt_payment_order.status paymentOrder_status,
 		pmt_payment_order.payment_terminal_type paymentOrder_payment_terminal_type,
-		pmt_payment_order.payment_channel_id paymentOrder_payment_channel_id,
+		pmt_payment_order.channel_code paymentOrder_channel_code,
 		pmt_payment_order_item.id paymentOrder_paymentOrderItem_id,
 		pmt_payment_order_item.payment_order_id paymentOrder_paymentOrderItem_payment_order_id,
 		pmt_payment_order_item.application_number paymentOrder_paymentOrderItem_application_number,

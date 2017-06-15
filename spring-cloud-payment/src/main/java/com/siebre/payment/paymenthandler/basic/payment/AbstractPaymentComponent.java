@@ -1,8 +1,6 @@
 package com.siebre.payment.paymenthandler.basic.payment;
 
-import com.siebre.payment.entity.enums.PaymentInterfaceType;
-import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
-import com.siebre.payment.entity.enums.PaymentTransactionStatus;
+import com.siebre.payment.entity.enums.*;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentchannel.service.PaymentChannelService;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
@@ -11,6 +9,7 @@ import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentlistener.PaymentOrderOutOfTimeService;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
+import com.siebre.payment.paymentorder.service.PaymentOrderService;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymenttransaction.mapper.PaymentTransactionMapper;
 import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
@@ -37,6 +36,9 @@ public abstract class AbstractPaymentComponent implements PaymentInterfaceCompon
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
+    private PaymentOrderService paymentOrderService;
+
+    @Autowired
     private PaymentChannelService paymentChannelService;
 
     @Autowired
@@ -61,54 +63,52 @@ public abstract class AbstractPaymentComponent implements PaymentInterfaceCompon
     private QueryApplicationService queryApplicationService;
 
     @Override
-    public PaymentResponse handle(PaymentRequest request) {
+    public void handle(PaymentRequest request, PaymentResponse response) {
+        PaymentOrder paymentOrder = request.getPaymentOrder();
+        response.setPaymentOrder(paymentOrder);
+
         PaymentWay paymentWay = this.paymentWayService.getPaymentWayByCode(request.getPaymentWayCode()).getData();
 
-        PaymentChannel channel = this.paymentChannelService.queryById(paymentWay.getPaymentChannelId()).getData();
-
-        PaymentOrder paymentOrder = paymentOrderMapper.selectByOrderNumber(request.getOrderNumber());
-
-        /**
-         * TODO 检查order状态，为未支付状态可以直接支付
-         */
-
-        //TODO 先简单处理，如果已存在支付中的订单,直接更新为交易关闭，5月12号之后再处理
-        PaymentTransaction transactionForCheck = paymentTransactionService.getPaymentTransactionForQuery(paymentOrder.getOrderNumber());
-        if(transactionForCheck != null) {
-            if(PaymentTransactionStatus.PROCESSING.equals(transactionForCheck.getPaymentStatus())){
-                PaymentTransaction paymentTransactionForUpdate = new PaymentTransaction();
-                paymentTransactionForUpdate.setId(transactionForCheck.getId());
-                paymentTransactionForUpdate.setPaymentStatus(PaymentTransactionStatus.CLOSED);
-                this.paymentTransactionMapper.updateByPrimaryKeySelective(paymentTransactionForUpdate);
-            }
+        //检查锁定
+        if (PaymentOrderLockStatus.LOCK.equals(paymentOrder.getLockStatus())) {
+            response.setReturnCode(ReturnCode.FAIL.getDescription());
+            response.setReturnMessage("支付失败，订单已被锁定");
+            response.setPaymentOrder(paymentOrder);
+            return;
+        }
+        //检查是否是未支付状态
+        if (!PaymentOrderPayStatus.UNPAID.equals(paymentOrder.getStatus())) {
+            response.setReturnCode(ReturnCode.FAIL.getDescription());
+            response.setReturnMessage("支付失败, 该订单状态为" + paymentOrder.getStatus().getDescription());
+            response.setPaymentOrder(paymentOrder);
+            return;
         }
 
         PaymentTransaction paymentTransaction = this.paymentTransactionService.createTransaction(paymentOrder, paymentWay);
         //订单状态改为支付中，并且更新订单渠道
-        PaymentOrder orderForUpdate = new PaymentOrder();
-        orderForUpdate.setId(paymentOrder.getId());
-        orderForUpdate.setStatus(PaymentOrderPayStatus.PAYING);
-        orderForUpdate.setChannelCode(channel.getChannelCode());
-        orderForUpdate.setPaymentWayCode(paymentWay.getCode());
-        this.paymentOrderMapper.updateByPrimaryKeySelective(orderForUpdate);
+        this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PAYING);
 
         this.orderOutOfTimeService.newOrder(paymentOrder);//超时队列中记录新加入的订单
 
         PaymentInterface paymentInterface = getPayTypeInterface(paymentWay);
 
-        return this.handleInternal(request, paymentWay, paymentInterface, paymentOrder, paymentTransaction);
+        this.handleInternal(request, response, paymentWay, paymentInterface, paymentTransaction);
+
+        if(ReturnCode.FAIL.getDescription().equals(response.getReturnCode())) {
+            this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PAYERROR);
+        }
     }
 
     private PaymentInterface getPayTypeInterface(PaymentWay paymentWay) {
-        for(PaymentInterface paymentInterface : paymentWay.getPaymentInterfaces()) {
-            if(PaymentInterfaceType.PAY.equals(paymentInterface.getPaymentInterfaceType())){
+        for (PaymentInterface paymentInterface : paymentWay.getPaymentInterfaces()) {
+            if (PaymentInterfaceType.PAY.equals(paymentInterface.getPaymentInterfaceType())) {
                 return paymentInterface;
             }
         }
         return null;
     }
 
-    protected abstract PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay,PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction);
+    protected abstract void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction);
 
     protected String getPaymentUrl(PaymentWay paymentWay, Map<String, String> params) {
         String url = this.getPaymentGateWayUrl(paymentWay);

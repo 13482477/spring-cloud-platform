@@ -22,15 +22,14 @@ import java.util.Map;
  */
 @Service("unionPayAcpPaymentHandler")
 public class UnionPayAcpPaymentHandler extends AbstractPaymentComponent {
+
     @Override
-    protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
+    protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
         Map<String, String> requestParams = generateParamsMap(request, paymentWay, paymentInterface, paymentTransaction);
 
         String paymentUrl = this.getPaymentUrl(paymentWay, requestParams);
 
-        PaymentResponse response = new PaymentResponse();
         response.setPayUrl(paymentUrl);
-        return response;
     }
 
     private Map<String, String> generateParamsMap(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {

@@ -31,7 +31,7 @@ import java.util.UUID;
 public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
 
     @Override
-    protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
+    protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
         //拼装请求参数
         Map<String, String> params = this.generateParamsMap(request, paymentWay, paymentInterface, paymentTransaction);
         //调用统一下单API 获得预付单信息prepay_id
@@ -40,10 +40,8 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
         //生成JSAPI页面调用的支付参数并签名
         WechatJsApiParams jsApiParams = generateJsapiParams(paymentWay, prepayId);
         this.processSign2(jsApiParams, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
-        PaymentResponse response = new PaymentResponse();
         response.setReturnCode(ReturnCode.SUCCESS.getDescription());
         response.setWechatJsApiParams(jsApiParams);
-        return response;
     }
 
     private WechatJsApiParams generateJsapiParams(PaymentWay paymentWay, String prepayId) {

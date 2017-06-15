@@ -21,6 +21,8 @@ import com.siebre.payment.paymentorder.vo.TradeOrderItem;
 import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 import com.siebre.payment.paymentorderitem.mapper.PaymentOrderItemMapper;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.paymentway.service.PaymentWayService;
 import com.siebre.payment.policylibility.entity.PolicyLibility;
 import com.siebre.payment.policylibility.mapper.PolicyLibilityMapper;
 import com.siebre.payment.policyrole.entity.PolicyRole;
@@ -70,6 +72,9 @@ public class PaymentOrderService {
     @Autowired
     private PaymentChannelMapper paymentChannelMapper;
 
+    @Autowired
+    private PaymentWayService paymentWayService;
+
     public ServiceResult<List<PaymentOrder>> queryPaymentOrder(PageInfo pageInfo) {
         return null;
     }
@@ -81,6 +86,20 @@ public class PaymentOrderService {
     public PaymentOrderPayStatus queryOrderStatus(String orderNumber) {
         PaymentOrder order = paymentOrderMapper.selectByOrderNumber(orderNumber);
         return order.getStatus();
+    }
+
+    /**
+     * 更新订单为指定状态
+     * @param order
+     * @param status
+     */
+    @Transactional("db")
+    public void updateOrderStatus(PaymentOrder order, PaymentOrderPayStatus status){
+        PaymentOrder orderForUpdate = new PaymentOrder();
+        orderForUpdate.setId(order.getId());
+        orderForUpdate.setStatus(status);
+        this.paymentOrderMapper.updateByPrimaryKeySelective(orderForUpdate);
+        order.setStatus(status);
     }
 
     /**
@@ -102,7 +121,10 @@ public class PaymentOrderService {
         //幂等性校验
         MsgUtil mdxMsf = idempotencyValidate(unifiedPayRequest.getMessageId());
         if (ReturnCode.FAIL.equals(mdxMsf.getResult())) {
-            return PaymentOrderResponse.FAIL(validateInfo.getMsg());
+            PaymentOrder order = (PaymentOrder) mdxMsf.getData();
+            PaymentAccount account = this.paymentAccountService.getPaymentAccountById(order.getPaymentAccountId());
+            order.setPaymentAccount(account);
+            return PaymentOrderResponse.SUCCESS("订单已创建", order);
         }
         //模型转换
         PaymentOrder paymentOrder = transfer(unifiedPayRequest);
@@ -111,6 +133,8 @@ public class PaymentOrderService {
     }
 
     private void initOrderDate(PaymentOrder paymentOrder) {
+        PaymentWay paymentWay = this.paymentWayService.getPaymentWay(paymentOrder.getPaymentWayCode());
+        paymentOrder.setChannelCode(paymentWay.getPaymentChannel().getChannelCode());
         paymentOrder.setOrderNumber(serialNumberService.nextValue("sale_order"));
         //设置order状态为待支付
         paymentOrder.setStatus(PaymentOrderPayStatus.UNPAID);
@@ -126,6 +150,8 @@ public class PaymentOrderService {
         //初始化Order的一些状态
         initOrderDate(paymentOrder);
         this.paymentOrderMapper.insert(paymentOrder);
+        this.paymentAccountService.insertPaymentAccount(paymentOrder.getId(), paymentOrder.getPaymentAccount());
+        paymentOrder.setPaymentAccountId(paymentOrder.getPaymentAccount().getId());
         for (PaymentOrderItem paymentOrderItem : paymentOrder.getItems()) {
             paymentOrderItem.setPaymentOrderId(paymentOrder.getId());
             //save insured
@@ -147,19 +173,23 @@ public class PaymentOrderService {
 
     /**
      * 幂等性校验
+     *
      * @param messageId
      * @return
      */
     private MsgUtil idempotencyValidate(String messageId) {
         PaymentOrder order = paymentOrderMapper.selectByMessageId(messageId);
         if (order != null) {
-            return new MsgUtil(ReturnCode.FAIL, "该订单已创建");
+            MsgUtil msgUtil = new MsgUtil(ReturnCode.FAIL, "该订单已创建");
+            msgUtil.setData(order);
+            return msgUtil;
         }
         return new MsgUtil(ReturnCode.SUCCESS, "");
     }
 
     /**
      * UnifiedPayRequest模型转换为PaymentOrder
+     *
      * @param unifiedPayRequest
      * @return
      */
@@ -204,6 +234,7 @@ public class PaymentOrderService {
 
     /**
      * 校验前端传递的模型是否缺一些必要信息
+     *
      * @param unifiedPayRequest
      * @return
      */
@@ -219,9 +250,19 @@ public class PaymentOrderService {
             return new MsgUtil(ReturnCode.FAIL, "订单信息不能为空");
         }
         BankAccount bankAccount = unifiedPayOrder.getBankAccount();
+        if (bankAccount != null) {
+            if (StringUtils.isBlank(bankAccount.getAcountNumber())) {
+                return new MsgUtil(ReturnCode.FAIL, "银行卡账号不能为空");
+            }
+            if (StringUtils.isBlank(bankAccount.getHolderName())) {
+                return new MsgUtil(ReturnCode.FAIL, "银行卡持有人姓名不能为空");
+            }
+        }
         WeChatAccount weChatAccount = unifiedPayOrder.getWeChatAccount();
-        if (bankAccount == null && weChatAccount == null) {
-            return new MsgUtil(ReturnCode.FAIL, "账户信息不能为空");
+        if (weChatAccount != null) {
+            if (StringUtils.isBlank(weChatAccount.getOpenid())) {
+                return new MsgUtil(ReturnCode.FAIL, "OPENID不能为空");
+            }
         }
         return new MsgUtil(ReturnCode.SUCCESS, "");
     }
@@ -237,7 +278,7 @@ public class PaymentOrderService {
     public PaymentOrderResponse createPaymentOrderAndItems(PaymentOrderRequest orderRequest, HttpServletRequest request) {
         //幂等性校验
         MsgUtil validateMsg = idempotencyValidate(orderRequest.getMessageId());
-        if(ReturnCode.FAIL.equals(validateMsg.getResult())){
+        if (ReturnCode.FAIL.equals(validateMsg.getResult())) {
             PaymentOrder order = paymentOrderMapper.selectByMessageId(orderRequest.getMessageId());
             return PaymentOrderResponse.SUCCESS("创建成功", order);
         }

@@ -31,8 +31,9 @@ import java.util.Map;
  */
 @Service("alipayPaymentRefundHandler")
 public class AlipayPaymentRefundHandler extends AbstractPaymentRefundComponent {
+
     @Override
-    protected PaymentRefundResponse handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentTransaction paymentTransaction,
+    protected void handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse, PaymentTransaction paymentTransaction,
                                                    PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface) {
         AlipayClient alipayClient = new DefaultAlipayClient(paymentInterface.getRequestUrl(),
                 paymentWay.getAppId(), paymentWay.getSecretKey(), "json", AlipayConfig.INPUT_CHARSET_UTF,
@@ -40,7 +41,7 @@ public class AlipayPaymentRefundHandler extends AbstractPaymentRefundComponent {
 
         AlipayTradeRefundRequest alipayRequest = buildAlipayRefundRequest(paymentRefundRequest, paymentWay, paymentTransaction);
 
-        return processRefund(paymentRefundRequest, alipayClient, alipayRequest);
+        processRefund(paymentRefundRequest, refundResponse, alipayClient, alipayRequest);
     }
 
     /**
@@ -79,8 +80,7 @@ public class AlipayPaymentRefundHandler extends AbstractPaymentRefundComponent {
         return JsonUtil.mapToJson(params);
     }
 
-    private PaymentRefundResponse processRefund(PaymentRefundRequest paymentRefundRequest, AlipayClient alipayClient, AlipayTradeRefundRequest alipayRequest) {
-        PaymentRefundResponse refundResponse = new PaymentRefundResponse();
+    private void processRefund(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse, AlipayClient alipayClient, AlipayTradeRefundRequest alipayRequest) {
 
         PaymentTransaction refundTransaction = paymentRefundRequest.getRefundTransaction();
         RefundApplication refundApplication = paymentRefundRequest.getRefundApplication();
@@ -108,7 +108,5 @@ public class AlipayPaymentRefundHandler extends AbstractPaymentRefundComponent {
 
         refundResponse.setRefundApplication(refundApplication);
         refundResponse.setPaymentTransaction(refundTransaction);
-
-        return refundResponse;
     }
 }

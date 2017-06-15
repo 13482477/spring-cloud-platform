@@ -54,7 +54,7 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
     private static String resourse = "D:/apiclient_cert.p12";
 
     @Override
-    protected PaymentRefundResponse handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface) {
+    protected void handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface) {
         PaymentChannel channel = paymentChannelMapper.selectByPrimaryKey(paymentWay.getPaymentChannelId());
         //1.读取证书
         CloseableHttpClient httpclient = this.getHttpClient(channel);
@@ -65,7 +65,6 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
 
         //4.调用api
         Map<String, String> res = refund(httpclient,paymentInterface.getRequestUrl(),params);
-        PaymentRefundResponse refundResponse = new PaymentRefundResponse();
 
         PaymentTransaction refundTransaction = paymentRefundRequest.getRefundTransaction();
         RefundApplication refundApplication = paymentRefundRequest.getRefundApplication();
@@ -101,7 +100,6 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
         }
         refundResponse.setRefundApplication(refundApplication);
         refundResponse.setPaymentTransaction(refundTransaction);
-        return refundResponse;
     }
 
     private CloseableHttpClient getHttpClient( PaymentChannel channel){

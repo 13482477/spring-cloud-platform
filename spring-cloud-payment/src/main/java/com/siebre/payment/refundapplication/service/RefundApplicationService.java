@@ -137,8 +137,9 @@ public class RefundApplicationService {
         refundApplicationService.createRefundApplication(application);
         if (RefundApplicationStatus.APPLICATION.equals(application.getStatus())) {
             PaymentRefundRequest paymentRefundRequest = new PaymentRefundRequest();
+            PaymentRefundResponse refundResponse = new PaymentRefundResponse();
             paymentRefundRequest.setRefundApplication(application);
-            PaymentRefundResponse refundResponse = paymentRefundRouteService.route(paymentRefundRequest);
+            paymentRefundRouteService.route(paymentRefundRequest, refundResponse);
             application = refundResponse.getRefundApplication();
         }
         RefundResponse refundResponse = new RefundResponse();

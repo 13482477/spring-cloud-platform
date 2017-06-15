@@ -26,15 +26,15 @@ public abstract class AbstractPaymentQueryComponent implements PaymentInterfaceC
     @Autowired
     private PaymentWayService paymentWayService;
 
-    public PaymentQueryResponse handle(PaymentQueryRequest request){
+    @Override
+    public void handle(PaymentQueryRequest request, PaymentQueryResponse response){
         logger.info("订单查询接口处理");
-        PaymentQueryResponse response  = this.handleInternal(request);
+        this.handleInternal(request, response);
 
         this.processOrderStatus(request,response);
-        return response;
     }
 
-    protected abstract PaymentQueryResponse handleInternal(PaymentQueryRequest request);
+    protected abstract void handleInternal(PaymentQueryRequest request, PaymentQueryResponse response);
 
 
     private void processOrderStatus(PaymentQueryRequest request,PaymentQueryResponse response){

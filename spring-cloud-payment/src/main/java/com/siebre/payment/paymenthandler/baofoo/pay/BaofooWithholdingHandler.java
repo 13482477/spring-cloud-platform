@@ -34,8 +34,9 @@ public class BaofooWithholdingHandler extends AbstractPaymentComponent {
     private BaofooApiClient baofooApiClient;
 
     @Override
-    protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
+    protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
 
+        PaymentOrder paymentOrder = request.getPaymentOrder();
         //String request_url = "https://public.baofoo.com/cutpayment/api/backTransRequest";//正式环境地址
 
         Map<String, Object> requestDate = requestParams(paymentTransaction,paymentWay,paymentOrder);
@@ -57,8 +58,7 @@ public class BaofooWithholdingHandler extends AbstractPaymentComponent {
         }
 
         //TODO
-        PaymentResponse response = new PaymentResponse();
-        return response; // PaymentResponse.builder().body(result).build();
+        // PaymentResponse.builder().body(result).build();
     }
 
     private Map<String, Object> requestParams(PaymentTransaction paymentTransaction,PaymentWay paymentWay,PaymentOrder paymentOrder){

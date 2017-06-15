@@ -27,14 +27,15 @@ import java.util.Map;
  */
 @Service("unionPayPaymentRefundHandler")
 public class UnionPayPaymentRefundHandler extends AbstractPaymentRefundComponent {
+
     @Override
-    protected PaymentRefundResponse handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface) {
+    protected void handleInternal(PaymentRefundRequest paymentRefundRequest,PaymentRefundResponse refundResponse, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface) {
         Map<String, String> requestData = generateParamsMap(paymentRefundRequest, paymentWay, paymentInterface, paymentTransaction);
 
         String url = paymentInterface.getRequestUrl();
         logger.info("请求地址{}", url);
 
-        return doPost(paymentRefundRequest, url, requestData);
+        doPost(paymentRefundRequest, refundResponse, url, requestData);
     }
 
 
@@ -68,13 +69,11 @@ public class UnionPayPaymentRefundHandler extends AbstractPaymentRefundComponent
         return UnionPayUtil.sign(requestData, paymentWay.getSecretKey());
     }
 
-    private PaymentRefundResponse doPost(PaymentRefundRequest paymentRefundRequest, String url, Map<String, String> requestParams) {
+    private void doPost(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse, String url, Map<String, String> requestParams) {
         String responseContent = HttpTookit.doPost(url, requestParams);
         logger.info("responseContent:{}", responseContent);
         Map<String, String> result = UnionPayUtil.responseToMap(responseContent);
 
-
-        PaymentRefundResponse refundResponse = new PaymentRefundResponse();
         refundResponse.setSynchronize(false);//银联为异步返回结果
 
         PaymentTransaction refundTransaction = paymentRefundRequest.getRefundTransaction();
@@ -103,6 +102,5 @@ public class UnionPayPaymentRefundHandler extends AbstractPaymentRefundComponent
 
         refundResponse.setRefundApplication(refundApplication);
         refundResponse.setPaymentTransaction(refundTransaction);
-        return refundResponse;
     }
 }

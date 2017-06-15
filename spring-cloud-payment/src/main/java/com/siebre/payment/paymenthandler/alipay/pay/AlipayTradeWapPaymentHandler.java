@@ -25,8 +25,9 @@ import java.util.Map;
 public class AlipayTradeWapPaymentHandler extends AbstractPaymentComponent {
 
     @Override
-    protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
+    protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
 
+        PaymentOrder paymentOrder = request.getPaymentOrder();
         AlipayClient alipayClient = new DefaultAlipayClient(paymentInterface.getRequestUrl(),
                 paymentWay.getAppId(), paymentWay.getSecretKey(), "json", AlipayConfig.INPUT_CHARSET_UTF,
                 paymentWay.getPublicKey(), paymentWay.getEncryptionMode().getDescription()); //获得初始化的AlipayClient
@@ -38,9 +39,7 @@ public class AlipayTradeWapPaymentHandler extends AbstractPaymentComponent {
             e.printStackTrace();
         }
 
-        PaymentResponse response = new PaymentResponse();
         response.setPayUrl(paymentInterface.getRequestUrl() + "?" + form);
-        return response;
     }
 
     /**

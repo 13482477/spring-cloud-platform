@@ -29,11 +29,11 @@ public abstract class AbstractPaymentRefundComponent implements PaymentInterface
     private SerialNumberMapper SerialNumberMapper;
 
     //abstract empty method implement PaymentInterface
-    public PaymentRefundResponse handle(PaymentRefundRequest paymentRefundRequest){
-        return null;
+    @Override
+    public void handle(PaymentRefundRequest request, PaymentRefundResponse response) {
     }
 
-    public PaymentRefundResponse handle(PaymentRefundRequest paymentRefundRequest, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface){
+    public void handle(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse paymentRefundResponse, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface) {
         //获取原有交易的transaction {设置请求中的原始内部交易流水号，外部交易流水号}
         paymentRefundRequest.setOriginExternalNumber(paymentTransaction.getExternalTransactionNumber());
         paymentRefundRequest.setOriginInternalNumber(paymentTransaction.getInternalTransactionNumber());
@@ -66,19 +66,18 @@ public abstract class AbstractPaymentRefundComponent implements PaymentInterface
         refundApplication.setStatus(RefundApplicationStatus.PROCESSING);
 
         refundPaymentTransaction.setCreateDate(new Date());
-        paymentTransactionService.createRefundPaymentTransaction(refundPaymentTransaction,refundApplication);
+        paymentTransactionService.createRefundPaymentTransaction(refundPaymentTransaction, refundApplication);
         paymentRefundRequest.setRefundTransaction(refundPaymentTransaction);
 
-        PaymentRefundResponse paymentRefundResponse = this.handleInternal(paymentRefundRequest,refundPaymentTransaction,paymentOrder,paymentWay,paymentInterface);
+        this.handleInternal(paymentRefundRequest, paymentRefundResponse, refundPaymentTransaction, paymentOrder, paymentWay, paymentInterface);
 
 
         //同步状态下更新 退款application 退款transaction
-        if(paymentRefundResponse.getSynchronize()){
-            paymentTransactionService.synchronizedRefundConfirm(paymentRefundResponse.getRefundApplication(),paymentRefundResponse.getPaymentTransaction());
+        if (paymentRefundResponse.getSynchronize()) {
+            paymentTransactionService.synchronizedRefundConfirm(paymentRefundResponse.getRefundApplication(), paymentRefundResponse.getPaymentTransaction());
         }
 
-        return paymentRefundResponse;
     }
 
-    protected abstract PaymentRefundResponse handleInternal(PaymentRefundRequest paymentRefundRequest,PaymentTransaction paymentTransaction,PaymentOrder paymentOrder,PaymentWay paymentWay,PaymentInterface paymentInterface);
+    protected abstract void handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse paymentRefundResponse, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface);
 }

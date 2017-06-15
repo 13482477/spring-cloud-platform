@@ -97,12 +97,11 @@ public class AllinPayTranx {
     /**
      * 退款返回报文处理逻辑
      */
-    public PaymentRefundResponse dealRetForRefund(String retXml, String trxcode, PaymentRefundRequest paymentRefundRequest){
+    public void dealRetForRefund(String retXml, String trxcode, PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse  refundResponse){
 
         AipgRsp aipgrsp = null;
         aipgrsp = XSUtil.parseRsp(retXml);
 
-        PaymentRefundResponse refundResponse = new PaymentRefundResponse();
         String externalTransactionNumber = aipgrsp.getINFO().getREQ_SN();
         refundResponse.setExternalTransactionNumber(externalTransactionNumber);
         //TransRet ret = (TransRet) aipgrsp.getTrxData().get(0);
@@ -130,18 +129,15 @@ public class AllinPayTranx {
 
         refundResponse.setRefundApplication(refundApplication);
         refundResponse.setPaymentTransaction(refundTransaction);
-        return refundResponse;
     }
 
     /**
      * 查询返回报文处理逻辑
      */
-    public PaymentQueryResponse dealRetForQuery(String retXml, String trxcode){
+    public void dealRetForQuery(String retXml, String trxcode, PaymentQueryResponse response){
 
         AipgRsp aipgrsp = null;
         aipgrsp = XSUtil.parseRsp(retXml);
-
-        PaymentQueryResponse response = new PaymentQueryResponse();
 
         //交易查询处理逻辑(交易结果查询--200004,交易明细查询--200005)
         if("200004".equals(trxcode)||"200005".equals(trxcode)){
@@ -167,7 +163,6 @@ public class AllinPayTranx {
                 }
 
                 response.setStatus(PaymentTransactionStatus.SUCCESS);//设置状态--交易成功
-                return response;
 
             }else if("2000".equals(aipgrsp.getINFO().getRET_CODE())
                     ||"2001".equals(aipgrsp.getINFO().getRET_CODE())
@@ -189,7 +184,6 @@ public class AllinPayTranx {
             response.setStatus(PaymentTransactionStatus.FAILED);//设置状态--交易失败
 
         }
-        return response;
     }
 
     /**

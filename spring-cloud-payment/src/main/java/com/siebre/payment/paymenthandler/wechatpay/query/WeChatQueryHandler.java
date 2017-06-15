@@ -32,15 +32,13 @@ public class WeChatQueryHandler extends AbstractPaymentQueryComponent {
      * @return
      */
     @Override
-    protected PaymentQueryResponse handleInternal(PaymentQueryRequest request) {
+    protected void handleInternal(PaymentQueryRequest request, PaymentQueryResponse response) {
         PaymentInterface paymentInterface = request.getPaymentInterface();
         PaymentWay paymentWay = request.getPaymentWay();
         Map<String,String> params = generateQueryParams(paymentWay,paymentInterface,request);
         this.processSign(params, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
         PaymentTransactionStatus status = getPaymentStatus(params, paymentInterface);
-        PaymentQueryResponse response = new PaymentQueryResponse();
         response.setStatus(status);
-        return response;
     }
 
     private PaymentTransactionStatus getPaymentStatus(Map<String, String> params, PaymentInterface paymentInterface) {

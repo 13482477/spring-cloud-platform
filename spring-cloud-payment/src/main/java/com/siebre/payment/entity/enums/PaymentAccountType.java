@@ -11,6 +11,8 @@ public enum PaymentAccountType implements BaseEnum {
     BANK_ACCOUNT(1, "银行卡"),
 
     WECHAT_ACCOUNT(2, "微信"),
+
+    ALIPAY_ACCOUNT(3, "支付宝"),
     ;
 
     public static PaymentAccountType valueOf(int value){
