@@ -15,7 +15,6 @@ public class WechatJsApiParams implements Serializable {
 
     private String nonceStr;
 
-    @Deprecated
     private String paySign;
 
     @JsonProperty("package")
@@ -44,12 +43,10 @@ public class WechatJsApiParams implements Serializable {
         this.nonceStr = nonceStr;
     }
 
-    @Deprecated
     public String getPaySign() {
         return paySign;
     }
 
-    @Deprecated
     public void setPaySign(String paySign) {
         this.paySign = paySign;
     }

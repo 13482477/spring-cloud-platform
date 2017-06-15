@@ -118,6 +118,7 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
             String sign = WeChatParamConvert.signMd5(params, secretKey);
             logger.info("Wechat sign key generated, original paramerers={},encryptionMode={}, secretKey={},sign={}", params.toString(), encryptionMode.getDescription(), secretKey, sign);
             params.put("paySign", sign);
+            wechatJsApiParams.setPaySign(sign);
             return;
         }
     }
