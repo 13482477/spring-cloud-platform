@@ -1,6 +1,7 @@
 package com.siebre.payment.paymenthandler.alipay.pay;
 
 import com.siebre.payment.entity.enums.EncryptionMode;
+import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.paymenthandler.alipay.sdk.AlipaySign;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
@@ -33,6 +34,7 @@ public class AlipayWebPaymentHandler extends AbstractPaymentComponent {
 		String url = this.getPaymentUrl(paymentWay, paramsMap);
 
 		response.setPayUrl(url);
+		response.setReturnCode(ReturnCode.SUCCESS.getDescription());
 	}
 
 	private Map<String, String> generateParamsMap(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder,PaymentTransaction paymentTransaction) {
@@ -46,7 +48,7 @@ public class AlipayWebPaymentHandler extends AbstractPaymentComponent {
 		params.put("seller_email", paymentWay.getPaymentChannel().getPayeeAccount());
 		params.put("subject", "保险产品");
 		params.put("out_trade_no", paymentTransaction.getInternalTransactionNumber());
-		params.put("total_fee", paymentTransaction.getPaymentAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+		params.put("total_fee", paymentOrder.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
 		params.put("it_b_pay", "30m");
 		return params;
 	}

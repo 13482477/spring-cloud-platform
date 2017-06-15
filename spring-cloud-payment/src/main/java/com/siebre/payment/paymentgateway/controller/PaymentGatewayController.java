@@ -134,7 +134,9 @@ public class PaymentGatewayController {
         paymentRequest.setPaymentWayCode(orderResponse.getPaymentOrder().getPaymentWayCode());
         paymentRequest.setOrderNumber(orderResponse.getPaymentOrder().getOrderNumber());
         paymentRequest.setIp(HttpServletRequestUtil.getIpAddress(request));
-        paymentRequest.setOpenid(orderResponse.getPaymentOrder().getPaymentAccount().getOpenid());
+        if(orderResponse.getPaymentOrder().getPaymentAccount() != null) {
+            paymentRequest.setOpenid(orderResponse.getPaymentOrder().getPaymentAccount().getOpenid());
+        }
         paymentRequest.setPaymentOrder(orderResponse.getPaymentOrder());
         return paymentRequest;
     }

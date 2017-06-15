@@ -6,8 +6,10 @@ import com.siebre.payment.paymenthandler.alipay.sdk.AlipaySign;
 import com.siebre.payment.paymenthandler.basic.paymentcallback.AbstractPaymentCallBackHandler;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.paymentway.service.PaymentWayService;
 import com.siebre.payment.utils.messageconvert.Converts;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +26,9 @@ import java.util.Map;
 @Component("alipayCallBackHandler")
 public class AlipayCallBackHandler extends AbstractPaymentCallBackHandler {
 
+    @Autowired
+    private PaymentWayService paymentWayService;
+
     private static final String SIGN_PARAM="sign";
 
     private static final String SIGN_TYPE_PARAM="sign_type";
@@ -35,7 +40,7 @@ public class AlipayCallBackHandler extends AbstractPaymentCallBackHandler {
 
         Map<String, String> paramMap = HttpServletRequestUtil.getParameterMap(request);
 
-        PaymentWay paymentWay = paymentInterface.getPaymentWay();
+        PaymentWay paymentWay = paymentWayService.getPaymentWayById(paymentInterface.getPaymentWayId()).getData();
 
         if (validateSign(paramMap, paymentWay)) {
 

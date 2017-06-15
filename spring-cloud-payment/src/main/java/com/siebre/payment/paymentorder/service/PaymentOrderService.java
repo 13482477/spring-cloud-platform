@@ -90,11 +90,12 @@ public class PaymentOrderService {
 
     /**
      * 更新订单为指定状态
+     *
      * @param order
      * @param status
      */
     @Transactional("db")
-    public void updateOrderStatus(PaymentOrder order, PaymentOrderPayStatus status){
+    public void updateOrderStatus(PaymentOrder order, PaymentOrderPayStatus status) {
         PaymentOrder orderForUpdate = new PaymentOrder();
         orderForUpdate.setId(order.getId());
         orderForUpdate.setStatus(status);
@@ -150,8 +151,10 @@ public class PaymentOrderService {
         //初始化Order的一些状态
         initOrderDate(paymentOrder);
         this.paymentOrderMapper.insert(paymentOrder);
-        this.paymentAccountService.insertPaymentAccount(paymentOrder.getId(), paymentOrder.getPaymentAccount());
-        paymentOrder.setPaymentAccountId(paymentOrder.getPaymentAccount().getId());
+        if (paymentOrder.getPaymentAccount() != null) {
+            this.paymentAccountService.insertPaymentAccount(paymentOrder.getId(), paymentOrder.getPaymentAccount());
+            paymentOrder.setPaymentAccountId(paymentOrder.getPaymentAccount().getId());
+        }
         for (PaymentOrderItem paymentOrderItem : paymentOrder.getItems()) {
             paymentOrderItem.setPaymentOrderId(paymentOrder.getId());
             //save insured

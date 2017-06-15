@@ -6,6 +6,7 @@ import com.siebre.payment.entity.enums.*;
 import com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
+import com.siebre.payment.paymentorder.service.PaymentOrderService;
 import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 import com.siebre.payment.paymentorderitem.mapper.PaymentOrderItemMapper;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
@@ -37,6 +38,9 @@ public class PaymentTransactionService {
 
     @Autowired
     private PaymentOrderMapper paymentOrderMapper;
+
+    @Autowired
+    private PaymentOrderService paymentOrderService;
 
     @Autowired
     private PaymentOrderItemMapper paymentOrderItemMapper;
@@ -281,6 +285,8 @@ public class PaymentTransactionService {
 
         PaymentTransaction paymentTransaction = this.paymentTransactionMapper.selectByInterTradeNo(internalTransactionNumber);
 
+        PaymentOrder paymentOrder = this.paymentOrderMapper.selectByPrimaryKey(paymentTransaction.getPaymentOrderId());
+
         if (paymentTransaction == null) {
             logger.error("没有找到该条交易记录internalTransactionNumber={}", internalTransactionNumber);
             return ServiceResult.<PaymentTransaction>builder().success(false).message("没有找到该条交易记录internalTransactionNumber=" + internalTransactionNumber).build();
@@ -296,7 +302,7 @@ public class PaymentTransactionService {
             return ServiceResult.<PaymentTransaction>builder().success(false).message("商户号不一致seller_id=" + seller_id + ", MerchantCode=" + merchId).build();
         }
         // 校验total_fee
-        BigDecimal paymentAmount = paymentTransaction.getPaymentAmount();
+        BigDecimal paymentAmount = paymentOrder.getAmount();
         if (paymentAmount.compareTo(total_fee) != 0) {
             logger.error("订单金额不一致total_fee={}，paymentAmount={}", total_fee, paymentAmount);
             return ServiceResult.<PaymentTransaction>builder().success(false).message("订单金额不一致total_fee=" + seller_id + "，paymentAmount=" + paymentAmount).build();
@@ -307,11 +313,7 @@ public class PaymentTransactionService {
         this.paymentTransactionMapper.updateByPrimaryKeySelective(paymentTransaction);
 
         //更新order状态
-        PaymentOrder paymentOrder = this.paymentOrderMapper.selectByPrimaryKey(paymentTransaction.getPaymentOrderId());
-        PaymentOrder paymentOrderForUpdate = new PaymentOrder();
-        paymentOrderForUpdate.setId(paymentOrder.getId());
-        paymentOrderForUpdate.setStatus(PaymentOrderPayStatus.PAID);
-        paymentOrderMapper.updateByPrimaryKeySelective(paymentOrderForUpdate);
+        this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PAID);
 
         return ServiceResult.<PaymentTransaction>builder().success(true).data(paymentTransaction).build();
     }

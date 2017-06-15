@@ -94,7 +94,7 @@ public abstract class AbstractPaymentComponent implements PaymentInterfaceCompon
 
         this.handleInternal(request, response, paymentWay, paymentInterface, paymentTransaction);
 
-        if(ReturnCode.FAIL.getDescription().equals(response.getReturnCode())) {
+        if (ReturnCode.FAIL.getDescription().equals(response.getReturnCode())) {
             this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PAYERROR);
         }
     }
