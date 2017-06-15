@@ -51,6 +51,16 @@ public class PaymentTransaction extends BaseObject {
 
     private String paymentAccout;
 
+    /**
+     * 发送方
+     */
+    private String sender;
+
+    /**
+     * 接收方
+     */
+    private String receiver;
+
     public Long getPaymentChannelId() {
         return paymentChannelId;
     }
@@ -163,23 +173,19 @@ public class PaymentTransaction extends BaseObject {
         this.interfaceType = interfaceType;
     }
 
-    @Override
-    public String toString() {
-        return "PaymentTransaction{" +
-                "paymentChannelId=" + paymentChannelId +
-                ", paymentChannel=" + paymentChannel +
-                ", paymentWayId=" + paymentWayId +
-                ", paymentWay=" + paymentWay +
-                ", paymentOrderId=" + paymentOrderId +
-                ", paymentOrder=" + paymentOrder +
-                ", internalTransactionNumber='" + internalTransactionNumber + '\'' +
-                ", externalTransactionNumber='" + externalTransactionNumber + '\'' +
-                ", paymentAmount=" + paymentAmount +
-                ", paymentStatus=" + paymentStatus +
-                ", interfaceType=" + interfaceType +
-                ", transactionMessageId='" + transactionMessageId + '\'' +
-                ", payeeAccount='" + payeeAccount + '\'' +
-                ", paymentAccout='" + paymentAccout + '\'' +
-                '}';
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 }

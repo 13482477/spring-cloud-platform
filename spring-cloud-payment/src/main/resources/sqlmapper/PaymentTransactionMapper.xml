@@ -15,6 +15,8 @@
 		<result column="payment_accout" property="paymentAccout" jdbcType="VARCHAR" />
 		<result column="interface_type" property="interfaceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="sender" property="sender" jdbcType="VARCHAR"/>
+		<result column="receiver" property="receiver" jdbcType="VARCHAR"/>
 	</resultMap>
 	<sql id="Base_Column_List">
 		id,
@@ -29,7 +31,9 @@
 		payee_account,
 		payment_accout,
 		interface_type,
-		create_date
+		create_date,
+		sender,
+		receiver
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
@@ -58,7 +62,9 @@
 		payee_account,
 		payment_accout,
 		interface_type,
-		create_date
+		create_date,
+		sender,
+		receiver
 		)
 		VALUES (
 		#{paymentChannelId,jdbcType=BIGINT},
@@ -72,7 +78,9 @@
 		#{payeeAccount,jdbcType=VARCHAR},
 		#{paymentAccout,jdbcType=VARCHAR},
 		#{interfaceType.value},
-		#{createDate,jdbcType=TIMESTAMP}
+		#{createDate,jdbcType=TIMESTAMP},
+		#{sender,jdbcType=VARCHAR},
+        #{receiver,jdbcType=VARCHAR}
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.siebre.payment.paymenttransaction.entity.PaymentTransaction" useGeneratedKeys="true" keyProperty="id">
@@ -117,6 +125,12 @@
 			<if test="createDate !=null">
 				create_date,
 			</if>
+			<if test="sender !=null">
+				sender,
+			</if>
+			<if test="receiver !=null">
+				receiver,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -157,6 +171,12 @@
 			</if>
 			<if test="createDate !=null">
 				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sender != null">
+				#{sender,jdbcType=VARCHAR},
+			</if>
+			<if test="receiver != null">
+				#{receiver,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -200,6 +220,12 @@
 			<if test="createDate !=null">
 				create_date = #{createDate,jdbcType=TIMESTAMP},
 			</if>
+			<if test="sender != null">
+				sender = #{sender,jdbcType=VARCHAR},
+			</if>
+			<if test="receiver != null">
+				receiver = #{receiver,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
@@ -218,7 +244,9 @@
 		payee_account = #{payeeAccount,jdbcType=VARCHAR},
 		payment_accout = #{paymentAccout,jdbcType=VARCHAR},
 		interface_type = #{interfaceType.value},
-		create_date = #{createDate,jdbcType=TIMESTAMP}
+		create_date = #{createDate,jdbcType=TIMESTAMP},
+		sender = #{sender,jdbcType=VARCHAR},
+        receiver = #{receiver,jdbcType=VARCHAR}
 		WHERE
 		id = #{id,jdbcType=BIGINT}
 	</update>
@@ -237,6 +265,8 @@
 		<result column="payment_accout" property="paymentAccout" jdbcType="VARCHAR" />
 		<result column="interface_type" property="interfaceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="sender" property="sender" jdbcType="VARCHAR"/>
+		<result column="receiver" property="receiver" jdbcType="VARCHAR"/>
 		<association property="paymentChannel" javaType="com.siebre.payment.paymentchannel.entity.PaymentChannel" notNullColumn="id" columnPrefix="paymentChannel_">
 			<result column="channel_name" property="channelName" jdbcType="VARCHAR" />
 			<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
@@ -307,6 +337,8 @@
 		pmt_payment_transaction.payment_accout payment_accout,
 		pmt_payment_transaction.interface_type interface_type,
 		pmt_payment_transaction.create_date create_date,
+		pmt_payment_transaction.sender sender,
+		pmt_payment_transaction.receiver receiver,
 		pmt_payment_order.id paymentOrder_id,
 		pmt_payment_order.order_number paymentOrder_order_number,
 		pmt_payment_order.total_insured_amount paymentOrder_total_insured_amount,
