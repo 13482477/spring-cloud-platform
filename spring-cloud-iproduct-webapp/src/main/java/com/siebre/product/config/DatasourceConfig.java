@@ -1,29 +1,16 @@
 package com.siebre.product.config;
 
 
-import java.util.Arrays;
-import java.util.Properties;
-
 import org.apache.tomcat.jdbc.pool.DataSource;
-import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.Resource;
-
-import com.beust.jcommander.internal.Lists;
-import com.siebre.basic.db.DynamicDataSource;
-import com.siebre.basic.query.PagePlugin;
 
 @Configuration
 public class DatasourceConfig {
 	
-	@Bean("master")
+	@Bean()
 	@Autowired
 	public DataSource master(Environment env) {
 		DataSource ds = new DataSource();

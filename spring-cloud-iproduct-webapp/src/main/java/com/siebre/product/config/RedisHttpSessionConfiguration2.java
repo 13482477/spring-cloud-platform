@@ -44,7 +44,6 @@ import org.springframework.util.StringUtils;
  * @author lizhiqiang
  * @see EnableRedisHttpSession
  */
-@Configuration
 @EnableScheduling
 public class RedisHttpSessionConfiguration2 extends SpringHttpSessionConfiguration implements ImportAware {
 
