@@ -153,7 +153,7 @@
 		left JOIN
 		pmt_payment_order on pmt_refund_application.order_number = pmt_payment_order.order_number
 		left JOIN
-		pmt_payment_channel on pmt_payment_order.channel_code = pmt_payment_channel.code
+		pmt_payment_channel on pmt_payment_order.channel_code = pmt_payment_channel.channel_code
 		left JOIN
 		pmt_payment_transaction on pmt_refund_application.refund_application_number = pmt_payment_transaction.internal_transaction_number
 		where 1=1

@@ -381,7 +381,7 @@ public class PaymentOrderService {
 
         //投保信息
         orderVo.setApplicationNumber("1494469393190");
-        orderVo.setPremium(order.getTotalPremium());
+        orderVo.setPremium(order.getAmount());
         orderVo.setApplicationCreateTime(dateStrCreate);
         orderVo.setApplicationPayStatus(order.getStatus().getDescription());
 
@@ -760,7 +760,7 @@ public class PaymentOrderService {
                 order.setOrderCreateDate(dateStr);
             }
             order.setOrderNumber(paymentOrder.getOrderNumber());
-            order.setOrderAmount(paymentOrder.getTotalPremium().toString());
+            order.setOrderAmount(paymentOrder.getAmount().toString());
             order.setPayState(paymentOrder.getStatus().getDescription());
             if (null != paymentOrder.getPaymentChannel()) {
                 order.setPayChannel(paymentOrder.getPaymentChannel().getChannelName());
