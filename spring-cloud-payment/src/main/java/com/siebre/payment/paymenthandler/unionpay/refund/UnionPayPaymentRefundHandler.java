@@ -86,6 +86,7 @@ public class UnionPayPaymentRefundHandler extends AbstractPaymentRefundComponent
         if ("00".equals(respCode)) {
             refundTransaction.setPaymentStatus(PaymentTransactionStatus.SUCCESS);//退款交易调用成功
             refundApplication.setStatus(RefundApplicationStatus.SUCCESS);
+            refundApplication.setResponse(RefundApplicationStatus.SUCCESS.getDescription());
             refundResponse.setRefundApplicationStatus(RefundApplicationStatus.SUBMITTED);
         } else if ("03".equals(respCode) ||
                 "04".equals(respCode) ||
@@ -93,10 +94,12 @@ public class UnionPayPaymentRefundHandler extends AbstractPaymentRefundComponent
             //TODO 未成功。后续需发起交易状态查询交易确定交易状态
             refundTransaction.setPaymentStatus(PaymentTransactionStatus.PROCESSING);
             refundApplication.setStatus(RefundApplicationStatus.PROCESSING);
+            refundApplication.setResponse(RefundApplicationStatus.PROCESSING.getDescription());
             refundResponse.setRefundApplicationStatus(RefundApplicationStatus.PROCESSING);
         } else {
             refundTransaction.setPaymentStatus(PaymentTransactionStatus.FAILED);
             refundApplication.setStatus(RefundApplicationStatus.FAILED);
+            refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
             refundResponse.setRefundApplicationStatus(RefundApplicationStatus.FAILED);
         }
 

@@ -98,16 +98,19 @@ public class AlipayFastpayRefundHandler extends AbstractPaymentRefundComponent {
             if (response.isSuccess()) {
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.SUCCESS);//退款交易调用成功
                 refundApplication.setStatus(RefundApplicationStatus.SUCCESS);
+                refundApplication.setResponse(RefundApplicationStatus.SUCCESS.getDescription());
                 logger.info("调用成功");
             } else {
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.FAILED);
                 refundApplication.setStatus(RefundApplicationStatus.FAILED);
+                refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
                 logger.info("调用失败");
             }
 
         } catch (AlipayApiException e) {
             refundTransaction.setPaymentStatus(PaymentTransactionStatus.FAILED);
             refundApplication.setStatus(RefundApplicationStatus.FAILED);
+            refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
             logger.error("支付宝退款接口调用异常", e);
         }
 

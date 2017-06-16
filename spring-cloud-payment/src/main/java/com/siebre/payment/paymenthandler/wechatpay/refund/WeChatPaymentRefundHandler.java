@@ -81,6 +81,7 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
                 refundTransaction.setExternalTransactionNumber(res.get("refund_id"));
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.SUCCESS);//退款交易调用成功
                 refundApplication.setStatus(RefundApplicationStatus.SUCCESS);
+                refundApplication.setResponse(RefundApplicationStatus.SUCCESS.getDescription());
 
                 refundResponse.setReturnMessage("申请成功");
                 refundResponse.setRefundApplicationStatus(RefundApplicationStatus.SUBMITTED);
@@ -88,6 +89,8 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
                 logger.error("申请失败，原因={}", res.get("err_code_des"));
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.FAILED);
                 refundApplication.setStatus(RefundApplicationStatus.FAILED);
+                refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
+
                 refundResponse.setReturnMessage("申请失败，原因:" + res.get("err_code_des"));
                 refundResponse.setRefundApplicationStatus(RefundApplicationStatus.FAILED);
             }
@@ -95,6 +98,8 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
             logger.error("申请失败，原因={}", res.get("return_msg"));
             refundTransaction.setPaymentStatus(PaymentTransactionStatus.FAILED);
             refundApplication.setStatus(RefundApplicationStatus.FAILED);
+            refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
+
             refundResponse.setReturnMessage("申请失败，原因:" + res.get("return_msg"));
             refundResponse.setRefundApplicationStatus(RefundApplicationStatus.FAILED);
         }

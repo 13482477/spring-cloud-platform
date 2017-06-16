@@ -20,6 +20,8 @@ public interface RefundApplicationMapper {
 
     RefundApplication selectByPrimaryKey(Long id);
 
+    RefundApplication selectByMessageId(String messageId);
+
     RefundApplication selectByBusinessNumber(@Param("orderNumber") String orderNumber, @Param("refundApplicationNumber") String refundApplicationNumber);
 
     List<RefundApplication> selectByPage(PageInfo pageinfo);

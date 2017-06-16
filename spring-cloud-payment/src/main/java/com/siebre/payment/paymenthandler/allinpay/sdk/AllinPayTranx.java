@@ -115,6 +115,7 @@ public class AllinPayTranx {
             if("0000".equals(aipgrsp.getINFO().getRET_CODE())){//退款交易调用成功
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.SUCCESS);
                 refundApplication.setStatus(RefundApplicationStatus.SUCCESS);
+                refundApplication.setResponse(RefundApplicationStatus.SUCCESS.getDescription());
                 refundResponse.setRefundApplicationStatus(RefundApplicationStatus.SUCCESS);
                 logger.info("refund success");
 
@@ -122,6 +123,7 @@ public class AllinPayTranx {
             else{
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.FAILED);
                 refundApplication.setStatus(RefundApplicationStatus.FAILED);
+                refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
                 refundResponse.setRefundApplicationStatus(RefundApplicationStatus.FAILED);
                 logger.info("refund fail, reason：" + aipgrsp.getINFO().getERR_MSG());
             }

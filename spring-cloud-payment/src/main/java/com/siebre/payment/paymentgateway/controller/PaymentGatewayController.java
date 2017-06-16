@@ -171,7 +171,7 @@ public class PaymentGatewayController {
 
         RefundApplication application = new RefundApplication();
         application.setStatus(RefundApplicationStatus.APPLICATION);
-        application.setRequest(refundRequest.getReason());
+        //application.setRequest(refundRequest.getReason());
         application.setOrderNumber(refundRequest.getOrderNumber());
         application.setRefundAmount(refundRequest.getRefundAmount());
         // 创建RefundApplication

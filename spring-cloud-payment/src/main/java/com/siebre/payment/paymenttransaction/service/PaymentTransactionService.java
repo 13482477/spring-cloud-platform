@@ -407,11 +407,13 @@ public class PaymentTransactionService {
             }
 
             //更新订单退款状态
-            if (paymentOrder.getRefundAmount().compareTo(paymentOrder.getTotalPremium()) == 0) {
+            if (paymentOrder.getRefundAmount().compareTo(paymentOrder.getAmount()) == 0) {
                 paymentOrder.setStatus(PaymentOrderPayStatus.FULL_REFUND);
             } else {
                 paymentOrder.setStatus(PaymentOrderPayStatus.PART_REFUND);
             }
+        }  else if (RefundApplicationStatus.FAILED.equals(refundApplication.getStatus())) {
+            paymentOrder.setStatus(PaymentOrderPayStatus.REFUNDERROR);
         }
 
         paymentOrderMapper.updateByPrimaryKey(paymentOrder);

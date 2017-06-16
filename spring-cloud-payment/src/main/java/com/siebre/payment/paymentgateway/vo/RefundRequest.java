@@ -14,8 +14,6 @@ public class RefundRequest implements Serializable{
 
     private BigDecimal refundAmount;
 
-    private String reason;
-
     //统一退款2.0版本
     private String messageId;
 
@@ -37,14 +35,6 @@ public class RefundRequest implements Serializable{
 
     public void setRefundAmount(BigDecimal refundAmount) {
         this.refundAmount = refundAmount;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
     }
 
     public String getMessageId() {

@@ -100,7 +100,7 @@ public class RefundApplicationService {
         BigDecimal totalAmount = order.getTotalPremium();
         BigDecimal refundedAmount = order.getRefundAmount() == null ? BigDecimal.ZERO : order.getRefundAmount();
 
-        if (refundedAmount.add(refundApplication.getRefundAmount()).compareTo(totalAmount) <= 0) {
+        if (refundedAmount.add(refundApplication.getRefundAmount()).compareTo(order.getAmount()) <= 0) {
             //查询数据库，该订单是否已存在对应的退款申请，如果已存在，使用已存在的退款申请
             RefundApplication refundApplication2 = refundApplicationMapper.selectByBusinessNumber(order.getOrderNumber(), null);
             if (refundApplication2 != null) {
@@ -123,6 +123,14 @@ public class RefundApplicationService {
             RefundResponse refundResponse = new RefundResponse();
             refundResponse.setReturnCode(RefundApplicationStatus.FAILED.getDescription());
             refundResponse.setReturnMessage("订单被锁定，不能退款");
+            return refundResponse;
+        }
+
+        RefundApplication isExist = refundApplicationMapper.selectByMessageId(refundRequest.getMessageId());
+        if (isExist != null) {
+            RefundResponse refundResponse = new RefundResponse();
+            refundResponse.setReturnCode(RefundApplicationStatus.FAILED.getDescription());
+            refundResponse.setReturnMessage("该退款申请已存在，不能再退款");
             return refundResponse;
         }
 

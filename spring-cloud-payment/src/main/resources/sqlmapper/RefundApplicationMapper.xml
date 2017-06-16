@@ -131,6 +131,13 @@
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
+	<select id="selectByMessageId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List"/>
+		from pmt_refund_application
+		where message_id = #{messageId,jdbcType=VARCHAR}
+	</select>
+
 	<select id="selectByPage" resultMap="BaseResultMap" >
 		select
 		<include refid="Base_Column_List"/>
