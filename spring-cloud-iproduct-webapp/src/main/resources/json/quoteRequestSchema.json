@@ -1,0 +1,258 @@
+{
+	"$schema":"http://json-schema.org/draft-04/schema",
+	"type": "object",
+	"properties": {
+		"step": {
+			"type": "string"
+		},
+	
+		"productCode": {
+			"type": "string"
+		},
+		
+		"planCode": {
+			"type": "string"
+		},
+		
+		"effectiveDate": {
+			"type": "string"
+		},
+		
+		"mult": {
+			"type": "string"
+		},
+		
+		"insured": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					
+					"idType": {
+						"type": "string"
+					},
+					
+					"idNo": {
+						"type": "string"
+					},
+					
+					"sex": {
+						"type": "string"
+					},
+					
+					"birthday": {
+						"type": "string"
+					},
+					
+					"nativePlace": {
+						"type": "string"
+					},
+					
+					"idValid": {
+						"type": "string"
+					},
+					
+					"relationToAppnt": {
+						"type": "string"
+					},
+					
+					"relationToMainInsured": {
+						"type": "string"
+					},
+					
+					"occupationCode": {
+						"type": "string"
+					},
+					
+					"major": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		
+		"plan": {
+			"type": "array",
+			"items": {
+				"type":"object",
+				"properties": {
+					"code": {
+						"type": "string"
+					},
+					
+					"mult": {
+						"type": "string"
+					}
+				}
+			}			
+		},
+		
+		"risks": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"riskCode": {
+						"type": "string"
+					},
+					
+					"amnt": {
+						"type": "string"
+					},
+					
+					"prem": {
+						"type": "string"
+					},
+					
+					"insuYear": {
+						"type": "string"
+					},
+					
+					"insuYearFlag": {
+						"type": "string"
+					},
+					
+					"insuranceType": {
+						"type": "string"
+					},
+					
+					"loanMonths": {
+						"type": "string"
+					},
+					
+					"loanMoney": {
+						"type": "string"
+					},
+					
+					"loanContNum": {
+						"type": "string"
+					},
+					
+					"borrowerLenderType": {
+						"type": "string"
+					},
+					
+					"loanType": {
+						"type": "string"
+					},
+					
+					"freeFlag": {
+						"type": "string"
+					},
+					
+					"loanYears": {
+						"type": "string"
+					},
+					
+					"floatRate": {
+						"type": "string"
+					},
+					
+					"loanDate": {
+						"type": "string"
+					},
+					
+					"rnewFlag": {
+						"type": "string"
+					},
+					
+					"payIntv": {
+						"type": "string"
+					},
+					
+					"payEndYear": {
+						"type": "string"
+					},
+					
+					"payEndYearFlag": {
+						"type": "string"
+					},
+					
+					"autoPayFlag": {
+						"type": "string"
+					},
+					
+					"bonusGetMode": {
+						"type": "string"
+					},
+					
+					"mult": {
+						"type": "string"
+					},
+					
+					"liveGetMode": {
+						"type": "string"
+					},
+					
+					"liveGetIntv": {
+						"type": "string"
+					},
+					
+					"liveGetYear": {
+						"type": "string"
+					},
+					
+					"liveGetYearFlag": {
+						"type": "string"
+					},
+					
+					"getEndPeriod": {
+						"type": "string"
+					},
+					
+					"getEndUnit": {
+						"type": "string"
+					},
+					
+					"duties": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"dutyCode": {
+									"type": "string"
+								},
+								
+								"Amnt": {
+									"type": "string"
+								},
+								
+								"Prem": {
+									"type": "string"
+								}
+							}
+						}
+					},
+					
+					"plan": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"planCode": {
+									"type": "string"
+								},
+								
+								"mult": {
+									"type": "string"
+								},
+								
+								"amnt": {
+									"type": "string"
+								},
+								
+								"prem": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+	}
+}

@@ -2,25 +2,26 @@ package com.siebre.payment.paymentorder.vo;
 
 import java.io.Serializable;
 
-/**  交易订单
+/**
+ * 交易订单
  * Created by AdamTang on 2017/3/21.
  * Project:siebre-cloud-platform
  * Version:1.0
  */
 
-public class TradeOrder implements Serializable{
+public class TradeOrder implements Serializable {
     /**
      * 订单号
      */
     private String orderNumber;
 
     /**
-     *订单状态
+     * 订单状态
      */
     private String orderState;
 
     /**
-     *订单状态
+     * 订单状态
      */
     private String payState;
 
@@ -30,46 +31,46 @@ public class TradeOrder implements Serializable{
     private String orderName;
 
     /**
-     *支付渠道
+     * 支付渠道
      */
     private String payChannel;
 
     /**
-     *支付方式
+     * 支付方式
      */
     private String payMethod;
 
     /**
-     *外部支付流水号
+     * 外部支付流水号
      */
     private String paySerialNumber;
-    
-    /**
-     *创建日期
-     */
-    private String  orderCreateDate;
 
     /**
-     *订单金额 单位元
+     * 创建日期
+     */
+    private String orderCreateDate;
+
+    /**
+     * 订单金额 单位元
      */
     private String orderAmount;
 
     /**
-     *支付金额 单位元
+     * 支付金额 单位元
      */
     private String payAmount;
 
     /**
-     * 退款状态
+     * 锁定状态
      */
-    private String refundStatus;
+    private String lockStatus;
 
-    public String getRefundStatus() {
-        return refundStatus;
+    public String getLockStatus() {
+        return lockStatus;
     }
 
-    public void setRefundStatus(String refundStatus) {
-        this.refundStatus = refundStatus;
+    public void setLockStatus(String lockStatus) {
+        this.lockStatus = lockStatus;
     }
 
     public String getOrderNumber() {

@@ -65,7 +65,7 @@
         <property name="name" value="jdbcPool"/>
     </bean>
 
-    <bean id="dataSource" class="com.siebre.product.basic.db.DynamicDataSource">
+    <bean id="dataSource" class="com.siebre.basic.db.DynamicDataSource">
         <property name="master" ref="master"/>
         <property name="slaves">
             <list>
@@ -87,7 +87,7 @@
 		 -->
 		<property name="plugins">
 			<array>
-				<bean class="com.siebre.product.basic.query.PagePlugin">
+				<bean class="com.siebre.basic.query.PagePlugin">
 					<property name="properties">
 						<props>
 							<prop key="dialect">mysql</prop>
@@ -98,7 +98,7 @@
 		</property>
 	</bean>
 
-	<bean id="transactionManager" class="com.siebre.product.basic.db.DynamicDataSourceTransactionManager">
+	<bean id="transactionManager" class="com.siebre.basic.db.DynamicDataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
         <property name="nestedTransactionAllowed" value="true"/>
         <qualifier value="db"/>

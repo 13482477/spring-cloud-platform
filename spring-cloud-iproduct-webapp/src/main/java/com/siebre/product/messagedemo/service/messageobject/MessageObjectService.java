@@ -11,7 +11,6 @@ import java.util.List;
 @Service
 public class MessageObjectService {
 
-	@Autowired
 	private MessageObjectMapper messageObjectMapper;
 
 	public void create(MessageObject messageObject) {

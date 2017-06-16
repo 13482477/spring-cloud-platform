@@ -1,0 +1,9 @@
+{
+	"$schema":"http://json-schema.org/draft-04/schema",
+	amnt: "string",
+	prem: "string",
+	effectiveDate: "string",
+	expirationDate: "string",
+	risks: "array",
+	plan: "array"
+}

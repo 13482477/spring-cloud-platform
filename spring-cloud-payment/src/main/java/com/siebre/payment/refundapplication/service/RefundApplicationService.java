@@ -2,13 +2,20 @@ package com.siebre.payment.refundapplication.service;
 
 import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.service.ServiceResult;
+import com.siebre.payment.entity.enums.PaymentOrderLockStatus;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.PaymentOrderRefundStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
+import com.siebre.payment.paymentgateway.vo.RefundRequest;
+import com.siebre.payment.paymentgateway.vo.RefundResponse;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
+import com.siebre.payment.paymentorder.service.PaymentOrderService;
 import com.siebre.payment.paymentorder.vo.OrderQueryParamsVo;
 import com.siebre.payment.paymentorder.vo.Refund;
+import com.siebre.payment.paymentroute.service.PaymentRefundRouteService;
+import com.siebre.payment.refundapplication.dto.PaymentRefundRequest;
+import com.siebre.payment.refundapplication.dto.PaymentRefundResponse;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
 import com.siebre.payment.refundapplication.mapper.RefundApplicationMapper;
 import com.siebre.payment.serialnumber.mapper.SerialNumberMapper;
@@ -37,12 +44,21 @@ public class RefundApplicationService {
     private PaymentOrderMapper paymentOrderMapper;
 
     @Autowired
+    private PaymentOrderService paymentOrderService;
+
+    @Autowired
+    private RefundApplicationService refundApplicationService;
+
+    @Autowired
+    private PaymentRefundRouteService paymentRefundRouteService;
+
+    @Autowired
     private SerialNumberMapper serialNumberMapper;
 
     public ServiceResult<List<RefundApplication>> selectRefundList(String orderNumber, String refundNumber,
-                                                                   List<String> channelCodeList, List<PaymentOrderRefundStatus> refundStatusList,
+                                                                   List<String> channelCodeList,
                                                                    Date startDate, Date endDate, PageInfo pageInfo) {
-        List<RefundApplication> list = refundApplicationMapper.selectRefundList(orderNumber, refundNumber, channelCodeList, refundStatusList, startDate, endDate, pageInfo);
+        List<RefundApplication> list = refundApplicationMapper.selectRefundList(orderNumber, refundNumber, channelCodeList, startDate, endDate, pageInfo);
         ServiceResult<List<RefundApplication>> result = new ServiceResult<>();
         result.setData(list);
         result.setPageInfo(pageInfo);
@@ -100,13 +116,43 @@ public class RefundApplicationService {
         return refundApplication;
     }
 
-    public List<Refund> qeuryRefundByPage(OrderQueryParamsVo paramsVo, PageInfo page) {
+    public RefundResponse doRefund(RefundRequest refundRequest) {
+        //判断订单是否锁定
+        PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrder(refundRequest.getOrderNumber());
+        if (PaymentOrderLockStatus.LOCK.equals(paymentOrder.getLockStatus())) {
+            RefundResponse refundResponse = new RefundResponse();
+            refundResponse.setReturnCode(RefundApplicationStatus.FAILED.getDescription());
+            refundResponse.setReturnMessage("订单被锁定，不能退款");
+            return refundResponse;
+        }
+
+        RefundApplication application = new RefundApplication();
+        application.setStatus(RefundApplicationStatus.APPLICATION);
+        application.setRequest(refundRequest.getReason());
+        application.setOrderNumber(refundRequest.getOrderNumber());
+        application.setRefundAmount(refundRequest.getRefundAmount());
+        // 创建RefundApplication
+        refundApplicationService.createRefundApplication(application);
+        if (RefundApplicationStatus.APPLICATION.equals(application.getStatus())) {
+            PaymentRefundRequest paymentRefundRequest = new PaymentRefundRequest();
+            paymentRefundRequest.setRefundApplication(application);
+            PaymentRefundResponse refundResponse = paymentRefundRouteService.route(paymentRefundRequest);
+            application = refundResponse.getRefundApplication();
+        }
+        RefundResponse refundResponse = new RefundResponse();
+        refundResponse.setRefundStatus(application.getStatus().toString());
+        refundResponse.setResponse(application.getResponse());
+        refundResponse.setApplicationNumber(application.getRefundApplicationNumber());
+        return refundResponse;
+    }
+
+    public List<Refund> queryRefundByPage(OrderQueryParamsVo paramsVo, PageInfo page) {
         String orderNumber = paramsVo.getOrderNumber();
         String refundNumber = paramsVo.getRefundNumber();
         Date startDate = paramsVo.getStartDate();
         Date endDate = paramsVo.getEndDate();
         ServiceResult<List<RefundApplication>> refundsListResult = this.selectRefundList(orderNumber, refundNumber, paramsVo.getChannelCodeList(),
-                paramsVo.getRefundStatusList(), startDate, endDate, page);
+               startDate, endDate, page);
         List<RefundApplication> refundsList = refundsListResult.getData();
         page.setTotalPage(refundsListResult.getPageInfo().getTotalPage());
         List<Refund> result = new ArrayList<>();
@@ -119,7 +165,7 @@ public class RefundApplicationService {
             refund.setRefundAmount(refundApp.getRefundAmount().toString());
             refund.setRefundStatus(refundApp.getStatus().getDescription());
             if(RefundApplicationStatus.SUCCESS.equals(refundApp.getStatus())){
-                refund.setOrderRefundStatus(refundApp.getPaymentOrder().getRefundStatus().getDescription());
+                refund.setOrderRefundStatus(refundApp.getPaymentOrder().getStatus().getDescription());
             }
             if(refundApp.getCreateDate() != null) {
                 String dateStr = DateFormatUtils.format(refundApp.getCreateDate(), "yyyy-MM-dd HH:mm:ss");

@@ -44,7 +44,6 @@
 			<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
 			<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
 			<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-			<result column="refund_status" property="refundStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
 			<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
 			<association property="paymentChannel" javaType="com.siebre.payment.paymentchannel.entity.PaymentChannel" columnPrefix="paymentChannel_">
@@ -104,7 +103,6 @@
 		pmt_payment_order.payment_terminal_type            paymentOrder_payment_terminal_type,
 		pmt_payment_order.payment_channel_id               paymentOrder_payment_channel_id,
 		pmt_payment_order.create_time                      paymentOrder_create_time,
-		pmt_payment_order.refund_status                    paymentOrder_refund_status,
 		pmt_payment_order.refund_amount                    paymentOrder_refund_amount,
 		pmt_payment_order.payment_way_code                 paymentOrder_payment_way_code,
 		pmt_payment_channel.channel_name                   paymentOrder_paymentChannel_channel_name,
@@ -162,12 +160,6 @@
 			and pmt_payment_channel.channel_code in
 			<foreach item="channelCode" index="index" collection="channelCodeList" open="(" separator="," close=")">
 				#{channelCode}
-			</foreach>
-		</if>
-		<if test="refundStatusList != null and refundStatusList.size() != 0">
-			and pmt_payment_order.refund_status in
-			<foreach item="refundStatus" index="index" collection="refundStatusList" open="(" separator="," close=")">
-				#{refundStatus.value}
 			</foreach>
 		</if>
 		<if test="startDate != null">
