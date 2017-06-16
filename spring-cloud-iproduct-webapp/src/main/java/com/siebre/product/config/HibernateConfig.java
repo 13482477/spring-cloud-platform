@@ -1,21 +1,28 @@
 package com.siebre.product.config;
 
+import com.siebre.bmf.repository.BmfDataTypeRepository;
+import com.siebre.bmf.repository.BmfEnumTypeLocalRepository;
+import com.siebre.bmf.repository.BmfEnumTypeRepository;
+import com.siebre.bmf.repository.DefaultBmfDataTypeRepository;
 import com.siebre.orm.hibernate.AuditInterceptor;
+
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.aspectj.AnnotationBeanConfigurerAspect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+
 import java.util.Properties;
 
 @Configuration
-@Import(DatasourceConfig.class)
+@EnableTransactionManagement
 public class HibernateConfig {
 	@Value("${hibernate.dialect}") String hibernateDialect;
 	
@@ -25,6 +32,26 @@ public class HibernateConfig {
 	
 	@Autowired
 	DataSource dataSource;
+	
+	@Bean
+	public BmfDataTypeRepository dataTypeRepository() {
+		return new DefaultBmfDataTypeRepository(BmfEnumTypeLocalRepository.getInstance());
+	}
+	
+	@Bean
+	public BmfEnumTypeRepository bmfEnumTypeRepository() {
+		return new BmfEnumTypeLocalRepository("com.siebre");
+	}
+	
+	@Bean
+	public DefaultBmfDataTypeRepository typeRepository() {
+		return new DefaultBmfDataTypeRepository(bmfEnumTypeRepository());
+	}
+	
+	@Bean
+	public AnnotationBeanConfigurerAspect annotationBeanConfigurerAspect() {
+		return new AnnotationBeanConfigurerAspect();
+	}
 	
     @Bean
     @Autowired
@@ -71,6 +98,7 @@ public class HibernateConfig {
         properties.put("hibernate.connection.url", "jdbc:mysql://192.168.18.158:3306/siebre-message-demo?characterEncoding=utf8");
         properties.put("hibernate.connection.username", "root");
         properties.put("hibernate.connection.password", "1qaz@WSX");
+        properties.put("hibernate.current_session_context_class", "thread");
 
         return properties;
     }

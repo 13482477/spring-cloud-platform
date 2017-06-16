@@ -9,7 +9,7 @@ import com.siebre.basic.db.DynamicDataSource;
 import com.siebre.basic.db.DynamicDataSourceTransactionManager;
 
 //@Configuration
-@EnableTransactionManagement
+//@EnableTransactionManagement
 public class TransactionConfig {
 
 //	@Bean

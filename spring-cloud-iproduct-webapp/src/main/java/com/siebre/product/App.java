@@ -34,10 +34,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableFeignClients
 @SpringBootApplication(exclude = {SessionAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class})
 //@ImportResource({"classpath:spring/applicationContext-*.xml"})
-public class Application {
+public class App {
 	
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(App.class, args);
 	}
 
 	@Autowired

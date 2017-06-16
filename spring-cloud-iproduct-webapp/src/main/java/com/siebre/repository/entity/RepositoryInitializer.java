@@ -7,6 +7,7 @@ import com.siebre.repository.Repository;
 import com.siebre.repository.rdb.hibernate.HibernateAware;
 import com.siebre.repository.rdb.hibernate.HibernateUtils;
 import com.siebre.repository.support.StaticGeneralRepository;
+
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 
 /**
  * Service used to initialize {@link Repository repositories} with EntityProviders.
@@ -307,7 +309,7 @@ public class RepositoryInitializer implements ApplicationContextAware, Initializ
             return;
 
         synchronized(this) {
-//            initialize();
+            initialize();
         }
     }
 

@@ -1,8 +1,6 @@
 package com.siebre.product.controller;
 
-import static com.siebre.agreement.builder.SmfSpecBuilders.calculation;
-import static com.siebre.agreement.builder.SmfSpecBuilders.propertySpec;
-import static com.siebre.agreement.builder.SmfSpecBuilders.requestSpec;
+import static com.siebre.agreement.builder.SmfSpecBuilders.*;
 import static com.siebre.product.builder.ProductBuilders.marketableProduct;
 
 import java.math.BigDecimal;
@@ -14,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.siebre.agreement.service.DefaultAgreementRequestExecutor;
@@ -55,7 +54,10 @@ public class QuoteController {
 	}
 	
 	@RequestMapping(path = "/api/v1/quote")
+	@ResponseStatus
 	public WebResult<QuoteResult> quote(HttpServletRequest request) {
+		//TODO transfer json object to application
+		
 		QuoteResult quoteResult = new QuoteResult();
 		
 		String productCode = ServletRequestUtils.getStringParameter(request, "productCode", "");
@@ -76,10 +78,10 @@ public class QuoteController {
 				.insuredAmount(BigDecimal.valueOf(insuredAmount))
 				.build());
 		
-		QuoteResult.builder().status(result.isSucceeded() ? "Success" : "Failure").messages(result.getMessages()).insuredAmount(BigDecimal.valueOf(insuredAmount)).premium(result.getPremium());
+		quoteResult = QuoteResult.builder().status(result.isSucceeded() ? "Success" : "Failure").messages(result.getMessages()).insuredAmount(BigDecimal.valueOf(insuredAmount)).premium(result.getPremium()).build();
 		
-		return WebResult.<QuoteResult>builder().returnCode("200").data(quoteResult).build();
-	}
+		return WebResult.<QuoteResult>builder().returnCode("200").returnMessage("The operation is done successfully.").data(quoteResult).build();
 	
+	}
 	
 }
