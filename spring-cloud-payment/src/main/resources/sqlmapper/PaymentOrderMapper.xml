@@ -854,13 +854,13 @@
 			</foreach>
 		</if>
 		<if test="checkStartDate != null">
-			and pmt_payment_order.create_time &gt; #{checkStartDate,jdbcType=VARCHAR}
+			and pmt_payment_order.check_time &gt; #{checkStartDate,jdbcType=VARCHAR}
 		</if>
 		<if test="checkEndDate != null">
-			and pmt_payment_order.create_time &lt; #{checkEndDate,jdbcType=VARCHAR}
+			and pmt_payment_order.check_time &lt; #{checkEndDate,jdbcType=VARCHAR}
 		</if>
 		order by
-		pmt_payment_order.create_time desc
+		pmt_payment_order.check_time desc
 	</select>
 
 </mapper>

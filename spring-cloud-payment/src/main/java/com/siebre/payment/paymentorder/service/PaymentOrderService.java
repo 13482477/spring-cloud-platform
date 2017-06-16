@@ -721,7 +721,7 @@ public class PaymentOrderService {
                     }
                 } else if (order.getCheckStatus().equals(PaymentOrderCheckStatus.FAIL)) {//对账失败
                     failCount = failCount + 1;
-                } else if (order.getCheckStatus().equals(PaymentOrderCheckStatus.FAIL)) {//对账异常
+                } else if (order.getCheckStatus().equals(PaymentOrderCheckStatus.UNUSUAL)) {//对账异常
                     unusualCount = unusualCount + 1;
                 }
             } else {//未对账
@@ -732,6 +732,7 @@ public class PaymentOrderService {
         checkOverviewResult.setCheckTotalCount(checkTotalCount);
         checkOverviewResult.setSuccessCount(successCount);
         checkOverviewResult.setFailCount(failCount);
+        checkOverviewResult.setUnusualCount(unusualCount);
         checkOverviewResult.setNotCheckTotalCount(notCheckTotalCount);
         checkOverviewResult.setPayOrderTotalAmount(payOrderTotalAmount);
         checkOverviewResult.setPayTotalAmount(payTotalAmount);
