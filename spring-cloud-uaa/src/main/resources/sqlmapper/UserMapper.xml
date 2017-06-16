@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.uaa.user.mapper.UserMapper">
+    <resultMap id="BaseUser" type="com.siebre.uaa.user.entity.User">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+        <result column="active" property="active" jdbcType="TINYINT"/>
+        <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <resultMap id="UserRoleAuthorityMap" type="com.siebre.uaa.user.entity.User" extends="BaseUser">
+    	<collection property="roles" ofType="com.siebre.uaa.role.entity.Role" columnPrefix="role_" notNullColumn="id">
+    		<id column="id" property="id" jdbcType="BIGINT"/>
+	        <result column="role_name" property="roleName" jdbcType="VARCHAR"/>
+	        <result column="role_code" property="roleCode" jdbcType="VARCHAR"/>
+	        <result column="description" property="description" jdbcType="VARCHAR"/>
+	        <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+	        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+	        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+	        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
+	        <collection property="authorities" ofType="com.siebre.uaa.authority.entity.Authority" columnPrefix="authority_" notNullColumn="id">
+	        	<id column="id" property="id" jdbcType="BIGINT"/>
+		        <result column="authority_name" property="authorityName" jdbcType="VARCHAR"/>
+		        <result column="authority_code" property="authorityCode" jdbcType="VARCHAR"/>
+		        <result column="description" property="description" jdbcType="VARCHAR"/>
+		        <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+		        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+		        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+		        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
+	        </collection>
+    	</collection>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, username, password, email, mobile, nickname, active, create_user, create_date,
+        update_user, update_date
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseUser" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectByUsername" resultMap="BaseUser" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        where username = #{username,jdbcType=VARCHAR}
+    </select>
+    <select id="selectCountByUsername" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT count(0)
+        FROM sys_user
+        WHERE username = #{username,jdbcType=VARCHAR}
+    </select>
+    <select id="selectByRoleID" resultMap="BaseUser" parameterType="java.lang.Long">
+        select
+            id, username, password, email, mobile, nickname, active
+        from sys_user LEFT JOIN sys_user_role ON sys_user.id = sys_user_role.user_id
+        where sys_user_role.role_id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="getAllUser" resultMap="BaseUser">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+    </select>
+
+    <select id="selectByPage" resultMap="BaseUser" parameterType="com.siebre.basic.query.PageInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        <where>
+            <if test="searchParameters.username !=null and searchParameters.username !=''">
+                username = #{searchParameters.username,jdbcType=VARCHAR}
+            </if>
+            <if test="searchParameters.nickname !=null and searchParameters.nickname !=''">
+                and nickname = #{searchParameters.nickname,jdbcType=VARCHAR}
+            </if>
+            <if test="searchParameters.startDate !=null and searchParameters.startDate !='' ">
+                and create_date &gt;= #{searchParameters.startDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="searchParameters.endDate !=null and searchParameters.endDate !='' ">
+                and create_date &lt; #{searchParameters.endDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="searchParameters.active !=null and searchParameters.active !='' ">
+                and active = #{searchParameters.active,jdbcType=TINYINT}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM sys_user
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.siebre.uaa.user.entity.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_user (id, username, password,
+                              email, mobile, nickname,
+                              active, create_user, create_date,
+                              update_user, update_date)
+        VALUES (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+                                        #{email,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR},
+                                        #{nickname,jdbcType=VARCHAR},
+                                        #{active,jdbcType=TINYINT}, #{createUser,jdbcType=VARCHAR},
+                                        #{createDate,jdbcType=TIMESTAMP},
+                                        #{updateUser,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="com.siebre.uaa.user.entity.User" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="nickname != null">
+                nickname,
+            </if>
+            <if test="active != null">
+                active,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="updateUser != null">
+                update_user,
+            </if>
+            <if test="updateDate != null">
+                update_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null">
+                #{active,jdbcType=TINYINT},
+            </if>
+            <if test="createUser != null">
+                #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null">
+                #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.siebre.uaa.user.entity.User">
+        update sys_user
+        <set>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                mobile = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                nickname = #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null">
+                active = #{active,jdbcType=TINYINT},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.siebre.uaa.user.entity.User">
+        UPDATE sys_user
+        SET username    = #{username,jdbcType=VARCHAR},
+            password    = #{password,jdbcType=VARCHAR},
+            email       = #{email,jdbcType=VARCHAR},
+            mobile      = #{mobile,jdbcType=VARCHAR},
+            nickname    = #{nickname,jdbcType=VARCHAR},
+            active      = #{active,jdbcType=TINYINT},
+            create_user = #{createUser,jdbcType=VARCHAR},
+            create_date = #{createDate,jdbcType=TIMESTAMP},
+            update_user = #{updateUser,jdbcType=VARCHAR},
+            update_date = #{updateDate,jdbcType=TIMESTAMP}
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+    <delete id="deleteUserRoles" parameterType="java.lang.Long">
+        DELETE FROM sys_user_role
+        WHERE user_id = #{id,jdbcType=TINYINT}
+    </delete>
+    <insert id="insertUserRoles">
+        INSERT INTO sys_user_role(user_id, role_id) VALUES
+        <foreach item="item" index="index" collection="role" separator=",">
+            (#{user,jdbcType=BIGINT},#{item,jdbcType=BIGINT})
+        </foreach>
+    </insert>
+    
+    <select id="loadUserByUsername" resultMap="UserRoleAuthorityMap">
+        select
+        	sys_user.id                             id,          
+        	sys_user.username                       username,    
+        	sys_user.password                       password,    
+        	sys_user.email                          email,       
+        	sys_user.mobile                         mobile,      
+        	sys_user.nickname                       nickname,    
+        	sys_user.active                         active,      
+        	sys_user.create_user                    create_user, 
+        	sys_user.create_date                    create_date, 
+        	sys_user.update_user                    update_user, 
+        	sys_user.update_date                    update_date,
+        	sys_role.id 			                role_id, 
+	        sys_role.role_name 		                role_role_name, 
+	        sys_role.role_code 		                role_role_code, 
+	        sys_role.description 	                role_description, 
+	        sys_role.create_user 	                role_create_user, 
+	        sys_role.create_date 	                role_create_date, 
+	        sys_role.update_user 	                role_update_user, 
+	        sys_role.update_date 	                role_update_date,
+	        sys_authority.id                        role_authority_id,                 
+	        sys_authority.authority_name            role_authority_authority_name,     
+	        sys_authority.authority_code            role_authority_authority_code,     
+	        sys_authority.description               role_authority_description,        
+	        sys_authority.create_user              	role_authority_create_user,        
+	        sys_authority.create_date               role_authority_create_date,        
+	        sys_authority.update_user               role_authority_update_user,        
+	        sys_authority.update_date               role_authority_update_date         
+        from sys_user 
+        	left join sys_user_role 
+        		on sys_user.id = sys_user_role.user_id
+        	left join sys_role
+        		on sys_user_role.role_id = sys_role.id
+        	left join sys_role_authority
+        		on sys_role.id = sys_role_authority.role_id
+        	left join sys_authority
+        		on sys_role_authority.authority_id = sys_authority.id
+        where
+        	username = #{username,jdbcType=VARCHAR}
+    </select>
+</mapper>
