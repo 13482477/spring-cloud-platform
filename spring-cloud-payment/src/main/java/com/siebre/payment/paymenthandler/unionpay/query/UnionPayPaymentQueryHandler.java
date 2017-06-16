@@ -72,15 +72,15 @@ public class UnionPayPaymentQueryHandler extends AbstractPaymentQueryComponent {
         String respCode = result.get("respCode");
         if ("00".equals(respCode)) {
             //交易成功，更新商户订单状态
-            return PaymentTransactionStatus.SUCCESS;
+            return PaymentTransactionStatus.PAY_SUCCESS;
         } else if ("03".equals(respCode) ||
                 "04".equals(respCode) ||
                 "05".equals(respCode)) {
             //需再次发起交易状态查询交易
-            return PaymentTransactionStatus.PROCESSING;
+            return PaymentTransactionStatus.PAY_PROCESSING;
         } else {
             //其他应答码为失败请排查原因
-            return PaymentTransactionStatus.FAILED;
+            return PaymentTransactionStatus.PAY_FAILED;
         }
     }
 }

@@ -83,13 +83,13 @@ public class AlipayPaymentQueryHandler extends AbstractPaymentQueryComponent {
                 String status = response.getTradeStatus();
                 //支付成功
                 if ("TRADE_SUCCESS".equals(status)) {
-                    queryResponse.setStatus(PaymentTransactionStatus.SUCCESS);
+                    queryResponse.setStatus(PaymentTransactionStatus.PAY_SUCCESS);
                 } else if ("WAIT_BUYER_PAY".equals(status)) {//等待支付
-                    queryResponse.setStatus(PaymentTransactionStatus.PROCESSING);
+                    queryResponse.setStatus(PaymentTransactionStatus.PAY_PROCESSING);
                 } else if ("TRADE_FINISHED".equals(status)) {//支付关闭
                     queryResponse.setStatus(PaymentTransactionStatus.CLOSED);
                 } else if ("TRADE_CLOSED".equals(status)) {//支付失败（未付款交易超时关闭，或支付完成后全额退款
-                    queryResponse.setStatus(PaymentTransactionStatus.FAILED);
+                    queryResponse.setStatus(PaymentTransactionStatus.PAY_FAILED);
                 }
 
                 logger.info("调用成功");

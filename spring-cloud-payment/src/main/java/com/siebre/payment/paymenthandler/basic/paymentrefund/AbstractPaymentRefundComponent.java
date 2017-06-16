@@ -49,7 +49,7 @@ public abstract class AbstractPaymentRefundComponent implements PaymentInterface
 
         PaymentTransaction refundPaymentTransaction = new PaymentTransaction();
         refundPaymentTransaction.setInterfaceType(PaymentInterfaceType.REFUND);
-        refundPaymentTransaction.setPaymentStatus(PaymentTransactionStatus.PROCESSING);
+        refundPaymentTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_PROCESSING);
         refundPaymentTransaction.setPaymentOrderId(paymentOrder.getId());
         refundPaymentTransaction.setPaymentWayId(paymentWay.getId());
         refundPaymentTransaction.setPaymentChannelId(paymentWay.getPaymentChannelId());

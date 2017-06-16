@@ -21,6 +21,7 @@
 		<result column="message_id" property="messageId" jdbcType="VARCHAR" />
 		<result column="amount" property="amount" jdbcType="DECIMAL" />
 		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
 		<result column="currency" property="currency" jdbcType="VARCHAR" />
 		<result column="payment_account_id" property="paymentAccountId" jdbcType="BIGINT" />
 		<result column="notification_url" property="notificationUrl" jdbcType="VARCHAR" />
@@ -52,6 +53,7 @@
 		<result column="message_id" property="messageId" jdbcType="VARCHAR" />
 		<result column="amount" property="amount" jdbcType="DECIMAL" />
 		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
 		<result column="currency" property="currency" jdbcType="VARCHAR" />
 		<result column="payment_account_id" property="paymentAccountId" jdbcType="BIGINT" />
 		<result column="notification_url" property="notificationUrl" jdbcType="VARCHAR" />
@@ -112,6 +114,7 @@
 		pmt_payment_order.message_id,
 		pmt_payment_order.amount,
 		pmt_payment_order.check_time,
+		pmt_payment_order.pay_time,
 		pmt_payment_order.currency,
 		pmt_payment_order.payment_account_id,
 		pmt_payment_order.notification_url,
@@ -165,6 +168,7 @@
 		message_id,
 		amount,
 		check_time,
+		pay_time,
 		currency,
 		payment_account_id,
 		notification_url,
@@ -192,6 +196,7 @@
 		pmt_payment_order.message_id,
 		pmt_payment_order.amount,
 		pmt_payment_order.check_time,
+		pmt_payment_order.pay_time,
 		pmt_payment_order.currency,
 		pmt_payment_order.payment_account_id,
 		pmt_payment_order.notification_url,
@@ -233,6 +238,7 @@
 		message_id,
 		amount,
 		check_time,
+		pay_time,
 		currency,
 		payment_account_id,
 		notification_url,
@@ -324,6 +330,9 @@
 			</if>
 			<if test="checkTime!=null">
 				check_time,
+			</if>
+			<if test="payTime!=null">
+				pay_time,
 			</if>
 			<if test="currency!=null">
 				currency,
@@ -453,7 +462,7 @@
 				channel_code = #{channelCode,jdbcType=VARCHAR},
 			</if>
 			<if test="createTime != null">
-				create_time = #{createTime,jdbcType=VARCHAR},
+				create_time = #{createTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="refundAmount!=null">
 				refund_amount = #{refundAmount,jdbcType=DECIMAL},
@@ -471,7 +480,10 @@
 				amount = #{amount,jdbcType=DECIMAL},
 			</if>
 			<if test="checkTime != null">
-				check_time = #{checkTime,jdbcType=VARCHAR},
+				check_time = #{checkTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="payTime != null">
+				pay_time = #{payTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="currency!=null">
 				currency = #{currency,jdbcType=VARCHAR},
@@ -504,13 +516,14 @@
 		check_status = #{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		payment_terminal_type = #{paymentTerminalType,jdbcType=INTEGER},
 		channel_code = #{channelCode,jdbcType=VARCHAR},
-		create_time = #{createTime,jdbcType=VARCHAR},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
 		refund_amount = #{refundAmount,jdbcType=INTEGER},
 		payment_way_code = #{paymentWayCode,jdbcType=VARCHAR},
 		selling_channel = #{sellingChannel,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		message_id = #{messageId,jdbcType=VARCHAR},
 		amount = #{amount,jdbcType=DECIMAL},
-		check_time = #{checkTime,jdbcType=VARCHAR},
+		check_time = #{checkTime,jdbcType=TIMESTAMP},
+		pay_time = #{payTime,jdbcType=TIMESTAMP},
 		currency = #{currency,jdbcType=VARCHAR},
 		payment_account_id = #{paymentAccountId,jdbcType=BIGINT},
 		notification_url = #{notificationUrl,jdbcType=VARCHAR},

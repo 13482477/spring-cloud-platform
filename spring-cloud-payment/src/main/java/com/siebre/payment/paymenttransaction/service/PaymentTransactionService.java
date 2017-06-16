@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.List;
 
@@ -66,8 +68,8 @@ public class PaymentTransactionService {
         PaymentTransaction transaction = paymentTransactionMapper.selectByPrimaryKey(transactionId);
         PaymentOrder paymentOrder = paymentOrderMapper.selectByPrimaryKey(orderId);
 
-        if (PaymentTransactionStatus.SUCCESS.equals(transactionStatus)) {
-            if (!PaymentTransactionStatus.SUCCESS.equals(transaction.getPaymentStatus())) {
+        if (PaymentTransactionStatus.PAY_SUCCESS.equals(transactionStatus)) {
+            if (!PaymentTransactionStatus.PAY_SUCCESS.equals(transaction.getPaymentStatus())) {
                 PaymentTransaction transaction1 = new PaymentTransaction();
                 transaction1.setId(transactionId);
                 transaction1.setPaymentStatus(transactionStatus);
@@ -80,9 +82,9 @@ public class PaymentTransactionService {
                 paymentOrder1.setStatus(PaymentOrderPayStatus.PAID);
                 paymentOrderMapper.updateByPrimaryKeySelective(paymentOrder1);
             }
-        } else if (PaymentTransactionStatus.FAILED.equals(transactionStatus)) {
+        } else if (PaymentTransactionStatus.PAY_FAILED.equals(transactionStatus)) {
             //如果查询结果返回失败，并且订单状态为支付中，更新订单状态为支付失败
-            if (PaymentTransactionStatus.PROCESSING.equals(transaction.getPaymentStatus())) {
+            if (PaymentTransactionStatus.PAY_PROCESSING.equals(transaction.getPaymentStatus())) {
                 PaymentTransaction transaction1 = new PaymentTransaction();
                 transaction1.setId(transactionId);
                 transaction1.setPaymentStatus(PaymentTransactionStatus.CLOSED);
@@ -110,7 +112,7 @@ public class PaymentTransactionService {
      */
     public static PaymentOrderPayStatus getOrderStatusByTransactionStatus(PaymentTransactionStatus transactionStatus) {
         PaymentOrderPayStatus status = null;
-        if (PaymentTransactionStatus.SUCCESS.equals(transactionStatus)) {
+        if (PaymentTransactionStatus.PAY_SUCCESS.equals(transactionStatus)) {
             //交易支付成功状态对应订单支付成功
             status = PaymentOrderPayStatus.PAID;
         }
@@ -135,7 +137,7 @@ public class PaymentTransactionService {
      * @return
      */
     public PaymentTransaction getSuccessPaidPaymentTransaction(String orderNumber) {
-        List<PaymentTransaction> paymentTransactions = paymentTransactionMapper.queryPaymentTransaction(orderNumber, null, PaymentTransactionStatus.SUCCESS, PaymentInterfaceType.PAY, null, null, null, null);
+        List<PaymentTransaction> paymentTransactions = paymentTransactionMapper.queryPaymentTransaction(orderNumber, null, PaymentTransactionStatus.PAY_SUCCESS, PaymentInterfaceType.PAY, null, null, null, null);
         if (paymentTransactions != null && !paymentTransactions.isEmpty()) {
             return paymentTransactions.get(0);
         }
@@ -149,7 +151,7 @@ public class PaymentTransactionService {
      * @return
      */
     public PaymentTransaction getPayingTransaction(String orderNumber) {
-        List<PaymentTransaction> paymentTransactions = paymentTransactionMapper.queryPaymentTransaction(orderNumber, null, PaymentTransactionStatus.PROCESSING, PaymentInterfaceType.PAY, null, null, null, null);
+        List<PaymentTransaction> paymentTransactions = paymentTransactionMapper.queryPaymentTransaction(orderNumber, null, PaymentTransactionStatus.PAY_PROCESSING, PaymentInterfaceType.PAY, null, null, null, null);
         if (paymentTransactions != null && !paymentTransactions.isEmpty()) {
             return paymentTransactions.get(0);
         }
@@ -179,27 +181,41 @@ public class PaymentTransactionService {
     }
 
     /**
-     * 根据已有的paymentOrder创建paymentTransaction
-     *
-     * @param paymentOrder
+     *  记录与第三方支付系统发生的支付交易记录
      */
     @Transactional("db")
-    public PaymentTransaction createTransaction(PaymentOrder paymentOrder, PaymentWay paymentWay) {
+    public PaymentTransaction recordPay2ThirdPartyTransaction(PaymentOrder paymentOrder, PaymentWay paymentWay) {
         PaymentTransaction paymentTransaction = new PaymentTransaction();
-        paymentTransaction.setPaymentStatus(PaymentTransactionStatus.PROCESSING);
-        paymentTransaction.setInternalTransactionNumber(serialNumberService.nextValue("payment"));
+        paymentTransaction.setPaymentStatus(PaymentTransactionStatus.PAY_PROCESSING);
+        //内部交易流水号使用order上的orderNumber
+        paymentTransaction.setInternalTransactionNumber(paymentOrder.getOrderNumber());
         paymentTransaction.setPaymentWayId(paymentWay.getId());
         paymentTransaction.setPaymentChannelId(paymentWay.getPaymentChannel().getId());
         paymentTransaction.setCreateUser("lizhiqiang");
         paymentTransaction.setCreateDate(new Date());
         paymentTransaction.setPaymentOrderId(paymentOrder.getId());
-        paymentTransaction.setPaymentAmount(paymentOrder.getTotalPremium());
+        paymentTransaction.setPaymentAmount(paymentOrder.getAmount());
         //创建的是支付的交易
         paymentTransaction.setInterfaceType(PaymentInterfaceType.PAY);
+        paymentTransaction.setSender("iPay(" + getLocalHostInfo() + ")");
+        paymentTransaction.setReceiver(paymentOrder.getChannelCode());
         paymentTransaction.setCreateDate(new Date());
 
         this.paymentTransactionMapper.insert(paymentTransaction);
         return paymentTransaction;
+    }
+
+    private String getLocalHostInfo(){
+        String ip = "";
+        String hostName = "";
+        try {
+            InetAddress netAddress = InetAddress.getLocalHost();
+            ip = netAddress.getHostAddress();
+            hostName = netAddress.getHostName();
+        } catch (UnknownHostException e) {
+            logger.error("获取InetAddress失败，原因：{}", e);
+        }
+        return ip + ":" + hostName;
     }
 
     @Transactional("db")
@@ -264,26 +280,21 @@ public class PaymentTransactionService {
         return paymentOrder;
     }
 
-
-    public ServiceResult<PaymentTransaction> getPaymentTransactionByInternalTransactionNumber(String internalTransactionNumber) {
-        PaymentTransaction data = this.paymentTransactionMapper.selectByInterTradeNo(internalTransactionNumber);
-        return ServiceResult.<PaymentTransaction>builder().success(true).data(data).build();
-    }
-
     /**
      * 支付成功，订单业务回调处理程序
      * 1.判断该笔订单是否已经做过处理
      * 如果没有做过处理，根据订单号internalTransactionNumber在订单系统中查到该笔订单的详细，并执行业务程序
      * 判断请求时的total_fee、seller_id与通知时获取的total_fee、seller_id为一致的
      * 如果有做过处理，不执行业务程序
-     * @param internalTransactionNumber 内部交易号
+     * @param internalTransactionNumber 内部交易号(订单号)
      * @param externalTransactionNumber 外部交易流水号
      * @return
      */
     @Transactional("db")
     public ServiceResult<PaymentTransaction> paymentConfirm(String internalTransactionNumber, String externalTransactionNumber, String seller_id, BigDecimal total_fee) {
 
-        PaymentTransaction paymentTransaction = this.paymentTransactionMapper.selectByInterTradeNo(internalTransactionNumber);
+        //根据内部交易流水号  交易状态为支付中   接口类型为支付接口  查找唯一的transaction
+        PaymentTransaction paymentTransaction = this.paymentTransactionMapper.selectByInterTradeNo(internalTransactionNumber, PaymentTransactionStatus.PAY_PROCESSING, PaymentInterfaceType.PAY);
 
         PaymentOrder paymentOrder = this.paymentOrderMapper.selectByPrimaryKey(paymentTransaction.getPaymentOrderId());
 
@@ -309,7 +320,7 @@ public class PaymentTransactionService {
         }
         //更新transaction状态
         paymentTransaction.setExternalTransactionNumber(externalTransactionNumber);
-        paymentTransaction.setPaymentStatus(PaymentTransactionStatus.SUCCESS);
+        paymentTransaction.setPaymentStatus(PaymentTransactionStatus.PAY_SUCCESS);
         this.paymentTransactionMapper.updateByPrimaryKeySelective(paymentTransaction);
 
         //更新order状态
@@ -326,7 +337,7 @@ public class PaymentTransactionService {
      * @return
      */
     public ServiceResult<PaymentTransaction> setFailStatus(String internalTransactionNumber, String externalTransactionNumber) {
-        PaymentTransaction paymentTransaction = this.paymentTransactionMapper.selectByInterTradeNo(internalTransactionNumber);
+        PaymentTransaction paymentTransaction = this.paymentTransactionMapper.selectByInterTradeNo(internalTransactionNumber, PaymentTransactionStatus.PAY_PROCESSING, PaymentInterfaceType.PAY);
 
         if (paymentTransaction == null) {
             logger.error("没有找到该条交易记录internalTransactionNumber={}", internalTransactionNumber);
@@ -338,25 +349,23 @@ public class PaymentTransactionService {
         }
         //更新transaction状态
         paymentTransaction.setExternalTransactionNumber(externalTransactionNumber);
-        paymentTransaction.setPaymentStatus(PaymentTransactionStatus.FAILED);
+        paymentTransaction.setPaymentStatus(PaymentTransactionStatus.PAY_FAILED);
         this.paymentTransactionMapper.updateByPrimaryKeySelective(paymentTransaction);
 
         //更新order状态
         PaymentOrder paymentOrder = this.paymentOrderMapper.selectByPrimaryKey(paymentTransaction.getPaymentOrderId());
         paymentOrder.setStatus(PaymentOrderPayStatus.PAYERROR);
-        //设置为未对账
-        paymentOrder.setCheckStatus(PaymentOrderCheckStatus.NOT_CONFIRM);
         paymentOrderMapper.updateByPrimaryKeySelective(paymentOrder);
 
-        return ServiceResult.<PaymentTransaction>builder().success(false).data(paymentTransaction).build();
+        return ServiceResult.<PaymentTransaction>builder().success(true).data(paymentTransaction).build();
     }
 
     @Transactional("db")
     public ServiceResult<PaymentTransaction> refundConfirm(String internalTransactionNumber, String externalTransactionNumber) {
         //TODO 完成退款的回调处理同步更新订单，交易，退款申请
-        PaymentTransaction paymentTransaction = paymentTransactionMapper.selectByInterTradeNo(internalTransactionNumber);
+        PaymentTransaction paymentTransaction = paymentTransactionMapper.selectByInterTradeNo(internalTransactionNumber, PaymentTransactionStatus.REFUND_PROCESSING, PaymentInterfaceType.REFUND);
         paymentTransaction.setExternalTransactionNumber(externalTransactionNumber);
-        paymentTransaction.setPaymentStatus(PaymentTransactionStatus.SUCCESS);
+        paymentTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_SUCCESS);
 
         PaymentOrder paymentOrder = this.paymentOrderMapper.selectByPrimaryKey(paymentTransaction.getPaymentOrderId());
         RefundApplication refundApplication = refundApplicationMapper.selectByBusinessNumber(paymentOrder.getOrderNumber(), paymentTransaction.getInternalTransactionNumber());

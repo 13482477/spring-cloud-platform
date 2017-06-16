@@ -113,7 +113,7 @@ public class AllinPayTranx {
         //交易退款返回处理逻辑
         if("REFUND".equals(trxcode)){
             if("0000".equals(aipgrsp.getINFO().getRET_CODE())){//退款交易调用成功
-                refundTransaction.setPaymentStatus(PaymentTransactionStatus.SUCCESS);
+                refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_SUCCESS);
                 refundApplication.setStatus(RefundApplicationStatus.SUCCESS);
                 refundApplication.setResponse(RefundApplicationStatus.SUCCESS.getDescription());
                 refundResponse.setRefundApplicationStatus(RefundApplicationStatus.SUCCESS);
@@ -121,7 +121,7 @@ public class AllinPayTranx {
 
             }
             else{
-                refundTransaction.setPaymentStatus(PaymentTransactionStatus.FAILED);
+                refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_FAILED);
                 refundApplication.setStatus(RefundApplicationStatus.FAILED);
                 refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
                 refundResponse.setRefundApplicationStatus(RefundApplicationStatus.FAILED);
@@ -164,7 +164,7 @@ public class AllinPayTranx {
                     }
                 }
 
-                response.setStatus(PaymentTransactionStatus.SUCCESS);//设置状态--交易成功
+                response.setStatus(PaymentTransactionStatus.REFUND_SUCCESS);//设置状态--交易成功
 
             }else if("2000".equals(aipgrsp.getINFO().getRET_CODE())
                     ||"2001".equals(aipgrsp.getINFO().getRET_CODE())
@@ -183,7 +183,7 @@ public class AllinPayTranx {
                 logger.info("查询请求失败，请重新发起查询");
             }
 
-            response.setStatus(PaymentTransactionStatus.FAILED);//设置状态--交易失败
+            response.setStatus(PaymentTransactionStatus.REFUND_FAILED);//设置状态--交易失败
 
         }
     }

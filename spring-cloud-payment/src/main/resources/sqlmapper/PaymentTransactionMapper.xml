@@ -418,7 +418,16 @@
 		from
 		pmt_payment_transaction
 		where
-		internal_transaction_number = #{internalTn,jdbcType=VARCHAR}
+		1 = 1
+		<if test="internalTn != null">
+			and internal_transaction_number = #{internalTn,jdbcType=VARCHAR}
+		</if>
+		<if test="transactionStatus != null">
+			and pmt_payment_transaction.payment_status = #{transactionStatus.value}
+		</if>
+		<if test="interfaceType != null">
+			and pmt_payment_transaction.interface_type = #{interfaceType.value}
+		</if>
 	</select>
 
 	<select id="selectByPaymentOrderId" resultMap="BaseResultMap" parameterType="java.lang.String">

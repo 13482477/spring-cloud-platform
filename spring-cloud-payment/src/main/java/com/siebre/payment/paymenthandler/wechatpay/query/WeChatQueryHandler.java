@@ -51,7 +51,7 @@ public class WeChatQueryHandler extends AbstractPaymentQueryComponent {
         if("SUCCESS".equals(resultMap.get("return_code"))){
             switch (resultMap.get("trade_state")){
                 case "SUCCESS":
-                    status = PaymentTransactionStatus.SUCCESS;
+                    status = PaymentTransactionStatus.PAY_SUCCESS;
                     break;
                 case "REFUND"://转入退款，在我们系统中说明交易已关闭
                 case "CLOSED":
@@ -59,10 +59,10 @@ public class WeChatQueryHandler extends AbstractPaymentQueryComponent {
                     break;
                 case "NOTPAY"://未支付对应我们的支付中
                 case "USERPAYING":
-                    status = PaymentTransactionStatus.PROCESSING;
+                    status = PaymentTransactionStatus.PAY_PROCESSING;
                     break;
                 case "PAYERROR":
-                    status = PaymentTransactionStatus.FAILED;
+                    status = PaymentTransactionStatus.PAY_FAILED;
                     break;
             }
         }else{

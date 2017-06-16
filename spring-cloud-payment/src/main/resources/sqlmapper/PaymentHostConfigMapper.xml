@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.hostconfig.mapper.PaymentHostConfigMapper" >
+  <resultMap id="BaseResultMap" type="com.siebre.payment.hostconfig.entity.PaymentHostConfig" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="payment_host" property="paymentHost" jdbcType="VARCHAR" />
+    <result column="front_host" property="frontHost" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, payment_host, front_host
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from pmt_host_config
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from pmt_host_config
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.siebre.payment.hostconfig.entity.PaymentHostConfig" useGeneratedKeys="true" keyProperty="id">
+    insert into pmt_host_config (id, payment_host, front_host
+      )
+    values (#{id,jdbcType=BIGINT}, #{paymentHost,jdbcType=VARCHAR}, #{frontHost,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.siebre.payment.hostconfig.entity.PaymentHostConfig" useGeneratedKeys="true" keyProperty="id">
+    insert into pmt_host_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="paymentHost != null" >
+        payment_host,
+      </if>
+      <if test="frontHost != null" >
+        front_host,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="paymentHost != null" >
+        #{paymentHost,jdbcType=VARCHAR},
+      </if>
+      <if test="frontHost != null" >
+        #{frontHost,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.hostconfig.entity.PaymentHostConfig" >
+    update pmt_host_config
+    <set >
+      <if test="paymentHost != null" >
+        payment_host = #{paymentHost,jdbcType=VARCHAR},
+      </if>
+      <if test="frontHost != null" >
+        front_host = #{frontHost,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.hostconfig.entity.PaymentHostConfig" >
+    update pmt_host_config
+    set payment_host = #{paymentHost,jdbcType=VARCHAR},
+      front_host = #{frontHost,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

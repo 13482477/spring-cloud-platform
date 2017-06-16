@@ -46,11 +46,11 @@ public abstract class AbstractPaymentQueryComponent implements PaymentInterfaceC
     }
 
     private PaymentOrderPayStatus bindingPayStatus(PaymentTransactionStatus paymentTransactionStatus){
-        if(PaymentTransactionStatus.SUCCESS.equals(paymentTransactionStatus)){
+        if(PaymentTransactionStatus.PAY_SUCCESS.equals(paymentTransactionStatus)){
             return PaymentOrderPayStatus.PAID;
-        }else if(PaymentTransactionStatus.FAILED.equals(paymentTransactionStatus)){
+        }else if(PaymentTransactionStatus.PAY_FAILED.equals(paymentTransactionStatus)){
             return PaymentOrderPayStatus.PAYERROR;
-        }else if(PaymentTransactionStatus.PROCESSING.equals(paymentTransactionStatus)){
+        }else if(PaymentTransactionStatus.PAY_PROCESSING.equals(paymentTransactionStatus)){
             return PaymentOrderPayStatus.PAYING;
         }else if(PaymentTransactionStatus.CLOSED.equals(paymentTransactionStatus)){
             return PaymentOrderPayStatus.INVALID;

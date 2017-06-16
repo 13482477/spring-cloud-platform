@@ -82,6 +82,8 @@ public class PaymentOrder extends BaseObject {
 
     private Date checkTime;//对账时间
 
+    private Date payTime;
+
     private List<PaymentOrderItem> items = new ArrayList<PaymentOrderItem>();
 
     private List<PaymentTransaction> paymentTransactions = new ArrayList<PaymentTransaction>();
@@ -300,5 +302,13 @@ public class PaymentOrder extends BaseObject {
 
     public void setChannelCode(String channelCode) {
         this.channelCode = channelCode;
+    }
+
+    public Date getPayTime() {
+        return payTime;
+    }
+
+    public void setPayTime(Date payTime) {
+        this.payTime = payTime;
     }
 }

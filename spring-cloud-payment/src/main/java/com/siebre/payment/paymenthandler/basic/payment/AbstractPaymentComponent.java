@@ -84,7 +84,9 @@ public abstract class AbstractPaymentComponent implements PaymentInterfaceCompon
             return;
         }
 
-        PaymentTransaction paymentTransaction = this.paymentTransactionService.createTransaction(paymentOrder, paymentWay);
+        //支付交易记录
+        PaymentTransaction paymentTransaction = this.paymentTransactionService.recordPay2ThirdPartyTransaction(paymentOrder, paymentWay);
+
         //订单状态改为支付中，并且更新订单渠道
         this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PAYING);
 

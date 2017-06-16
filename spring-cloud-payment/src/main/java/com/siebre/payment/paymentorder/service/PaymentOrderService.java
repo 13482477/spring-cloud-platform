@@ -99,6 +99,11 @@ public class PaymentOrderService {
         PaymentOrder orderForUpdate = new PaymentOrder();
         orderForUpdate.setId(order.getId());
         orderForUpdate.setStatus(status);
+        if(PaymentOrderPayStatus.PAID.equals(status)) {
+            Date current = new Date();
+            orderForUpdate.setPayTime(current);
+            order.setPayTime(current);
+        }
         this.paymentOrderMapper.updateByPrimaryKeySelective(orderForUpdate);
         order.setStatus(status);
     }
@@ -793,7 +798,7 @@ public class PaymentOrderService {
         List<PaymentTransaction> transactions = paymentOrder.getPaymentTransactions();
         for (PaymentTransaction transaction : transactions) {
             if (PaymentInterfaceType.PAY.equals(transaction.getInterfaceType())) {//过滤只有类型为PAY的交易
-                if (transaction.getPaymentStatus().equals(PaymentTransactionStatus.SUCCESS)) {
+                if (transaction.getPaymentStatus().equals(PaymentTransactionStatus.PAY_SUCCESS)) {
                     detail.setTransactionStatus(transaction.getPaymentStatus().getDescription());
                     detail.setPayAmount(paymentOrder.getTotalPremium().toString());
                     detail.setPayChannel(transaction.getPaymentChannel().getChannelName());
@@ -818,7 +823,7 @@ public class PaymentOrderService {
 
         for (PaymentTransaction transaction : transactions) {
             if (PaymentInterfaceType.REFUND.equals(transaction.getInterfaceType())) {
-                if (transaction.getPaymentStatus().equals(PaymentTransactionStatus.SUCCESS) || transaction.getPaymentStatus().equals(PaymentTransactionStatus.FAILED)) {
+                if (transaction.getPaymentStatus().equals(PaymentTransactionStatus.PAY_SUCCESS) || transaction.getPaymentStatus().equals(PaymentTransactionStatus.PAY_FAILED)) {
                     detail.setRefundAmount(paymentOrder.getRefundAmount().toString());
                     detail.setRefundNumber(transaction.getInternalTransactionNumber());
                     if (transaction.getCreateDate() != null) {
