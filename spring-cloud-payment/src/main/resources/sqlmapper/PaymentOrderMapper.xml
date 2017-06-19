@@ -218,8 +218,7 @@
 	</delete>
 
 	<insert id="insert" parameterType="com.siebre.payment.paymentorder.entity.PaymentOrder" useGeneratedKeys="true" keyProperty="id">
-		insert into
-		pmt_payment_order (
+		insert into pmt_payment_order (
 		order_number,
 		total_insured_amount,
 		total_premium,
@@ -264,6 +263,7 @@
 		#{messageId,jdbcType=VARCHAR},
 		#{amount,jdbcType=DECIMAL},
 		#{checkTime,jdbcType=TIMESTAMP},
+		#{payTime,jdbcType=TIMESTAMP},
 		#{currency,jdbcType=VARCHAR},
 		#{paymentAccountId,jdbcType=BIGINT},
 		#{notificationUrl,jdbcType=VARCHAR},
@@ -407,6 +407,9 @@
 			</if>
 			<if test="checkTime!=null">
 				#{checkTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="payTime!=null">
+				#{payTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="currency!=null">
 				#{currency,jdbcType=VARCHAR},

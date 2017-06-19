@@ -16,7 +16,6 @@ import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
 import com.siebre.payment.paymentorder.vo.OrderQueryParamsVo;
 import com.siebre.payment.paymentorder.vo.TradeOrder;
-import com.siebre.payment.paymentorder.vo.TradeOrderDetail;
 import com.siebre.payment.paymentorder.vo.TradeOrderItem;
 import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 import com.siebre.payment.paymentorderitem.mapper.PaymentOrderItemMapper;
@@ -99,7 +98,7 @@ public class PaymentOrderService {
         PaymentOrder orderForUpdate = new PaymentOrder();
         orderForUpdate.setId(order.getId());
         orderForUpdate.setStatus(status);
-        if(PaymentOrderPayStatus.PAID.equals(status)) {
+        if (PaymentOrderPayStatus.PAID.equals(status)) {
             Date current = new Date();
             orderForUpdate.setPayTime(current);
             order.setPayTime(current);
@@ -755,95 +754,74 @@ public class PaymentOrderService {
         }
         for (PaymentOrder paymentOrder : rpcResult.getData()) {
             TradeOrder order = new TradeOrder();
-            if (paymentOrder.getCreateTime() != null) {
-                String dateStr = DateFormatUtils.format(paymentOrder.getCreateTime(), "yyyy-MM-dd HH:mm:ss");
-                order.setOrderCreateDate(dateStr);
-            }
+            order.setOrderId(paymentOrder.getId());
             order.setOrderNumber(paymentOrder.getOrderNumber());
-            order.setOrderAmount(paymentOrder.getAmount().toString());
-            order.setPayState(paymentOrder.getStatus().getDescription());
+            order.setOrderCreateDate(DateFormatUtils.format(paymentOrder.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+            order.setOrderState(paymentOrder.getStatus().getDescription());
+            order.setOrderAmount(paymentOrder.getAmount());
             if (null != paymentOrder.getPaymentChannel()) {
                 order.setPayChannel(paymentOrder.getPaymentChannel().getChannelName());
-            }
-            if (paymentOrder.getLockStatus() != null) {
-                order.setLockStatus(paymentOrder.getLockStatus().getDescription());
             }
             orders.add(order);
         }
         return orders;
     }
 
-    public TradeOrderDetail loadOrderDetail(String number) {
+    public TradeOrder loadOrderDetail(String number) {
         ServiceResult<PaymentOrder> result = this.queryPaymentOrderRPC(number);
         PaymentOrder paymentOrder = result.getData();
         if (paymentOrder == null) {
             return null;
         }
-        TradeOrderDetail detail = new TradeOrderDetail();
+        TradeOrder detail = new TradeOrder();
+        detail.setOrderId(paymentOrder.getId());
+        //订单信息
         detail.setOrderNumber(paymentOrder.getOrderNumber());
-        if (paymentOrder.getSellingChannel() != null) {
-            detail.setSaleChannel(paymentOrder.getSellingChannel().getDescription());
-        }
-        if (paymentOrder.getCreateTime() != null) {
-            String dateStr = DateFormatUtils.format(paymentOrder.getCreateTime(), "yyyy-MM-dd HH:mm:ss");
-            detail.setOrderCreateDate(dateStr);
-            //TODO 需要paymentOrder记录交易成功时间
-            detail.setPayConfirmTime(dateStr);
-            detail.setPayCallBackTime(dateStr);
-            detail.setPayTime(dateStr);
-        }
-        if (paymentOrder.getStatus() != null) {
-            detail.setPayState(paymentOrder.getStatus().getDescription());
-        }
-        detail.setOrderAmount(paymentOrder.getTotalPremium().toString());
-        List<PaymentTransaction> transactions = paymentOrder.getPaymentTransactions();
-        for (PaymentTransaction transaction : transactions) {
-            if (PaymentInterfaceType.PAY.equals(transaction.getInterfaceType())) {//过滤只有类型为PAY的交易
-                if (transaction.getPaymentStatus().equals(PaymentTransactionStatus.PAY_SUCCESS)) {
-                    detail.setTransactionStatus(transaction.getPaymentStatus().getDescription());
-                    detail.setPayAmount(paymentOrder.getTotalPremium().toString());
-                    detail.setPayChannel(transaction.getPaymentChannel().getChannelName());
-                    detail.setPayMethod(transaction.getPaymentWay().getName());
-                    detail.setPaySerialNumber(transaction.getExternalTransactionNumber());
-                    if (paymentOrder.getCheckStatus() != null) {
-                        detail.setCheckStatus(paymentOrder.getCheckStatus().getDescription());
-                    }
-                    break;
-                } else {
-                    detail.setTransactionStatus(transaction.getPaymentStatus().getDescription());
-                    detail.setPayAmount(paymentOrder.getTotalPremium().toString());
-                    detail.setPayChannel(transaction.getPaymentChannel().getChannelName());
-                    detail.setPayMethod(transaction.getPaymentWay().getName());
-                    detail.setPaySerialNumber(transaction.getExternalTransactionNumber());
-                    if (paymentOrder.getCheckStatus() != null) {
-                        detail.setCheckStatus(paymentOrder.getCheckStatus().getDescription());
-                    }
-                }
-            }
+        detail.setOrderCreateDate(DateFormatUtils.format(paymentOrder.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+        detail.setOrderState(paymentOrder.getStatus().getDescription());
+        detail.setOrderAmount(paymentOrder.getAmount());
+        detail.setSaleChannel(paymentOrder.getSellingChannel() == null ? SellingChannel.MOBILE_SALE_APP.getDescription() : paymentOrder.getSellingChannel().getDescription());
+
+        //保单摘要
+        if (paymentOrder.getItems().size() > 0) {
+            PaymentOrderItem item = paymentOrder.getItems().get(0);
+            detail.setProductName(item.getProductName());
+            detail.setApplicationNumber(item.getApplicationNumber());
+            detail.setPolicyNumber(item.getPolicyNumber());
+            detail.setApplication(item.getApplicant().getName());
+            detail.setPhoneNumber(item.getApplicant().getPhoneNumber());
+            detail.setIdType(item.getApplicant().getIdType().getDescription());
+            detail.setIdNumber(item.getApplicant().getIdNumber());
         }
 
-        for (PaymentTransaction transaction : transactions) {
-            if (PaymentInterfaceType.REFUND.equals(transaction.getInterfaceType())) {
-                if (transaction.getPaymentStatus().equals(PaymentTransactionStatus.PAY_SUCCESS) || transaction.getPaymentStatus().equals(PaymentTransactionStatus.PAY_FAILED)) {
-                    detail.setRefundAmount(paymentOrder.getRefundAmount().toString());
-                    detail.setRefundNumber(transaction.getInternalTransactionNumber());
-                    if (transaction.getCreateDate() != null) {
-                        String dateStr = DateFormatUtils.format(transaction.getCreateDate(), "yyyy-MM-dd HH:mm:ss");
-                        detail.setRefundTime(dateStr);
-                    }
-                }
-            }
-        }
-
-        for (PaymentOrderItem paymentOrderItem : paymentOrder.getItems()) {
-            detail.addOrderItems(transItemVo(paymentOrderItem));
-        }
-
-        if (paymentOrder.getLockStatus() != null) {
-            detail.setLockStatus(paymentOrder.getLockStatus().getDescription());
+        //支付信息
+        PaymentTransaction payTransaction = getLastPayTransaction(paymentOrder.getPaymentTransactions());
+        if (payTransaction != null) {
+            detail.setPayChannel(payTransaction.getPaymentChannel().getChannelName());
+            detail.setPayTime(DateFormatUtils.format(paymentOrder.getPayTime(), "yyyy-MM-dd HH:mm:ss"));
+            detail.setPayWay(payTransaction.getPaymentWay().getName());
+            detail.setPayAmount(payTransaction.getPaymentAmount());
+            detail.setPayStatus(payTransaction.getPaymentStatus().getDescription());
         }
 
         return detail;
+    }
+
+    private PaymentTransaction getLastPayTransaction(List<PaymentTransaction> paymentTransactions) {
+        List<PaymentTransaction> pays = new ArrayList<>();
+        for (PaymentTransaction transaction : paymentTransactions) {
+            if (PaymentInterfaceType.PAY.equals(transaction.getInterfaceType())) {//过滤只有类型为PAY的交易
+                pays.add(transaction);
+            }
+        }
+        Collections.sort(pays, new Comparator<PaymentTransaction>() {
+            @Override
+            public int compare(PaymentTransaction o1, PaymentTransaction o2) {
+                int flag = o1.getCreateDate().compareTo(o2.getCreateDate());
+                return flag;
+            }
+        });
+        return pays.get(pays.size() == 0 ? 0 : pays.size() - 1);
     }
 
     private TradeOrderItem transItemVo(PaymentOrderItem paymentOrderItem) {
