@@ -4,6 +4,8 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
+import com.siebre.payment.entity.enums.ReturnCode;
+import com.siebre.payment.entity.enums.SubsequentAction;
 import com.siebre.payment.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
@@ -40,6 +42,9 @@ public class AlipayTradeWapPaymentHandler extends AbstractPaymentComponent {
         }
 
         response.setPayUrl(paymentInterface.getRequestUrl() + "?" + form);
+        response.setReturnCode(ReturnCode.SUCCESS.getDescription());
+        response.setReturnMessage("调用成功");
+        response.setSubsequentAction(SubsequentAction.REDIRECT_TO_PAYMENT_GATEWAY.getValue());
     }
 
     /**

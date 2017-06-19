@@ -2,6 +2,7 @@ package com.siebre.payment.paymenthandler.alipay.pay;
 
 import com.siebre.payment.entity.enums.EncryptionMode;
 import com.siebre.payment.entity.enums.ReturnCode;
+import com.siebre.payment.entity.enums.SubsequentAction;
 import com.siebre.payment.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.paymenthandler.alipay.sdk.AlipaySign;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
@@ -35,6 +36,8 @@ public class AlipayWebPaymentHandler extends AbstractPaymentComponent {
 
 		response.setPayUrl(url);
 		response.setReturnCode(ReturnCode.SUCCESS.getDescription());
+		response.setReturnMessage("调用成功");
+		response.setSubsequentAction(SubsequentAction.REDIRECT_TO_PAYMENT_GATEWAY.getValue());
 	}
 
 	private Map<String, String> generateParamsMap(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder,PaymentTransaction paymentTransaction) {

@@ -2,6 +2,7 @@ package com.siebre.payment.paymenthandler.wechatpay.pay;
 
 import com.siebre.payment.entity.enums.EncryptionMode;
 import com.siebre.payment.entity.enums.ReturnCode;
+import com.siebre.payment.entity.enums.SubsequentAction;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
@@ -69,16 +70,16 @@ public class WeChatScanPaymentHandler extends AbstractPaymentComponent {
 		String payResultXml = HttpTookit.doPost(wechatPaymentUrl, payXml);
 		Map<String, String> resultMap = ConvertToXML.toMap(payResultXml);
 
-		//TODO xml异常错误处理
 		if("FAIL".equals(resultMap.get("return_code"))) {
 			logger.error("获取微信支付地址失败，原因：{}", resultMap.get("return_msg"));
 			response.setReturnCode(ReturnCode.FAIL.getDescription());
 			response.setReturnMessage(resultMap.get("return_msg"));
 		} else {
 			String url = resultMap.get("code_url");
+			logger.info("WechatScan url generated, url={}", url);
 			response.setPayUrl(url);
 			response.setReturnCode(ReturnCode.SUCCESS.getDescription());
-			logger.info("WechatScan url generated, url={}", url);
+			response.setSubsequentAction(SubsequentAction.REDIRECT_TO_PAYMENT_GATEWAY.getValue());
 		}
 	}
 
