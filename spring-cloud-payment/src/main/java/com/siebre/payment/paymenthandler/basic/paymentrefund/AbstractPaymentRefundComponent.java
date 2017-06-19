@@ -37,13 +37,15 @@ public abstract class AbstractPaymentRefundComponent implements PaymentInterface
         paymentRefundRequest.setOriginExternalNumber(paymentOrder.getExternalOrderNumber());
         paymentRefundRequest.setOriginInternalNumber(paymentOrder.getOrderNumber());
 
-        //TODO 是否去数据库中查找refundPaymentTransaction
         PaymentTransaction refundPaymentTransaction = new PaymentTransaction();
         refundPaymentTransaction.setInterfaceType(PaymentInterfaceType.REFUND);
         refundPaymentTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_PROCESSING);
         refundPaymentTransaction.setPaymentOrderId(paymentOrder.getId());
         refundPaymentTransaction.setPaymentWayId(paymentWay.getId());
         refundPaymentTransaction.setPaymentChannelId(paymentWay.getPaymentChannelId());
+        refundPaymentTransaction.setSender("iPay(" + paymentTransactionService.getLocalHostInfo() + ")");
+        refundPaymentTransaction.setReceiver(paymentOrder.getChannelCode());
+
         //设置金额
         refundPaymentTransaction.setPaymentAmount(paymentRefundRequest.getRefundApplication().getRefundAmount());
 

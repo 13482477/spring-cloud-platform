@@ -170,12 +170,17 @@ public class RefundApplicationService {
 
     public List<Refund> queryRefundByPage(OrderQueryParamsVo paramsVo, PageInfo page) {
         String orderNumber = paramsVo.getOrderNumber();
-        String refundNumber = paramsVo.getRefundNumber();
+        //String refundNumber = paramsVo.getRefundNumber();
         Date startDate = paramsVo.getStartDate();
         Date endDate = paramsVo.getEndDate();
-        ServiceResult<List<RefundApplication>> refundsListResult = this.selectRefundList(orderNumber, refundNumber, paramsVo.getChannelCodeList(),
+        ServiceResult<List<RefundApplication>> refundsListResult = this.selectRefundList(orderNumber, null, paramsVo.getChannelCodeList(),
                startDate, endDate, page);
         List<RefundApplication> refundsList = refundsListResult.getData();
+        //特殊需求处理：前端将orderNumber和refundNumber合并为一个字段传给后端，先去查询orderNumber，若查询不到值再去查询refundNumber
+        if(refundsList == null || refundsList.size() == 0){
+            refundsList = this.selectRefundList(null, orderNumber, paramsVo.getChannelCodeList(),
+                    startDate, endDate, page).getData();
+        }
         page.setTotalPage(refundsListResult.getPageInfo().getTotalPage());
         List<Refund> result = new ArrayList<>();
         for (RefundApplication refundApp : refundsList) {

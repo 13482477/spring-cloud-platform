@@ -202,7 +202,7 @@ public class PaymentTransactionService {
         return paymentTransaction;
     }
 
-    private String getLocalHostInfo(){
+    public String getLocalHostInfo(){
         String ip = "";
         String hostName = "";
         try {

@@ -45,9 +45,6 @@ public class PaymentRefundRouteService {
 
         PaymentOrder paymentOrder = paymentRefundRequest.getPaymentOrder();
 
-        /*PaymentTransaction paymentTransaction = paymentTransactionService.getSuccessPaidPaymentTransaction(paymentOrder.getOrderNumber());
-        paymentRefundRequest.setPaymentTransaction(paymentTransaction);*/
-
         PaymentWay paymentWay = paymentWayService.getPaymentWay(paymentOrder.getPaymentWayCode());
 
         //针对同一渠道下不同支付方式使用统一退款接口的情况，需要做处理。先在该支付方式下查找，是否存在paymentInterface，如果不存在，则在该支付方式所在渠道下查找paymentInterface
