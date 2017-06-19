@@ -1,34 +1,11 @@
 package com.siebre.gateway.security.entity;
 
-import com.siebre.basic.enumutil.BaseEnum;
-
-public enum ResourceType implements BaseEnum {
+public enum ResourceType {
 	
-	MENU(1, "MENU"),
+	MENU,
 
-	RESOURCE(2, "RESOURCE"),
+	RESOURCE,
 
-	SYSTEM(3, "SYSTEM"),
-	
+	SYSTEM,
 	;
-	
-	private int value;
-
-	private String description;
-
-	ResourceType(int value, String description) {
-		this.value = value;
-		this.description = description;
-	}
-
-	@Override
-	public int getValue() {
-		return value;
-	}
-
-	@Override
-	public String getDescription() {
-		return description;
-	}
-
 }

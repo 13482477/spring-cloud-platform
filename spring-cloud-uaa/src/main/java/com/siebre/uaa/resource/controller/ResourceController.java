@@ -21,6 +21,12 @@ public class ResourceController {
 
     @Autowired
     private ResourceService resourceService;
+    
+    @RequestMapping(value ="/api/v1/resourcesAndPermission", method = {RequestMethod.GET})
+    public WebResult<List<Resource>> allResourcesAndPermission() {
+    	List<Resource> data = this.resourceService.loadAllResourceWithAuthority();
+        return WebResult.<List<Resource>>builder().returnCode("200").data(data).build();
+    }
 
     @RequestMapping(value ="/api/v1/resource/{id}", method = {RequestMethod.GET})
     public WebResult<Resource> load(@PathVariable Long id) {

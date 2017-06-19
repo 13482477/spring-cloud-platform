@@ -13,15 +13,19 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.ImportResource;
 
-@EnableDiscoveryClient
+import com.siebre.gateway.security.metadata.CustomerSecurityMetadata;
+
 @EnableFeignClients
+@EnableDiscoveryClient
 @EnableZuulProxy
 @SpringBootApplication(exclude = {SessionAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class, TransactionAutoConfiguration.class})
 @ImportResource({"classpath:spring/applicationContext-*.xml"})
 public class Application {
 	
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(Application.class, args)
+		.getBean(CustomerSecurityMetadata.class)
+		.initSecurityMeta();;
 	}
 
 }

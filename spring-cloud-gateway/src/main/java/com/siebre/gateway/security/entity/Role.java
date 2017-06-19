@@ -26,7 +26,7 @@ public class Role {
 	private String description;
 
 	/**
-	 * 资源
+	 * 权限
 	 */
 	private List<Authority> authorities = new ArrayList<Authority>();
 	

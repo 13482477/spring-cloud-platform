@@ -1,8 +1,14 @@
 package com.siebre.gateway.security.entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -43,6 +49,11 @@ public class User implements UserDetails {
 	 * 是否活动
 	 */
 	private Boolean active;
+	
+	/**
+	 * 角色
+	 */
+	private List<Role> roles = new ArrayList<Role>();
 	
 	public Long getId() {
 		return id;
@@ -99,10 +110,24 @@ public class User implements UserDetails {
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
 	}
+	
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		Set<String> authorities = new HashSet<String>();
+		for (Role role : this.roles) {
+			for (Authority authority : role.getAuthorities()) {
+				authorities.add(authority.getAuthorityCode());
+			}
+		}
+		return CollectionUtils.collect(authorities.iterator(), (input) -> {return new SimpleGrantedAuthority(input);});
 	}
 
 	@Override
