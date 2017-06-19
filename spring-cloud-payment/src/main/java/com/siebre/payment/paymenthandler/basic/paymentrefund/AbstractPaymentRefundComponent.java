@@ -28,25 +28,16 @@ public abstract class AbstractPaymentRefundComponent implements PaymentInterface
     @Autowired
     private SerialNumberMapper SerialNumberMapper;
 
-    //abstract empty method implement PaymentInterface
     @Override
-    public void handle(PaymentRefundRequest request, PaymentRefundResponse response) {
-    }
+    public void handle(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse paymentRefundResponse) {
+        PaymentOrder paymentOrder = paymentRefundRequest.getPaymentOrder();
+        PaymentWay paymentWay = paymentRefundRequest.getPaymentWay();
 
-    public void handle(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse paymentRefundResponse, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface) {
         //获取原有交易的transaction {设置请求中的原始内部交易流水号，外部交易流水号}
-        paymentRefundRequest.setOriginExternalNumber(paymentTransaction.getExternalTransactionNumber());
-        paymentRefundRequest.setOriginInternalNumber(paymentTransaction.getInternalTransactionNumber());
+        paymentRefundRequest.setOriginExternalNumber(paymentOrder.getExternalOrderNumber());
+        paymentRefundRequest.setOriginInternalNumber(paymentOrder.getOrderNumber());
 
-        //TODO 查看是否存在已退款的transaction记录，判断该条记录是否是成功退款或者是处于失败退款的一个中间状态
-        /*List<PaymentTransaction> refunds = paymentTransactionService.queryRefundTransaction(paymentOrder.getId());
-        for (PaymentTransaction refund : refunds) {
-            if(PaymentTransactionStatus.SUCCESS.equals(refund.getPaymentStatus())){
-                logger.info("该订单已退款");
-
-            }
-        }*/
-
+        //TODO 是否去数据库中查找refundPaymentTransaction
         PaymentTransaction refundPaymentTransaction = new PaymentTransaction();
         refundPaymentTransaction.setInterfaceType(PaymentInterfaceType.REFUND);
         refundPaymentTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_PROCESSING);
@@ -59,25 +50,26 @@ public abstract class AbstractPaymentRefundComponent implements PaymentInterface
         //设置退款交易的内部流水号，并同时作为退款申请的申请号存储的refundApplication
         refundPaymentTransaction.setInternalTransactionNumber(SerialNumberMapper.nextValue("refund_dep"));
 
-
         RefundApplication refundApplication = paymentRefundRequest.getRefundApplication();
         //更新状态为处理中
         refundApplication.setRefundApplicationNumber(refundPaymentTransaction.getInternalTransactionNumber());
         refundApplication.setStatus(RefundApplicationStatus.PROCESSING);
 
         refundPaymentTransaction.setCreateDate(new Date());
+        //保存refundPaymentTransaction和refundApplication
         paymentTransactionService.createRefundPaymentTransaction(refundPaymentTransaction, refundApplication);
+
         paymentRefundRequest.setRefundTransaction(refundPaymentTransaction);
 
-        this.handleInternal(paymentRefundRequest, paymentRefundResponse, refundPaymentTransaction, paymentOrder, paymentWay, paymentInterface);
+        this.handleInternal(paymentRefundRequest, paymentRefundResponse);
 
 
         //同步状态下更新 退款application 退款transaction
         if (paymentRefundResponse.getSynchronize()) {
-            paymentTransactionService.synchronizedRefundConfirm(paymentRefundResponse.getRefundApplication(), paymentRefundResponse.getPaymentTransaction());
+            paymentTransactionService.synchronizedRefundConfirm(paymentOrder, paymentRefundResponse.getRefundApplication(), paymentRefundResponse.getRefundTransaction());
         }
 
     }
 
-    protected abstract void handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse paymentRefundResponse, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface);
+    protected abstract void handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse paymentRefundResponse);
 }

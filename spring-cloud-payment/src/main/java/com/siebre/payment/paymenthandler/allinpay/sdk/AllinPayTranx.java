@@ -113,24 +113,34 @@ public class AllinPayTranx {
         //交易退款返回处理逻辑
         if("REFUND".equals(trxcode)){
             if("0000".equals(aipgrsp.getINFO().getRET_CODE())){//退款交易调用成功
+                refundTransaction.setExternalTransactionNumber(externalTransactionNumber);
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_SUCCESS);
+
                 refundApplication.setStatus(RefundApplicationStatus.SUCCESS);
                 refundApplication.setResponse(RefundApplicationStatus.SUCCESS.getDescription());
+
+                refundResponse.setReturnCode(ReturnCode.SUCCESS.getDescription());
+                refundResponse.setReturnMessage("退款成功");
                 refundResponse.setRefundApplicationStatus(RefundApplicationStatus.SUCCESS);
                 logger.info("refund success");
 
             }
             else{
+                refundTransaction.setExternalTransactionNumber(externalTransactionNumber);
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_FAILED);
+
                 refundApplication.setStatus(RefundApplicationStatus.FAILED);
                 refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
+
+                refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
+                refundResponse.setReturnMessage("退款失败");
                 refundResponse.setRefundApplicationStatus(RefundApplicationStatus.FAILED);
                 logger.info("refund fail, reason：" + aipgrsp.getINFO().getERR_MSG());
             }
         }
 
         refundResponse.setRefundApplication(refundApplication);
-        refundResponse.setPaymentTransaction(refundTransaction);
+        refundResponse.setRefundTransaction(refundTransaction);
     }
 
     /**

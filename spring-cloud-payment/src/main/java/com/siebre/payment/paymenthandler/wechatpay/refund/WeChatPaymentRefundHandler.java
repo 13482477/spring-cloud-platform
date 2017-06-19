@@ -3,6 +3,7 @@ package com.siebre.payment.paymenthandler.wechatpay.refund;
 import com.siebre.payment.entity.enums.EncryptionMode;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
+import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
 import com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper;
 import com.siebre.payment.paymenthandler.basic.paymentrefund.AbstractPaymentRefundComponent;
@@ -54,12 +55,16 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
     private static String resourse = "D:/apiclient_cert.p12";
 
     @Override
-    protected void handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface) {
-        PaymentChannel channel = paymentChannelMapper.selectByPrimaryKey(paymentWay.getPaymentChannelId());
+    protected void handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse) {
+
+        PaymentWay paymentWay = paymentRefundRequest.getPaymentWay();
+        PaymentInterface paymentInterface = paymentRefundRequest.getPaymentInterface();
+
+        PaymentChannel channel = paymentChannelMapper.selectByChannelCode(paymentRefundRequest.getPaymentOrder().getChannelCode());
         //1.读取证书
         CloseableHttpClient httpclient = this.getHttpClient(channel);
         //2.拼装返回参数
-        Map<String,String> params = this.generateRefundParams(paymentRefundRequest ,paymentTransaction,channel, paymentWay);
+        Map<String,String> params = this.generateRefundParams(paymentRefundRequest ,channel);
         //3.签名
         this.processSign(params, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
 
@@ -68,43 +73,49 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
 
         PaymentTransaction refundTransaction = paymentRefundRequest.getRefundTransaction();
         RefundApplication refundApplication = paymentRefundRequest.getRefundApplication();
-
-
-
+        //处理返回结果
         refundResponse.setReturnMessage(res.get("return_msg"));
 
         if("SUCCESS".equals(res.get("return_code"))){
             if("SUCCESS".equals(res.get("result_code"))){
-                logger.error("申请成功");
+                logger.error("退款成功");
 
-                refundResponse.setExternalTransactionNumber(res.get("refund_id"));
                 refundTransaction.setExternalTransactionNumber(res.get("refund_id"));
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_SUCCESS);//退款交易调用成功
+
                 refundApplication.setStatus(RefundApplicationStatus.SUCCESS);
                 refundApplication.setResponse(RefundApplicationStatus.SUCCESS.getDescription());
 
-                refundResponse.setReturnMessage("申请成功");
-                refundResponse.setRefundApplicationStatus(RefundApplicationStatus.SUBMITTED);
+                refundResponse.setExternalTransactionNumber(res.get("refund_id"));
+                refundResponse.setReturnCode(ReturnCode.SUCCESS.getDescription());
+                refundResponse.setReturnMessage("退款成功");
+                refundResponse.setRefundApplicationStatus(RefundApplicationStatus.SUCCESS);
             }else{
-                logger.error("申请失败，原因={}", res.get("err_code_des"));
+                logger.error("退款失败，原因={}", res.get("err_code_des"));
+
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_FAILED);
+
                 refundApplication.setStatus(RefundApplicationStatus.FAILED);
                 refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
 
+                refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
                 refundResponse.setReturnMessage("申请失败，原因:" + res.get("err_code_des"));
                 refundResponse.setRefundApplicationStatus(RefundApplicationStatus.FAILED);
             }
         }else{
-            logger.error("申请失败，原因={}", res.get("return_msg"));
+            logger.error("退款失败，原因={}", res.get("return_msg"));
+
             refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_FAILED);
+
             refundApplication.setStatus(RefundApplicationStatus.FAILED);
             refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
 
+            refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
             refundResponse.setReturnMessage("申请失败，原因:" + res.get("return_msg"));
             refundResponse.setRefundApplicationStatus(RefundApplicationStatus.FAILED);
         }
         refundResponse.setRefundApplication(refundApplication);
-        refundResponse.setPaymentTransaction(refundTransaction);
+        refundResponse.setRefundTransaction(refundTransaction);
     }
 
     private CloseableHttpClient getHttpClient( PaymentChannel channel){
@@ -152,7 +163,8 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
         return httpclient;
     }
 
-    private Map<String,String> generateRefundParams(PaymentRefundRequest paymentRefundRequest, PaymentTransaction paymentTransaction, PaymentChannel channel, PaymentWay paymentWay){
+    private Map<String,String> generateRefundParams(PaymentRefundRequest paymentRefundRequest, PaymentChannel channel){
+        PaymentWay paymentWay = paymentRefundRequest.getPaymentWay();
         RefundApplication refundApplication = paymentRefundRequest.getRefundApplication();
         Map<String,String> params = new HashMap<>();
         params.put("appid", paymentWay.getAppId());
@@ -166,7 +178,7 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
         }
         params.put("out_refund_no",refundApplication.getRefundApplicationNumber());
         //微信要求金额单位为分，只能为整数
-        params.put("total_fee", paymentTransaction.getPaymentAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString());
+        params.put("total_fee", paymentRefundRequest.getPaymentOrder().getAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString());
         params.put("refund_fee", refundApplication.getRefundAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString());
         params.put("op_user_id", channel.getMerchantCode());   //操作员帐号, 默认为商户号
         return params;

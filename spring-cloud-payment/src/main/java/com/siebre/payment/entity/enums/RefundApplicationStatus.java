@@ -18,7 +18,7 @@ public enum RefundApplicationStatus implements BaseEnum {
 
     PROCESSING(4,"退款处理中"),
 
-    SUBMITTED(5,"退款申请提交成功")
+    /*SUBMITTED(5,"退款申请提交成功")*/
     ;
 
     private RefundApplicationStatus(int value, String description) {

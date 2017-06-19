@@ -192,6 +192,19 @@
 		</if>
 	</select>
 
+	<select id="selectByOrderNumberAndStatus" resultMap="BaseResultMap" >
+		select
+		<include refid="Base_Column_List"/>
+		from pmt_refund_application
+		where 1=1
+		<if test="orderNumber!=null and orderNumber!=''">
+			and pmt_refund_application.order_number =#{orderNumber}
+		</if>
+		<if test="status!=null">
+			and pmt_refund_application.status = #{status.value}
+		</if>
+	</select>
+
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
 		DELETE FROM pmt_refund_application
 		WHERE id = #{id,jdbcType=BIGINT}

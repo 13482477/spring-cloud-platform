@@ -2,6 +2,7 @@ package com.siebre.payment.paymenthandler.unionpay.refund;
 
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
+import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymenthandler.basic.paymentrefund.AbstractPaymentRefundComponent;
 import com.siebre.payment.paymenthandler.unionpay.sdk.UnionPayUtil;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
@@ -29,8 +30,12 @@ import java.util.Map;
 public class UnionPayPaymentRefundHandler extends AbstractPaymentRefundComponent {
 
     @Override
-    protected void handleInternal(PaymentRefundRequest paymentRefundRequest,PaymentRefundResponse refundResponse, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface) {
-        Map<String, String> requestData = generateParamsMap(paymentRefundRequest, paymentWay, paymentInterface, paymentTransaction);
+    protected void handleInternal(PaymentRefundRequest paymentRefundRequest,PaymentRefundResponse refundResponse) {
+        PaymentWay paymentWay = paymentRefundRequest.getPaymentWay();
+        PaymentInterface paymentInterface = paymentRefundRequest.getPaymentInterface();
+        PaymentTransaction refundTransaction = paymentRefundRequest.getRefundTransaction();
+
+        Map<String, String> requestData = generateParamsMap(paymentRefundRequest, paymentWay, paymentInterface, refundTransaction);
 
         String url = paymentInterface.getRequestUrl();
         logger.info("请求地址{}", url);
@@ -87,7 +92,8 @@ public class UnionPayPaymentRefundHandler extends AbstractPaymentRefundComponent
             refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_SUCCESS);//退款交易调用成功
             refundApplication.setStatus(RefundApplicationStatus.SUCCESS);
             refundApplication.setResponse(RefundApplicationStatus.SUCCESS.getDescription());
-            refundResponse.setRefundApplicationStatus(RefundApplicationStatus.SUBMITTED);
+            refundResponse.setReturnCode(ReturnCode.SUCCESS.getDescription());
+            refundResponse.setRefundApplicationStatus(RefundApplicationStatus.SUCCESS);
         } else if ("03".equals(respCode) ||
                 "04".equals(respCode) ||
                 "05".equals(respCode)) {
@@ -95,15 +101,17 @@ public class UnionPayPaymentRefundHandler extends AbstractPaymentRefundComponent
             refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_PROCESSING);
             refundApplication.setStatus(RefundApplicationStatus.PROCESSING);
             refundApplication.setResponse(RefundApplicationStatus.PROCESSING.getDescription());
+            refundResponse.setReturnCode(ReturnCode.SUCCESS.getDescription());
             refundResponse.setRefundApplicationStatus(RefundApplicationStatus.PROCESSING);
         } else {
             refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_FAILED);
             refundApplication.setStatus(RefundApplicationStatus.FAILED);
             refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
+            refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
             refundResponse.setRefundApplicationStatus(RefundApplicationStatus.FAILED);
         }
 
         refundResponse.setRefundApplication(refundApplication);
-        refundResponse.setPaymentTransaction(refundTransaction);
+        refundResponse.setRefundTransaction(refundTransaction);
     }
 }

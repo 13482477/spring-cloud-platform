@@ -123,10 +123,7 @@ public class PaymentTransactionService {
     @Transactional("db")
     public PaymentTransaction createRefundPaymentTransaction(PaymentTransaction paymentTransaction, RefundApplication refundApplication) {
         paymentTransactionMapper.insertSelective(paymentTransaction);
-
-
         refundApplicationMapper.updateByPrimaryKeySelective(refundApplication);
-
         return paymentTransaction;
     }
 
@@ -325,8 +322,16 @@ public class PaymentTransactionService {
 
         //更新order状态
         this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PAID);
+        updateExternalTransactionNumber(externalTransactionNumber, paymentOrder);
 
         return ServiceResult.<PaymentTransaction>builder().success(true).data(paymentTransaction).build();
+    }
+
+    private void updateExternalTransactionNumber(String externalTransactionNumber, PaymentOrder paymentOrder) {
+        PaymentOrder orderForUpdate = new PaymentOrder();
+        orderForUpdate.setId(paymentOrder.getId());
+        orderForUpdate.setExternalOrderNumber(externalTransactionNumber);
+        this.paymentOrderMapper.updateByPrimaryKeySelective(orderForUpdate);
     }
 
     /**
@@ -400,9 +405,8 @@ public class PaymentTransactionService {
      * 同步退款结果处理
      */
     @Transactional("db")
-    public void synchronizedRefundConfirm(RefundApplication refundApplication, PaymentTransaction paymentTransaction) {
+    public void synchronizedRefundConfirm(PaymentOrder paymentOrder, RefundApplication refundApplication, PaymentTransaction paymentTransaction) {
 
-        PaymentOrder paymentOrder = this.paymentOrderMapper.selectByPrimaryKey(paymentTransaction.getPaymentOrderId());
         //退款处理中，更新order状态为处理中
         if (RefundApplicationStatus.PROCESSING.equals(refundApplication.getStatus())) {
             paymentOrder.setStatus(PaymentOrderPayStatus.PROCESSING_REFUND);

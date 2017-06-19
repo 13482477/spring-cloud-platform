@@ -24,6 +24,8 @@ public interface RefundApplicationMapper {
 
     RefundApplication selectByBusinessNumber(@Param("orderNumber") String orderNumber, @Param("refundApplicationNumber") String refundApplicationNumber);
 
+    List<RefundApplication> selectByOrderNumberAndStatus(@Param("orderNumber") String orderNumber, @Param("status") RefundApplicationStatus status);
+
     List<RefundApplication> selectByPage(PageInfo pageinfo);
 
     List<RefundApplication> selectRefundList(@Param("orderNumber") String orderNumber, @Param("refundNumber") String refundNumber,

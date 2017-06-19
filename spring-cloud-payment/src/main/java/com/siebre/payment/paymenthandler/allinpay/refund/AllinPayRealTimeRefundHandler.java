@@ -28,15 +28,21 @@ public class AllinPayRealTimeRefundHandler extends AbstractPaymentRefundComponen
     private AllinPayTranx allinPayTranx;
 
     @Override
-    protected void handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder, PaymentWay paymentWay, PaymentInterface paymentInterface) {
+    protected void handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse) {
+
+
 
         String trx_code = "REFUND";//交易代码
         boolean isTLTFront = false;//是否发送至前置机（由前置机进行签名）如不特别说明，商户技术不要设置为true
 
-        refundTranx(paymentInterface.getRequestUrl(), trx_code, isTLTFront, paymentWay, paymentTransaction, paymentRefundRequest, refundResponse);
+        refundTranx(trx_code, isTLTFront, paymentRefundRequest, refundResponse);
     }
 
-    private void refundTranx(String url, String trx_code, boolean isTLTFront, PaymentWay paymentWay, PaymentTransaction paymentTransaction, PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse) {
+    private void refundTranx(String trx_code, boolean isTLTFront, PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse) {
+        PaymentOrder paymentOrder = paymentRefundRequest.getPaymentOrder();
+        PaymentWay paymentWay = paymentRefundRequest.getPaymentWay();
+        PaymentInterface paymentInterface = paymentRefundRequest.getPaymentInterface();
+
         String xml = "";
         AipgReq aipg = new AipgReq();
         InfoReq info = allinPayTranx.makeReq(trx_code, paymentWay);
@@ -51,14 +57,14 @@ public class AllinPayRealTimeRefundHandler extends AbstractPaymentRefundComponen
         refund.setORGBATCHSN("0");//原交易的记录序号，原交易为单笔实时交易时填0 实时收款设置为0
         refund.setACCOUNT_NO("6214850218622493");
         refund.setACCOUNT_NAME("张三");
-        String amt = paymentTransaction.getPaymentAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
+        String amt = paymentOrder.getAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
         refund.setAMOUNT(amt);
         //refund.setREMARK("全部退还");
         aipg.addTrx(refund);
 
         xml = XmlTools.buildXml(aipg, true);
 
-        allinPayTranx.dealRetForRefund(allinPayTranx.sendToTlt(xml, isTLTFront, url, paymentWay), trx_code, paymentRefundRequest, refundResponse);
+        allinPayTranx.dealRetForRefund(allinPayTranx.sendToTlt(xml, isTLTFront, paymentInterface.getRequestUrl(), paymentWay), trx_code, paymentRefundRequest, refundResponse);
     }
 
 }

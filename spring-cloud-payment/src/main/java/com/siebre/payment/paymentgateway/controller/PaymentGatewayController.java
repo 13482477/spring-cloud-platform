@@ -161,7 +161,7 @@ public class PaymentGatewayController {
     @RequestMapping(value = "/openApi/v1/paymentGateWay/refund", method = POST)
     public RefundResponse applicationRefund(@RequestBody RefundRequest refundRequest, HttpServletRequest servletRequest) {
         //判断订单是否锁定
-        PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrder(refundRequest.getOrderNumber());
+       /* PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrder(refundRequest.getOrderNumber());
         if (PaymentOrderLockStatus.LOCK.equals(paymentOrder.getLockStatus())) {
             RefundResponse refundResponse = new RefundResponse();
             refundResponse.setRefundStatus(RefundApplicationStatus.FAILED.getDescription());
@@ -187,7 +187,8 @@ public class PaymentGatewayController {
         refundResponse.setRefundStatus(application.getStatus().toString());
         refundResponse.setResponse(application.getResponse());
         refundResponse.setApplicationNumber(application.getRefundApplicationNumber());
-        return refundResponse;
+        return refundResponse;*/
+       return null;
     }
 
     /**
@@ -198,9 +199,10 @@ public class PaymentGatewayController {
      */
     @ApiOperation(value = "统一单笔退款接口(V2.0)", notes = "统一单笔退款接口(V2.0)")
     @RequestMapping(value = "/openApi/v2/paymentGateWay/refund", method = POST)
-    public ServiceResult<RefundResponse> applicationRefund2(RefundRequest refundRequest) {
-        RefundResponse refundResponse = refundApplicationService.doRefund(refundRequest);
-        return ServiceResult.<RefundResponse>builder().success(Boolean.TRUE).data(refundResponse).message(ServiceResult.SUCCESS_MESSAGE).build();
+    public RefundResponse applicationRefund2(RefundRequest refundRequest) {
+        RefundResponse refundResponse = new RefundResponse();
+        refundApplicationService.doRefund(refundRequest, refundResponse);
+        return refundResponse;
     }
 
     /**

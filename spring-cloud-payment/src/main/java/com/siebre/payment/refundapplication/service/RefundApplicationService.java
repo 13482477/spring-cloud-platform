@@ -4,8 +4,8 @@ import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.entity.enums.PaymentOrderLockStatus;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
-import com.siebre.payment.entity.enums.PaymentOrderRefundStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
+import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymentgateway.vo.RefundRequest;
 import com.siebre.payment.paymentgateway.vo.RefundResponse;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
@@ -14,6 +14,7 @@ import com.siebre.payment.paymentorder.service.PaymentOrderService;
 import com.siebre.payment.paymentorder.vo.OrderQueryParamsVo;
 import com.siebre.payment.paymentorder.vo.Refund;
 import com.siebre.payment.paymentroute.service.PaymentRefundRouteService;
+import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
 import com.siebre.payment.refundapplication.dto.PaymentRefundRequest;
 import com.siebre.payment.refundapplication.dto.PaymentRefundResponse;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
@@ -36,6 +37,8 @@ import java.util.List;
  */
 @Service
 public class RefundApplicationService {
+
+    private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PaymentTransactionService.class);
 
     @Autowired
     private RefundApplicationMapper refundApplicationMapper;
@@ -86,76 +89,83 @@ public class RefundApplicationService {
     }
 
     @Transactional("db")
-    public RefundApplication createRefundApplication(RefundApplication refundApplication) {
-        PaymentOrder order = paymentOrderMapper.selectByOrderNumber(refundApplication.getOrderNumber());
-        if (order == null) {
-            refundApplication.setStatus(RefundApplicationStatus.FAILED);
-            refundApplication.setResponse("该订单不存在，请检查");
-        }
-        if (!order.getStatus().equals(PaymentOrderPayStatus.PAID)) {
-            refundApplication.setStatus(RefundApplicationStatus.FAILED);
-            refundApplication.setResponse("该订单状态为" + order.getStatus().getDescription() + "，不能申请退款");
-        }
-
-        BigDecimal totalAmount = order.getTotalPremium();
-        BigDecimal refundedAmount = order.getRefundAmount() == null ? BigDecimal.ZERO : order.getRefundAmount();
-
-        if (refundedAmount.add(refundApplication.getRefundAmount()).compareTo(order.getAmount()) <= 0) {
-            //查询数据库，该订单是否已存在对应的退款申请，如果已存在，使用已存在的退款申请
-            RefundApplication refundApplication2 = refundApplicationMapper.selectByBusinessNumber(order.getOrderNumber(), null);
-            if (refundApplication2 != null) {
-                return refundApplication2;
-            } else {
-                refundApplication.setCreateDate(new Date());
-                refundApplicationMapper.insertSelective(refundApplication);
-            }
-        } else {
-            refundApplication.setStatus(RefundApplicationStatus.FAILED);
-            refundApplication.setResponse("退款金额超限");
-        }
-        return refundApplication;
-    }
-
-    public RefundResponse doRefund(RefundRequest refundRequest) {
+    public void doRefund(RefundRequest refundRequest, RefundResponse refundResponse) {
         //判断订单是否锁定
         PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrder(refundRequest.getOrderNumber());
         if (PaymentOrderLockStatus.LOCK.equals(paymentOrder.getLockStatus())) {
-            RefundResponse refundResponse = new RefundResponse();
-            refundResponse.setReturnCode(RefundApplicationStatus.FAILED.getDescription());
+            logger.info("订单:{} 被锁定，不能退款", paymentOrder.getOrderNumber());
+            refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
             refundResponse.setReturnMessage("订单被锁定，不能退款");
-            return refundResponse;
+            return;
+        }
+        //订单只有在支付成功或者部分退款状态下才可以有退款操作
+        if(!(PaymentOrderPayStatus.PAID.equals(paymentOrder.getStatus()) || PaymentOrderPayStatus.PART_REFUND.equals(paymentOrder.getStatus()))){
+            logger.info("订单:{} 状态为:{}，不能退款", paymentOrder.getOrderNumber(), paymentOrder.getStatus().getDescription());
+            refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
+            refundResponse.setResponse("该订单状态为" + paymentOrder.getStatus().getDescription() + "，不能申请退款");
+            return;
+        }
+        //判断金额是否超限
+        BigDecimal refundedAmount = paymentOrder.getRefundAmount() == null ? BigDecimal.ZERO : paymentOrder.getRefundAmount();
+        if (refundedAmount.add(refundRequest.getRefundAmount()).compareTo(paymentOrder.getAmount()) > 0) {
+            logger.info("订单{}退款金额超限!订单金额：{}, 已退款金额：{}, 本次申请退款金额：{}", paymentOrder.getOrderNumber(), paymentOrder.getAmount(), paymentOrder.getRefundAmount(), refundRequest.getRefundAmount());
+            refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
+            refundResponse.setResponse("退款金额超限!订单金额：" + paymentOrder.getAmount() + ", 已退款金额：" + paymentOrder.getRefundAmount() + ", 本次申请退款金额：" + refundRequest.getRefundAmount());
+            return;
         }
 
-        RefundApplication isExist = refundApplicationMapper.selectByMessageId(refundRequest.getMessageId());
+        RefundApplication application;
+        RefundApplication isExist = null;
+        //判断该订单是否有处于申请退款状态的refundApplication
+        List<RefundApplication> refundApplications = refundApplicationMapper.selectByOrderNumberAndStatus(paymentOrder.getOrderNumber(), RefundApplicationStatus.APPLICATION);
+        if (refundApplications.size() > 0) {
+            //一个订单处于申请退款状态下的refundApplication最多只能有一个,
+            RefundApplication temp = refundApplications.get(0);
+            // 如果已存在数据库中的refundApplication的messageId与本次请求相同，那么使用数据库中已存在的refundApplication
+            // 否则返回错误信息，该订单已存在一笔退款申请
+            if(temp.getMessageId().equals(refundRequest.getMessageId())){
+                isExist = temp;
+            }else{
+                logger.info("订单:{} 已存在一笔退款申请, 退款申请单号为：{},messageId为：{}。本次请求的messageId为：{}", paymentOrder.getOrderNumber(), temp.getRefundApplicationNumber(),
+                            temp.getMessageId(), refundRequest.getMessageId());
+                refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
+                refundResponse.setResponse("该订单已存在一笔退款申请, 退款申请单号为：" + temp.getRefundApplicationNumber() + ", messageId为：" + temp.getMessageId());
+                return;
+            }
+        }
+
+        //判断是否重复提交
+        if(isExist == null) {
+            isExist = refundApplicationMapper.selectByMessageId(refundRequest.getMessageId());
+        }
+
         if (isExist != null) {
-            RefundResponse refundResponse = new RefundResponse();
-            refundResponse.setReturnCode(RefundApplicationStatus.FAILED.getDescription());
-            refundResponse.setReturnMessage("该退款申请已存在，不能再退款");
-            return refundResponse;
+            application = isExist;
+        } else {
+            // 创建RefundApplication
+            application = new RefundApplication();
+            application.setStatus(RefundApplicationStatus.APPLICATION);
+            application.setRequest(refundRequest.getRefundReason());
+            application.setOrderNumber(refundRequest.getOrderNumber());
+            application.setRefundAmount(refundRequest.getRefundAmount());
+            application.setMessageId(refundRequest.getMessageId());
+            application.setNotificationUrl(refundRequest.getNotificationUrl());
+            application.setCreateDate(new Date());
+            refundApplicationMapper.insertSelective(application);
+            logger.info("为订单：{}创建一条新的退款申请, 退款单号为：{}", paymentOrder.getOrderNumber(), application.getRefundApplicationNumber());
         }
 
-        RefundApplication application = new RefundApplication();
-        application.setStatus(RefundApplicationStatus.APPLICATION);
-        application.setRequest(refundRequest.getRefundReason());
-        application.setOrderNumber(refundRequest.getOrderNumber());
-        application.setRefundAmount(refundRequest.getRefundAmount());
-        application.setMessageId(refundRequest.getMessageId());
-        application.setNotificationUrl(refundRequest.getNotificationUrl());
-        // 创建RefundApplication
-        refundApplicationService.createRefundApplication(application);
-        if (RefundApplicationStatus.APPLICATION.equals(application.getStatus())) {
-            PaymentRefundRequest paymentRefundRequest = new PaymentRefundRequest();
-            PaymentRefundResponse refundResponse = new PaymentRefundResponse();
-            paymentRefundRequest.setRefundApplication(application);
-            paymentRefundRouteService.route(paymentRefundRequest, refundResponse);
-            application = refundResponse.getRefundApplication();
-        }
-        RefundResponse refundResponse = new RefundResponse();
-        refundResponse.setReturnCode(application.getStatus().toString());
-        refundResponse.setReturnMessage(application.getResponse());
+        PaymentRefundRequest paymentRefundRequest = new PaymentRefundRequest();
+        PaymentRefundResponse paymentRefundResponse = new PaymentRefundResponse();
+        paymentRefundRequest.setPaymentOrder(paymentOrder);
+        paymentRefundRequest.setRefundApplication(application);
+
+        paymentRefundRouteService.route(paymentRefundRequest, paymentRefundResponse);
+        application = paymentRefundResponse.getRefundApplication();
+
+        refundResponse.setReturnCode(paymentRefundResponse.getReturnCode());
+        refundResponse.setReturnMessage(paymentRefundResponse.getReturnMessage());
         refundResponse.setRefundAmount(application.getRefundAmount());
-        //refundResponse.setApplicationNumber(application.getRefundApplicationNumber());
-        return refundResponse;
     }
 
     public List<Refund> queryRefundByPage(OrderQueryParamsVo paramsVo, PageInfo page) {
