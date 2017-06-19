@@ -178,8 +178,9 @@ public class RefundApplicationService {
         List<RefundApplication> refundsList = refundsListResult.getData();
         //特殊需求处理：前端将orderNumber和refundNumber合并为一个字段传给后端，先去查询orderNumber，若查询不到值再去查询refundNumber
         if(refundsList == null || refundsList.size() == 0){
-            refundsList = this.selectRefundList(null, orderNumber, paramsVo.getChannelCodeList(),
-                    startDate, endDate, page).getData();
+            refundsListResult = this.selectRefundList(null, orderNumber, paramsVo.getChannelCodeList(),
+                    startDate, endDate, page);
+            refundsList = refundsListResult.getData();
         }
         page.setTotalPage(refundsListResult.getPageInfo().getTotalPage());
         List<Refund> result = new ArrayList<>();
