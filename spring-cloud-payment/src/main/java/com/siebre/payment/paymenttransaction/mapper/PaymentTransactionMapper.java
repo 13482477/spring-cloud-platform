@@ -43,7 +43,6 @@ public interface PaymentTransactionMapper {
 
     int updateTransactionStatusToClose(String orderNumber);
 
-    List<PaymentTransaction> selectTransaction(@Param("orderId") Long orderId,
-                                                                            @Param("interfaceType") PaymentInterfaceType interfaceType);
+    List<PaymentTransaction> selectTransaction(@Param("orderId") Long orderId, @Param("interfaceType") PaymentInterfaceType interfaceType);
 
 }

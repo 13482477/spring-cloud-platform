@@ -29,10 +29,7 @@ import java.util.List;
 
 @Service
 public class PaymentTransactionService {
-	
-	@Autowired
-	private PaymentTransactionMapper paymentTransactionMapper;
-	
+
 	private Logger logger = LoggerFactory.getLogger(PaymentTransactionService.class);
 
     @Autowired
@@ -52,6 +49,9 @@ public class PaymentTransactionService {
 
     @Autowired
     protected SerialNumberService serialNumberService;
+
+    @Autowired
+    private PaymentTransactionMapper paymentTransactionMapper;
 
     /**
      * 更新交易和订单状态
