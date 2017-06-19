@@ -1,4 +1,4 @@
-package com.siebre.admin.rpc.uaa;
+package com.siebre.gateway.security.entity;
 
 import java.util.Collection;
 

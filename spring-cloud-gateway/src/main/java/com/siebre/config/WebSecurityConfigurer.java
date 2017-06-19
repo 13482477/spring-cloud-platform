@@ -14,7 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import com.siebre.admin.security.userdetails.CustomerUserDetailsService;
+import com.siebre.gateway.security.userdetails.CustomerUserDetailsService;
 
 @Configuration
 @EnableWebSecurity

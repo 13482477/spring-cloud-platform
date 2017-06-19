@@ -1,4 +1,4 @@
-package com.siebre.admin.security.userdetails;
+package com.siebre.gateway.security.userdetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -6,9 +6,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.siebre.admin.rpc.uaa.User;
-import com.siebre.admin.rpc.uaa.UserRemoteService;
 import com.siebre.basic.web.WebResult;
+import com.siebre.gateway.security.entity.User;
 
 @Component
 public class CustomerUserDetailsService implements UserDetailsService {
