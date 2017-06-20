@@ -10,10 +10,15 @@
     id, payment_host, front_host
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from pmt_host_config
     where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from pmt_host_config
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from pmt_host_config
