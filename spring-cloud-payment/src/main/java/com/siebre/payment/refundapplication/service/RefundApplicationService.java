@@ -45,19 +45,10 @@ public class RefundApplicationService {
     private RefundApplicationMapper refundApplicationMapper;
 
     @Autowired
-    private PaymentOrderMapper paymentOrderMapper;
-
-    @Autowired
     private PaymentOrderService paymentOrderService;
 
     @Autowired
-    private RefundApplicationService refundApplicationService;
-
-    @Autowired
     private PaymentRefundRouteService paymentRefundRouteService;
-
-    @Autowired
-    private SerialNumberMapper serialNumberMapper;
 
     public ServiceResult<List<RefundApplication>> selectRefundList(String orderNumber, String refundNumber,
                                                                    List<String> channelCodeList,
@@ -92,9 +83,15 @@ public class RefundApplicationService {
     @Transactional("db")
     public void doRefund(RefundRequest refundRequest, RefundResponse refundResponse) {
         if (StringUtils.isBlank(refundRequest.getOrderNumber())) {
-            logger.info("订单编号为空", refundRequest.getOrderNumber());
+            logger.info("订单编号为空");
             refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
             refundResponse.setReturnMessage("订单编号为空");
+            return;
+        }
+        if (refundRequest.getRefundAmount() == null) {
+            logger.info("退款金额为空");
+            refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
+            refundResponse.setReturnMessage("退款金额为空");
             return;
         }
         //判断订单是否锁定
@@ -157,9 +154,11 @@ public class RefundApplicationService {
             application.setRefundAmount(refundRequest.getRefundAmount());
             application.setMessageId(refundRequest.getMessageId());
             application.setNotificationUrl(refundRequest.getNotificationUrl());
-            application.setCreateDate(new Date());
+            application.setCreateDate(new Date());   //申请退款时间
             refundApplicationMapper.insertSelective(application);
             logger.info("为订单：{}创建一条新的退款申请, 退款单号为：{}", paymentOrder.getOrderNumber(), application.getRefundApplicationNumber());
+            //订单状态更新为:退款已申请
+            paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.REFUNDING);
         }
 
         PaymentRefundRequest paymentRefundRequest = new PaymentRefundRequest();

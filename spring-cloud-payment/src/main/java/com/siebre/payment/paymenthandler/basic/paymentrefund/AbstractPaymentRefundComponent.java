@@ -1,11 +1,13 @@
 package com.siebre.payment.paymenthandler.basic.paymentrefund;
 
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
+import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
 import com.siebre.payment.paymenthandler.basic.payment.PaymentInterfaceComponent;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
+import com.siebre.payment.paymentorder.service.PaymentOrderService;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
 import com.siebre.payment.paymentway.entity.PaymentWay;
@@ -24,6 +26,9 @@ public abstract class AbstractPaymentRefundComponent implements PaymentInterface
 
     @Autowired
     private PaymentTransactionService paymentTransactionService;
+
+    @Autowired
+    private PaymentOrderService paymentOrderService;
 
     @Autowired
     private SerialNumberMapper SerialNumberMapper;
@@ -53,13 +58,15 @@ public abstract class AbstractPaymentRefundComponent implements PaymentInterface
         refundPaymentTransaction.setInternalTransactionNumber(SerialNumberMapper.nextValue("refund_dep"));
 
         RefundApplication refundApplication = paymentRefundRequest.getRefundApplication();
-        //更新状态为处理中
+        //更新refundApplication状态为处理中
         refundApplication.setRefundApplicationNumber(refundPaymentTransaction.getInternalTransactionNumber());
         refundApplication.setStatus(RefundApplicationStatus.PROCESSING);
 
-        refundPaymentTransaction.setCreateDate(new Date());
+        refundPaymentTransaction.setCreateDate(new Date());   //发起退款时间
         //保存refundPaymentTransaction和refundApplication
         paymentTransactionService.createRefundPaymentTransaction(refundPaymentTransaction, refundApplication);
+        //更新order状态为退款中
+        this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PROCESSING_REFUND);
 
         paymentRefundRequest.setRefundTransaction(refundPaymentTransaction);
 
