@@ -196,7 +196,7 @@ public class RefundApplicationService {
             refund.setOrderNumber(refundApp.getOrderNumber());
             refund.setRefundNumber(refundApp.getRefundApplicationNumber());
             refund.setChannelName(refundApp.getPaymentOrder().getPaymentChannel().getChannelName());
-            refund.setOrderAmount(refundApp.getPaymentOrder().getTotalPremium().toString());
+            refund.setOrderAmount(refundApp.getPaymentOrder().getAmount().toString());
             refund.setRefundAmount(refundApp.getRefundAmount().toString());
             refund.setRefundStatus(refundApp.getStatus().getDescription());
             if (RefundApplicationStatus.SUCCESS.equals(refundApp.getStatus())) {
