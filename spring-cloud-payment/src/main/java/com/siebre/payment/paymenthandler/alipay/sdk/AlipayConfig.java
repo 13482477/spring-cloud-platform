@@ -1,5 +1,7 @@
 package com.siebre.payment.paymenthandler.alipay.sdk;
 
+import com.siebre.payment.paymentcallback.controller.PaymentCallbackController;
+
 /**
  * 支付宝配置信息
  */
@@ -21,16 +23,13 @@ public class AlipayConfig {
     public static String TRADE_REQUEST_URL = "https://openapi.alipay.com/gateway.do";
 
     //即时到账-支付回调地址
-    public static String FASTPAY_CALLBACK_URL = "http://tianci.vicp.io:14369/siebre-cloud-payment-service/payment/paymentGateWay/notify/" + WAY_WEB_PAY;
+    public static String FASTPAY_CALLBACK_URL = PaymentCallbackController.CALL_BACK_URI + WAY_WEB_PAY;
 
     //手机网关支付-支付回调地址
-    public static String TRADE_CALLBACK_URL = "http://tianci.vicp.io:14369/siebre-cloud-payment-service/payment/paymentGateWay/notify/" + WAY_TRADE_PAY;
-
-    //即时到账-退款回调地址
-    public static String FASTPAY_REFUND_CALLBACK_URL = "http://tianci.vicp.io:14369/siebre-cloud-payment-service/payment/paymentGateWay/notify/ALIPAY_FASTPAY_REFUND_CALLBACK";
+    public static String TRADE_CALLBACK_URL = PaymentCallbackController.CALL_BACK_URI + WAY_TRADE_PAY;
 
     //支付同步通知页面地址
-    public static String RETURN_PAGE_URL = "http://mobile.siebre.com/siebre-cloud/success";
+    public static String RETURN_PAGE_URL = "/siebre-cloud/success";
 
     public static String WEBPAY_SERVICE="create_direct_pay_by_user";
 

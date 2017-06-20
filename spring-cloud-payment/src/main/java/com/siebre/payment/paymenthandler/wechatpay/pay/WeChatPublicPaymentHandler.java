@@ -3,6 +3,7 @@ package com.siebre.payment.paymenthandler.wechatpay.pay;
 import com.siebre.payment.entity.enums.EncryptionMode;
 import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.entity.enums.SubsequentAction;
+import com.siebre.payment.hostconfig.service.PaymentHostConfigService;
 import com.siebre.payment.paymentgateway.vo.WechatJsApiParams;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
@@ -16,6 +17,7 @@ import com.siebre.payment.utils.http.HttpTookit;
 import com.siebre.payment.utils.messageconvert.ConvertToXML;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -30,6 +32,9 @@ import java.util.UUID;
  */
 @Component("weChatPublicPaymentHandler")
 public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
+
+    @Autowired
+    private PaymentHostConfigService hostConfig;
 
     @Override
     protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
@@ -73,7 +78,7 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
         Date current = new Date();
         paramMap.put("time_start", DateFormatUtils.format(current, "yyyyMMddHHmmss")); // 交易起始时间
         paramMap.put("time_expire", DateFormatUtils.format(DateUtils.addMinutes(current, 30), "yyyyMMddHHmmss")); // 交易结束时间,设置为起始时间后30分钟
-        paramMap.put("notify_url", paymentInterface.getCallbackUrl()); // 支付成功后，回调地址
+        paramMap.put("notify_url", hostConfig.getPaymentHost() + paymentInterface.getCallbackUrl()); // 支付成功后，回调地址
         paramMap.put("trade_type", "JSAPI"); // 交易类型
         paramMap.put("openid", request.getOpenid()); // 交易类型为JSAPI时，必传的参数
         return paramMap;

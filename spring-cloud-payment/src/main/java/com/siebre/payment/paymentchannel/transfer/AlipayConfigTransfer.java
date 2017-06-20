@@ -159,7 +159,6 @@ public class AlipayConfigTransfer {
         fastPayRefund.setPaymentWayId(webPayWay.getId());
         fastPayRefund.setInterfaceName("支付宝即时到账退款接口");
         fastPayRefund.setRequestUrl(AlipayConfig.FASTPAY_REQUEST_URL);
-        fastPayRefund.setCallbackUrl(AlipayConfig.FASTPAY_REFUND_CALLBACK_URL);
         fastPayRefund.setReturnPageUrl(AlipayConfig.RETURN_PAGE_URL);
         fastPayRefund.setPaymentInterfaceType(PaymentInterfaceType.REFUND);
         paymentInterfaceService.createPaymentInterface(fastPayRefund);

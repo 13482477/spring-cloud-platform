@@ -3,6 +3,7 @@ package com.siebre.payment.paymenthandler.alipay.pay;
 import com.siebre.payment.entity.enums.EncryptionMode;
 import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.entity.enums.SubsequentAction;
+import com.siebre.payment.hostconfig.service.PaymentHostConfigService;
 import com.siebre.payment.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.paymenthandler.alipay.sdk.AlipaySign;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
@@ -12,6 +13,7 @@ import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -23,6 +25,9 @@ import java.util.Map;
  */
 @Component("alipayWebPaymentHandler")
 public class AlipayWebPaymentHandler extends AbstractPaymentComponent {
+
+	@Autowired
+	private PaymentHostConfigService hostConfig;
 
 	@Override
 	protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
@@ -45,8 +50,8 @@ public class AlipayWebPaymentHandler extends AbstractPaymentComponent {
 		params.put("service", AlipayConfig.WEBPAY_SERVICE);
 		params.put("partner", paymentWay.getPaymentChannel().getMerchantCode());
 		params.put("_input_charset", AlipayConfig.INPUT_CHARSET_UTF);
-		params.put("notify_url", paymentInterface.getCallbackUrl());
-		params.put("return_url", paymentInterface.getReturnPageUrl() + "?orderNumber=" + paymentOrder.getOrderNumber());
+		params.put("notify_url", hostConfig.getPaymentHost() + paymentInterface.getCallbackUrl());
+		params.put("return_url", hostConfig.getFrontHost() + paymentInterface.getReturnPageUrl() + "?orderNumber=" + paymentOrder.getOrderNumber());
 		params.put("payment_type", AlipayConfig.PAYMENT_TYPE);
 		params.put("seller_email", paymentWay.getPaymentChannel().getPayeeAccount());
 		params.put("subject", "保险产品");

@@ -3,6 +3,7 @@ package com.siebre.payment.paymenthandler.unionpay.refund;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
 import com.siebre.payment.entity.enums.ReturnCode;
+import com.siebre.payment.hostconfig.service.PaymentHostConfigService;
 import com.siebre.payment.paymenthandler.basic.paymentrefund.AbstractPaymentRefundComponent;
 import com.siebre.payment.paymenthandler.unionpay.sdk.UnionPayUtil;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
@@ -13,6 +14,7 @@ import com.siebre.payment.refundapplication.dto.PaymentRefundRequest;
 import com.siebre.payment.refundapplication.dto.PaymentRefundResponse;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
 import com.siebre.payment.utils.http.HttpTookit;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -29,8 +31,11 @@ import java.util.Map;
 @Service("unionPayPaymentRefundHandler")
 public class UnionPayPaymentRefundHandler extends AbstractPaymentRefundComponent {
 
+    @Autowired
+    private PaymentHostConfigService hostConfig;
+
     @Override
-    protected void handleInternal(PaymentRefundRequest paymentRefundRequest,PaymentRefundResponse refundResponse) {
+    protected void handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse) {
         PaymentWay paymentWay = paymentRefundRequest.getPaymentWay();
         PaymentInterface paymentInterface = paymentRefundRequest.getPaymentInterface();
         PaymentTransaction refundTransaction = paymentRefundRequest.getRefundTransaction();
@@ -67,7 +72,7 @@ public class UnionPayPaymentRefundHandler extends AbstractPaymentRefundComponent
 
         requestData.put("txnAmt", amt);                          //****退货金额，单位分，不要带小数点。退货金额小于等于原消费金额，当小于的时候可以多次退货至退货累计金额等于原消费金额
 
-        requestData.put("backUrl", paymentInterface.getCallbackUrl());      //银联通用后台通知地址
+        requestData.put("backUrl", hostConfig.getPaymentHost() + paymentInterface.getCallbackUrl());      //银联通用后台通知地址
 
         requestData.put("origQryId", paymentRefundRequest.getOriginExternalNumber());//****原消费交易返回的的queryId，可以从消费交易后台通知接口中或者交易状态查询接口中获取
 

@@ -19,10 +19,12 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 public class PaymentCallbackController {
 
+	public static final String CALL_BACK_URI = "/api/v1/paymentGateWay/notify/";
+
 	@Autowired
 	private PaymentWayService paymentWayService;
 
-	@RequestMapping(value = "/api/v1/paymentGateWay/notify/{notifyCode}", method = {RequestMethod.POST })
+	@RequestMapping(value = CALL_BACK_URI + "{notifyCode}", method = {RequestMethod.POST })
 	public WebResult<Object> paymentCallback(@PathVariable String notifyCode, HttpServletRequest request, HttpServletResponse response) {
 		String handleBeanName = HandlerBeanNameConfig.CALL_BACK_MAPPING.get(notifyCode);
 		PaymentInterface paymentInterface = this.paymentWayService.getPaymentInterface(notifyCode, PaymentInterfaceType.PAY_NOTIFY);
