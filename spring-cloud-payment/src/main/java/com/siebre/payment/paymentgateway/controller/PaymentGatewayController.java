@@ -208,7 +208,8 @@ public class PaymentGatewayController {
     /**
      * 获取请求微信授权的url pageUrl 微信需要重定向的目标页面，会将code返回回来
      */
-    @RequestMapping(value = "/paymentGateway/unifiedPay/wechatauthorize", method = GET)
+    @ApiOperation(value = "获取微信授权", notes = "获取请求微信授权的redirectUrl:微信需要重定向的目标页面，会将code返回回来")
+    @RequestMapping(value = "/paymentGateway/unifiedPay/weChatAuthorize", method = GET)
     public Object weChatTest(HttpServletRequest request) {
         String pageUrl = request.getParameter("pageUrl");
         Map<String, String> result = new HashMap<>();
@@ -221,10 +222,10 @@ public class PaymentGatewayController {
 
     /**
      * 获取微信openid
-     *
      * @param request
      * @return
      */
+    @ApiOperation(value = "获取微信openid", notes = "获取微信openid")
     @RequestMapping(value = "/paymentGateway/unifiedPay/getWeChatOpenid", method = GET)
     public Object getWeChatOpenid(HttpServletRequest request) {
         Map<String, String> result = new HashMap<>();

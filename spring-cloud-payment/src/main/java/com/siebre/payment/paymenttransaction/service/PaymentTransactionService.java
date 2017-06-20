@@ -255,8 +255,6 @@ public class PaymentTransactionService {
         //根据内部交易流水号  交易状态为支付中   接口类型为支付接口  查找唯一的transaction
         PaymentTransaction paymentTransaction = this.paymentTransactionMapper.selectByInterTradeNo(internalTransactionNumber, PaymentTransactionStatus.PAY_PROCESSING, PaymentInterfaceType.PAY);
 
-        PaymentOrder paymentOrder = this.paymentOrderMapper.selectByPrimaryKey(paymentTransaction.getPaymentOrderId());
-
         if (paymentTransaction == null) {
             logger.error("没有找到该条交易记录internalTransactionNumber={}", internalTransactionNumber);
             return ServiceResult.<PaymentTransaction>builder().success(false).message("没有找到该条交易记录internalTransactionNumber=" + internalTransactionNumber).build();
@@ -271,6 +269,9 @@ public class PaymentTransactionService {
             logger.error("商户号不一致seller_id={}，MerchantCode={}", seller_id, merchId);
             return ServiceResult.<PaymentTransaction>builder().success(false).message("商户号不一致seller_id=" + seller_id + ", MerchantCode=" + merchId).build();
         }
+
+        PaymentOrder paymentOrder = this.paymentOrderMapper.selectByPrimaryKey(paymentTransaction.getPaymentOrderId());
+
         // 校验total_fee
         BigDecimal paymentAmount = paymentOrder.getAmount();
         if (paymentAmount.compareTo(total_fee) != 0) {

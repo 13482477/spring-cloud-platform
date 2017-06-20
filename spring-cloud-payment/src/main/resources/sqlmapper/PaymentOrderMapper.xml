@@ -616,7 +616,7 @@
 
 	<select id="getSuccessedPaymentAmount" resultType="java.math.BigDecimal">
 		select
-		sum(total_premium)
+		sum(amount)
 		from
 		pmt_payment_order
 		where
@@ -632,7 +632,7 @@
 	</select>
 	<select id="getFaildPaymentAmount" resultType="java.math.BigDecimal">
 		select
-		sum(total_premium)
+		sum(amount)
 		from
 		pmt_payment_order
 		where
@@ -655,7 +655,7 @@
 
 	<select id="getTotalAmountByDateRange" resultType="java.math.BigDecimal">
 		select
-		sum(total_premium)
+		sum(amount)
 		from
 		pmt_payment_order
 		where
@@ -689,7 +689,7 @@
 
 	<select id="getChannelSuccessedAmount" resultType="java.util.HashMap">
 		select
-		sum(total_premium) totalAmount,
+		sum(amount) totalAmount,
 		channel_code channelCode
 		from
 		pmt_payment_order
@@ -703,7 +703,7 @@
 
 	<select id="getChannelFailAmount" resultType="java.util.HashMap">
 		select
-		sum(total_premium) totalAmount,
+		sum(amount) totalAmount,
 		channel_code channelCode
 		from
 		pmt_payment_order
@@ -756,7 +756,7 @@
 		select
 		channel_code,
 		count(*) successCount,
-		sum(total_premium) successAmount
+		sum(amount) successAmount
 		from
 		pmt_payment_order
 		where
@@ -770,7 +770,7 @@
 		(select
 		channel_code,
 		count(*) faildCount,
-		sum(total_premium) faildAmount
+		sum(amount) faildAmount
 		from
 		pmt_payment_order
 		where
