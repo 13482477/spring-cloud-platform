@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.uaa.authority.mapper.AuthorityMapper">
+    <resultMap id="BaseAuthority" type="com.siebre.uaa.authority.entity.Authority">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="authority_name" property="authorityName" jdbcType="VARCHAR"/>
+        <result column="authority_code" property="authorityCode" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, authority_name, authority_code, description, create_user, create_date, update_user, update_date
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseAuthority" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_authority
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByRoleID" resultMap="BaseAuthority" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_authority LEFT JOIN sys_role_authority ON sys_authority.id = sys_role_authority.authority_id
+        where sys_role_authority.role_id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByResourceID" resultMap="BaseAuthority" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_authority LEFT JOIN sys_authority_resource ON sys_authority.id = sys_authority_resource.authority_id
+        where sys_authority_resource.resource_id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM sys_authority
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.siebre.uaa.authority.entity.Authority" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO sys_authority (
+        	id, 
+        	authority_name, 
+        	authority_code,
+            description, 
+            create_user, 
+            create_date,
+            update_user, 
+            update_date
+        )
+        VALUES (
+        	#{id,jdbcType=BIGINT}, 
+        	#{authorityName,jdbcType=VARCHAR}, 
+        	#{authorityCode,jdbcType=VARCHAR},
+            #{description,jdbcType=VARCHAR}, 
+            #{createUser,jdbcType=VARCHAR}, 
+            #{createDate,jdbcType=TIMESTAMP},
+            #{updateUser,jdbcType=VARCHAR}, 
+            #{updateDate,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.siebre.uaa.authority.entity.Authority" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_authority
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="authorityName != null">
+                authority_name,
+            </if>
+            <if test="authorityCode != null">
+                authority_code,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="updateUser != null">
+                update_user,
+            </if>
+            <if test="updateDate != null">
+                update_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="authorityName != null">
+                #{authorityName,jdbcType=VARCHAR},
+            </if>
+            <if test="authority_code != null">
+                #{authorityCode,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null">
+                #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.siebre.uaa.authority.entity.Authority">
+        update sys_authority
+        <set>
+            <if test="authorityName != null">
+                authority_name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="authority_code != null">
+                authorityCode = #{authorityCode,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.siebre.uaa.authority.entity.Authority">
+        UPDATE 
+        	sys_authority
+        SET 
+        	authority_name        = #{authorityName,jdbcType=VARCHAR},
+            authority_code        = #{authorityCode,jdbcType=VARCHAR},
+            description 		  = #{description,jdbcType=VARCHAR},
+            create_user 		  = #{createUser,jdbcType=VARCHAR},
+            create_date 		  = #{createDate,jdbcType=TIMESTAMP},
+            update_user 		  = #{updateUser,jdbcType=VARCHAR},
+            update_date 		  = #{updateDate,jdbcType=TIMESTAMP}
+        WHERE 
+        	id = #{id,jdbcType=BIGINT}
+    </update>
+    
+    <select id="getAllAuthorities" resultMap="BaseAuthority">
+	    select
+	    	<include refid="Base_Column_List"/>
+	    from
+	    	sys_authority
+    </select>
+</mapper>
