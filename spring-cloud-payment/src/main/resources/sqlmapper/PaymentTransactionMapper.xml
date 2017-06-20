@@ -466,5 +466,7 @@
 		<if test="interfaceType != null">
 			and pmt_payment_transaction.interface_type = #{interfaceType.value}
 		</if>
+		order by
+		pmt_payment_transaction.create_date desc
 	</select>
 </mapper>
