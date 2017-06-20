@@ -1,3 +1,73 @@
 {
-	
+	"step": "step1",
+	"productCode": "BJXEDKYWX",
+	"effectiveDate": "2017-06-19",
+	"mult": "1",
+	"insured": [
+		{
+			"name": "Adam",
+			"idType": "identity",
+			"idNo": "763465736483729384",
+			"sex": "male",
+			"birthday": "1999-09-01",
+			"nativePlace": "Shanghai",
+			"idValid": "Yes",
+			"relationToAppnt": "self",
+			"relationToMainInsured": "self",
+			"occupationCode": "3306",
+			"major": "ATEJF12"
+		}
+	],
+	"plan": [
+		{
+			"code": "2017FJDOAF",
+			"mult": "1"
+		}
+	],
+	"risks": [
+		{
+			"riskCode": "test123",
+			"amnt": "10000",
+			"prem": "300",
+			"insuYear": "2017",
+			"insuYearFlag": "Yes",
+			"insuranceType": "Workers' accident compensation insurance",
+			"loadMonths": "24",
+			"loadMoney": "10000",
+			"loadContNum": "JREIOW1342",
+			"borrowerLenderType": "borrower",
+			"loadType": "Car",
+			"freeFlag": "Yes",
+			"loadYears": "2",
+			"floatRate": "0.21",
+			"loadDate": "2017-02-02",
+			"rnewFlag": "No",
+			"payIntv": "Monthly",
+			"payEndYear": "2018",
+			"payEndYearFlag": "No",
+			"autoPayFlag": "No",
+			"bonusGetMode": "Annually",
+			"mult": "1",
+			"liveGetMode": "EveryYear",
+			"liveGetYear": "2018",
+			"liveGetYearFlag": "No",
+			"getEndPeriod": "2018",
+			"getEndUnit": "",
+			"duties":[
+				{
+					"dutyCode": "A123",
+					"Amnt": "1000",
+					"Prem": "10000"
+				}
+			],
+			"plan": [
+				{
+					"planCode": "2017FJDOAF",
+					"mult": "1",
+					"amnt": "1000",
+					"prem": "10000"
+				}
+			]
+		}
+	]
 }

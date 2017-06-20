@@ -98,7 +98,7 @@ public class HibernateConfig {
         properties.put("hibernate.connection.url", "jdbc:mysql://192.168.18.158:3306/siebre-message-demo?characterEncoding=utf8");
         properties.put("hibernate.connection.username", "root");
         properties.put("hibernate.connection.password", "1qaz@WSX");
-        properties.put("hibernate.current_session_context_class", "thread");
+        properties.put("hibernate.current_session_context_class", "org.springframework.orm.hibernate4.SpringSessionContext");
 
         return properties;
     }
