@@ -461,7 +461,7 @@
 		where
 		1 = 1
 		<if test="orderId != null">
-			and pmt_payment_transaction.order_id = #{orderId,jdbcType=BIGINT}
+			and pmt_payment_transaction.payment_order_id = #{orderId,jdbcType=BIGINT}
 		</if>
 		<if test="interfaceType != null">
 			and pmt_payment_transaction.interface_type = #{interfaceType.value}

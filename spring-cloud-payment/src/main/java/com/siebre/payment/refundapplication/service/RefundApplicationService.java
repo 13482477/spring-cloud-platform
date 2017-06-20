@@ -20,6 +20,7 @@ import com.siebre.payment.refundapplication.dto.PaymentRefundResponse;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
 import com.siebre.payment.refundapplication.mapper.RefundApplicationMapper;
 import com.siebre.payment.serialnumber.mapper.SerialNumberMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -90,6 +91,12 @@ public class RefundApplicationService {
 
     @Transactional("db")
     public void doRefund(RefundRequest refundRequest, RefundResponse refundResponse) {
+        if (StringUtils.isBlank(refundRequest.getOrderNumber())) {
+            logger.info("订单编号为空", refundRequest.getOrderNumber());
+            refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
+            refundResponse.setReturnMessage("订单编号为空");
+            return;
+        }
         //判断订单是否锁定
         PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrder(refundRequest.getOrderNumber());
         if (PaymentOrderLockStatus.LOCK.equals(paymentOrder.getLockStatus())) {
@@ -99,7 +106,7 @@ public class RefundApplicationService {
             return;
         }
         //订单只有在支付成功或者部分退款状态下才可以有退款操作
-        if(!(PaymentOrderPayStatus.PAID.equals(paymentOrder.getStatus()) || PaymentOrderPayStatus.PART_REFUND.equals(paymentOrder.getStatus()))){
+        if (!(PaymentOrderPayStatus.PAID.equals(paymentOrder.getStatus()) || PaymentOrderPayStatus.PART_REFUND.equals(paymentOrder.getStatus()))) {
             logger.info("订单:{} 状态为:{}，不能退款", paymentOrder.getOrderNumber(), paymentOrder.getStatus().getDescription());
             refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
             refundResponse.setResponse("该订单状态为" + paymentOrder.getStatus().getDescription() + "，不能申请退款");
@@ -123,11 +130,11 @@ public class RefundApplicationService {
             RefundApplication temp = refundApplications.get(0);
             // 如果已存在数据库中的refundApplication的messageId与本次请求相同，那么使用数据库中已存在的refundApplication
             // 否则返回错误信息，该订单已存在一笔退款申请
-            if(temp.getMessageId().equals(refundRequest.getMessageId())){
+            if (temp.getMessageId().equals(refundRequest.getMessageId())) {
                 isExist = temp;
-            }else{
+            } else {
                 logger.info("订单:{} 已存在一笔退款申请, 退款申请单号为：{},messageId为：{}。本次请求的messageId为：{}", paymentOrder.getOrderNumber(), temp.getRefundApplicationNumber(),
-                            temp.getMessageId(), refundRequest.getMessageId());
+                        temp.getMessageId(), refundRequest.getMessageId());
                 refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
                 refundResponse.setResponse("该订单已存在一笔退款申请, 退款申请单号为：" + temp.getRefundApplicationNumber() + ", messageId为：" + temp.getMessageId());
                 return;
@@ -135,7 +142,7 @@ public class RefundApplicationService {
         }
 
         //判断是否重复提交
-        if(isExist == null) {
+        if (isExist == null) {
             isExist = refundApplicationMapper.selectByMessageId(refundRequest.getMessageId());
         }
 
@@ -174,10 +181,10 @@ public class RefundApplicationService {
         Date startDate = paramsVo.getStartDate();
         Date endDate = paramsVo.getEndDate();
         ServiceResult<List<RefundApplication>> refundsListResult = this.selectRefundList(orderNumber, null, paramsVo.getChannelCodeList(),
-               startDate, endDate, page);
+                startDate, endDate, page);
         List<RefundApplication> refundsList = refundsListResult.getData();
         //特殊需求处理：前端将orderNumber和refundNumber合并为一个字段传给后端，先去查询orderNumber，若查询不到值再去查询refundNumber
-        if(refundsList == null || refundsList.size() == 0){
+        if (refundsList == null || refundsList.size() == 0) {
             refundsListResult = this.selectRefundList(null, orderNumber, paramsVo.getChannelCodeList(),
                     startDate, endDate, page);
             refundsList = refundsListResult.getData();
@@ -192,10 +199,10 @@ public class RefundApplicationService {
             refund.setOrderAmount(refundApp.getPaymentOrder().getTotalPremium().toString());
             refund.setRefundAmount(refundApp.getRefundAmount().toString());
             refund.setRefundStatus(refundApp.getStatus().getDescription());
-            if(RefundApplicationStatus.SUCCESS.equals(refundApp.getStatus())){
+            if (RefundApplicationStatus.SUCCESS.equals(refundApp.getStatus())) {
                 refund.setOrderRefundStatus(refundApp.getPaymentOrder().getStatus().getDescription());
             }
-            if(refundApp.getCreateDate() != null) {
+            if (refundApp.getCreateDate() != null) {
                 String dateStr = DateFormatUtils.format(refundApp.getCreateDate(), "yyyy-MM-dd HH:mm:ss");
                 refund.setCreateDate(dateStr);
             }

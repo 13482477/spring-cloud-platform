@@ -6,6 +6,8 @@ import com.siebre.payment.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.paymenthandler.basic.paymentcallback.AbstractPaymentCallBackHandler;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.paymentway.mapper.PaymentWayMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +26,9 @@ import java.util.Map;
 @Component("alipayTradeWapCallBackHandler")
 public class AlipayTradeWapCallBackHandler extends AbstractPaymentCallBackHandler {
 
+    @Autowired
+    private PaymentWayMapper paymentWayMapper;
+
     @Override
     protected Object callBackHandleInternal(HttpServletRequest request, HttpServletResponse response, PaymentInterface paymentInterface) {
         //获取支付宝POST过来反馈信息
@@ -37,7 +42,7 @@ public class AlipayTradeWapCallBackHandler extends AbstractPaymentCallBackHandle
             //交易状态
             String trade_status = new String(request.getParameter("trade_status").getBytes("ISO-8859-1"), "UTF-8");
             //计算得出通知验证结果
-            PaymentWay paymentWay = paymentInterface.getPaymentWay();
+            PaymentWay paymentWay = paymentWayMapper.selectByPrimaryKey(paymentInterface.getPaymentWayId());//paymentInterface.getPaymentWay();
             boolean verify_result = AlipaySignature.rsaCheckV1(params, paymentWay.getPublicKey(), AlipayConfig.INPUT_CHARSET_UTF, paymentWay.getEncryptionMode().getDescription());
             //验证成功
             if (verify_result) {
