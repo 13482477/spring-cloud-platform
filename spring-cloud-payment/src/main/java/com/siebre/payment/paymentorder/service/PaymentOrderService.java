@@ -302,8 +302,6 @@ public class PaymentOrderService {
                 paymentOrder.setSellingChannel(SellingChannel.SELF_INSURANCE);//自助投保
             }
         }
-
-        this.processTotalAmount(paymentOrder, orderRequest.getPaymentOrderItems());
         this.paymentOrderMapper.insert(paymentOrder);
 
         for (PaymentOrderItem paymentOrderItem : orderRequest.getPaymentOrderItems()) {
@@ -329,23 +327,6 @@ public class PaymentOrderService {
         }
         return PaymentOrderResponse.SUCCESS("创建成功", paymentOrder);
     }
-
-    /**
-     * 计算总保额和总保费
-     *
-     * @param paymentOrder
-     * @param paymentOrderItems
-     */
-    private void processTotalAmount(PaymentOrder paymentOrder, List<PaymentOrderItem> paymentOrderItems) {
-        BigDecimal totalPremium = BigDecimal.ZERO;
-
-        for (PaymentOrderItem paymentOrderItem : paymentOrderItems) {
-            this.processPolicyLibilityAmount(paymentOrderItem);
-            totalPremium = totalPremium.add(paymentOrderItem.getGrossPremium());
-        }
-        paymentOrder.setTotalPremium(totalPremium);
-    }
-
 
     private void processPolicyLibilityAmount(PaymentOrderItem paymentOrderItem) {
         BigDecimal totalPremium = BigDecimal.ZERO;
@@ -798,7 +779,9 @@ public class PaymentOrderService {
         PaymentTransaction payTransaction = getLastPayTransaction(paymentOrder.getPaymentTransactions());
         if (payTransaction != null) {
             detail.setPayChannel(payTransaction.getPaymentChannel().getChannelName());
-            detail.setPayTime(DateFormatUtils.format(paymentOrder.getPayTime(), "yyyy-MM-dd HH:mm:ss"));
+            if(paymentOrder.getPayTime() != null) {
+                detail.setPayTime(DateFormatUtils.format(paymentOrder.getPayTime(), "yyyy-MM-dd HH:mm:ss"));
+            }
             detail.setPayWay(payTransaction.getPaymentWay().getName());
             detail.setPayAmount(payTransaction.getPaymentAmount());
             detail.setPayStatus(payTransaction.getPaymentStatus().getDescription());

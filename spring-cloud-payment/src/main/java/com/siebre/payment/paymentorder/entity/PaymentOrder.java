@@ -22,10 +22,6 @@ public class PaymentOrder extends BaseObject {
 
     private String orderNumber;
 
-    private BigDecimal totalInsuredAmount;
-
-    private BigDecimal totalPremium;
-
     private BigDecimal amount;//订单支付金额
 
     private Integer businessPlantform;
@@ -110,22 +106,6 @@ public class PaymentOrder extends BaseObject {
 
     public void setOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber == null ? null : orderNumber.trim();
-    }
-
-    public BigDecimal getTotalInsuredAmount() {
-        return totalInsuredAmount;
-    }
-
-    public void setTotalInsuredAmount(BigDecimal totalInsuredAmount) {
-        this.totalInsuredAmount = totalInsuredAmount;
-    }
-
-    public BigDecimal getTotalPremium() {
-        return totalPremium;
-    }
-
-    public void setTotalPremium(BigDecimal totalPremium) {
-        this.totalPremium = totalPremium;
     }
 
     public Integer getBusinessPlantform() {

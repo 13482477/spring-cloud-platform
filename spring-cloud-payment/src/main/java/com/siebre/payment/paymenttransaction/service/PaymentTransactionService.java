@@ -215,44 +215,6 @@ public class PaymentTransactionService {
         return ip + ":" + hostName;
     }
 
-    @Transactional("db")
-    public void createPaymentTransaction(PaymentOrder paymentOrder, List<PaymentOrderItem> paymentOrderItems, PaymentTransaction paymentTransaction) {
-        this.processTotalAmount(paymentOrder, paymentOrderItems);
-        paymentOrder.setCreateTime(new Date());
-        paymentOrder.setCreateDate(new Date());
-        this.paymentOrderMapper.insert(paymentOrder);
-
-        for (PaymentOrderItem paymentOrderItem : paymentOrderItems) {
-            paymentOrderItem.setPaymentOrderId(paymentOrder.getId());
-            paymentOrderItemMapper.insert(paymentOrderItem);
-        }
-
-        paymentTransaction.setPaymentOrderId(paymentOrder.getId());
-        paymentTransaction.setPaymentAmount(paymentOrder.getTotalPremium());
-        //创建的是支付的交易
-        paymentTransaction.setInterfaceType(PaymentInterfaceType.PAY);
-        paymentTransaction.setCreateDate(new Date());
-
-        this.paymentTransactionMapper.insert(paymentTransaction);
-    }
-
-    /**
-     * 计算总保额和总保费
-     *
-     * @param paymentOrder
-     * @param paymentOrderItems
-     */
-    private void processTotalAmount(PaymentOrder paymentOrder, List<PaymentOrderItem> paymentOrderItems) {
-        BigDecimal totalInsuredAmount = BigDecimal.ZERO;
-        BigDecimal totalPremium = BigDecimal.ZERO;
-
-        for (PaymentOrderItem paymentOrderItem : paymentOrderItems) {
-            totalPremium = totalPremium.add(paymentOrderItem.getGrossPremium());
-        }
-        paymentOrder.setTotalInsuredAmount(totalInsuredAmount);
-        paymentOrder.setTotalPremium(totalPremium);
-    }
-
     //特指交易类型为（支付）的交易
     public List<PaymentTransaction> queryPaymentTransaction(String orderNumber, String applicantNumber, PaymentTransactionStatus status, Long channelId, Date startDate, Date endDate,
                                                             PageInfo pageInfo) {
@@ -384,7 +346,7 @@ public class PaymentTransactionService {
         }
 
         //更新订单退款状态
-        if (paymentOrder.getRefundAmount().compareTo(paymentOrder.getTotalPremium()) == 0) {
+        if (paymentOrder.getRefundAmount().compareTo(paymentOrder.getAmount()) == 0) {
             paymentOrder.setStatus(PaymentOrderPayStatus.FULL_REFUND);
         } else {
             paymentOrder.setStatus(PaymentOrderPayStatus.PART_REFUND);

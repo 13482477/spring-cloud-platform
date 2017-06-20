@@ -34,9 +34,7 @@
 		<association property="paymentOrder" notNullColumn="id" javaType="com.siebre.payment.paymentorder.entity.PaymentOrder" columnPrefix="paymentOrder_">
 			<id column="id" property="id" jdbcType="BIGINT" />
 			<result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
-			<result column="total_insured_amount" property="totalInsuredAmount" jdbcType="DECIMAL" />
 			<result column="amount" property="amount" jdbcType="DECIMAL" />
-			<result column="total_premium" property="totalPremium" jdbcType="DECIMAL" />
 			<result column="business_plantform" property="businessPlantform" jdbcType="INTEGER" />
 			<result column="payment_client" property="paymentClient" jdbcType="INTEGER" />
 			<result column="return_trade_no" property="returnTradeNo" jdbcType="VARCHAR" />
@@ -94,9 +92,7 @@
 		pmt_refund_application.update_date,
 		pmt_payment_order.id                               paymentOrder_id,
 		pmt_payment_order.order_number                     paymentOrder_order_number,
-		pmt_payment_order.total_insured_amount             paymentOrder_total_insured_amount,
 		pmt_payment_order.amount                           paymentOrder_amount,
-		pmt_payment_order.total_premium                    paymentOrder_total_premium,
 		pmt_payment_order.business_plantform               paymentOrder_business_plantform,
 		pmt_payment_order.payment_client                   paymentOrder_payment_client,
 		pmt_payment_order.return_trade_no                  paymentOrder_return_trade_no,

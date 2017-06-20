@@ -4,8 +4,6 @@
 	<resultMap id="BaseResultMap" type="com.siebre.payment.paymentorder.entity.PaymentOrder">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
-		<result column="total_insured_amount" property="totalInsuredAmount" jdbcType="DECIMAL" />
-		<result column="total_premium" property="totalPremium" jdbcType="DECIMAL" />
 		<result column="business_plantform" property="businessPlantform" jdbcType="INTEGER" />
 		<result column="payment_client" property="paymentClient" jdbcType="INTEGER" />
 		<result column="return_trade_no" property="returnTradeNo" jdbcType="VARCHAR" />
@@ -36,8 +34,6 @@
 	<resultMap id="selectByOrderNumberResultMap" type="com.siebre.payment.paymentorder.entity.PaymentOrder">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
-		<result column="total_insured_amount" property="totalInsuredAmount" jdbcType="DECIMAL" />
-		<result column="total_premium" property="totalPremium" jdbcType="DECIMAL" />
 		<result column="business_plantform" property="businessPlantform" jdbcType="INTEGER" />
 		<result column="payment_client" property="paymentClient" jdbcType="INTEGER" />
 		<result column="return_trade_no" property="returnTradeNo" jdbcType="VARCHAR" />
@@ -97,8 +93,6 @@
 	<sql id="paymentOrderTransaction">
 		pmt_payment_order.id,
 		pmt_payment_order.order_number,
-		pmt_payment_order.total_insured_amount,
-		pmt_payment_order.total_premium,
 		pmt_payment_order.business_plantform,
 		pmt_payment_order.payment_client,
 		pmt_payment_order.return_trade_no,
@@ -150,8 +144,6 @@
 
 	<sql id="Base_Column_List">
 		id, order_number,
-		total_insured_amount,
-		total_premium,
 		business_plantform,
 		payment_client,
 		return_trade_no,
@@ -179,8 +171,6 @@
 	<sql id="colnum_for_page">
 		pmt_payment_order.id,
 		pmt_payment_order.order_number,
-		pmt_payment_order.total_insured_amount,
-		pmt_payment_order.total_premium,
 		pmt_payment_order.business_plantform,
 		pmt_payment_order.payment_client,
 		pmt_payment_order.return_trade_no,
@@ -220,8 +210,6 @@
 	<insert id="insert" parameterType="com.siebre.payment.paymentorder.entity.PaymentOrder" useGeneratedKeys="true" keyProperty="id">
 		insert into pmt_payment_order (
 		order_number,
-		total_insured_amount,
-		total_premium,
 		business_plantform,
 		payment_client,
 		return_trade_no,
@@ -246,8 +234,6 @@
 		)
 		values (
 		#{orderNumber,jdbcType=VARCHAR},
-		#{totalInsuredAmount,jdbcType=DECIMAL},
-		#{totalPremium,jdbcType=DECIMAL},
 		#{businessPlantform,jdbcType=INTEGER},
 		#{paymentClient,jdbcType=INTEGER},
 		#{returnTradeNo,jdbcType=VARCHAR},
@@ -279,12 +265,6 @@
 			</if>
 			<if test="orderNumber != null">
 				order_number,
-			</if>
-			<if test="totalInsuredAmount != null">
-				total_insured_amount,
-			</if>
-			<if test="totalPremium != null">
-				total_premium,
 			</if>
 			<if test="businessPlantform != null">
 				business_plantform,
@@ -357,12 +337,6 @@
 			<if test="orderNumber != null">
 				#{orderNumber,jdbcType=VARCHAR},
 			</if>
-			<if test="totalInsuredAmount != null">
-				#{totalInsuredAmount,jdbcType=DECIMAL},
-			</if>
-			<if test="totalPremium != null">
-				#{totalPremium,jdbcType=DECIMAL},
-			</if>
 			<if test="businessPlantform != null">
 				#{businessPlantform,jdbcType=INTEGER},
 			</if>
@@ -434,12 +408,6 @@
 			<if test="orderNumber != null">
 				order_number = #{orderNumber,jdbcType=VARCHAR},
 			</if>
-			<if test="totalInsuredAmount != null">
-				total_insured_amount = #{totalInsuredAmount,jdbcType=DECIMAL},
-			</if>
-			<if test="totalPremium != null">
-				total_premium = #{totalPremium,jdbcType=DECIMAL},
-			</if>
 			<if test="businessPlantform != null">
 				business_plantform = #{businessPlantform,jdbcType=INTEGER},
 			</if>
@@ -509,8 +477,6 @@
 	<update id="updateByPrimaryKey" parameterType="com.siebre.payment.paymentorder.entity.PaymentOrder">
 		update pmt_payment_order
 		set order_number = #{orderNumber,jdbcType=VARCHAR},
-		total_insured_amount = #{totalInsuredAmount,jdbcType=DECIMAL},
-		total_premium = #{totalPremium,jdbcType=DECIMAL},
 		business_plantform = #{businessPlantform,jdbcType=INTEGER},
 		payment_client = #{paymentClient,jdbcType=INTEGER},
 		return_trade_no = #{returnTradeNo,jdbcType=VARCHAR},
