@@ -43,10 +43,9 @@ public class HandlerBeanNameConfig {
         //通联实时代扣支付接口
         PAY_MAPPING.put(AllinpayConfig.WAY_ALLIN_REALTIME_PAY, "allinPayRealTimeHandler");
         //宝付快捷支付预支付接口
-        PAY_MAPPING.put(BaofooConfig.WAY_BAOFOO_WITHHOLDING, "baofooQuickPaymentHandler");
+        PAY_MAPPING.put(BaofooConfig.WAY_BAOFOO_FAST_PAY, "baofooQuickPaymentHandler");
         //宝付代扣支付接口
-        PAY_MAPPING.put(BaofooConfig.WAY_BAOFOO_FAST_PAY, "baofooWithholdingHandler");
-
+        PAY_MAPPING.put(BaofooConfig.WAY_BAOFOO_WITHHOLDING, "baofooWithholdingHandler");
         //银联支付网关支付接口
         PAY_MAPPING.put("UNIONPAY_ACP_PAY", "unionPayAcpPaymentHandler");
 
