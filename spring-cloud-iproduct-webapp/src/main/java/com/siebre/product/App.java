@@ -89,7 +89,7 @@ public class App {
 	AgreementSpecReaderFactory specReaderFactory() {
 		XmlAgreementSpecReaderFactory result = new XmlAgreementSpecReaderFactory()
 				.addFilter(new SmfBehaviorInternalReferenceGenerator());
-		result.setMappingFile("SmfCastorMapping-nns.xml");
+		result.setMappingFile("SmfCastorMapping.xml");
 		return result;
 	}
 
