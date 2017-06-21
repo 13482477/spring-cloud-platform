@@ -5,8 +5,10 @@ import com.siebre.payment.paymenthandler.basic.paymentcallback.AbstractPaymentCa
 import com.siebre.payment.paymenthandler.wechatpay.sdk.WeChatParamConvert;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.paymentway.mapper.PaymentWayMapper;
 import com.siebre.payment.utils.messageconvert.ConvertToXML;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +25,9 @@ import java.util.Map;
  */
 @Component("weChatCallBackHandler")
 public class WeChatCallBackHandler extends AbstractPaymentCallBackHandler {
+
+    @Autowired
+    private PaymentWayMapper paymentWayMapper;
 	
     @Override
     protected Object callBackHandleInternal(HttpServletRequest request, HttpServletResponse response, PaymentInterface paymentInterface) {
@@ -32,7 +37,7 @@ public class WeChatCallBackHandler extends AbstractPaymentCallBackHandler {
             byte[] bytes = this.readBytes(inputStream, request.getContentLength());
             String xml = new String(bytes);
             Map<String, String> map = ConvertToXML.toMap(xml);
-            PaymentWay paymentWay = paymentInterface.getPaymentWay();
+            PaymentWay paymentWay = paymentWayMapper.selectByPrimaryKey(paymentInterface.getPaymentWayId()); //paymentInterface.getPaymentWay();
             if (validateSign(map, paymentWay)) {
 
                 logger.info("微信签名验证成功");

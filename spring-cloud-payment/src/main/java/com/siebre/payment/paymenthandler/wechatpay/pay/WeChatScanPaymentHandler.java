@@ -84,7 +84,7 @@ public class WeChatScanPaymentHandler extends AbstractPaymentComponent {
 			logger.info("WechatScan url generated, url={}", url);
 			response.setPayUrl(url);
 			response.setReturnCode(ReturnCode.SUCCESS.getDescription());
-			response.setSubsequentAction(SubsequentAction.REDIRECT_TO_PAYMENT_GATEWAY.getValue());
+			response.setSubsequentAction(SubsequentAction.GENERATE_ERWEIMA.getValue());
 		}
 	}
 

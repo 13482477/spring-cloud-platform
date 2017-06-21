@@ -22,7 +22,7 @@ public class WechatJsApiParams implements Serializable {
 
     private String signType;
 
-    private Long timeStamp;
+    private String timeStamp;
 
     public WechatJsApiParams() {
     }
@@ -59,11 +59,11 @@ public class WechatJsApiParams implements Serializable {
         this.signType = signType;
     }
 
-    public Long getTimeStamp() {
+    public String getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(Long timeStamp) {
+    public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
     }
 

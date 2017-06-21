@@ -5,6 +5,8 @@ import com.siebre.payment.paymenthandler.basic.paymentcallback.AbstractPaymentCa
 import com.siebre.payment.paymenthandler.unionpay.sdk.UnionPayUtil;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.paymentway.mapper.PaymentWayMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,12 +22,16 @@ import java.util.Map;
 
 @Component("unionPayCallBackHandler")
 public class UnionPayCallBackHandler extends AbstractPaymentCallBackHandler {
+
+    @Autowired
+    private PaymentWayMapper paymentWayMapper;
+
     @Override
     protected Object callBackHandleInternal(HttpServletRequest request, HttpServletResponse response,PaymentInterface paymentInterface) {
 
         Map<String,String > paramsMap = HttpServletRequestUtil.getParameterMap(request);
 
-        PaymentWay paymentWay  =  paymentInterface.getPaymentWay();
+        PaymentWay paymentWay  = paymentWayMapper.selectByPrimaryKey(paymentInterface.getPaymentWayId()); //paymentInterface.getPaymentWay();
 
         if(UnionPayUtil.validateSign(paramsMap,paymentWay.getSecretKey())){
             logger.info("银联签名验证成功!");

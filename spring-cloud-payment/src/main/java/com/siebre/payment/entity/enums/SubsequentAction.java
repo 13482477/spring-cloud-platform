@@ -11,6 +11,9 @@ public enum SubsequentAction {
     //重定向到支付网关
     REDIRECT_TO_PAYMENT_GATEWAY("REDIRECT_TO_PAYMENT_GATEWAY", "重定向到支付网关"),
 
+    //生成二维码
+    GENERATE_ERWEIMA("GENERATE_ERWEIMA", "生成二维码"),
+
     //读取支付结果
     READ_PAY_RESULT("READ_PAY_RESULT", "读取支付结果"),
     ;

@@ -42,7 +42,10 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
         Map<String, String> params = this.generateParamsMap(request, paymentWay, paymentInterface, paymentTransaction);
         //调用统一下单API 获得预付单信息prepay_id
         this.processSign(params, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
-        String prepayId = this.getPrepayId(paymentWay, params);
+        String prepayId = this.getPrepayId(paymentWay, params, response);
+        if(prepayId == null) {
+            return;
+        }
         //生成JSAPI页面调用的支付参数并签名
         WechatJsApiParams jsApiParams = generateJsapiParams(paymentWay, prepayId);
         this.processSign2(jsApiParams, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
@@ -54,7 +57,7 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
     private WechatJsApiParams generateJsapiParams(PaymentWay paymentWay, String prepayId) {
         WechatJsApiParams wechatJsApiParams = new WechatJsApiParams();
         wechatJsApiParams.setAppId(paymentWay.getAppId());
-        wechatJsApiParams.setTimeStamp(Long.valueOf(new Date().getTime()));
+        wechatJsApiParams.setTimeStamp(Long.valueOf(new Date().getTime()).toString());
         wechatJsApiParams.setNonceStr(String.valueOf(UUID.randomUUID()).substring(0, 31));
         StringBuilder sb = new StringBuilder().append("prepay_id=").append(prepayId);
         wechatJsApiParams.setPackageSrt(sb.toString());
@@ -84,7 +87,7 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
         return paramMap;
     }
 
-    private String getPrepayId(PaymentWay paymentWay, Map<String, String> params) {
+    private String getPrepayId(PaymentWay paymentWay, Map<String, String> params, PaymentResponse response) {
         String payXml = ConvertToXML.toXml(params);
 
         logger.info("微信获取prepare请求信息={}", payXml);
@@ -93,14 +96,24 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
 
         String prepayOrderXml = HttpTookit.doPost(requestUrl, payXml);
         Map<String, String> resultMap = ConvertToXML.toMap(prepayOrderXml);
-
-        //TODO xml异常错误处理
-        logger.info("微信获取prepare返回信息={}", resultMap.toString());
-
-        String prepayId = resultMap.get("prepay_id");
-        logger.info("WechatScan url generated, prepayId={}", prepayId);
-
-        return prepayId;
+        if("FAIL".equals(resultMap.get("return_code"))) {
+            logger.info("调用预支付接口错误，错误原因：{}", resultMap.get("return_msg"));
+            response.setReturnCode(ReturnCode.FAIL.getDescription());
+            response.setReturnMessage(resultMap.get("return_msg"));
+            return null;
+        } else {
+            if("FAIL".equals(resultMap.get("result_code"))) {
+                logger.info("调用预支付接口错误，错误代码：{}，错误原因：{}", resultMap.get("err_code"), resultMap.get("return_msg"));
+                response.setReturnCode(ReturnCode.FAIL.getDescription());
+                response.setReturnMessage("调用预支付接口错误，错误代码：" + resultMap.get("err_code") + ",错误原因：" + resultMap.get("err_code_des"));
+                return null;
+            } else {
+                logger.info("微信获取prepare返回信息={}", resultMap.toString());
+                String prepayId = resultMap.get("prepay_id");
+                logger.info("WechatScan url generated, prepayId={}", prepayId);
+                return prepayId;
+            }
+        }
     }
 
     private void processSign(Map<String, String> params, EncryptionMode encryptionMode, String secretKey) {
@@ -115,7 +128,7 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
     private void processSign2(WechatJsApiParams wechatJsApiParams, EncryptionMode encryptionMode, String secretKey) {
         Map<String, String> params = new HashMap<>();
         params.put("appId", wechatJsApiParams.getAppId());
-        params.put("timeStamp", wechatJsApiParams.getTimeStamp().toString());
+        params.put("timeStamp", wechatJsApiParams.getTimeStamp());
         params.put("nonceStr", wechatJsApiParams.getNonceStr());
         params.put("package", wechatJsApiParams.getPackageSrt());
         params.put("signType", wechatJsApiParams.getSignType());
