@@ -15,6 +15,10 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +57,15 @@ public class AlipayCallBackHandler extends AbstractPaymentCallBackHandler {
                 String externalTransactionNumber = payNotifyParamDTO.getTrade_no();
                 String seller_id = payNotifyParamDTO.getSeller_id();
                 BigDecimal total_fee = new BigDecimal(payNotifyParamDTO.getTotal_fee());
-                this.paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee);
+
+                DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                try {
+                    Date successDate = f.parse(request.getParameter("gmt_payment"));
+                    this.paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee, successDate);
+                } catch (ParseException e) {
+                    logger.error("日期转换失败");
+                    e.printStackTrace();
+                }
                 return "success";
             }
 

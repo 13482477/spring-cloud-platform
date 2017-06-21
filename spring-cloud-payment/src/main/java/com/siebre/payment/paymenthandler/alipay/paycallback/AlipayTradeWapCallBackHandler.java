@@ -15,6 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,8 +52,18 @@ public class AlipayTradeWapCallBackHandler extends AbstractPaymentCallBackHandle
             if (verify_result) {
                 String seller_id = new String(request.getParameter("seller_id").getBytes("ISO-8859-1"), "UTF-8");
                 BigDecimal total_amount = new BigDecimal(new String(request.getParameter("total_amount").getBytes("ISO-8859-1"), "UTF-8"));
+
                 if (trade_status.equals("TRADE_FINISHED") || trade_status.equals("TRADE_SUCCESS")) {
-                    this.paymentTransactionService.paymentConfirm(out_trade_no, trade_no, seller_id, total_amount);
+                    DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                    try {
+                        Date successDate = f.parse(request.getParameter("gmt_payment"));
+                        this.paymentTransactionService.paymentConfirm(out_trade_no, trade_no, seller_id, total_amount, successDate);
+                    } catch (ParseException e) {
+                        logger.error("日期转换失败");
+                        e.printStackTrace();
+                    }
+
                 }
                 //response.getWriter().println("success");	//请不要修改或删除
                 return "success";

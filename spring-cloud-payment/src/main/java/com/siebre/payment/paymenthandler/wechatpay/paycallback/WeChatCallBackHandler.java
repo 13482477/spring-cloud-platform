@@ -16,6 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +50,15 @@ public class WeChatCallBackHandler extends AbstractPaymentCallBackHandler {
                 String externalTransactionNumber = map.get("transaction_id");
                 String mch_id = map.get("mch_id");
                 BigDecimal total_fee = new BigDecimal(map.get("total_fee")).divide(new BigDecimal("100"));
-                this.paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, mch_id, total_fee);
+                String time_end = map.get("time_end");
+                DateFormat f = new SimpleDateFormat("yyyyMMddHHmmss");
+                try {
+                    Date d = f.parse(time_end);
+                    this.paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, mch_id, total_fee, d);
+                } catch (ParseException e) {
+                    logger.error("日期转换失败！");
+                    e.printStackTrace();
+                }
                 return "";
             }else{
                 logger.info("微信签名验证失败");

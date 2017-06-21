@@ -94,14 +94,13 @@ public class PaymentOrderService {
      * @param status
      */
     @Transactional("db")
-    public void updateOrderStatus(PaymentOrder order, PaymentOrderPayStatus status) {
+    public void updateOrderStatus(PaymentOrder order, PaymentOrderPayStatus status, Date successDate) {
         PaymentOrder orderForUpdate = new PaymentOrder();
         orderForUpdate.setId(order.getId());
         orderForUpdate.setStatus(status);
         if (PaymentOrderPayStatus.PAID.equals(status)) {
-            Date current = new Date();
-            orderForUpdate.setPayTime(current);
-            order.setPayTime(current);
+            orderForUpdate.setPayTime(successDate);
+            order.setPayTime(successDate);
         }
         this.paymentOrderMapper.updateByPrimaryKeySelective(orderForUpdate);
         order.setStatus(status);

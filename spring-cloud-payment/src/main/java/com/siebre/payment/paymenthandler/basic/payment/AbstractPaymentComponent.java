@@ -88,7 +88,7 @@ public abstract class AbstractPaymentComponent implements PaymentInterfaceCompon
         PaymentTransaction paymentTransaction = this.paymentTransactionService.recordPay2ThirdPartyTransaction(paymentOrder, paymentWay);
 
         //订单状态改为支付中，并且更新订单渠道
-        this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PAYING);
+        this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PAYING, null);
 
         this.orderOutOfTimeService.newOrder(paymentOrder);//超时队列中记录新加入的订单
 
@@ -97,7 +97,7 @@ public abstract class AbstractPaymentComponent implements PaymentInterfaceCompon
         this.handleInternal(request, response, paymentWay, paymentInterface, paymentTransaction);
 
         if (ReturnCode.FAIL.getDescription().equals(response.getReturnCode())) {
-            this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PAYERROR);
+            this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PAYERROR, null);
         }
     }
 

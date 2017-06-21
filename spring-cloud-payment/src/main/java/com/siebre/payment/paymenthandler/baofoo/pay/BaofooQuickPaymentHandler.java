@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +59,8 @@ public class BaofooQuickPaymentHandler extends AbstractPaymentComponent {
             String seller_id = paymentWay.getPaymentChannel().getMerchantCode();//商户号
             if (baofooResponse.getSuccess()) {//支付成功
                 BigDecimal total_fee = new BigDecimal(baofooResponse.getSuccessAmount());
-                this.paymentTransactionService.paymentConfirm(paymentTransaction.getInternalTransactionNumber(), externalTransactionNumber, seller_id, total_fee);
+                //TODO 需要从回调中取出支付成功时间
+                this.paymentTransactionService.paymentConfirm(paymentTransaction.getInternalTransactionNumber(), externalTransactionNumber, seller_id, total_fee, new Date());
                 result.put("transaction_result", "success");
             } else {
                 this.paymentTransactionService.setFailStatus(paymentTransaction.getInternalTransactionNumber(), externalTransactionNumber);

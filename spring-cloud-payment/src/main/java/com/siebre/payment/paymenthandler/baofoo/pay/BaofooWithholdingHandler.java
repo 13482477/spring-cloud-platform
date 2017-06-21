@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +49,8 @@ public class BaofooWithholdingHandler extends AbstractPaymentComponent {
         BigDecimal total_fee = new BigDecimal(resultMap.get("succ_amt"));
         String externalTransactionNumber = resultMap.get("trans_no");
         if(resultMap.get("resp_code ") != null && resultMap.get("resp_code ").equals("0000")) {//交易成功且业务成功
-            this.paymentTransactionService.paymentConfirm(paymentTransaction.getInternalTransactionNumber(), externalTransactionNumber, seller_id, total_fee);
+            //TODO 支付成功时间从回调中获取
+            this.paymentTransactionService.paymentConfirm(paymentTransaction.getInternalTransactionNumber(), externalTransactionNumber, seller_id, total_fee, new Date());
 
             result.put("transaction_result","success");
         }else {//失败

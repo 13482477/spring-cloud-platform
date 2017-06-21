@@ -66,7 +66,7 @@ public abstract class AbstractPaymentRefundComponent implements PaymentInterface
         //保存refundPaymentTransaction和refundApplication
         paymentTransactionService.createRefundPaymentTransaction(refundPaymentTransaction, refundApplication);
         //更新order状态为退款中
-        this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PROCESSING_REFUND);
+        this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PROCESSING_REFUND, null);
 
         paymentRefundRequest.setRefundTransaction(refundPaymentTransaction);
 

@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,8 @@ public class AllinPayTranx {
                     //修改订单交易状态
                     String seller_id = paymentWay.getPaymentChannel().getMerchantCode();
                     BigDecimal total_fee = paymentTransaction.getPaymentAmount();
-                    paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee);
+                    //TODO
+                    paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee, new Date());
 
                     result.put("transaction_result", ReturnCode.SUCCESS.getDescription());
                     result.put("orderNumber", internalTransactionNumber);
@@ -207,8 +209,10 @@ public class AllinPayTranx {
         InfoReq info = new InfoReq();
         info.setTRX_CODE(trxcod);//交易代码 100011
         info.setREQ_SN(paymentWay.getPaymentChannel().getMerchantCode() + "-" + String.valueOf(System.currentTimeMillis()));
-        info.setUSER_NAME(paymentWay.getPaymentChannel().getMerchantName());
-        info.setUSER_PASS(paymentWay.getPaymentChannel().getMerchantPwd());
+        //info.setUSER_NAME(paymentWay.getPaymentChannel().getMerchantName());
+        //info.setUSER_PASS(paymentWay.getPaymentChannel().getMerchantPwd());
+        info.setUSER_NAME("20036800000096104");
+        info.setUSER_PASS("111111");
         //info.setUSER_NAME("20060400000044502");//demo测试
         //info.setUSER_PASS("`12qwe");//demo测试
         info.setLEVEL("5");//处理级别 0-9 0优先级最低

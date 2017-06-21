@@ -250,7 +250,7 @@ public class PaymentTransactionService {
      * @return
      */
     @Transactional("db")
-    public ServiceResult<PaymentTransaction> paymentConfirm(String internalTransactionNumber, String externalTransactionNumber, String seller_id, BigDecimal total_fee) {
+    public ServiceResult<PaymentTransaction> paymentConfirm(String internalTransactionNumber, String externalTransactionNumber, String seller_id, BigDecimal total_fee, Date successDate) {
 
         //根据内部交易流水号  交易状态为支付中   接口类型为支付接口  查找唯一的transaction
         PaymentTransaction paymentTransaction = this.paymentTransactionMapper.selectByInterTradeNo(internalTransactionNumber, PaymentTransactionStatus.PAY_PROCESSING, PaymentInterfaceType.PAY);
@@ -284,7 +284,7 @@ public class PaymentTransactionService {
         this.paymentTransactionMapper.updateByPrimaryKeySelective(paymentTransaction);
 
         //更新order状态
-        this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PAID);
+        this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PAID, successDate);
         updateExternalTransactionNumber(externalTransactionNumber, paymentOrder);
 
         return ServiceResult.<PaymentTransaction>builder().success(true).data(paymentTransaction).build();

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -67,7 +68,8 @@ public class UnionPayCallBackHandler extends AbstractPaymentCallBackHandler {
         if("00".equals(respCode)){//支付成功
             String merId = paramsMap.get("merId");
             BigDecimal txnAmt = new BigDecimal(paramsMap.get("txnAmt")).divide(new BigDecimal("100"));
-            this.paymentTransactionService.paymentConfirm(orderId,queryId , merId, txnAmt);
+            //TODO  支付成功时间从返回报文中取
+            this.paymentTransactionService.paymentConfirm(orderId,queryId , merId, txnAmt, new Date());
         }
     }
 

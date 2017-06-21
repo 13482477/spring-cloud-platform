@@ -158,7 +158,7 @@ public class RefundApplicationService {
             refundApplicationMapper.insertSelective(application);
             logger.info("为订单：{}创建一条新的退款申请, 退款单号为：{}", paymentOrder.getOrderNumber(), application.getRefundApplicationNumber());
             //订单状态更新为:退款已申请
-            paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.REFUNDING);
+            paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.REFUNDING, null);
         }
 
         PaymentRefundRequest paymentRefundRequest = new PaymentRefundRequest();
