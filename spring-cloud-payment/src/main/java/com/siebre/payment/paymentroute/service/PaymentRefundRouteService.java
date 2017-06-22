@@ -33,13 +33,7 @@ public class PaymentRefundRouteService {
     private Logger logger = LoggerFactory.getLogger(PaymentRefundRouteService.class);
 
     @Autowired
-    private PaymentOrderService paymentOrderService;
-
-    @Autowired
     private PaymentWayService paymentWayService;
-
-    @Autowired
-    private PaymentTransactionService paymentTransactionService;
 
     public void route(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse) {
 

@@ -74,19 +74,6 @@ public class PaymentOrderService {
     @Autowired
     private PaymentWayService paymentWayService;
 
-    public ServiceResult<List<PaymentOrder>> queryPaymentOrder(PageInfo pageInfo) {
-        return null;
-    }
-
-    public ServiceResult<Map<String, Object>> queryPaymentSummary(PageInfo pageInfo) {
-        return null;
-    }
-
-    public PaymentOrderPayStatus queryOrderStatus(String orderNumber) {
-        PaymentOrder order = paymentOrderMapper.selectByOrderNumber(orderNumber);
-        return order.getStatus();
-    }
-
     /**
      * 更新订单为指定状态
      *
@@ -273,68 +260,6 @@ public class PaymentOrderService {
         return new MsgUtil(ReturnCode.SUCCESS, "");
     }
 
-    /**
-     * 创建order和order item   libility    applicant   insurePerson
-     *
-     * @param orderRequest
-     * @param request
-     * @return
-     */
-    @Transactional("db")
-    public PaymentOrderResponse createPaymentOrderAndItems(PaymentOrderRequest orderRequest, HttpServletRequest request) {
-        //幂等性校验
-        MsgUtil validateMsg = idempotencyValidate(orderRequest.getMessageId());
-        if (ReturnCode.FAIL.equals(validateMsg.getResult())) {
-            PaymentOrder order = paymentOrderMapper.selectByMessageId(orderRequest.getMessageId());
-            return PaymentOrderResponse.SUCCESS("创建成功", order);
-        }
-
-        //保存order
-        PaymentOrder paymentOrder = new PaymentOrder();
-        initOrderDate(paymentOrder);
-        paymentOrder.setPaymentWayCode(orderRequest.getPaymentWayCode());
-        paymentOrder.setItems(orderRequest.getPaymentOrderItems());
-        if (orderRequest.getSellingChannel() != null) {
-            if (orderRequest.getSellingChannel().equals("MOBILE_SALE_APP")) {
-                paymentOrder.setSellingChannel(SellingChannel.MOBILE_SALE_APP);//移动展业
-            } else {
-                paymentOrder.setSellingChannel(SellingChannel.SELF_INSURANCE);//自助投保
-            }
-        }
-        this.paymentOrderMapper.insert(paymentOrder);
-
-        for (PaymentOrderItem paymentOrderItem : orderRequest.getPaymentOrderItems()) {
-            paymentOrderItem.setPaymentOrderId(paymentOrder.getId());
-            //save insured
-            PolicyRole insuredPerson = paymentOrderItem.getInsured();
-            insuredPerson.setPolicyRoleType(PolicyRoleType.INSURED);
-            policyRoleMapper.insert(insuredPerson);
-            paymentOrderItem.setInsuredPersonId(insuredPerson.getId());
-            //save applicant
-            if ("SELF".equalsIgnoreCase(insuredPerson.getRelatedToApplicant())) {
-                PolicyRole applicant = paymentOrderItem.getApplicant();
-                applicant.setPolicyRoleType(PolicyRoleType.APPLICANT);
-                policyRoleMapper.insert(applicant);
-                paymentOrderItem.setApplicantId(applicant.getId());
-            }
-            paymentOrderItemMapper.insert(paymentOrderItem);
-            //save libilities
-            for (PolicyLibility libility : paymentOrderItem.getLibilities()) {
-                libility.setOrderItemId(paymentOrderItem.getId());
-                policyLibilityMapper.insert(libility);
-            }
-        }
-        return PaymentOrderResponse.SUCCESS("创建成功", paymentOrder);
-    }
-
-    private void processPolicyLibilityAmount(PaymentOrderItem paymentOrderItem) {
-        BigDecimal totalPremium = BigDecimal.ZERO;
-        for (PolicyLibility libility : paymentOrderItem.getLibilities()) {
-            totalPremium = totalPremium.add(libility.getPremium());
-        }
-        paymentOrderItem.setGrossPremium(totalPremium);
-    }
-
     public CheckOrderVo queryPaymentOrderForCheckDetail(String orderNumber) {
         PaymentOrder order = paymentOrderMapper.selectByOrderNumberleftjoin(orderNumber);
         List<PaymentOrderItem> items = paymentOrderItemMapper.selectByPaymentOrderId(order.getId());
@@ -441,21 +366,6 @@ public class PaymentOrderService {
         result.setData(checkOrderVos);
         result.setPageInfo(pageInfo);
         return result;
-    }
-
-    public ServiceResult<List<PaymentOrder>> queryPaymentOrderListRPC(String orderNumber, String applicationNumber, PaymentTransactionStatus status, PageInfo page) {
-        ServiceResult<List<PaymentOrder>> result = new ServiceResult<List<PaymentOrder>>();
-        List<PaymentOrder> orders = paymentOrderMapper.selectOrderJoinTransaction(orderNumber, applicationNumber, status, page);
-        result.setData(orders);
-        result.setPageInfo(page);
-        return result;
-    }
-
-    @Transactional("db")
-    public void paymentCheckConfirm(String orderNumber) {
-        PaymentOrder paymentOrder = this.paymentOrderMapper.selectByOrderNumber(orderNumber);
-        paymentOrder.setCheckStatus(PaymentOrderCheckStatus.SUCCESS);
-        paymentOrderMapper.updateByPrimaryKeySelective(paymentOrder);
     }
 
     public ServiceResult<BigDecimal> getSuccessPaymentAmount() {
@@ -804,25 +714,6 @@ public class PaymentOrderService {
             }
         });
         return pays.get(pays.size() == 0 ? 0 : pays.size() - 1);
-    }
-
-    private TradeOrderItem transItemVo(PaymentOrderItem paymentOrderItem) {
-        TradeOrderItem item = new TradeOrderItem();
-
-        item.setApplicationNumber(paymentOrderItem.getApplicationNumber());
-        item.setPolicyNumber(paymentOrderItem.getApplicationNumber());
-        item.setPolicyState("未生效");
-        item.setPayAmount(paymentOrderItem.getGrossPremium().toString());
-
-        item.setProductName(paymentOrderItem.getProductName());
-        item.setApplicantName(paymentOrderItem.getApplicant().getName());
-        item.setPayAmount(paymentOrderItem.getGrossPremium().toString());
-
-        item.setApplicantMobile(paymentOrderItem.getApplicant().getPhoneNumber());
-        item.setApplicantIdentityType("身份证");
-        item.setApplicantIdentityNumber(paymentOrderItem.getApplicant().getIdNumber());
-
-        return item;
     }
 
 }

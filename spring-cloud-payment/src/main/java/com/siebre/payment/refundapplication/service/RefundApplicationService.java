@@ -60,26 +60,6 @@ public class RefundApplicationService {
         return result;
     }
 
-    public ServiceResult<List<RefundApplication>> getRefundApplicationByPage(PageInfo pageInfo) {
-        List<RefundApplication> list = refundApplicationMapper.selectByPage(pageInfo);
-        ServiceResult<List<RefundApplication>> result = new ServiceResult<>();
-        result.setData(list);
-        result.setPageInfo(pageInfo);
-        return result;
-    }
-
-    public ServiceResult<RefundApplication> getRefundApplicationByOrderNumber(String orderNumber) {
-        ServiceResult<RefundApplication> result = new ServiceResult<>();
-        result.setData(refundApplicationMapper.selectByBusinessNumber(orderNumber, null));
-        return result;
-    }
-
-    public ServiceResult<RefundApplication> getRefundApplicationByRefundApplicationNumber(String refundApplicationNumber) {
-        ServiceResult<RefundApplication> result = new ServiceResult<>();
-        result.setData(refundApplicationMapper.selectByBusinessNumber(null, refundApplicationNumber));
-        return result;
-    }
-
     @Transactional("db")
     public void doRefund(RefundRequest refundRequest, RefundResponse refundResponse) {
         if (StringUtils.isBlank(refundRequest.getOrderNumber())) {
