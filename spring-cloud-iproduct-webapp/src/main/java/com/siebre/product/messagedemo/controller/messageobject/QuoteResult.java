@@ -9,7 +9,6 @@ public class QuoteResult {
 
 	String status = "Success";
 	List<String> messages = Lists.newArrayList();
-	BigDecimal insuredAmount;
 	BigDecimal premium;
 	
 	public String getStatus() {
@@ -28,14 +27,6 @@ public class QuoteResult {
 		this.messages = messages;
 	}
 
-	public BigDecimal getInsuredAmount() {
-		return insuredAmount;
-	}
-
-	public void setInsuredAmount(BigDecimal insuredAmount) {
-		this.insuredAmount = insuredAmount;
-	}
-
 	public BigDecimal getPremium() {
 		return premium;
 	}
@@ -44,7 +35,7 @@ public class QuoteResult {
 		this.premium = premium;
 	}
 	
-	public static QuoteResultBuilder builder() {
+	public QuoteResultBuilder builder() {
 		return new QuoteResultBuilder();
 	}
 	
@@ -79,7 +70,6 @@ public class QuoteResult {
 			QuoteResult quoteResult = new QuoteResult();
 			quoteResult.setStatus(this.status);
 			quoteResult.setMessages(this.messages);
-			quoteResult.setInsuredAmount(this.insuredAmount);
 			quoteResult.setPremium(this.premium);
 			
 			return quoteResult;
