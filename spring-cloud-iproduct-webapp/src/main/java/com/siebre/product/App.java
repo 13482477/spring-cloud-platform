@@ -25,10 +25,10 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.util.Properties;
 
 //@EnableDiscoveryClient
 //@EnableFeignClients
@@ -37,6 +37,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class App {
 	
 	public static void main(String[] args) {
+		Properties systemProperties = System.getProperties();
+		systemProperties.remove("javax.xml.parsers.DocumentBuilderFactory");
 		SpringApplication.run(App.class, args);
 	}
 
@@ -92,6 +94,8 @@ public class App {
 		result.setMappingFile("SmfCastorMapping.xml");
 		return result;
 	}
+
+
 
 	public void afterPropertiesSet() throws Exception {
 		//TODO move to WebApplicationInitializer

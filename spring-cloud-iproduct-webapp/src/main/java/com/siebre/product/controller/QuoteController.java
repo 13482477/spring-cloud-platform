@@ -1,17 +1,5 @@
 package com.siebre.product.controller;
 
-import io.swagger.annotations.ApiOperation;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.siebre.agreement.service.DefaultAgreementRequestExecutor;
 import com.siebre.basic.web.WebResult;
 import com.siebre.policy.application.Application;
@@ -19,6 +7,15 @@ import com.siebre.policy.application.ApplicationResult;
 import com.siebre.policy.application.service.ApplicationService;
 import com.siebre.product.messagedemo.controller.messageobject.QuoteResult;
 import com.siebre.product.utils.QuoteJsonService;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class QuoteController {
@@ -53,7 +50,7 @@ public class QuoteController {
 	}
 	
 	String getMockJsonString() {
-		return "{\"specCode\": \"CYAXBJH\",\"premium\": \"0\",\"insuredAmount\": \"10000\"}";
+		return "{\"specCode\": \"FJHYX\",\"premium\": \"0\",\"insuredAmount\": \"10000\"}";
 	}
 	
 }
