@@ -23,6 +23,7 @@ import com.siebre.agreement.dto.support.DtoBuilders;
 import com.siebre.policy.application.Application;
 import com.siebre.product.InsuranceProduct;
 import com.siebre.product.repository.InsuranceProductRepository;
+import com.siebre.smf.SmfRole;
 import com.siebre.smf.groovy.GroovyMetaClassEnhancer;
 
 @Service
@@ -45,12 +46,16 @@ public class QuoteJsonService {
 		String productCode = (String) properties.get("specCode");
 		
 		InsuranceProduct product = productRepository.findByExternalReference(productCode);
-		product.getRoleSpecs();
-		product.getRequestSpecs();
-		product.getCalculations();
-		product.getRules();
-		product.getPropertySpecs();
-		product.getChildCompositions();
+		
+		Hibernate.initialize(product.getRoleSpecs());
+		for (SmfRole role : product.getRoleSpecs()) {
+			Hibernate.initialize(role.getRules());
+		}
+		Hibernate.initialize(product.getRequestSpecs());
+		Hibernate.initialize(product.getCalculations());
+		Hibernate.initialize(product.getRules());
+		Hibernate.initialize(product.getPropertySpecs());
+		Hibernate.initialize(product.getChildCompositions());
 		
 		//InsuranceProduct product = mockProduct();
 		

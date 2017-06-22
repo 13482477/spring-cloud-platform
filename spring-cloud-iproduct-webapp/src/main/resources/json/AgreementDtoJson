@@ -1,5 +1,11 @@
 {
     "specCode": "test",
+    "properties": [
+        {
+            "name": "inceptionDate",
+            "value": "2017-6-209: 57: 30"
+        }
+    ],
     "roles": [
         {
             "kind": "applicant",
@@ -17,12 +23,6 @@
             "roles": [],
             "components": [],
             "properties": []
-        }
-    ],
-    "properties": [
-        {
-            "name": "inceptionDate",
-            "value": "2017-6-209: 57: 30"
         }
     ]
 }

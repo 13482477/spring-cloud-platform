@@ -40,7 +40,8 @@ public class QuoteController {
 	public WebResult<QuoteResult> quote(HttpServletRequest request) throws Exception {
 		QuoteResult quoteResult = new QuoteResult();
 		
-		String requestJsonString = IOUtils.toString(request.getInputStream());
+		//String requestJsonString = IOUtils.toString(request.getInputStream());
+		String requestJsonString = getMockJsonString();
 		Application application = quoteJsonService.toApplication(requestJsonString);
 		
 		ApplicationResult result = applicationService.quote(application);
@@ -49,6 +50,10 @@ public class QuoteController {
 		
 		return WebResult.<QuoteResult>builder().returnCode("200").returnMessage("The operation is done successfully.").data(quoteResult).build();
 	
+	}
+	
+	String getMockJsonString() {
+		return "{\"specCode\": \"CYAXBJH\",\"premium\": \"0\",\"insuredAmount\": \"10000\"}";
 	}
 	
 }

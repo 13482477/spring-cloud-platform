@@ -30,8 +30,8 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.PlatformTransactionManager;
 
-@EnableDiscoveryClient
-@EnableFeignClients
+//@EnableDiscoveryClient
+//@EnableFeignClients
 @SpringBootApplication(exclude = {SessionAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class})
 //@ImportResource({"classpath:spring/applicationContext-*.xml"})
 public class App {
@@ -89,7 +89,7 @@ public class App {
 	AgreementSpecReaderFactory specReaderFactory() {
 		XmlAgreementSpecReaderFactory result = new XmlAgreementSpecReaderFactory()
 				.addFilter(new SmfBehaviorInternalReferenceGenerator());
-		result.setMappingFile("SmfCastorMapping-nns.xml");
+		result.setMappingFile("SmfCastorMapping.xml");
 		return result;
 	}
 
