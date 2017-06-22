@@ -4,6 +4,8 @@ import com.aipg.common.AipgReq;
 import com.aipg.common.InfoReq;
 import com.aipg.refund.Refund;
 import com.allinpay.XmlTools;
+import com.siebre.payment.paymentaccount.entity.PaymentAccount;
+import com.siebre.payment.paymentaccount.service.PaymentAccountService;
 import com.siebre.payment.paymenthandler.allinpay.sdk.AllinPayTranx;
 import com.siebre.payment.paymenthandler.basic.paymentrefund.AbstractPaymentRefundComponent;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
@@ -25,6 +27,9 @@ import java.math.BigDecimal;
 public class AllinPayRealTimeRefundHandler extends AbstractPaymentRefundComponent {
 
     @Autowired
+    private PaymentAccountService paymentAccountService;
+
+    @Autowired
     private AllinPayTranx allinPayTranx;
 
     @Override
@@ -40,6 +45,7 @@ public class AllinPayRealTimeRefundHandler extends AbstractPaymentRefundComponen
 
     private void refundTranx(String trx_code, boolean isTLTFront, PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse) {
         PaymentOrder paymentOrder = paymentRefundRequest.getPaymentOrder();
+        PaymentAccount account = paymentAccountService.getPaymentAccountById(paymentOrder.getPaymentAccountId());
         PaymentWay paymentWay = paymentRefundRequest.getPaymentWay();
         PaymentInterface paymentInterface = paymentRefundRequest.getPaymentInterface();
 
@@ -55,8 +61,8 @@ public class AllinPayRealTimeRefundHandler extends AbstractPaymentRefundComponen
         String oldNumber = paymentRefundRequest.getOriginExternalNumber();
         refund.setORGBATCHID(oldNumber); //原交易的REQ_SN 交易的文件名
         refund.setORGBATCHSN("0");//原交易的记录序号，原交易为单笔实时交易时填0 实时收款设置为0
-        refund.setACCOUNT_NO("6214850218622493");
-        refund.setACCOUNT_NAME("张三");
+        refund.setACCOUNT_NO(account.getAcountNumber());
+        refund.setACCOUNT_NAME(account.getHolderName());
         String amt = paymentOrder.getAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
         refund.setAMOUNT(amt);
         //refund.setREMARK("全部退还");

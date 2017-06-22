@@ -75,8 +75,6 @@ public class AllinPayRealTimeHandler extends AbstractPaymentComponent {
         trans.setBUSINESS_CODE("19900");//业务代码
         trans.setMERCHANT_ID(paymentWay.getPaymentChannel().getMerchantCode());
         trans.setSUBMIT_TIME(new SimpleDateFormat("yyyyMMddHHmmss").format(paymentTransaction.getCreateDate()));
-        //trans.setACCOUNT_NAME(request.getAccountName());//账号名 银行卡或存折上的所有人姓名。
-        //trans.setACCOUNT_NO(request.getAccountNo());//账号 银行卡或存折号码
         trans.setACCOUNT_NAME(account.getHolderName());//账号名 银行卡或存折上的所有人姓名。
         trans.setACCOUNT_NO(account.getAcountNumber());//账号 银行卡或存折号码
         trans.setACCOUNT_PROP("0");//账号属性 0私人，1公司。不填时，默认为私人0。
