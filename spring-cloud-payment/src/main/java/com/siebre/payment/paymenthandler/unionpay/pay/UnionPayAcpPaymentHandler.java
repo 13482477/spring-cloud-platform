@@ -1,5 +1,6 @@
 package com.siebre.payment.paymenthandler.unionpay.pay;
 
+import com.siebre.payment.hostconfig.service.PaymentHostConfigService;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
@@ -8,6 +9,7 @@ import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -22,13 +24,17 @@ import java.util.Map;
  */
 @Service("unionPayAcpPaymentHandler")
 public class UnionPayAcpPaymentHandler extends AbstractPaymentComponent {
+
+    @Autowired
+    private PaymentHostConfigService hostConfig;
+
     @Override
-    protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
+    protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
         Map<String, String> requestParams = generateParamsMap(request, paymentWay, paymentInterface, paymentTransaction);
 
         String paymentUrl = this.getPaymentUrl(paymentWay, requestParams);
 
-        return PaymentResponse.builder().payUrl(paymentUrl).build();
+        response.setPayUrl(paymentUrl);
     }
 
     private Map<String, String> generateParamsMap(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
@@ -52,8 +58,8 @@ public class UnionPayAcpPaymentHandler extends AbstractPaymentComponent {
 
         requestData.put("txnAmt", amt); //交易金额，单位分，不要带小数点
 
-        requestData.put("frontUrl", paymentInterface.getReturnPageUrl());//前台通知地址
-        requestData.put("backUrl", paymentInterface.getCallbackUrl());//后台通知地址
+        requestData.put("frontUrl", hostConfig.getFrontHost() + paymentInterface.getReturnPageUrl());//前台通知地址
+        requestData.put("backUrl", hostConfig.getPaymentHost() + paymentInterface.getCallbackUrl());//后台通知地址
 
         requestData.put("payTimeout", new SimpleDateFormat("yyyyMMddHHmmss").format(paymentTransaction.getCreateDate().getTime() + 30 * 60 * 1000));// 订单超时时间 30分钟
 

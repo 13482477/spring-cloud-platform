@@ -1,6 +1,7 @@
 package com.siebre.payment.paymentgateway.vo;
 
 
+import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 
@@ -14,25 +15,22 @@ public class PaymentOrderResponse implements Serializable {
 
     private String returnCode;
 
-    private String message;
+    private String returnMessage;
 
     private PaymentOrder paymentOrder;
 
-    private List<PaymentOrderItem> paymentOrderItems;
-
-    private PaymentOrderResponse(String returnCode, String message, PaymentOrder paymentOrder, List<PaymentOrderItem> paymentOrderItems) {
+    private PaymentOrderResponse(String returnCode, String returnMessage, PaymentOrder paymentOrder) {
         this.returnCode = returnCode;
-        this.message = message;
+        this.returnMessage = returnMessage;
         this.paymentOrder = paymentOrder;
-        this.paymentOrderItems = paymentOrderItems;
     }
 
     public static PaymentOrderResponse FAIL(String s) {
-        return new PaymentOrderResponse("500", s , null ,null);
+        return new PaymentOrderResponse(ReturnCode.FAIL.getDescription(), s, null);
     }
 
-    public static PaymentOrderResponse SUCCESS(String s,PaymentOrder paymentOrder,List<PaymentOrderItem> paymentOrderItems) {
-        return new PaymentOrderResponse("200", s , paymentOrder,paymentOrderItems);
+    public static PaymentOrderResponse SUCCESS(String s, PaymentOrder paymentOrder) {
+        return new PaymentOrderResponse(ReturnCode.SUCCESS.getDescription(), s, paymentOrder);
     }
 
     public String getReturnCode() {
@@ -43,12 +41,12 @@ public class PaymentOrderResponse implements Serializable {
         this.returnCode = returnCode;
     }
 
-    public String getMessage() {
-        return message;
+    public String getReturnMessage() {
+        return returnMessage;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setReturnMessage(String returnMessage) {
+        this.returnMessage = returnMessage;
     }
 
     public PaymentOrder getPaymentOrder() {
@@ -59,11 +57,4 @@ public class PaymentOrderResponse implements Serializable {
         this.paymentOrder = paymentOrder;
     }
 
-    public List<PaymentOrderItem> getPaymentOrderItems() {
-        return paymentOrderItems;
-    }
-
-    public void setPaymentOrderItems(List<PaymentOrderItem> paymentOrderItems) {
-        this.paymentOrderItems = paymentOrderItems;
-    }
 }

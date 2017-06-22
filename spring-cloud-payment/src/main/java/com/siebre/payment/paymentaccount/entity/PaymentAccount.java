@@ -20,7 +20,7 @@ public class PaymentAccount implements Serializable{
     //银行卡类型
     private BankAccountType accountType;
 
-    private String acountNumber;
+    private String acountNumber;   //与支付宝账户共用，详情见AliPayAccount
 
     private String bankCode;
 

@@ -4,12 +4,17 @@ import com.aipg.common.AipgReq;
 import com.aipg.common.InfoReq;
 import com.aipg.rtreq.Trans;
 import com.allinpay.XmlTools;
+import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
+import com.siebre.payment.entity.enums.ReturnCode;
+import com.siebre.payment.entity.enums.SubsequentAction;
+import com.siebre.payment.paymentaccount.entity.PaymentAccount;
 import com.siebre.payment.paymenthandler.allinpay.sdk.AllinPayTranx;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
+import com.siebre.payment.paymentorder.service.PaymentOrderService;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import org.slf4j.Logger;
@@ -19,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -36,18 +42,30 @@ public class AllinPayRealTimeHandler extends AbstractPaymentComponent {
     @Autowired
     private AllinPayTranx allinPayTranx ;
 
+    @Autowired
+    private PaymentOrderService paymentOrderService;
+
     @Override
-    protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
+    protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
 
         String trx_code = "100011";//交易代码
         boolean isTLTFront = false;//是否发送至前置机（由前置机进行签名）如不特别说明，商户技术不要设置为true
 
-        Map<String, Object> result = singleTranx(request, paymentInterface.getRequestUrl(), trx_code, isTLTFront, paymentWay, paymentTransaction);
+        Map<String, String> result = singleTranx(request, paymentInterface.getRequestUrl(), trx_code, isTLTFront, paymentWay, paymentTransaction);
 
-        return PaymentResponse.builder().body(result).build();
+        response.setReturnCode(result.get("transaction_result"));
+        response.setReturnMessage(result.get("msg"));
+        if(ReturnCode.SUCCESS.getDescription().equals(result.get("transaction_result"))) {
+            //TODO 找黄飞确认
+            paymentOrderService.updateOrderStatus(request.getPaymentOrder(), PaymentOrderPayStatus.PAID, new Date());
+            response.setSubsequentAction(SubsequentAction.READ_PAY_RESULT.getValue());
+        }
+
     }
 
-    private Map<String, Object> singleTranx(PaymentRequest request, String url, String trx_code, boolean isTLTFront, PaymentWay paymentWay, PaymentTransaction paymentTransaction) {
+    private Map<String, String> singleTranx(PaymentRequest request, String url, String trx_code, boolean isTLTFront, PaymentWay paymentWay, PaymentTransaction paymentTransaction) {
+        PaymentOrder paymentOrder = request.getPaymentOrder();
+        PaymentAccount account = paymentOrder.getPaymentAccount();
         String xml = "";
         AipgReq aipg = new AipgReq();
         InfoReq info = allinPayTranx.makeReq(trx_code, paymentWay);
@@ -57,8 +75,8 @@ public class AllinPayRealTimeHandler extends AbstractPaymentComponent {
         trans.setBUSINESS_CODE("19900");//业务代码
         trans.setMERCHANT_ID(paymentWay.getPaymentChannel().getMerchantCode());
         trans.setSUBMIT_TIME(new SimpleDateFormat("yyyyMMddHHmmss").format(paymentTransaction.getCreateDate()));
-        trans.setACCOUNT_NAME(request.getAccountName());//账号名 银行卡或存折上的所有人姓名。
-        trans.setACCOUNT_NO(request.getAccountNo());//账号 银行卡或存折号码
+        trans.setACCOUNT_NAME(account.getHolderName());//账号名 银行卡或存折上的所有人姓名。
+        trans.setACCOUNT_NO(account.getAcountNumber());//账号 银行卡或存折号码
         trans.setACCOUNT_PROP("0");//账号属性 0私人，1公司。不填时，默认为私人0。
 //		trans.setACCOUNT_TYPE("01");//账号类型 00银行卡，01存折，02信用卡。不填默认为银行卡00
         String amt = paymentTransaction.getPaymentAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
@@ -71,8 +89,8 @@ public class AllinPayRealTimeHandler extends AbstractPaymentComponent {
 
         xml = XmlTools.buildXml(aipg, true);
         logger.info("request data: {}", xml);
-        
-        Map<String, Object> result = allinPayTranx.dealRetForPay(allinPayTranx.sendToTlt(xml, isTLTFront, url,paymentWay),trx_code, paymentTransaction, paymentWay);
+
+        Map<String, String> result = allinPayTranx.dealRetForPay(allinPayTranx.sendToTlt(xml, isTLTFront, url, paymentWay), trx_code, paymentTransaction, paymentWay);
 
         return result;
 

@@ -5,11 +5,14 @@ import com.siebre.payment.paymenthandler.basic.paymentcallback.AbstractPaymentCa
 import com.siebre.payment.paymenthandler.unionpay.sdk.UnionPayUtil;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.paymentway.mapper.PaymentWayMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -20,12 +23,16 @@ import java.util.Map;
 
 @Component("unionPayCallBackHandler")
 public class UnionPayCallBackHandler extends AbstractPaymentCallBackHandler {
+
+    @Autowired
+    private PaymentWayMapper paymentWayMapper;
+
     @Override
     protected Object callBackHandleInternal(HttpServletRequest request, HttpServletResponse response,PaymentInterface paymentInterface) {
 
         Map<String,String > paramsMap = HttpServletRequestUtil.getParameterMap(request);
 
-        PaymentWay paymentWay  =  paymentInterface.getPaymentWay();
+        PaymentWay paymentWay  = paymentWayMapper.selectByPrimaryKey(paymentInterface.getPaymentWayId()); //paymentInterface.getPaymentWay();
 
         if(UnionPayUtil.validateSign(paramsMap,paymentWay.getSecretKey())){
             logger.info("银联签名验证成功!");
@@ -61,7 +68,8 @@ public class UnionPayCallBackHandler extends AbstractPaymentCallBackHandler {
         if("00".equals(respCode)){//支付成功
             String merId = paramsMap.get("merId");
             BigDecimal txnAmt = new BigDecimal(paramsMap.get("txnAmt")).divide(new BigDecimal("100"));
-            this.paymentTransactionService.paymentConfirm(orderId,queryId , merId, txnAmt);
+            //TODO  支付成功时间从返回报文中取
+            this.paymentTransactionService.paymentConfirm(orderId,queryId , merId, txnAmt, new Date());
         }
     }
 

@@ -2,8 +2,8 @@ package com.siebre.payment.entity.enums;
 
 public enum ReturnCode {
 	
-	SUCCESS("200", "成功!"),
-	FAIL("500", "失败"),
+	SUCCESS("200", "SUCCESS"),
+	FAIL("500", "FAIL"),
 	;
 	
 	ReturnCode(String value, String description) {

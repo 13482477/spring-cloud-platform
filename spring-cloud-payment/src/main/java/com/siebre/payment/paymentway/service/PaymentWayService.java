@@ -45,21 +45,6 @@ public class PaymentWayService {
 		return null;
 	}
 
-	public PaymentInterface getNotifyPaymentInterface(String notifyCode) {
-		return this.paymentInterfaceMapper.selectByCode(notifyCode);
-	}
-
-	@Transactional("db")
-	public ServiceResult<PaymentWay> createPaymentWayAndPaymentInterface(PaymentWay paymentWay) {
-		this.paymentWayMapper.insert(paymentWay);
-
-		for (PaymentInterface paymentInterface : paymentWay.getPaymentInterfaces()) {
-			paymentInterface.setPaymentWayId(paymentWay.getId());
-			this.paymentInterfaceMapper.insert(paymentInterface);
-		}
-		return ServiceResult.<PaymentWay>builder().success(true).data(paymentWay).build();
-	}
-
 	public ServiceResult<List<PaymentWay>> selectAllByPage(PageInfo pageInfo) {
 		List<PaymentWay> list = this.paymentWayMapper.selectAllByPage(pageInfo);
 		return ServiceResult.<List<PaymentWay>>builder().success(Boolean.TRUE).data(list).message(ServiceResult.SUCCESS_MESSAGE).build();

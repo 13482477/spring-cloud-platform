@@ -1,62 +1,45 @@
 package com.siebre.payment.paymentgateway.vo;
 
-import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class UnifiedPayRequest implements Serializable{
+/**
+ * @author Huang Tianci
+ * 统一支付接口请求模型 v2版本，v2版本接口开发完成之后，清除v1版本的请求模型，并重构请求模型名称
+ */
+public class UnifiedPayRequest implements Serializable {
 
-	private static final long serialVersionUID = 4231942882144054731L;
-	
-	private String orderNumber;
-	
-	private String payWayCode;
+	@ApiModelProperty(value = "由前端维护，唯一标识一次支付请求", required = true)
+	private String messageId;
 
-	private String ip;
+	@ApiModelProperty(value = "支付回调地址", required = false)
+	private String notificationUrl;
 
-	private String openid;
-	
-	private List<PaymentOrderItem> paymentOrderItems;
+	@ApiModelProperty(value = "支付订单信息", required = true)
+	private UnifiedPayOrder paymentOrder;
 
-	public String getOrderNumber() {
-		return orderNumber;
+	public String getMessageId() {
+		return messageId;
 	}
 
-	public void setOrderNumber(String orderNumber) {
-		this.orderNumber = orderNumber;
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
 	}
 
-	public String getPayWayCode() {
-		return payWayCode;
+	public String getNotificationUrl() {
+		return notificationUrl;
 	}
 
-	public void setPayWayCode(String payWayCode) {
-		this.payWayCode = payWayCode;
+	public void setNotificationUrl(String notificationUrl) {
+		this.notificationUrl = notificationUrl;
 	}
 
-	public String getIp() {
-		return ip;
+	public UnifiedPayOrder getPaymentOrder() {
+		return paymentOrder;
 	}
 
-	public void setIp(String ip) {
-		this.ip = ip;
+	public void setPaymentOrder(UnifiedPayOrder paymentOrder) {
+		this.paymentOrder = paymentOrder;
 	}
-
-	public String getOpenid() {
-		return openid;
-	}
-
-	public void setOpenid(String openid) {
-		this.openid = openid;
-	}
-
-	public List<PaymentOrderItem> getPaymentOrderItems() {
-		return paymentOrderItems;
-	}
-
-	public void setPaymentOrderItems(List<PaymentOrderItem> paymentOrderItems) {
-		this.paymentOrderItems = paymentOrderItems;
-	}
-    
 }

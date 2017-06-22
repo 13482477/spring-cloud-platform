@@ -24,7 +24,7 @@ public interface PaymentTransactionMapper {
 
     int updateByPrimaryKey(PaymentTransaction record);
 
-    public List<PaymentTransaction> queryPaymentTransaction(
+    List<PaymentTransaction> queryPaymentTransaction(
             @Param("orderNumber") String orderNumber,
             @Param("applicantNumber") String applicantNumber,
             @Param("status") PaymentTransactionStatus status,
@@ -35,13 +35,14 @@ public interface PaymentTransactionMapper {
             @Param("pageInfo") PageInfo pageInfo
     );
 
-    PaymentTransaction selectByInterTradeNo(String internalTn);
+    PaymentTransaction selectByInterTradeNo(@Param("internalTn") String internalTn,
+                                            @Param("transactionStatus") PaymentTransactionStatus transactionStatus,
+                                            @Param("interfaceType") PaymentInterfaceType interfaceType);
 
     List<PaymentTransaction> selectByPaymentOrderId(Long id);
 
     int updateTransactionStatusToClose(String orderNumber);
 
-    List<PaymentTransaction> selectTransaction(@Param("orderId") Long orderId,
-                                                                            @Param("interfaceType") PaymentInterfaceType interfaceType);
+    List<PaymentTransaction> selectTransaction(@Param("orderId") Long orderId, @Param("interfaceType") PaymentInterfaceType interfaceType);
 
 }

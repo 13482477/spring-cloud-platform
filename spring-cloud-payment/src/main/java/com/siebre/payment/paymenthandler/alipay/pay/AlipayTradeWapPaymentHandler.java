@@ -4,6 +4,10 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
+import com.siebre.payment.entity.enums.ReturnCode;
+import com.siebre.payment.entity.enums.SubsequentAction;
+import com.siebre.payment.hostconfig.entity.PaymentHostConfig;
+import com.siebre.payment.hostconfig.service.PaymentHostConfigService;
 import com.siebre.payment.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
@@ -12,6 +16,7 @@ import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -24,9 +29,13 @@ import java.util.Map;
 @Component("alipayTradeWapPaymentHandler")
 public class AlipayTradeWapPaymentHandler extends AbstractPaymentComponent {
 
-    @Override
-    protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
+    @Autowired
+    private PaymentHostConfigService hostConfig;
 
+    @Override
+    protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
+
+        PaymentOrder paymentOrder = request.getPaymentOrder();
         AlipayClient alipayClient = new DefaultAlipayClient(paymentInterface.getRequestUrl(),
                 paymentWay.getAppId(), paymentWay.getSecretKey(), "json", AlipayConfig.INPUT_CHARSET_UTF,
                 paymentWay.getPublicKey(), paymentWay.getEncryptionMode().getDescription()); //获得初始化的AlipayClient
@@ -37,7 +46,11 @@ public class AlipayTradeWapPaymentHandler extends AbstractPaymentComponent {
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
-        return PaymentResponse.builder().payUrl(paymentInterface.getRequestUrl()).body(form).build();
+
+        response.setPayUrl(paymentInterface.getRequestUrl() + "?" + form);
+        response.setReturnCode(ReturnCode.SUCCESS.getDescription());
+        response.setReturnMessage("调用成功");
+        response.setSubsequentAction(SubsequentAction.REDIRECT_TO_PAYMENT_GATEWAY.getValue());
     }
 
     /**
@@ -49,8 +62,8 @@ public class AlipayTradeWapPaymentHandler extends AbstractPaymentComponent {
      */
     private AlipayTradeWapPayRequest buildAlipayTradeWapPayRequest(PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder) {
         AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();//创建API对应的request
-        alipayRequest.setReturnUrl(paymentInterface.getReturnPageUrl() + "?orderNumber=" + paymentOrder.getOrderNumber());
-        alipayRequest.setNotifyUrl(paymentInterface.getCallbackUrl());//在公共参数中设置回跳和通知地址
+        alipayRequest.setReturnUrl(hostConfig.getFrontHost() + paymentInterface.getReturnPageUrl() + "?orderNumber=" + paymentOrder.getOrderNumber());
+        alipayRequest.setNotifyUrl(hostConfig.getPaymentHost() + paymentInterface.getCallbackUrl());//在公共参数中设置回跳和通知地址
         alipayRequest.setBizContent(generateBizContent(paymentWay, paymentTransaction, paymentOrder));
         return alipayRequest;
     }
@@ -65,7 +78,7 @@ public class AlipayTradeWapPaymentHandler extends AbstractPaymentComponent {
         params.put("subject", "保险产品");
         params.put("out_trade_no", paymentTransaction.getInternalTransactionNumber());
         params.put("timeout_express", "30m"); //30分钟后没有付款，将关闭交易
-        params.put("total_amount", paymentOrder.getTotalPremium());
+        params.put("total_amount", paymentOrder.getAmount());
         params.put("seller_id", paymentWay.getPaymentChannel().getPayeeAccount());
         StringBuilder sb = new StringBuilder();
         sb.append("{");

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,8 +39,8 @@ public class BaofooQuickPaymentHandler extends AbstractPaymentComponent {
     private BaofooQuickPayPayment baofooQuickPayPayment;
 
     @Override
-    protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
-
+    protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
+        PaymentOrder paymentOrder = request.getPaymentOrder();
         BaofooRequest boofooRequest = new BaofooRequest();
         boofooRequest.setInternalNumber(paymentTransaction.getInternalTransactionNumber());
 
@@ -48,27 +49,30 @@ public class BaofooQuickPaymentHandler extends AbstractPaymentComponent {
 
         boofooRequest.setBindCard(bindCard);
 
-        BaofooResponse response = baofooQuickPayPrePay.prePay(boofooRequest,paymentTransaction,paymentOrder,paymentWay,paymentInterface);//预支付
-        boofooRequest.setBusinessCode(response.getBusinessNumber());//宝付业务流水号
+        BaofooResponse baofooResponse = baofooQuickPayPrePay.prePay(boofooRequest, paymentTransaction, paymentOrder, paymentWay, paymentInterface);//预支付
+        boofooRequest.setBusinessCode(baofooResponse.getBusinessNumber());//宝付业务流水号
 
         Map<String, Object> result = new HashMap<String, Object>();
-        if(response.getSuccess()){//预支付成功
-            response = baofooQuickPayPayment.payment(boofooRequest,paymentWay);//支付
-            String externalTransactionNumber = response.getExternalNumber();//外部交易号
+        if (baofooResponse.getSuccess()) {//预支付成功
+            baofooResponse = baofooQuickPayPayment.payment(boofooRequest, paymentWay);//支付
+            String externalTransactionNumber = baofooResponse.getExternalNumber();//外部交易号
             String seller_id = paymentWay.getPaymentChannel().getMerchantCode();//商户号
-            if(response.getSuccess()){//支付成功
-                BigDecimal total_fee = new BigDecimal(response.getSuccessAmount());
-                this.paymentTransactionService.paymentConfirm(paymentTransaction.getInternalTransactionNumber(), externalTransactionNumber, seller_id, total_fee);
-                result.put("transaction_result","success");
-            }else {
-                this.paymentTransactionService.setFailStatus(paymentTransaction.getInternalTransactionNumber(),externalTransactionNumber);
-                result.put("transaction_result","fail");
+            if (baofooResponse.getSuccess()) {//支付成功
+                BigDecimal total_fee = new BigDecimal(baofooResponse.getSuccessAmount());
+                //TODO 需要从回调中取出支付成功时间
+                this.paymentTransactionService.paymentConfirm(paymentTransaction.getInternalTransactionNumber(), externalTransactionNumber, seller_id, total_fee, new Date());
+                result.put("transaction_result", "success");
+            } else {
+                this.paymentTransactionService.setFailStatus(paymentTransaction.getInternalTransactionNumber(), externalTransactionNumber);
+                result.put("transaction_result", "fail");
             }
-        }else {
-            result.put("transaction_result","fail");
+        } else {
+            result.put("transaction_result", "fail");
         }
 
-        return PaymentResponse.builder().body(result).build();
+        //TODO
+
+        //PaymentResponse.builder().body(result).build();
         //return PaymentResponse.builder().payUrl(paymentInterface.getRequestUrl()).body(response).build();
     }
 }

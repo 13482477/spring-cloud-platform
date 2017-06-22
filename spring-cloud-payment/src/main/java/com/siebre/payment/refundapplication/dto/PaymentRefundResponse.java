@@ -19,6 +19,8 @@ public class PaymentRefundResponse {
      */
     private RefundApplicationStatus refundApplicationStatus;
 
+    private String returnCode;
+
     /**
      * 退款申请的返回信息
      */
@@ -31,9 +33,8 @@ public class PaymentRefundResponse {
 
     /**
      * 退款交易transaction
-     * 冗余设计 同PaymentRefundRequest
      */
-    private PaymentTransaction paymentTransaction;
+    private PaymentTransaction refundTransaction;
 
     /**
      * 退款交易申请
@@ -49,12 +50,20 @@ public class PaymentRefundResponse {
         this.synchronize = synchronize;
     }
 
-    public String getExternalTransactionNumber() {
-        return externalTransactionNumber;
+    public RefundApplicationStatus getRefundApplicationStatus() {
+        return refundApplicationStatus;
     }
 
-    public void setExternalTransactionNumber(String externalTransactionNumber) {
-        this.externalTransactionNumber = externalTransactionNumber;
+    public void setRefundApplicationStatus(RefundApplicationStatus refundApplicationStatus) {
+        this.refundApplicationStatus = refundApplicationStatus;
+    }
+
+    public String getReturnCode() {
+        return returnCode;
+    }
+
+    public void setReturnCode(String returnCode) {
+        this.returnCode = returnCode;
     }
 
     public String getReturnMessage() {
@@ -65,20 +74,20 @@ public class PaymentRefundResponse {
         this.returnMessage = returnMessage;
     }
 
-    public RefundApplicationStatus getRefundApplicationStatus() {
-        return refundApplicationStatus;
+    public String getExternalTransactionNumber() {
+        return externalTransactionNumber;
     }
 
-    public void setRefundApplicationStatus(RefundApplicationStatus refundApplicationStatus) {
-        this.refundApplicationStatus = refundApplicationStatus;
+    public void setExternalTransactionNumber(String externalTransactionNumber) {
+        this.externalTransactionNumber = externalTransactionNumber;
     }
 
-    public PaymentTransaction getPaymentTransaction() {
-        return paymentTransaction;
+    public PaymentTransaction getRefundTransaction() {
+        return refundTransaction;
     }
 
-    public void setPaymentTransaction(PaymentTransaction paymentTransaction) {
-        this.paymentTransaction = paymentTransaction;
+    public void setRefundTransaction(PaymentTransaction refundTransaction) {
+        this.refundTransaction = refundTransaction;
     }
 
     public RefundApplication getRefundApplication() {

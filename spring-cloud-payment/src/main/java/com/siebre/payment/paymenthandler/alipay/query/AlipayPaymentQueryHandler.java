@@ -29,35 +29,37 @@ import java.util.Map;
 public class AlipayPaymentQueryHandler extends AbstractPaymentQueryComponent {
 
     @Override
-    protected PaymentQueryResponse handleInternal(PaymentQueryRequest request) {
+    protected void handleInternal(PaymentQueryRequest request, PaymentQueryResponse response) {
         PaymentWay paymentWay = request.getPaymentWay();
         PaymentInterface paymentInterface = request.getPaymentInterface();
         PaymentTransaction paymentTransaction = request.getPaymentTransaction();
 
         AlipayClient alipayClient = new DefaultAlipayClient(paymentInterface.getRequestUrl(),
                 paymentWay.getAppId(), paymentWay.getSecretKey(), "json", AlipayConfig.INPUT_CHARSET_UTF,
-                paymentWay.getPublicKey(),  EncryptionMode.RSA.getDescription()); //获得初始化的AlipayClient
+                paymentWay.getPublicKey(), EncryptionMode.RSA.getDescription()); //获得初始化的AlipayClient
 
-        AlipayTradeQueryRequest alipayRequest = buildAlipayQueryRequest(paymentWay,paymentTransaction);
+        AlipayTradeQueryRequest alipayRequest = buildAlipayQueryRequest(paymentWay, paymentTransaction);
 
-        return processQuery(alipayClient,alipayRequest);
+        processQuery(alipayClient, alipayRequest);
 
     }
 
     /**
      * 构造请求参数
+     *
      * @param paymentWay
      * @param paymentTransaction
      * @return
      */
     private AlipayTradeQueryRequest buildAlipayQueryRequest(PaymentWay paymentWay, PaymentTransaction paymentTransaction) {
         AlipayTradeQueryRequest alipayRequest = new AlipayTradeQueryRequest();//创建API对应的request
-        alipayRequest.setBizContent(generateBizContent(paymentWay,paymentTransaction));
+        alipayRequest.setBizContent(generateBizContent(paymentWay, paymentTransaction));
         return alipayRequest;
     }
 
     /**
      * 生成业务请求参数
+     *
      * @return
      */
     private String generateBizContent(PaymentWay paymentWay, PaymentTransaction paymentTransaction) {
@@ -70,25 +72,24 @@ public class AlipayPaymentQueryHandler extends AbstractPaymentQueryComponent {
     }
 
 
-
-    private PaymentQueryResponse processQuery(AlipayClient alipayClient,AlipayTradeQueryRequest alipayRequest){
+    private PaymentQueryResponse processQuery(AlipayClient alipayClient, AlipayTradeQueryRequest alipayRequest) {
         PaymentQueryResponse queryResponse = new PaymentQueryResponse();
 
         try {
 
-            AlipayTradeQueryResponse response =  alipayClient.execute(alipayRequest) ;
+            AlipayTradeQueryResponse response = alipayClient.execute(alipayRequest);
 
-            if(response.isSuccess()){
+            if (response.isSuccess()) {
                 String status = response.getTradeStatus();
                 //支付成功
-                if("TRADE_SUCCESS".equals(status)){
-                    queryResponse.setStatus(PaymentTransactionStatus.SUCCESS);
-                }else if("WAIT_BUYER_PAY".equals(status)){//等待支付
-                    queryResponse.setStatus(PaymentTransactionStatus.PROCESSING);
-                }else if("TRADE_FINISHED".equals(status)){//支付关闭
+                if ("TRADE_SUCCESS".equals(status)) {
+                    queryResponse.setStatus(PaymentTransactionStatus.PAY_SUCCESS);
+                } else if ("WAIT_BUYER_PAY".equals(status)) {//等待支付
+                    queryResponse.setStatus(PaymentTransactionStatus.PAY_PROCESSING);
+                } else if ("TRADE_FINISHED".equals(status)) {//支付关闭
                     queryResponse.setStatus(PaymentTransactionStatus.CLOSED);
-                }else if ("TRADE_CLOSED".equals(status)){//支付失败（未付款交易超时关闭，或支付完成后全额退款
-                    queryResponse.setStatus(PaymentTransactionStatus.FAILED);
+                } else if ("TRADE_CLOSED".equals(status)) {//支付失败（未付款交易超时关闭，或支付完成后全额退款
+                    queryResponse.setStatus(PaymentTransactionStatus.PAY_FAILED);
                 }
 
                 logger.info("调用成功");
@@ -97,7 +98,7 @@ public class AlipayPaymentQueryHandler extends AbstractPaymentQueryComponent {
                 logger.info("调用失败");
             }
         } catch (AlipayApiException e) {
-            logger.error("支付宝查询接口调用异常",e);
+            logger.error("支付宝查询接口调用异常", e);
         }
 
         return queryResponse;
