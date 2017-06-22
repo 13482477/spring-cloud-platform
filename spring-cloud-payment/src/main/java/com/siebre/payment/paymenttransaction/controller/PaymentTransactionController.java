@@ -3,6 +3,7 @@ package com.siebre.payment.paymenttransaction.controller;
 import com.siebre.basic.web.WebResult;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
+import com.siebre.payment.paymenttransaction.vo.RefundRecord;
 import com.siebre.payment.paymenttransaction.vo.TransactionVo;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -45,6 +46,14 @@ public class PaymentTransactionController {
         }
 
         return WebResult.<TransactionVo>builder().returnCode("200").data(result).returnMessage("调用成功").build();
+    }
+
+    @ApiOperation(value="退款详情-退款详情记录", notes = "退款详情-退款详情记录")
+    @RequestMapping(value = "/api/v1/paymentTransactions/refundRecords/{refundApplicationId}", method = GET)
+    public WebResult<List<RefundRecord>> getRefundRecords(@PathVariable Long refundApplicationId) {
+        List<RefundRecord> list = paymentTransactionService.getRefundRecordFlow(refundApplicationId);
+
+        return WebResult.<List<RefundRecord>>builder().returnCode("200").data(list).returnMessage("调用成功").build();
     }
 
 }

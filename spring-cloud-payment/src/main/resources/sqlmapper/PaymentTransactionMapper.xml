@@ -15,6 +15,7 @@
 		<result column="payment_accout" property="paymentAccout" jdbcType="VARCHAR" />
 		<result column="interface_type" property="interfaceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
 		<result column="sender" property="sender" jdbcType="VARCHAR"/>
 		<result column="receiver" property="receiver" jdbcType="VARCHAR"/>
 	</resultMap>
@@ -32,6 +33,7 @@
 		payment_accout,
 		interface_type,
 		create_date,
+		update_date,
 		sender,
 		receiver
 	</sql>
@@ -219,6 +221,9 @@
 			</if>
 			<if test="createDate !=null">
 				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateDate !=null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
 			</if>
 			<if test="sender != null">
 				sender = #{sender,jdbcType=VARCHAR},

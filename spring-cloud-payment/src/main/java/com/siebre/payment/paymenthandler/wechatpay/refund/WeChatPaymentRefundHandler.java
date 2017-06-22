@@ -52,8 +52,6 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
     @Autowired
     private PaymentChannelMapper paymentChannelMapper;
 
-    private static String resourse = "D:/apiclient_cert.p12";
-
     @Override
     protected void handleInternal(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse) {
 
@@ -91,27 +89,29 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
                 refundResponse.setReturnMessage("退款成功");
                 refundResponse.setRefundApplicationStatus(RefundApplicationStatus.SUCCESS);
             }else{
-                logger.error("退款失败，原因={}", res.get("err_code_des"));
+                String failReason = "退款失败，原因:" + res.get("err_code_des");
+                logger.error(failReason);
 
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_FAILED);
 
                 refundApplication.setStatus(RefundApplicationStatus.FAILED);
-                refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
+                refundApplication.setResponse(failReason);
 
                 refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
-                refundResponse.setReturnMessage("申请失败，原因:" + res.get("err_code_des"));
+                refundResponse.setReturnMessage(failReason);
                 refundResponse.setRefundApplicationStatus(RefundApplicationStatus.FAILED);
             }
         }else{
-            logger.error("退款失败，原因={}", res.get("return_msg"));
+            String failReason = "退款失败，原因:" + res.get("return_msg");
+            logger.error(failReason);
 
             refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_FAILED);
 
             refundApplication.setStatus(RefundApplicationStatus.FAILED);
-            refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
+            refundApplication.setResponse(failReason);
 
             refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
-            refundResponse.setReturnMessage("申请失败，原因:" + res.get("return_msg"));
+            refundResponse.setReturnMessage(failReason);
             refundResponse.setRefundApplicationStatus(RefundApplicationStatus.FAILED);
         }
         refundResponse.setRefundApplication(refundApplication);

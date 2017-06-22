@@ -99,27 +99,30 @@ public class AlipayFastpayRefundHandler extends AbstractPaymentRefundComponent {
             refundTransaction.setExternalTransactionNumber(response.getTradeNo());
             refundResponse.setReturnMessage(response.getMsg());
             if (response.isSuccess()) {
+                logger.info("退款成功");
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_SUCCESS);//退款交易调用成功
                 refundApplication.setStatus(RefundApplicationStatus.SUCCESS);
                 refundApplication.setResponse(RefundApplicationStatus.SUCCESS.getDescription());
                 refundResponse.setReturnCode(ReturnCode.SUCCESS.getDescription());
-                logger.info("调用成功");
             } else {
+                String failReason = "退款失败，失败原因：" + response.getSubMsg() + "," + response.getMsg();
+                logger.info(failReason);
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_FAILED);
                 refundApplication.setStatus(RefundApplicationStatus.FAILED);
-                refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
+                refundApplication.setResponse(failReason);
                 refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
-                logger.info("调用失败");
+                refundResponse.setReturnMessage(failReason);
             }
 
         } catch (AlipayApiException e) {
+            String failReason = "退款失败,支付宝退款接口调用异常";
+            logger.error("支付宝退款接口调用异常", e);
             refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_FAILED);
             refundApplication.setStatus(RefundApplicationStatus.FAILED);
-            refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
+            refundApplication.setResponse(failReason);
             refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
-            logger.error("支付宝退款接口调用异常", e);
+            refundResponse.setReturnMessage(failReason);
         }
-
         refundResponse.setRefundApplication(refundApplication);
         refundResponse.setRefundTransaction(refundTransaction);
     }

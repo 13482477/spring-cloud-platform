@@ -11,10 +11,15 @@ import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 import com.siebre.payment.paymentorderitem.mapper.PaymentOrderItemMapper;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymenttransaction.mapper.PaymentTransactionMapper;
+import com.siebre.payment.paymenttransaction.vo.RefundRecord;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.refundapplication.dto.PaymentRefundResponse;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
 import com.siebre.payment.refundapplication.mapper.RefundApplicationMapper;
 import com.siebre.payment.serialnumber.service.SerialNumberService;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -40,9 +46,6 @@ public class PaymentTransactionService {
 
     @Autowired
     private PaymentOrderService paymentOrderService;
-
-    @Autowired
-    private PaymentOrderItemMapper paymentOrderItemMapper;
 
     @Autowired
     private RefundApplicationMapper refundApplicationMapper;
@@ -100,24 +103,64 @@ public class PaymentTransactionService {
 
     }
 
-    public List<PaymentTransaction> queryRefundTransaction(Long orderId) {
-        return paymentTransactionMapper.selectTransaction(orderId, PaymentInterfaceType.REFUND);
-    }
-
     /**
-     * 根据transaction status获取对应的order status
-     *
-     * @param transactionStatus
+     * 获取退款流水记录
+     * @param refundApplicationId
      * @return
      */
-    public static PaymentOrderPayStatus getOrderStatusByTransactionStatus(PaymentTransactionStatus transactionStatus) {
-        PaymentOrderPayStatus status = null;
-        if (PaymentTransactionStatus.PAY_SUCCESS.equals(transactionStatus)) {
-            //交易支付成功状态对应订单支付成功
-            status = PaymentOrderPayStatus.PAID;
+    public List<RefundRecord> getRefundRecordFlow(Long refundApplicationId) {
+        String active = "ACTIVE";
+        String complete = "COMPLETE";
+        List<RefundRecord> result = new ArrayList<>();
+        RefundApplication refundApplication = this.refundApplicationMapper.selectByPrimaryKey(refundApplicationId);
+
+        RefundRecord applyRefund = createRefundRecord(complete, refundApplication.getCreateDate(), "退款申请提交");
+        result.add(applyRefund);
+
+        if(RefundApplicationStatus.APPLICATION.equals(refundApplication.getStatus())) {
+            RefundRecord wait = createRefundRecord(active, null, "等待审核");
+            result.add(wait);
+            return result;
         }
-        //TODO  确定订单和交易状态的对应关系
-        return status;
+
+        if(RefundApplicationStatus.FAILED.equals(refundApplication.getStatus()) && StringUtils.isBlank(refundApplication.getRefundApplicationNumber())) {
+            RefundRecord refuse = createRefundRecord(complete, refundApplication.getUpdateDate(), "退款申请未通过");
+            result.add(refuse);
+            return result;
+        }
+
+        PaymentTransaction paymentTransaction = paymentTransactionMapper.selectByInterTradeNo(refundApplication.getRefundApplicationNumber(), null, PaymentInterfaceType.REFUND);
+
+        if(paymentTransaction != null) {
+            RefundRecord processRefund = createRefundRecord(complete, paymentTransaction.getCreateDate(), "申请已受理，正在处理中");
+            result.add(processRefund);
+        }
+
+        if(PaymentTransactionStatus.REFUND_PROCESSING.equals(paymentTransaction.getPaymentStatus())) {
+            RefundRecord finish = createRefundRecord(active, null, "预计3-5个工作日完成退款");
+            result.add(finish);
+        } else if(PaymentTransactionStatus.REFUND_FAILED.equals(paymentTransaction.getPaymentStatus())){
+            RefundRecord finish = createRefundRecord(complete, paymentTransaction.getUpdateDate(), "退款失败，失败原因：" + refundApplication.getResponse());
+            result.add(finish);
+        } else if(PaymentTransactionStatus.REFUND_SUCCESS.equals(paymentTransaction.getPaymentStatus())) {
+            RefundRecord finish = createRefundRecord(complete, paymentTransaction.getUpdateDate(), "退款成功");
+            result.add(finish);
+        }
+        return result;
+    }
+
+    private RefundRecord createRefundRecord(String flag, Date time, String desc) {
+        RefundRecord applyRefund = new RefundRecord();
+        applyRefund.setFlag(flag);
+        if(time != null) {
+            applyRefund.setTime(DateFormatUtils.format(time, "yyyy-MM-dd HH:mm:ss"));
+        }
+        applyRefund.setDesc(desc);
+        return applyRefund;
+    }
+
+    public List<PaymentTransaction> queryRefundTransaction(Long orderId) {
+        return paymentTransactionMapper.selectTransaction(orderId, PaymentInterfaceType.REFUND);
     }
 
     @Transactional("db")
@@ -213,30 +256,6 @@ public class PaymentTransactionService {
             logger.error("获取InetAddress失败，原因：{}", e);
         }
         return ip + ":" + hostName;
-    }
-
-    //特指交易类型为（支付）的交易
-    public List<PaymentTransaction> queryPaymentTransaction(String orderNumber, String applicantNumber, PaymentTransactionStatus status, Long channelId, Date startDate, Date endDate,
-                                                            PageInfo pageInfo) {
-        return this.paymentTransactionMapper.queryPaymentTransaction(orderNumber, applicantNumber, status, PaymentInterfaceType.PAY, channelId, startDate, endDate, pageInfo);
-    }
-
-    public ServiceResult<List<PaymentTransaction>> queryPaymentTransactionRPC(String orderNumber, String applicantNumber, PaymentTransactionStatus status, Long channelId, Date startDate, Date endDate,
-                                                                              PageInfo pageInfo) {
-
-        ServiceResult<List<PaymentTransaction>> result = new ServiceResult<List<PaymentTransaction>>();
-        result.setData(this.queryPaymentTransaction(orderNumber, applicantNumber, status, channelId, startDate, endDate, pageInfo));
-        result.setPageInfo(pageInfo);
-        return result;
-    }
-
-    public PaymentOrder queryPaymentOrderGroup(String orderNumber) {
-        PaymentOrder paymentOrder = paymentOrderMapper.selectByOrderNumber(orderNumber);
-        List<PaymentOrderItem> orderItem = paymentOrderItemMapper.selectByPaymentOrderId(paymentOrder.getId());
-        List<PaymentTransaction> paymentTransactions = paymentTransactionMapper.selectByPaymentOrderId(paymentOrder.getId());
-        paymentOrder.setItems(orderItem);
-        paymentOrder.setPaymentTransactions(paymentTransactions);
-        return paymentOrder;
     }
 
     /**
@@ -368,12 +387,12 @@ public class PaymentTransactionService {
      * 同步退款结果处理
      */
     @Transactional("db")
-    public void synchronizedRefundConfirm(PaymentOrder paymentOrder, RefundApplication refundApplication, PaymentTransaction paymentTransaction) {
+    public void synchronizedRefundConfirm(PaymentOrder paymentOrder, PaymentRefundResponse paymentRefundResponse) {
+        RefundApplication refundApplication = paymentRefundResponse.getRefundApplication();
+        PaymentTransaction paymentTransaction = paymentRefundResponse.getRefundTransaction();
+        Date current = new Date();
 
-        //退款处理中，更新order状态为处理中
-        if (RefundApplicationStatus.PROCESSING.equals(refundApplication.getStatus())) {
-            paymentOrder.setStatus(PaymentOrderPayStatus.PROCESSING_REFUND);
-        } else if (RefundApplicationStatus.SUCCESS.equals(refundApplication.getStatus())) {
+        if (RefundApplicationStatus.SUCCESS.equals(refundApplication.getStatus())) {
             //更新订单退款金额
             BigDecimal totalRefundAmount = paymentOrder.getRefundAmount();
             if (totalRefundAmount != null) {
@@ -388,8 +407,13 @@ public class PaymentTransactionService {
             } else {
                 paymentOrder.setStatus(PaymentOrderPayStatus.PART_REFUND);
             }
+            refundApplication.setUpdateDate(current);
+            paymentTransaction.setUpdateDate(current);
         }  else if (RefundApplicationStatus.FAILED.equals(refundApplication.getStatus())) {
             paymentOrder.setStatus(PaymentOrderPayStatus.REFUNDERROR);
+            refundApplication.setUpdateDate(current);
+            refundApplication.setResponse(paymentRefundResponse.getReturnMessage());
+            paymentTransaction.setUpdateDate(current);
         }
 
         paymentOrderMapper.updateByPrimaryKey(paymentOrder);

@@ -128,16 +128,17 @@ public class AllinPayTranx {
 
             }
             else{
+                String faileReason = "退款失败,失败原因:" + aipgrsp.getINFO().getERR_MSG();
                 refundTransaction.setExternalTransactionNumber(externalTransactionNumber);
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_FAILED);
 
                 refundApplication.setStatus(RefundApplicationStatus.FAILED);
-                refundApplication.setResponse(RefundApplicationStatus.FAILED.getDescription());
+                refundApplication.setResponse(faileReason);
 
                 refundResponse.setReturnCode(ReturnCode.FAIL.getDescription());
-                refundResponse.setReturnMessage("退款失败");
+                refundResponse.setReturnMessage(faileReason);
                 refundResponse.setRefundApplicationStatus(RefundApplicationStatus.FAILED);
-                logger.info("refund fail, reason：" + aipgrsp.getINFO().getERR_MSG());
+                logger.info(faileReason);
             }
         }
 

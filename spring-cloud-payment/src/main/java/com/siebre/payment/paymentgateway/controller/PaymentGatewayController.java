@@ -48,9 +48,6 @@ public class PaymentGatewayController {
     private RefundApplicationService refundApplicationService;
 
     @Autowired
-    private PaymentRefundRouteService paymentRefundRouteService;
-
-    @Autowired
     private PaymentOrderService paymentOrderService;
 
     /**
@@ -66,34 +63,6 @@ public class PaymentGatewayController {
         request.setOrderNumber(orderNumber);
         PaymentOrderQueryResponse response = queryApplicationService.queryOrderStatusByOrderNumber(request).getData();
         return response;
-    }
-
-    /**
-     * 统一支付接口
-     */
-    @ApiOperation(value = "统一支付接口(V1.0)", notes = "统一支付接口(V1.0)")
-    @RequestMapping(value = "/openApi/v1/paymentGateway/unifiedPay", method = POST)
-    public UnifiedPayResponse unipay(@RequestBody UnifiedPayRequest unipayRequest, HttpServletRequest request) {
-        /*PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrder(unipayRequest.getOrderNumber());
-        if(PaymentOrderLockStatus.LOCK.equals(paymentOrder.getLockStatus())){
-            UnifiedPayResponse response = new UnifiedPayResponse();
-            response.setBody("支付失败，订单已被锁定");
-            return response;
-        }
-        String handlerBeanName = HandlerBeanNameConfig.PAY_MAPPING.get(unipayRequest.getPayWayCode());
-        PaymentRequest paymentRequest = new PaymentRequest();
-        paymentRequest.setPaymentWayCode(unipayRequest.getPayWayCode());
-        paymentRequest.setOrderNumber(unipayRequest.getOrderNumber());
-        paymentRequest.setPaymentOrderItems(unipayRequest.getPaymentOrderItems());
-        paymentRequest.setIp(HttpServletRequestUtil.getIpAddress(request));
-        paymentRequest.setOpenid(unipayRequest.getOpenid());
-        AbstractPaymentComponent paymentComponent = (AbstractPaymentComponent) SpringContextUtil.getBean(handlerBeanName);
-        PaymentResponse paymentResponse = paymentComponent.handle(paymentRequest);
-        UnifiedPayResponse response = new UnifiedPayResponse();
-        response.setRedirectUrl(paymentResponse.getPayUrl());
-        response.setBody(paymentResponse.getBody());
-        return response;*/
-        return null;
     }
 
     @ApiOperation(value = "统一支付接口(V2.0)", notes = "统一支付接口(V2.0)")
@@ -148,47 +117,6 @@ public class PaymentGatewayController {
         resOrder.setStatus(paymentOrder.getStatus().getDescription());
         resOrder.setCreatedOn(paymentOrder.getCreateTime());
         return resOrder;
-    }
-
-    /**
-     * 统一退款接口
-     *
-     * @param refundRequest
-     * @param servletRequest
-     * @return
-     */
-    @ApiOperation(value = "统一单笔退款接口(V1.0)", notes = "统一单笔退款接口(V1.0)")
-    @RequestMapping(value = "/openApi/v1/paymentGateWay/refund", method = POST)
-    public RefundResponse applicationRefund(@RequestBody RefundRequest refundRequest, HttpServletRequest servletRequest) {
-        //判断订单是否锁定
-       /* PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrder(refundRequest.getOrderNumber());
-        if (PaymentOrderLockStatus.LOCK.equals(paymentOrder.getLockStatus())) {
-            RefundResponse refundResponse = new RefundResponse();
-            refundResponse.setRefundStatus(RefundApplicationStatus.FAILED.getDescription());
-            refundResponse.setResponse("订单被锁定，不能退款");
-            return refundResponse;
-        }
-
-        RefundApplication application = new RefundApplication();
-        application.setStatus(RefundApplicationStatus.APPLICATION);
-        //application.setRequest(refundRequest.getReason());
-        application.setOrderNumber(refundRequest.getOrderNumber());
-        application.setRefundAmount(refundRequest.getRefundAmount());
-        // 创建RefundApplication
-        refundApplicationService.createRefundApplication(application);
-        if (RefundApplicationStatus.APPLICATION.equals(application.getStatus())) {
-            PaymentRefundRequest paymentRefundRequest = new PaymentRefundRequest();
-            PaymentRefundResponse refundResponse = new PaymentRefundResponse();
-            paymentRefundRequest.setRefundApplication(application);
-            paymentRefundRouteService.route(paymentRefundRequest, refundResponse);
-            application = refundResponse.getRefundApplication();
-        }
-        RefundResponse refundResponse = new RefundResponse();
-        refundResponse.setRefundStatus(application.getStatus().toString());
-        refundResponse.setResponse(application.getResponse());
-        refundResponse.setApplicationNumber(application.getRefundApplicationNumber());
-        return refundResponse;*/
-       return null;
     }
 
     /**

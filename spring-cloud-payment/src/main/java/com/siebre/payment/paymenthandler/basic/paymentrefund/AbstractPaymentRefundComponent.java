@@ -75,7 +75,7 @@ public abstract class AbstractPaymentRefundComponent implements PaymentInterface
 
         //同步状态下更新 退款application 退款transaction
         if (paymentRefundResponse.getSynchronize()) {
-            paymentTransactionService.synchronizedRefundConfirm(paymentOrder, paymentRefundResponse.getRefundApplication(), paymentRefundResponse.getRefundTransaction());
+            paymentTransactionService.synchronizedRefundConfirm(paymentOrder, paymentRefundResponse);
         }
 
     }
