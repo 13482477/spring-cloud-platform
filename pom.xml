@@ -137,7 +137,9 @@
 		<module>spring-cloud-basic</module>
 		<module>spring-boot-admin</module>
 		<module>spring-cloud-sleuth</module>
+		<!-- 
 		<module>spring-cloud-message-provide</module>
+		 -->
 		<module>spring-cloud-message-consumer</module>
 		<module>spring-cloud-payment</module>
 		<module>spring-cloud-admin</module>
@@ -147,6 +149,7 @@
     	<module>spring-cloud-turbine</module>
     	<module>spring-cloud-iproduct</module>
     	<module>spring-cloud-uaa</module>
+    	<module>spring-cloud-security</module>
   </modules>
 
 	<build>

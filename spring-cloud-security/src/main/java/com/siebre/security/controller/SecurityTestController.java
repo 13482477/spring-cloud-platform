@@ -1,4 +1,4 @@
-package com.siebre.gateway.security.controller;
+package com.siebre.security.controller;
 
 import java.util.List;
 
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.siebre.basic.web.WebResult;
-import com.siebre.gateway.security.entity.Resource;
-import com.siebre.gateway.security.metadata.ResourceRemoteService;
+import com.siebre.security.entity.Resource;
+import com.siebre.security.metadata.ResourceRemoteService;
 
 @RestController
 public class SecurityTestController {

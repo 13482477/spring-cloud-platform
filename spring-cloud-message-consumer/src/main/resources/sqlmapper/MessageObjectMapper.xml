@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.siebre.messagedemo.mapper.MessageObjectMapper">
+<mapper namespace="com.siebre.messageconsumer.mapper.MessageObjectMapper">
 	<resultMap id="BaseResultMap" type="com.siebre.messageconsumer.entity.MessageObject">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="current_date" jdbcType="TIMESTAMP" property="currentDate" />
@@ -26,15 +26,6 @@
 		insert into message_object (`current_date`, description)
 		values (#{currentDate,jdbcType=TIMESTAMP}, #{description,jdbcType=VARCHAR})
 	</insert>
-	<!-- 
-	<insert id="insert" parameterType="com.siebre.messagedemo.entity.MessageObject" useGeneratedKeys="true" keyProperty="id">
-		insert into message_object (id, `current_date`, description
-		)
-		values
-		(#{id,jdbcType=BIGINT}, #{currentDate,jdbcType=TIMESTAMP}, #{description,jdbcType=VARCHAR}
-		)
-	</insert>
-	 -->
 	<insert id="insertSelective" parameterType="com.siebre.messageconsumer.entity.MessageObject" useGeneratedKeys="true" keyProperty="id">
 		insert into message_object
 		<trim prefix="(" suffix=")" suffixOverrides=",">

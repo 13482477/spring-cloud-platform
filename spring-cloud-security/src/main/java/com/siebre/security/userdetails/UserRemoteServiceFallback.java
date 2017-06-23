@@ -1,9 +1,9 @@
-package com.siebre.gateway.security.userdetails;
+package com.siebre.security.userdetails;
 
 import org.springframework.stereotype.Component;
 
 import com.siebre.basic.web.WebResult;
-import com.siebre.gateway.security.entity.User;
+import com.siebre.security.entity.User;
 
 @Component
 public class UserRemoteServiceFallback implements UserRemoteService {

@@ -13,7 +13,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.ImportResource;
 
-import com.siebre.gateway.security.metadata.CustomerSecurityMetadata;
+import com.siebre.security.metadata.CustomerSecurityMetadata;
 
 @EnableFeignClients
 @EnableDiscoveryClient
@@ -25,7 +25,7 @@ public class Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args)
 		.getBean(CustomerSecurityMetadata.class)
-		.initSecurityMeta();;
+		.initSecurityMeta();
 	}
 
 }
