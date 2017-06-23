@@ -1,0 +1,28 @@
+{
+    "specCode": "test",
+    "properties": [
+        {
+            "name": "inceptionDate",
+            "value": "2017-6-209: 57: 30"
+        }
+    ],
+    "roles": [
+        {
+            "kind": "applicant",
+            "properties": [
+                {
+                    "name": "fullName",
+                    "value": "Jane"
+                }
+            ]
+        }
+    ],
+    "components": [
+        {
+            "specCode": "mainComponent",
+            "roles": [],
+            "components": [],
+            "properties": []
+        }
+    ]
+}

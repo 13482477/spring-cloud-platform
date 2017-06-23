@@ -33,23 +33,13 @@ public class PaymentRefundRouteService {
     private Logger logger = LoggerFactory.getLogger(PaymentRefundRouteService.class);
 
     @Autowired
-    private PaymentOrderService paymentOrderService;
-
-    @Autowired
     private PaymentWayService paymentWayService;
 
-    @Autowired
-    private PaymentTransactionService paymentTransactionService;
+    public void route(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse) {
 
-    public PaymentRefundResponse route(PaymentRefundRequest paymentRefundRequest) {
+        PaymentOrder paymentOrder = paymentRefundRequest.getPaymentOrder();
 
-        PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrder(paymentRefundRequest.getRefundApplication().getOrderNumber());
-        paymentRefundRequest.setPaymentOrder(paymentOrder);
-
-        PaymentTransaction paymentTransaction = paymentTransactionService.getSuccessPaidPaymentTransaction(paymentOrder.getOrderNumber());
-        paymentRefundRequest.setPaymentTransaction(paymentTransaction);
-
-        PaymentWay paymentWay = paymentWayService.getPaymentWay(paymentTransaction.getPaymentWay().getCode());
+        PaymentWay paymentWay = paymentWayService.getPaymentWay(paymentOrder.getPaymentWayCode());
 
         //针对同一渠道下不同支付方式使用统一退款接口的情况，需要做处理。先在该支付方式下查找，是否存在paymentInterface，如果不存在，则在该支付方式所在渠道下查找paymentInterface
         PaymentInterface paymentInterface = paymentWayService.getPaymentInterface(paymentWay.getCode(), PaymentInterfaceType.REFUND);
@@ -70,8 +60,9 @@ public class PaymentRefundRouteService {
         logger.info("加载" + handleBeanName);
         AbstractPaymentRefundComponent paymentRefundHandler = (AbstractPaymentRefundComponent) SpringContextUtil.getBean(handleBeanName);
 
-        PaymentRefundResponse paymentRefundResponse = paymentRefundHandler.handle(paymentRefundRequest, paymentTransaction, paymentOrder, paymentWay, paymentInterface);
+        paymentRefundRequest.setPaymentWay(paymentWay);
+        paymentRefundRequest.setPaymentInterface(paymentInterface);
+        paymentRefundHandler.handle(paymentRefundRequest, refundResponse);
 
-        return paymentRefundResponse;
     }
 }

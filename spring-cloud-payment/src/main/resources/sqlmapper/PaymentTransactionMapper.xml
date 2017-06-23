@@ -15,6 +15,9 @@
 		<result column="payment_accout" property="paymentAccout" jdbcType="VARCHAR" />
 		<result column="interface_type" property="interfaceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<result column="sender" property="sender" jdbcType="VARCHAR"/>
+		<result column="receiver" property="receiver" jdbcType="VARCHAR"/>
 	</resultMap>
 	<sql id="Base_Column_List">
 		id,
@@ -29,7 +32,10 @@
 		payee_account,
 		payment_accout,
 		interface_type,
-		create_date
+		create_date,
+		update_date,
+		sender,
+		receiver
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
@@ -58,7 +64,9 @@
 		payee_account,
 		payment_accout,
 		interface_type,
-		create_date
+		create_date,
+		sender,
+		receiver
 		)
 		VALUES (
 		#{paymentChannelId,jdbcType=BIGINT},
@@ -72,7 +80,9 @@
 		#{payeeAccount,jdbcType=VARCHAR},
 		#{paymentAccout,jdbcType=VARCHAR},
 		#{interfaceType.value},
-		#{createDate,jdbcType=TIMESTAMP}
+		#{createDate,jdbcType=TIMESTAMP},
+		#{sender,jdbcType=VARCHAR},
+        #{receiver,jdbcType=VARCHAR}
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.siebre.payment.paymenttransaction.entity.PaymentTransaction" useGeneratedKeys="true" keyProperty="id">
@@ -117,6 +127,12 @@
 			<if test="createDate !=null">
 				create_date,
 			</if>
+			<if test="sender !=null">
+				sender,
+			</if>
+			<if test="receiver !=null">
+				receiver,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -157,6 +173,12 @@
 			</if>
 			<if test="createDate !=null">
 				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sender != null">
+				#{sender,jdbcType=VARCHAR},
+			</if>
+			<if test="receiver != null">
+				#{receiver,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -200,6 +222,15 @@
 			<if test="createDate !=null">
 				create_date = #{createDate,jdbcType=TIMESTAMP},
 			</if>
+			<if test="updateDate !=null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sender != null">
+				sender = #{sender,jdbcType=VARCHAR},
+			</if>
+			<if test="receiver != null">
+				receiver = #{receiver,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
@@ -218,7 +249,9 @@
 		payee_account = #{payeeAccount,jdbcType=VARCHAR},
 		payment_accout = #{paymentAccout,jdbcType=VARCHAR},
 		interface_type = #{interfaceType.value},
-		create_date = #{createDate,jdbcType=TIMESTAMP}
+		create_date = #{createDate,jdbcType=TIMESTAMP},
+		sender = #{sender,jdbcType=VARCHAR},
+        receiver = #{receiver,jdbcType=VARCHAR}
 		WHERE
 		id = #{id,jdbcType=BIGINT}
 	</update>
@@ -237,6 +270,8 @@
 		<result column="payment_accout" property="paymentAccout" jdbcType="VARCHAR" />
 		<result column="interface_type" property="interfaceType" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="sender" property="sender" jdbcType="VARCHAR"/>
+		<result column="receiver" property="receiver" jdbcType="VARCHAR"/>
 		<association property="paymentChannel" javaType="com.siebre.payment.paymentchannel.entity.PaymentChannel" notNullColumn="id" columnPrefix="paymentChannel_">
 			<result column="channel_name" property="channelName" jdbcType="VARCHAR" />
 			<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
@@ -272,8 +307,6 @@
 		<association property="paymentOrder" javaType="com.siebre.payment.paymentorder.entity.PaymentOrder" notNullColumn="id" columnPrefix="paymentOrder_">
 			<id column="id" property="id" jdbcType="BIGINT" />
 			<result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
-			<result column="total_insured_amount" property="totalInsuredAmount" jdbcType="DECIMAL" />
-			<result column="total_premium" property="totalPremium" jdbcType="DECIMAL" />
 			<result column="business_plantform" property="businessPlantform" jdbcType="INTEGER" />
 			<result column="payment_client" property="paymentClient" jdbcType="INTEGER" />
 			<result column="return_trade_no" property="returnTradeNo" jdbcType="VARCHAR" />
@@ -285,7 +318,6 @@
 				<result column="payment_order_id" property="paymentOrderId" jdbcType="BIGINT" />
 				<result column="application_number" property="applicationNumber" jdbcType="VARCHAR" />
 				<result column="policy_number" property="policyNumber" jdbcType="VARCHAR" />
-				<result column="insured_amount" property="insuredAmount" jdbcType="DECIMAL" />
 				<result column="premium" property="premium" jdbcType="DECIMAL" />
 				<result column="applicant_id" property="applicantId" jdbcType="BIGINT" />
 				<result column="insured_person_id" property="insuredPersonId" jdbcType="BIGINT" />
@@ -308,21 +340,20 @@
 		pmt_payment_transaction.payment_accout payment_accout,
 		pmt_payment_transaction.interface_type interface_type,
 		pmt_payment_transaction.create_date create_date,
+		pmt_payment_transaction.sender sender,
+		pmt_payment_transaction.receiver receiver,
 		pmt_payment_order.id paymentOrder_id,
 		pmt_payment_order.order_number paymentOrder_order_number,
-		pmt_payment_order.total_insured_amount paymentOrder_total_insured_amount,
-		pmt_payment_order.total_premium paymentOrder_total_premium,
 		pmt_payment_order.business_plantform paymentOrder_business_plantform,
 		pmt_payment_order.payment_client paymentOrder_payment_client,
 		pmt_payment_order.return_trade_no paymentOrder_return_trade_no,
 		pmt_payment_order.status paymentOrder_status,
 		pmt_payment_order.payment_terminal_type paymentOrder_payment_terminal_type,
-		pmt_payment_order.payment_channel_id paymentOrder_payment_channel_id,
+		pmt_payment_order.channel_code paymentOrder_channel_code,
 		pmt_payment_order_item.id paymentOrder_paymentOrderItem_id,
 		pmt_payment_order_item.payment_order_id paymentOrder_paymentOrderItem_payment_order_id,
 		pmt_payment_order_item.application_number paymentOrder_paymentOrderItem_application_number,
 		pmt_payment_order_item.policy_number paymentOrder_paymentOrderItem_policy_number,
-		pmt_payment_order_item.insured_amount paymentOrder_paymentOrderItem_insured_amount,
 		pmt_payment_order_item.gross_premium paymentOrder_paymentOrderItem_gross_premium,
 		pmt_payment_order_item.applicant_id paymentOrder_paymentOrderItem_applicant_id,
 		pmt_payment_order_item.insured_person_id paymentOrder_paymentOrderItem_insured_person_id,
@@ -388,7 +419,16 @@
 		from
 		pmt_payment_transaction
 		where
-		internal_transaction_number = #{internalTn,jdbcType=VARCHAR}
+		1 = 1
+		<if test="internalTn != null">
+			and internal_transaction_number = #{internalTn,jdbcType=VARCHAR}
+		</if>
+		<if test="transactionStatus != null">
+			and pmt_payment_transaction.payment_status = #{transactionStatus.value}
+		</if>
+		<if test="interfaceType != null">
+			and pmt_payment_transaction.interface_type = #{interfaceType.value}
+		</if>
 	</select>
 
 	<select id="selectByPaymentOrderId" resultMap="BaseResultMap" parameterType="java.lang.String">
@@ -422,10 +462,12 @@
 		where
 		1 = 1
 		<if test="orderId != null">
-			and pmt_payment_transaction.order_id = #{orderId,jdbcType=BIGINT}
+			and pmt_payment_transaction.payment_order_id = #{orderId,jdbcType=BIGINT}
 		</if>
 		<if test="interfaceType != null">
 			and pmt_payment_transaction.interface_type = #{interfaceType.value}
 		</if>
+		order by
+		pmt_payment_transaction.create_date desc
 	</select>
 </mapper>

@@ -1,0 +1,739 @@
+<?xml version="1.0" encoding="GBK"?>
+<product kind="Marketable Product" name="畅游安心保计划"
+	seqIndex="0" externalReference="CYAXBJH" shortName="畅游安心保计划[个单/批量]"
+	instanceClassName="InsurancePolicy" groupType="PERSONAL"
+	sellChannelType="RemoteSell" productGroupType="AVIATION_ACCIDENT_INSURANCE" saleActionType="REMOTE_BATCH_SALES" >
+	<description>畅游安心保计划</description>
+	<baseSpec version="0" />
+	<properties>
+		<property kind="externalReference" name="保单号" seqIndex="100"
+			dataType="String" beanProperty="true" isHidden="false" required="false"
+			derived="false" />
+		<property kind="inceptionDate" name="生效日期" seqIndex="101"
+			dataType="Date" beanProperty="true" isHidden="false" required="true"
+			derived="false" defaultValue="new java.util.Date()" group="Base" />
+		<property kind="benefitPeriodType" name="保障类型" seqIndex="102"
+			dataType="BenefitPeriodType" beanProperty="true" isHidden="true"
+			required="true" derived="true" defaultValue="DAILY" group="Base"
+			allowedValues="DAILY" />
+		<property kind="benefitPeriod" name="保险期间" seqIndex="103"
+			dataType="Integer" beanProperty="true" isHidden="false" required="true"
+			derived="false" group="Base"  />
+		<property kind="plan" name="方案选择" seqIndex="127" dataType="String"
+			beanProperty="false" isHidden="false" required="false" derived="false"
+			group="Base" allowedValues="planA,planB,planC,planD" />
+		<property kind="premium" name="保费" seqIndex="107" dataType="Decimal"
+			beanProperty="true" isHidden="true" required="false" derived="false"
+			group="Base" />
+		<property kind="insuredAmount" name="保额" seqIndex="108"
+			dataType="Decimal" beanProperty="true" isHidden="true" required="false"
+			derived="false" group="Base" />
+		<property kind="grossPremium" name="保单总保费" seqIndex="109"
+			dataType="Decimal" beanProperty="true" isHidden="false" required="false"
+			derived="false" />
+		<property kind="unitCount" name="份数" seqIndex="119" dataType="Integer"
+			beanProperty="true" isHidden="true" required="false" derived="false"
+			defaultValue="1" />
+		<property kind="specialDescription" name="特别约定" seqIndex="400" dataType="String" beanProperty="true" isHidden="false" required="false" derived="true"  />
+		<property kind="salerName" name="销售人员" seqIndex="800" dataType="String" beanProperty="false" isHidden="true" required="false" derived="false" group="Base"/>
+		<property kind="destination" name="目的地" seqIndex="801" dataType="String" beanProperty="false" isHidden="false" required="false" derived="false" group="Base"/>
+		<property kind="travelGroupNumber" name="旅游团号" seqIndex="985" dataType="String" beanProperty="false" isHidden="false"
+            required="false" derived="false" group="Base"/>
+		<property kind="departure" name="出发地点" seqIndex="802"
+            dataType="String" beanProperty="false" isHidden="false"
+            required="false" derived="false" group="Base" allowedValues="^[0-9a-zA-Z\u4e00-\u9fa5]{0,50}$"/>
+		<property kind="tourType" name="旅游类型" seqIndex="860" dataType="String" 
+	 	    beanProperty="false" isHidden="false" required="true" derived="false" allowedValues="OVERSEAS,INCOMING,CISBORDER" group="Base"/>
+		<property kind="planAct" name="方案计划" seqIndex="970" dataType="String" beanProperty="false" isHidden="true" required="false" derived="false"  group="Base" />
+		<property kind="fixedAmount" name="固定保额" seqIndex="854" dataType="Decimal" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
+	</properties>
+	<constantProperties>
+		<constantProperty kind="coreProductCode" name="送核心代码"
+			seqIndex="227"  dataType="String" stringValue="63485" />
+		<constantProperty kind="activeTime" name="激活次数"
+			seqIndex="230" dataType="Decimal" beanProperty="false" isHidden="false"
+			required="true" derived="false" decimalValue="1" />
+		<constantProperty kind="isVirtual" name="是否虚拟主险"
+			seqIndex="231" dataType="Boolean" beanProperty="false" isHidden="false"
+			required="false" derived="false" booleanValue="false" />
+		<constantProperty kind="includeRemoteJSP" name="嵌入远程页面名称"
+			seqIndex="241" dataType="String" beanProperty="false" isHidden="false"
+			required="false" derived="false" stringValue="forCYAXBJHPlan" />
+		<constantProperty kind="EPolicyTemplate" name="电子保单模板"
+			seqIndex="242" dataType="String" beanProperty="false" isHidden="false"
+			required="false" derived="false" stringValue="epageWSDJWJY" />
+		<constantProperty kind="SendEPolicy" name="发送电子邮件" seqIndex="127" dataType="Boolean" beanProperty="false" isHidden="false" required="false" derived="false" booleanValue="true" />
+		<constantProperty kind="termsURLInfo" name="条款URL" seqIndex="115" dataType="String" beanProperty="false" isHidden="false" required="true" derived="false" stringValue="http://www.e-picclife.com/ECPL/personal/products/card/article/874842.html"/>
+		<constantProperty kind="termsNameInfo" name="条款名称" seqIndex="115" dataType="String" beanProperty="false" isHidden="false" required="true" derived="false" stringValue="人保寿险旅游意外伤害保险（新标准版）条款"/>
+		
+	</constantProperties>
+
+	<roles>
+		<role kind="Beneficiary" name="受益人" seqIndex="3" minOccurrence="1" maxOccurrence="1" instanceClassName="PartyRoleInPolicy">
+			<properties>
+				<property kind="beneficiaryMode" name="受益人类型" seqIndex="50" dataType="BeneficiaryMode" beanProperty="false" isHidden="false" required="true" defaultValue="BY_LAW" allowedValues="BY_LAW" derived="false" group="Control" />
+			</properties>
+		</role>
+		<role kind="Insured" name="被保人" seqIndex="1" minOccurrence="1"
+			maxOccurrence="1" instanceClassName="PartyRoleInPolicy">
+			<properties>
+				<property kind="fullName" name="被保人姓名" seqIndex="300"
+					dataType="String" beanProperty="true" isHidden="false" required="false"
+					derived="false" group="Base" />
+				<property kind="gender" name="被保人性别" seqIndex="301"
+					dataType="Gender" beanProperty="true" isHidden="false" required="false"
+					derived="false" defaultValue="M" group="Base" allowedValues="M,F" />
+				<property kind="idType" name="被保人证件类型" seqIndex="302"
+					dataType="IdType" beanProperty="true" isHidden="false" required="false"
+					derived="false" defaultValue="SHENFENG_CARD" group="Base,Quote" allowedValues="SHENFENG_CARD,PASSPORT_CARD,JUNREN_CARD,HU_KOU_CARD,CITY_CARD,SIR_CARD,BIRTH_CREADIT" />
+				<property kind="idNumber" name="被保人证件号码" seqIndex="303"
+					dataType="String" beanProperty="true" isHidden="false" required="false"
+					derived="false" group="Base,Quote" />
+				<property kind="birthDate" name="被保人出生日期" seqIndex="304"
+					dataType="Date" beanProperty="true" isHidden="false" required="false"
+					derived="false" group="Base,Quote" />
+				<property kind="relatedApplicant" name="与投保人关系" dataType="RelatedToRoleCode" seqIndex="50"
+					beanProperty="false" isHidden="false" required="true" derived="false" group="Control" defaultValue="Self" allowedValues="Self,Child"/>
+				<property kind="phoneNumber" name="被保人固定电话" seqIndex="370" dataType="String" 
+					beanProperty="true" isHidden="false" required="false" derived="false" group="Base"
+					allowedValues="^(0[0-9]{2,3}\-?)?([2-9][0-9]{6,7})+(\-?[0-9]{1,4})?$|(^(13[0-9]|15[0-9]|18[0-9])\d{8}$)"/>
+				<property kind="addressLines" name="通讯地址" seqIndex="600" dataType="String" 
+					beanProperty="true" isHidden="false" required="false" derived="false" group="Base"
+					allowedValues="^[0-9a-zA-Z\u4e00-\u9fa5]{0,50}$"/>
+				<property kind="postalCode" name="被保人邮政编码" seqIndex="700" dataType="String" 
+					beanProperty="true" isHidden="false" required="false" derived="false" group="Base"
+					allowedValues="^[1-9][0-9]{5}$"/>
+				<property kind="email" name="电子邮件" seqIndex="405"
+					dataType="String" beanProperty="true" isHidden="false" required="false"
+					derived="false" group="Base" />
+				
+			</properties>
+			<rules>
+				
+
+				<rule kind="CompEligibility" name="被保人出生日期" seqIndex="454"
+					language="GROOVY">
+					<body><![CDATA[
+                    context.ageInDays >=29 && context.age<=99 
+                    ]]></body>
+					<commentOnFailure>被保人年龄必须大于等于29天，小于等于99周岁</commentOnFailure>
+				</rule>
+				<rule kind="Eligibility" name="被保人与投保人关系校验" seqIndex="2" language="GROOVY">
+					<body><![CDATA[ 
+					if (context.age < 18){
+						return "Child".equals(context.relatedToRoleCode.toString());
+					} else{
+						return "Self".equals(context.relatedToRoleCode.toString());
+					}
+						
+					]]>
+					</body>
+					<commentOnFailure>被保险人年龄大于等于18周岁时：本人；被保险人年龄小于18周岁时：子女
+					</commentOnFailure>
+				</rule>
+				<rule kind="Eligibility" name="被保人证件类型校验" seqIndex="1" language="GROOVY">
+					<body><![CDATA[ 
+					import com.siebre.party.enums.IdType;
+					if (context.age >= 18) {
+						return IdType.SHENFENG_CARD.equals(context.idType) || IdType.PASSPORT_CARD.equals(context.idType) || IdType.JUNREN_CARD.equals(context.idType) || IdType.CITY_CARD.equals(context.idType) || IdType.SIR_CARD.equals(context.idType);
+					} else {
+						return IdType.SHENFENG_CARD.equals(context.idType) || IdType.PASSPORT_CARD.equals(context.idType) || IdType.HU_KOU_CARD.equals(context.idType) || IdType.CITY_CARD.equals(context.idType) || IdType.BIRTH_CREADIT.equals(context.idType);
+					}
+					]]>
+					</body>
+					<commentOnFailure>被保人证件类型：被保险人年龄大于等于18周岁时：身份证、军人证、护照、回乡证、警官证；被保险人年龄小于18周岁时：身份证、护照、回乡证、户口本、出生证
+					</commentOnFailure>
+				</rule>
+		
+			</rules>
+		</role>
+		
+		<role kind="Applicant" name="投保人" seqIndex="0" minOccurrence="1"
+			maxOccurrence="1" instanceClassName="PartyRoleInPolicy">
+			<properties>
+				<property kind="fullName" name="投保人姓名" seqIndex="400"
+					dataType="String" beanProperty="true" isHidden="false" required="true"
+					derived="false" group="Base" />
+				<property kind="idType" name="投保人证件类型" seqIndex="401"
+					dataType="IdType" beanProperty="true" isHidden="false" required="true"
+					derived="false" defaultValue="SHENFENG_CARD" group="Base" allowedValues="SHENFENG_CARD,PASSPORT_CARD,JUNREN_CARD,HU_KOU_CARD,CITY_CARD,SIR_CARD,BIRTH_CREADIT" />
+				<property kind="idNumber" name="投保人证件号码" seqIndex="402"
+					dataType="String" beanProperty="true" isHidden="false" required="true"
+					derived="false" group="Base" />
+				<property kind="gender" name="投保人性别" seqIndex="403"
+					dataType="Gender" beanProperty="true" isHidden="false" required="true"
+					derived="false" group="Base,Quote" defaultValue="M" />
+				<property kind="birthDate" name="投保人出生日期" seqIndex="404"
+					dataType="Date" beanProperty="true" isHidden="false" required="true"
+					derived="false" group="Base" />
+				<property kind="email" name="电子邮件" seqIndex="405"
+					dataType="String" beanProperty="true" isHidden="false" required="false"
+					derived="false" group="Base" />
+				<property kind="phoneNumber" name="手机号" seqIndex="407"
+					dataType="String" beanProperty="true" isHidden="false" required="false"
+					derived="false" group="Base" />
+				<property kind="addressLines" name="通讯地址" seqIndex="408"
+					dataType="String" beanProperty="true" isHidden="false" required="false"
+					derived="false" group="Base" />
+				<property kind="postalCode" name="邮政编码" seqIndex="409"
+					dataType="String" beanProperty="true" isHidden="false" required="false"
+					derived="false" group="Base" />
+				<property kind="occupationDescription" name="职业" seqIndex="950" dataType="String" 
+					beanProperty="true" isHidden="false" required="false" derived="false" group="Base"/>
+			</properties>
+			<rules>
+				
+
+				<rule kind="Eligibility" name="投保人出生日期" seqIndex="454"
+					language="GROOVY">
+					<body><![CDATA[
+                    context.age >= 18 
+                    ]]></body>
+					<commentOnFailure>投保人年龄必须大于等于18周岁</commentOnFailure>
+				</rule>
+				<rule kind="Eligibility" name="投保人证件类型校验" seqIndex="1" language="GROOVY">
+					<body><![CDATA[ 
+					
+						return "SHENFENG_CARD".equals(context.idType.toString()) || "HU_KOU_CARD".equals(context.idType.toString()) || "PASSPORT_CARD".equals(context.idType.toString()) || "JUNREN_CARD".equals(context.idType.toString()) || "CITY_CARD".equals(context.idType.toString()) || "SIR_CARD".equals(context.idType.toString()) || "BIRTH_CREADIT".equals(context.idType.toString());
+					
+					]]>
+					</body>
+					<commentOnFailure>投保人证件类型： 身份证、户口本、军人证、护照、回乡证、警官证、出生证
+					</commentOnFailure>
+				</rule>
+			</rules>
+		</role>
+		
+	</roles>
+	<rules>
+		<rule kind="Eligibility" name="保障期限限制" seqIndex="1" language="GROOVY">
+			<body><![CDATA[
+			def plan = context.getSmfProperty("plan");
+			if ("planA".equals(plan.toString())){
+				return context.benefitPeriod == 1;
+			}
+			]]>
+			</body>
+			<commentOnFailure>选择方案1时，保险期间为1天</commentOnFailure>
+		</rule>
+		<rule kind="CompEligibility" name="方案选择限制" seqIndex="0" language="GROOVY">
+			<body><![CDATA[
+			def plan = context.getSmfProperty("plan");
+			if (plan == null ){
+				return false;
+			}
+			]]>
+			</body>
+			<commentOnFailure>请先选择方案</commentOnFailure>
+		</rule>
+		<rule kind="Eligibility" name="保障期限限制" seqIndex="2" language="GROOVY">
+			<body><![CDATA[
+			def plan = context.getSmfProperty("plan");
+			if ("planB".equals(plan.toString())){
+				return context.benefitPeriod <= 3 && context.benefitPeriod >=2;
+			}
+			]]>
+			</body>
+			<commentOnFailure>选择方案2时，保险期间为2-3天</commentOnFailure>
+		</rule>
+		<rule kind="Eligibility" name="保障期限限制" seqIndex="3" language="GROOVY">
+			<body><![CDATA[
+			def plan = context.getSmfProperty("plan");
+			if ("planC".equals(plan.toString())){
+				return context.benefitPeriod <= 3 && context.benefitPeriod >=2;
+			}
+			]]>
+			</body>
+			<commentOnFailure>选择方案3时，保险期间为2-3天</commentOnFailure>
+		</rule>
+		<rule kind="Eligibility" name="保障期限限制" seqIndex="4" language="GROOVY">
+			<body><![CDATA[
+			def plan = context.getSmfProperty("plan");
+			if ("planD".equals(plan.toString())){
+				return context.benefitPeriod <= 3 && context.benefitPeriod >=1;
+			}
+			]]>
+			</body>
+			<commentOnFailure>选择方案4时，保险期间为1-3天</commentOnFailure>
+		</rule>
+		
+		<rule kind="Eligibility" name="投保次数限制" seqIndex="0" language="GROOVY">
+			<body><![CDATA[
+					return riskManager.validateActiveTime(context);
+			]]>
+			</body>
+			<commentOnFailure>同一被保人在同一保险期间内，仅限购买1份
+			</commentOnFailure>
+		</rule>
+		
+		
+		<rule kind="Eligibility" name="保单生效日" seqIndex="1" language="GROOVY">
+			<body><![CDATA[
+							Calendar terminalDate = new GregorianCalendar(); 
+							Calendar terminalDate2 = new GregorianCalendar();
+							terminalDate2.set(Calendar.DAY_OF_MONTH, terminalDate2.get(Calendar.DAY_OF_MONTH)+31);
+							terminalDate.setTime(new Date()); 
+							return context.inceptionDate.after(terminalDate.getTime()) && context.inceptionDate.before(terminalDate2.getTime());
+			]]>
+			</body>
+			<commentOnFailure>最早可指定投保次日生效，最晚不超过投保日顺延30日。</commentOnFailure>
+		</rule>
+
+	</rules>
+
+	<calculations>
+		<calculation kind="SetPreInsComponent" name="方案赋值"
+			seqIndex="1" language="GROOVY">
+			<body>
+				<![CDATA[
+						
+						import com.siebre.policy.enums.InsuredPlan;
+						
+						def plan = context.getSmfProperty("planAct");
+						if (plan != null){
+							if ("planA".equals(plan.toString())){
+								context.plan = InsuredPlan.planA;
+							}
+							if ("planB".equals(plan.toString())){
+								context.plan = InsuredPlan.planB;
+							}
+							if ("planC".equals(plan.toString())){
+								context.plan = InsuredPlan.planC;
+							}
+							if ("planD".equals(plan.toString())){
+								context.plan = InsuredPlan.planD;
+							}
+						}
+						
+							
+				]]>
+			</body>
+		</calculation>
+		<calculation kind="SetPreInsComponent" name="未成年人保额赋值"
+			seqIndex="3" language="GROOVY">
+			<body>
+				<![CDATA[
+						
+						if (context.getRoleOfKind('Insured').age < 10){
+							if (context.getRiderOfSpec('63486').insuredAmount <200000){
+								context.getRiderOfSpec('63325').insuredAmount = 200000 - context.getRiderOfSpec('63486').insuredAmount;
+								context.getRiderOfSpec('63331').insuredAmount = 200000 - context.getRiderOfSpec('63486').insuredAmount;
+							}
+							if (context.getRiderOfSpec('63486').insuredAmount >=200000){
+								context.getRiderOfSpec('63325').insuredAmount = 0;
+								context.getRiderOfSpec('63331').insuredAmount = 0;
+								context.premium =context.premium + context.getRiderOfSpec('63325').premium + context.getRiderOfSpec('63331').premium;
+								context.getRiderOfSpec('63485').premium = context.premium;
+								context.getRiderOfSpec('63325').premium = 0;
+								context.getRiderOfSpec('63331').premium = 0;
+								context.insuredAmount = 200000;
+								context.getRiderOfSpec('63485').insuredAmount = 200000;
+								context.getRiderOfSpec('63486').insuredAmount = 200000;
+								
+							}
+						} 
+						if (context.getRoleOfKind('Insured').age < 18 && context.getRoleOfKind('Insured').age >= 10){
+							if (context.getRiderOfSpec('63486').insuredAmount <500000){
+								context.getRiderOfSpec('63325').insuredAmount = 500000 - context.getRiderOfSpec('63486').insuredAmount;
+								context.getRiderOfSpec('63331').insuredAmount = 500000 - context.getRiderOfSpec('63486').insuredAmount;
+							}
+							if (context.getRiderOfSpec('63486').insuredAmount >=500000){
+								context.getRiderOfSpec('63325').insuredAmount = 0;
+								context.getRiderOfSpec('63331').insuredAmount = 0;
+								context.premium =context.premium + context.getRiderOfSpec('63325').premium + context.getRiderOfSpec('63331').premium;
+								context.getRiderOfSpec('63485').premium = context.premium;
+								context.getRiderOfSpec('63325').premium = 0;
+								context.getRiderOfSpec('63331').premium = 0;
+								context.insuredAmount = 500000;
+								context.getRiderOfSpec('63485').insuredAmount = 500000;
+								context.getRiderOfSpec('63486').insuredAmount = 500000;
+							}
+						} 
+						
+							
+				]]>
+			</body>
+		</calculation>
+		<calculation kind="SetPreInsComponent" name="方案計算"
+			seqIndex="2" language="GROOVY">
+			<body>
+				<![CDATA[
+						import util.IdNumberValidator;
+						import java.math.BigDecimal; 
+						import com.siebre.policy.action.MoneyUtil;
+						import com.siebre.policy.enums.InsuredPlan;
+						context.setSmfProperty("salerName",context.carrierName);
+						if (com.siebre.party.enums.IdType.SHENFENG_CARD.equals(context.getRoleOfKind('Applicant').idType)){
+								context.getRoleOfKind('Applicant').birthDate = IdNumberValidator.idNumber2BirthDate(context.getRoleOfKind('Applicant').idNumber);
+								context.getRoleOfKind('Applicant').gender = IdNumberValidator.getSexFromCard(context.getRoleOfKind('Applicant').idNumber);
+						}
+							
+						if (com.siebre.party.enums.IdType.SHENFENG_CARD.equals(context.getRoleOfKind('Insured').idType)){
+							context.getRoleOfKind('Insured').birthDate = IdNumberValidator.idNumber2BirthDate(context.getRoleOfKind('Insured').idNumber);
+							context.getRoleOfKind('Insured').gender = IdNumberValidator.getSexFromCard(context.getRoleOfKind('Insured').idNumber);
+						}
+						def plan = context.getSmfProperty("plan");
+						
+						if ("planA".equals(plan.toString())) {
+							
+							context.insuredAmount = 110000;
+							context.getRiderOfSpec('63485').insuredAmount = 110000;
+							context.getRiderOfSpec('63486').insuredAmount = 110000;
+							context.getRiderOfSpec('63487').insuredAmount = 18000;
+							context.getRiderOfSpec('63488').insuredAmount = 0;
+							context.getRiderOfSpec('63324').insuredAmount = 110000;
+							context.getRiderOfSpec('63330').insuredAmount = 110000;
+							context.getRiderOfSpec('63325').insuredAmount = 110000;
+							context.getRiderOfSpec('63331').insuredAmount = 110000;
+							
+							context.fixedAmount = 110000;
+							context.getRiderOfSpec('63485').fixedAmount = 110000;
+							context.getRiderOfSpec('63486').fixedAmount = 110000;
+							context.getRiderOfSpec('63487').fixedAmount = 18000;
+							context.getRiderOfSpec('63488').fixedAmount = 0;
+							context.getRiderOfSpec('63324').fixedAmount = 110000;
+							context.getRiderOfSpec('63330').fixedAmount = 110000;
+							context.getRiderOfSpec('63325').fixedAmount = 110000;
+							context.getRiderOfSpec('63331').fixedAmount = 110000;
+							
+							context.premium=1;
+							context.getRiderOfSpec('63485').premium = 1;
+							context.getRiderOfSpec('63486').premium = 1;
+							context.getRiderOfSpec('63487').premium = 4;
+							context.getRiderOfSpec('63488').premium = 0;
+							context.getRiderOfSpec('63324').premium = 1;
+							context.getRiderOfSpec('63330').premium = 1;
+							context.getRiderOfSpec('63325').premium = 1;
+							context.getRiderOfSpec('63331').premium = 1;		
+							context.grossPremium=10;
+						}
+						if ("planB".equals(plan.toString())) {
+							
+							context.insuredAmount = 220000;
+							context.getRiderOfSpec('63485').insuredAmount = 220000;
+							context.getRiderOfSpec('63486').insuredAmount = 220000;
+							context.getRiderOfSpec('63487').insuredAmount = 38000;
+							context.getRiderOfSpec('63488').insuredAmount = 0;
+							context.getRiderOfSpec('63324').insuredAmount = 220000;
+							context.getRiderOfSpec('63330').insuredAmount = 220000;
+							context.getRiderOfSpec('63325').insuredAmount = 220000;
+							context.getRiderOfSpec('63331').insuredAmount = 220000;
+							
+							context.fixedAmount = 220000;
+							context.getRiderOfSpec('63485').fixedAmount = 220000;
+							context.getRiderOfSpec('63486').fixedAmount = 220000;
+							context.getRiderOfSpec('63487').fixedAmount = 38000;
+							context.getRiderOfSpec('63488').fixedAmount = 0;
+							context.getRiderOfSpec('63324').fixedAmount = 220000;
+							context.getRiderOfSpec('63330').fixedAmount = 220000;
+							context.getRiderOfSpec('63325').fixedAmount = 220000;
+							context.getRiderOfSpec('63331').fixedAmount = 220000;
+							
+							context.premium=4;
+							context.getRiderOfSpec('63485').premium = 4;
+							context.getRiderOfSpec('63486').premium = 4;
+							context.getRiderOfSpec('63487').premium = 8;
+							context.getRiderOfSpec('63488').premium = 0;
+							context.getRiderOfSpec('63324').premium = 1;
+							context.getRiderOfSpec('63330').premium = 1;
+							context.getRiderOfSpec('63325').premium = 1;
+							context.getRiderOfSpec('63331').premium = 1;
+							context.grossPremium=20;
+							
+						}
+						if ("planC".equals(plan.toString())) {
+							
+							context.insuredAmount = 330000;
+							context.getRiderOfSpec('63485').insuredAmount = 330000;
+							context.getRiderOfSpec('63486').insuredAmount = 330000;
+							context.getRiderOfSpec('63487').insuredAmount = 55000;
+							context.getRiderOfSpec('63488').insuredAmount = 0;
+							context.getRiderOfSpec('63324').insuredAmount = 330000;
+							context.getRiderOfSpec('63330').insuredAmount = 330000;
+							context.getRiderOfSpec('63325').insuredAmount = 330000;
+							context.getRiderOfSpec('63331').insuredAmount = 330000;
+							
+							context.fixedAmount = 330000;
+							context.getRiderOfSpec('63485').fixedAmount = 330000;
+							context.getRiderOfSpec('63486').fixedAmount = 330000;
+							context.getRiderOfSpec('63487').fixedAmount = 55000;
+							context.getRiderOfSpec('63488').fixedAmount = 0;
+							context.getRiderOfSpec('63324').fixedAmount = 330000;
+							context.getRiderOfSpec('63330').fixedAmount = 330000;
+							context.getRiderOfSpec('63325').fixedAmount = 330000;
+							context.getRiderOfSpec('63331').fixedAmount = 330000;
+							
+							context.premium=7;
+							context.getRiderOfSpec('63485').premium = 7;
+							context.getRiderOfSpec('63486').premium = 7;
+							context.getRiderOfSpec('63487').premium = 12;
+							context.getRiderOfSpec('63488').premium = 0;
+							context.getRiderOfSpec('63324').premium = 1;
+							context.getRiderOfSpec('63330').premium = 1;
+							context.getRiderOfSpec('63325').premium = 1;
+							context.getRiderOfSpec('63331').premium = 1;		
+							context.grossPremium=30;
+						}
+						if ("planD".equals(plan.toString())) {
+							
+							context.insuredAmount = 100000;
+							context.getRiderOfSpec('63485').insuredAmount = 100000;
+							context.getRiderOfSpec('63486').insuredAmount = 100000;
+							context.getRiderOfSpec('63487').insuredAmount = 18000;
+							context.getRiderOfSpec('63488').insuredAmount = 0;
+							context.getRiderOfSpec('63324').insuredAmount = 100000;
+							context.getRiderOfSpec('63330').insuredAmount = 100000;
+							context.getRiderOfSpec('63325').insuredAmount = 100000;
+							context.getRiderOfSpec('63331').insuredAmount = 100000;
+							
+							context.fixedAmount = 100000;
+							context.getRiderOfSpec('63485').fixedAmount = 100000;
+							context.getRiderOfSpec('63486').fixedAmount = 100000;
+							context.getRiderOfSpec('63487').fixedAmount = 18000;
+							context.getRiderOfSpec('63488').fixedAmount = 0;
+							context.getRiderOfSpec('63324').fixedAmount = 100000;
+							context.getRiderOfSpec('63330').fixedAmount = 100000;
+							context.getRiderOfSpec('63325').fixedAmount = 100000;
+							context.getRiderOfSpec('63331').fixedAmount = 100000;
+							
+							context.premium=1;
+							context.getRiderOfSpec('63485').premium = 1;
+							context.getRiderOfSpec('63486').premium = 1;
+							context.getRiderOfSpec('63487').premium = 4;
+							context.getRiderOfSpec('63488').premium = 0;
+							context.getRiderOfSpec('63324').premium = 1;
+							context.getRiderOfSpec('63330').premium = 1;
+							context.getRiderOfSpec('63325').premium = 1;
+							context.getRiderOfSpec('63331').premium = 1;		
+							context.grossPremium=10;
+						}
+							
+				]]>
+			</body>
+		</calculation>
+		
+		<calculation kind="SetPreInsComponent" name="特别约定赋值"
+			seqIndex="2" language="GROOVY">
+			<body><![CDATA[
+					if ("planA".equals(context.getSmfProperty("plan").toString()))
+						context.specialDescription = "本产品中医疗保险金保额为1.8万元，其中因疾病导致的医疗保险金限额0.4万元。";
+						
+					
+					if ("planB".equals(context.getSmfProperty("plan").toString()))
+						context.specialDescription = "本产品中医疗保险金保额为3.8万元，其中因疾病导致的医疗保险金限额1.1万元。";
+						
+					
+					if ("planC".equals(context.getSmfProperty("plan").toString()))
+						context.specialDescription = "本产品中医疗保险金保额为5.5万元，其中因疾病导致的医疗保险金限额1.6万元。";
+						
+						
+					if ("planD".equals(context.getSmfProperty("plan").toString()))
+						context.specialDescription = "本产品中医疗保险金保额为1.8万元，其中因疾病导致的医疗保险金限额0.4万元。";
+						println context.specialDescription;
+					]]>
+			</body>
+		</calculation>
+		
+	</calculations>
+	<components>
+		
+		<component minOccurrence="1" maxOccurrence="1" seqIndex="1">
+			<coverage kind="Base" name="旅游意外伤害保险（新标准版）-身故保险金" seqIndex="1" externalReference="63485" shortName="旅游意外伤害保险（新标准版）-身故保险金" instanceClassName="CoverageComponent">
+				<description>旅游意外伤害保险（新标准版）-身故保险金</description>
+				<baseSpec version="0"/>
+				<properties>
+					<property kind="premium" name="保费" seqIndex="200" dataType="Decimal" beanProperty="true" isHidden="false" required="true" derived="false" />
+					<property kind="insuredAmount" name="保额" seqIndex="300" dataType="Decimal" beanProperty="true" isHidden="false" required="false" derived="false" />
+					<property kind="fixedAmount" name="固定保额" seqIndex="854" dataType="Decimal" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
+				</properties>
+			</coverage>
+		</component>
+		<component minOccurrence="1" maxOccurrence="1" seqIndex="2">
+			<coverage kind="Coverage" name="旅游意外伤害保险（新标准版）-伤残保险金" seqIndex="2" externalReference="63486" shortName="旅游意外伤害保险（新标准版）-伤残保险金" instanceClassName="CoverageComponent">
+				<description>旅游意外伤害保险（新标准版）-伤残保险金</description>
+				<baseSpec version="0"/>
+				<properties>
+					<property kind="premium" name="保费" seqIndex="200" dataType="Decimal" beanProperty="true" isHidden="false" required="true" derived="false" />
+					<property kind="insuredAmount" name="保额" seqIndex="300" dataType="Decimal" beanProperty="true" isHidden="false" required="false" derived="false" />
+					<property kind="fixedAmount" name="固定保额" seqIndex="854" dataType="Decimal" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
+				</properties>
+			</coverage>
+		</component>
+		<component minOccurrence="1" maxOccurrence="1" seqIndex="3">
+			<coverage kind="Coverage" name="旅游意外伤害保险（新标准版）-医疗保险金" seqIndex="4" externalReference="63487" shortName="旅游意外伤害保险（新标准版）-医疗保险金" instanceClassName="CoverageComponent">
+				<description>旅游意外伤害保险（新标准版）-医疗保险金</description>
+				<baseSpec version="0"/>
+				<properties>
+					<property kind="premium" name="保费" seqIndex="200" dataType="Decimal" beanProperty="true" isHidden="false" required="true" derived="false" />
+					<property kind="insuredAmount" name="保额" seqIndex="300" dataType="Decimal" beanProperty="true" isHidden="false" required="false" derived="false" />
+					<property kind="exceptValue" name="免配额" dataType="Decimal" beanProperty="false" isHidden="true" required="true" decimalValue="0"/>
+					<property kind="payRate" name="给付比例" dataType="Decimal" beanProperty="false" isHidden="true" required="true" decimalValue="100"/>
+					<property kind="fixedAmount" name="固定保额" seqIndex="854" dataType="Decimal" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
+				</properties>
+				<calculations>
+					<calculation kind="SetPreInsComponent" name="免赔额给付比例赋值" seqIndex="0" language="GROOVY">
+						<body><![CDATA[
+							context.exceptValue = 0;
+							context.payRate = 100;
+						]]></body>
+					</calculation>
+				</calculations>
+			</coverage>
+		</component>
+		<component minOccurrence="1" maxOccurrence="1" seqIndex="4">
+			<coverage kind="Coverage" name="旅游意外伤害保险（新标准版）-丧葬费用保险金" seqIndex="5" externalReference="63488" 
+			shortName="旅游意外伤害保险（新标准版）-丧葬费用保险金" instanceClassName="CoverageComponent">
+				<description>旅游意外伤害保险（新标准版）-丧葬费用保险金</description>
+				<baseSpec version="0"/>
+				<properties>
+					<property kind="premium" name="保费" seqIndex="200" dataType="Decimal" beanProperty="true" isHidden="false" required="true" derived="false" />
+					<property kind="insuredAmount" name="保额" seqIndex="300" dataType="Decimal" beanProperty="true" isHidden="false" required="false" derived="false" />
+					<property kind="fixedAmount" name="固定保额" seqIndex="854" dataType="Decimal" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
+				</properties>
+			</coverage>
+		</component>
+		<component minOccurrence="1" maxOccurrence="1" seqIndex="5">
+			<coverage kind="Coverage" name="公共交通工具意外伤害保险（新标准版）-A类风险意身故保险金" seqIndex="0" externalReference="63324" 
+			shortName="公共交通工具意外伤害保险（新标准版）-A类风险意身故保险金" instanceClassName="CoverageComponent">
+				<description>公共交通工具意外伤害保险（新标准版）-A类风险意身故保险金</description>
+				<baseSpec version="0"/>
+				<properties>
+					<property kind="premium" name="保费" seqIndex="200" dataType="Decimal" beanProperty="true" isHidden="false" required="true" derived="false" />
+					<property kind="insuredAmount" name="保额" seqIndex="300" dataType="Decimal" beanProperty="true" isHidden="false" required="false" derived="false" />
+					<property kind="fixedAmount" name="固定保额" seqIndex="854" dataType="Decimal" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
+				</properties>
+			</coverage>
+		</component>
+		<component minOccurrence="1" maxOccurrence="1" seqIndex="6">
+			<coverage kind="Coverage" name="公共交通工具意外伤害保险（新标准版）-A类风险II类伤残保险金" seqIndex="6" externalReference="63330" 
+			shortName="公共交通工具意外伤害保险（新标准版）-A类风险II类伤残保险金" instanceClassName="CoverageComponent">
+				<baseSpec version="0"/>
+				<properties>
+					<property kind="premium" name="保费" seqIndex="200" dataType="Decimal" beanProperty="true" isHidden="false" required="true" derived="false" />
+					<property kind="insuredAmount" name="保额" seqIndex="300" dataType="Decimal" beanProperty="true" isHidden="false" required="false" derived="false" />
+					<property kind="fixedAmount" name="固定保额" seqIndex="854" dataType="Decimal" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
+				</properties>	
+				
+			</coverage>
+		</component>
+		<component minOccurrence="1" maxOccurrence="1" seqIndex="6">
+			<coverage kind="Coverage" name="公共交通工具意外伤害保险（新标准版）-B类风险意身故保险金" seqIndex="7" externalReference="63325" 
+			shortName="公共交通工具意外伤害保险（新标准版）-B类风险意身故保险金" instanceClassName="CoverageComponent">
+				<baseSpec version="0"/>
+				<properties>
+					<property kind="premium" name="保费" seqIndex="200" dataType="Decimal" beanProperty="true" isHidden="false" required="true" derived="false" />
+					<property kind="insuredAmount" name="保额" seqIndex="300" dataType="Decimal" beanProperty="true" isHidden="false" required="false" derived="false" />
+					<property kind="fixedAmount" name="固定保额" seqIndex="854" dataType="Decimal" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
+				</properties>	
+				
+			</coverage>
+		</component>
+		<component minOccurrence="1" maxOccurrence="1" seqIndex="6">
+			<coverage kind="Coverage" name="公共交通工具意外伤害保险（新标准版）-B类风险II类伤残保险金" seqIndex="8" externalReference="63331" 
+			shortName="公共交通工具意外伤害保险（新标准版）-B类风险II类伤残保险金" instanceClassName="CoverageComponent">
+				<baseSpec version="0"/>
+				<properties>
+					<property kind="premium" name="保费" seqIndex="200" dataType="Decimal" beanProperty="true" isHidden="false" required="true" derived="false" />
+					<property kind="insuredAmount" name="保额" seqIndex="300" dataType="Decimal" beanProperty="true" isHidden="false" required="false" derived="false" />
+					<property kind="fixedAmount" name="固定保额" seqIndex="854" dataType="Decimal" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
+				</properties>	
+				
+			</coverage>
+		</component>
+	</components>
+
+	<requests>
+		<request kind="New" name="投保" seqIndex="777"
+			instanceClassName="FinancialServicesRequest" preconditionKinds="Eligibility"
+			calculationKinds="SetPreInsComponent" postconditionKinds="CompEligibility" />
+	</requests>
+	
+	<extensionScript><![CDATA[	
+				<script type="text/javascript">
+				function checkPlan(){
+					document.getElementById("isSelect").disabled = "";
+				}
+				</script>
+				<b>主方案选择</b>
+				<hr/>
+				<table class="bmoList">
+				
+				<thead>
+					<tr>
+						<th>方案号</th>
+						<th>身故保险金</th>
+						<th>伤残保险金</th>
+						<th>医疗保险金</th>
+						<th>丧葬费用保险金</th>
+						<th>A类风险意身故保险金</th>
+						<th>A类风险II类伤残保险金</th>
+						<th>B类风险意身故保险金</th>
+						<th>B类风险II类伤残保险金</th>
+						<th>选择</th>
+					</tr>
+				</thead>
+				<tbody>
+						<tr >
+							<td>方案1</td>
+							<td>110000</td>
+							<td>110000</td>
+							<td>18000</td>
+							<td>0</td>
+							<td>110000</td>
+							<td>110000</td>
+							<td>110000</td>
+							<td>110000</td>
+							<td>
+								<input type="radio" name="planAct" id="planAct" value="planA">
+							</td>
+						</tr>
+						<tr >
+							<td>方案2</td>
+							<td>220000</td>
+							<td>220000</td>
+							<td>38000</td>
+							<td>0</td>
+							<td>220000</td>
+							<td>220000</td>
+							<td>220000</td>
+							<td>220000</td>
+							<td>
+								<input type="radio" name="planAct" id="planAct" value="planB">
+							</td>
+						</tr>
+							<td>方案3</td>
+							<td>330000</td>
+							<td>330000</td>
+							<td>55000</td>
+							<td>0</td>
+							<td>330000</td>
+							<td>330000</td>
+							<td>330000</td>
+							<td>330000</td>
+							<td>
+								<input type="radio" name="planAct" id="planAct" value="planC">
+							</td>
+						</tr>
+						<tr >
+							<td>方案4</td>
+							<td>100000</td>
+							<td>100000</td>
+							<td>18000</td>
+							<td>0</td>
+							<td>100000</td>
+							<td>100000</td>
+							<td>100000</td>
+							<td>100000</td>
+							<td>
+								<input type="radio" name="planAct" id="planAct" value="planD">
+							</td>
+						</tr>
+				</tbody>
+			</table>
+				<hr/>
+				<b>保险信息<span style="color:red;" id="insuranceBaseInfo_MessageBox"></span></b>
+				<hr/>
+				
+				]]>
+	</extensionScript>
+</product>

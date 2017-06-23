@@ -5,8 +5,10 @@ import com.siebre.payment.paymenthandler.basic.paymentcallback.AbstractPaymentCa
 import com.siebre.payment.paymenthandler.wechatpay.sdk.WeChatParamConvert;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.paymentway.mapper.PaymentWayMapper;
 import com.siebre.payment.utils.messageconvert.ConvertToXML;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +29,9 @@ import java.util.Map;
  */
 @Component("weChatCallBackHandler")
 public class WeChatCallBackHandler extends AbstractPaymentCallBackHandler {
+
+    @Autowired
+    private PaymentWayMapper paymentWayMapper;
 	
     @Override
     protected Object callBackHandleInternal(HttpServletRequest request, HttpServletResponse response, PaymentInterface paymentInterface) {
@@ -32,7 +41,7 @@ public class WeChatCallBackHandler extends AbstractPaymentCallBackHandler {
             byte[] bytes = this.readBytes(inputStream, request.getContentLength());
             String xml = new String(bytes);
             Map<String, String> map = ConvertToXML.toMap(xml);
-            PaymentWay paymentWay = paymentInterface.getPaymentWay();
+            PaymentWay paymentWay = paymentWayMapper.selectByPrimaryKey(paymentInterface.getPaymentWayId()); //paymentInterface.getPaymentWay();
             if (validateSign(map, paymentWay)) {
 
                 logger.info("微信签名验证成功");
@@ -41,7 +50,15 @@ public class WeChatCallBackHandler extends AbstractPaymentCallBackHandler {
                 String externalTransactionNumber = map.get("transaction_id");
                 String mch_id = map.get("mch_id");
                 BigDecimal total_fee = new BigDecimal(map.get("total_fee")).divide(new BigDecimal("100"));
-                this.paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, mch_id, total_fee);
+                String time_end = map.get("time_end");
+                DateFormat f = new SimpleDateFormat("yyyyMMddHHmmss");
+                try {
+                    Date d = f.parse(time_end);
+                    this.paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, mch_id, total_fee, d);
+                } catch (ParseException e) {
+                    logger.error("日期转换失败！");
+                    e.printStackTrace();
+                }
                 return "";
             }else{
                 logger.info("微信签名验证失败");

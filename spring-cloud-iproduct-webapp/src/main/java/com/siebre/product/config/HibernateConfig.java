@@ -73,7 +73,7 @@ public class HibernateConfig {
     }
 
     @Bean
-    public SessionFactory getSessionFactory()
+    public SessionFactory sessionFactory()
     {
     	LocalSessionFactoryBuilder builder = new LocalSessionFactoryBuilder(dataSource);
 		builder.scanPackages(

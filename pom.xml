@@ -150,7 +150,6 @@
     	<module>spring-cloud-iproduct</module>
     	<module>spring-cloud-uaa</module>
     	<module>spring-cloud-security</module>
-    <module>spring-cloud-demo</module>
   </modules>
 
 	<build>

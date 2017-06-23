@@ -74,10 +74,6 @@ public class PaymentChannelService {
 		return vo;
 	}
 
-	public PaymentChannel findById(Long id) {
-		return this.paymentChannelMapper.selectByPrimaryKey(id);
-	}
-
 	public ServiceResult<PaymentChannel> queryById(Long id) {
 		PaymentChannel channel = this.paymentChannelMapper.selectByPrimaryKey(id);
 		return ServiceResult.<PaymentChannel>builder().success(Boolean.TRUE).data(channel).message(ServiceResult.SUCCESS_MESSAGE).build();

@@ -86,8 +86,6 @@ public interface PaymentOrderMapper {
 
     List<PaymentChannelTransactionVo> countPaymentChannelTransaction();
 
-    List<PaymentOrder> getOrdersByChannelAndDate(@Param("channelId") Long channelId,@Param("checkStartDate") Date checkStartDate, @Param("checkEndDate") Date checkEndDate);
-
     //对账明细列表查询
     List<PaymentOrder> selectCheckOrderByPage(@Param("orderNumber") String orderNumber, @Param("channelCodeList") List<String> channelCodeList,
                                               @Param("payStatusList") List<PaymentOrderPayStatus> payStatusList,

@@ -1,7 +1,9 @@
 package com.siebre.payment.refundapplication.dto;
 
+import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
 
 /**
@@ -26,14 +28,13 @@ public class PaymentRefundRequest {
     private PaymentTransaction refundTransaction;
 
     /**
-     * 原始支付交易
-     */
-    private PaymentTransaction paymentTransaction;
-
-    /**
      * 原始订单
      */
     private PaymentOrder paymentOrder;
+
+    private PaymentWay paymentWay;
+
+    private PaymentInterface paymentInterface;
 
     public String getOriginInternalNumber() {
         return originInternalNumber;
@@ -43,16 +44,16 @@ public class PaymentRefundRequest {
         this.originInternalNumber = originInternalNumber;
     }
 
-    public RefundApplication getRefundApplication() {
-        return refundApplication;
-    }
-
     public String getOriginExternalNumber() {
         return originExternalNumber;
     }
 
     public void setOriginExternalNumber(String originExternalNumber) {
         this.originExternalNumber = originExternalNumber;
+    }
+
+    public RefundApplication getRefundApplication() {
+        return refundApplication;
     }
 
     public void setRefundApplication(RefundApplication refundApplication) {
@@ -67,19 +68,27 @@ public class PaymentRefundRequest {
         this.refundTransaction = refundTransaction;
     }
 
-    public PaymentTransaction getPaymentTransaction() {
-        return paymentTransaction;
-    }
-
-    public void setPaymentTransaction(PaymentTransaction paymentTransaction) {
-        this.paymentTransaction = paymentTransaction;
-    }
-
     public PaymentOrder getPaymentOrder() {
         return paymentOrder;
     }
 
     public void setPaymentOrder(PaymentOrder paymentOrder) {
         this.paymentOrder = paymentOrder;
+    }
+
+    public PaymentWay getPaymentWay() {
+        return paymentWay;
+    }
+
+    public void setPaymentWay(PaymentWay paymentWay) {
+        this.paymentWay = paymentWay;
+    }
+
+    public PaymentInterface getPaymentInterface() {
+        return paymentInterface;
+    }
+
+    public void setPaymentInterface(PaymentInterface paymentInterface) {
+        this.paymentInterface = paymentInterface;
     }
 }

@@ -6,6 +6,8 @@
 		<result column="channel_name" property="channelName" jdbcType="VARCHAR" />
 		<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
 		<result column="merchant_code" property="merchantCode" jdbcType="VARCHAR" />
+		<result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
+		<result column="merchant_pwd" property="merchantPwd" jdbcType="VARCHAR" />
 		<result column="icon_url" property="iconUrl" jdbcType="VARCHAR" />
 		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="support_refunded" property="supportRefunded" jdbcType="BOOLEAN" />
@@ -20,8 +22,6 @@
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
 		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
 		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
-		<result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
-		<result column="merchant_pwd" property="merchantPwd" jdbcType="VARCHAR" />
 		<result column="terminal_id" property="terminalId" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
@@ -29,6 +29,8 @@
 		channel_name,
 		channel_code,
 		merchant_code,
+		merchant_name,
+		merchant_pwd,
 		icon_url,
 		status,
 		support_refunded,
@@ -43,8 +45,6 @@
 		create_date,
 		update_user,
 		update_date,
-		merchant_name,
-		merchant_pwd,
 		terminal_id
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
@@ -70,6 +70,8 @@
 		#{channelName,jdbcType=VARCHAR},
 		#{channelCode,jdbcType=VARCHAR},
 		#{merchantCode,jdbcType=VARCHAR},
+		#{merchantName,jdbcType=VARCHAR},
+		#{merchantPwd,jdbcType=VARCHAR},
 		#{iconUrl,jdbcType=VARCHAR},
 		#{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{supportRefunded,jdbcType=BOOLEAN},
@@ -84,8 +86,6 @@
 		#{createDate,jdbcType=TIMESTAMP},
 		#{updateUser,jdbcType=VARCHAR},
 		#{updateDate,jdbcType=TIMESTAMP},
-		#{merchantName,jdbcType=VARCHAR},
-		#{merchantPwd,jdbcType=VARCHAR},
 		#{terminalId,jdbcType=VARCHAR}
 		)
 	</insert>
@@ -103,6 +103,12 @@
 			</if>
 			<if test="merchantCode != null">
 				merchant_code,
+			</if>
+			<if test="merchantName != null">
+				merchant_name,
+			</if>
+			<if test="merchantPwd != null">
+				merchant_pwd,
 			</if>
 			<if test="iconUrl != null">
 				icon_url,
@@ -146,12 +152,6 @@
 			<if test="updateDate != null">
 				update_date,
 			</if>
-			<if test="merchantName != null">
-				merchant_name,
-			</if>
-			<if test="merchantPwd != null">
-				merchant_pwd,
-			</if>
 			<if test="terminalId != null">
 				terminal_id
 			</if>
@@ -168,6 +168,12 @@
 			</if>
 			<if test="merchantCode != null">
 				#{merchantCode,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantName != null">
+				#{merchantName,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantPwd != null">
+				#{merchantPwd,jdbcType=VARCHAR},
 			</if>
 			<if test="iconUrl != null">
 				#{iconUrl,jdbcType=VARCHAR},
@@ -211,12 +217,6 @@
 			<if test="updateDate != null">
 				#{updateDate,jdbcType=TIMESTAMP},
 			</if>
-			<if test="merchantName != null">
-				#{merchantName,jdbcType=VARCHAR},
-			</if>
-			<if test="merchantPwd != null">
-				#{merchantPwd,jdbcType=VARCHAR},
-			</if>
 			<if test="terminalId != null">
 				#{terminalId,jdbcType=VARCHAR},
 			</if>
@@ -233,6 +233,12 @@
 			</if>
 			<if test="merchantCode != null">
 				merchant_code = #{merchantCode,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantName != null">
+				merchant_name = #{merchantName,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantPwd != null">
+				merchant_pwd = #{merchantPwd,jdbcType=VARCHAR},
 			</if>
 			<if test="iconUrl != null">
 				icon_url = #{iconUrl,jdbcType=VARCHAR},
@@ -276,12 +282,6 @@
 			<if test="updateDate != null">
 				update_date = #{updateDate,jdbcType=TIMESTAMP},
 			</if>
-			<if test="merchantName != null">
-				merchant_name = #{merchantName,jdbcType=VARCHAR},
-			</if>
-			<if test="merchantPwd != null">
-				merchant_pwd = #{merchantPwd,jdbcType=VARCHAR},
-			</if>
 			<if test="terminalId != null">
 				terminal_id = #{terminalId,jdbcType=VARCHAR},
 			</if>
@@ -296,6 +296,8 @@
 		channel_name = #{channelName,jdbcType=VARCHAR},
 		channel_code = #{channelCode,jdbcType=VARCHAR},
 		merchant_code = #{merchantCode,jdbcType=VARCHAR},
+		merchant_name = #{merchantName,jdbcType=VARCHAR},
+		merchant_pwd = #{merchantPwd,jdbcType=VARCHAR},
 		icon_url = #{iconUrl,jdbcType=VARCHAR},
 		status = #{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		support_refunded = #{supportRefunded,jdbcType=BOOLEAN},
@@ -310,8 +312,6 @@
 		create_date = #{createDate,jdbcType=TIMESTAMP},
 		update_user = #{updateUser,jdbcType=VARCHAR},
 		update_date = #{updateDate,jdbcType=TIMESTAMP},
-		merchant_name = #{merchantName,jdbcType=VARCHAR},
-		merchant_pwd = #{merchantPwd,jdbcType=VARCHAR},
 		terminal_id = #{terminalId,jdbcType=VARCHAR}
 		where
 		id = #{id,jdbcType=INTEGER}

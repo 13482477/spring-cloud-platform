@@ -4,14 +4,18 @@ import com.siebre.basic.enumutil.BaseEnum;
 
 public enum PaymentTransactionStatus implements BaseEnum {
 
-	//特只由于业务或者系统导致的异常，从而使交易失败
-	FAILED(1, "交易失败"),
+	PAY_FAILED(1, "交易失败"),
 	
-	PROCESSING(2, "交易中"),
+	PAY_PROCESSING(2, "交易中"),
 	
-	SUCCESS(3, "交易成功"),
+	PAY_SUCCESS(3, "交易成功"),
 
-	//超出了一定时间之后没有完成交易，则设置订单关闭
+	REFUND_PROCESSING(5, "退款中"),
+
+	REFUND_SUCCESS(6, "退款成功"),
+
+	REFUND_FAILED(7, "退款失败"),
+
 	CLOSED(4, "交易关闭"),
 	;
 
