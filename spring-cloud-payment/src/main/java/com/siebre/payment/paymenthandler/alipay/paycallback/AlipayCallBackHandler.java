@@ -6,13 +6,19 @@ import com.siebre.payment.paymenthandler.alipay.sdk.AlipaySign;
 import com.siebre.payment.paymenthandler.basic.paymentcallback.AbstractPaymentCallBackHandler;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.paymentway.mapper.PaymentWayMapper;
 import com.siebre.payment.utils.messageconvert.Converts;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +29,9 @@ import java.util.Map;
  */
 @Component("alipayCallBackHandler")
 public class AlipayCallBackHandler extends AbstractPaymentCallBackHandler {
+
+    @Autowired
+    private PaymentWayMapper paymentWayMapper;
 
     private static final String SIGN_PARAM="sign";
 
@@ -35,7 +44,7 @@ public class AlipayCallBackHandler extends AbstractPaymentCallBackHandler {
 
         Map<String, String> paramMap = HttpServletRequestUtil.getParameterMap(request);
 
-        PaymentWay paymentWay = paymentInterface.getPaymentWay();
+        PaymentWay paymentWay = paymentWayMapper.selectByPrimaryKey(paymentInterface.getPaymentWayId());
 
         if (validateSign(paramMap, paymentWay)) {
 
@@ -48,7 +57,15 @@ public class AlipayCallBackHandler extends AbstractPaymentCallBackHandler {
                 String externalTransactionNumber = payNotifyParamDTO.getTrade_no();
                 String seller_id = payNotifyParamDTO.getSeller_id();
                 BigDecimal total_fee = new BigDecimal(payNotifyParamDTO.getTotal_fee());
-                this.paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee);
+
+                DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                try {
+                    Date successDate = f.parse(request.getParameter("gmt_payment"));
+                    this.paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee, successDate);
+                } catch (ParseException e) {
+                    logger.error("日期转换失败");
+                    e.printStackTrace();
+                }
                 return "success";
             }
 

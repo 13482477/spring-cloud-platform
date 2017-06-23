@@ -34,15 +34,14 @@
 		<association property="paymentOrder" notNullColumn="id" javaType="com.siebre.payment.paymentorder.entity.PaymentOrder" columnPrefix="paymentOrder_">
 			<id column="id" property="id" jdbcType="BIGINT" />
 			<result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
-			<result column="total_insured_amount" property="totalInsuredAmount" jdbcType="DECIMAL" />
-			<result column="total_premium" property="totalPremium" jdbcType="DECIMAL" />
+			<result column="amount" property="amount" jdbcType="DECIMAL" />
 			<result column="business_plantform" property="businessPlantform" jdbcType="INTEGER" />
 			<result column="payment_client" property="paymentClient" jdbcType="INTEGER" />
 			<result column="return_trade_no" property="returnTradeNo" jdbcType="VARCHAR" />
 			<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="check_status" property="checkStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 			<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
-			<result column="payment_channel_id" property="paymentChannelId" jdbcType="BIGINT" />
+			<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
 			<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
 			<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
 			<result column="payment_way_code" property="paymentWayCode" jdbcType="VARCHAR" />
@@ -93,15 +92,14 @@
 		pmt_refund_application.update_date,
 		pmt_payment_order.id                               paymentOrder_id,
 		pmt_payment_order.order_number                     paymentOrder_order_number,
-		pmt_payment_order.total_insured_amount             paymentOrder_total_insured_amount,
-		pmt_payment_order.total_premium                    paymentOrder_total_premium,
+		pmt_payment_order.amount                           paymentOrder_amount,
 		pmt_payment_order.business_plantform               paymentOrder_business_plantform,
 		pmt_payment_order.payment_client                   paymentOrder_payment_client,
 		pmt_payment_order.return_trade_no                  paymentOrder_return_trade_no,
 		pmt_payment_order.status                           paymentOrder_status,
 		pmt_payment_order.check_status                     paymentOrder_check_status,
 		pmt_payment_order.payment_terminal_type            paymentOrder_payment_terminal_type,
-		pmt_payment_order.payment_channel_id               paymentOrder_payment_channel_id,
+		pmt_payment_order.channel_code                     paymentOrder_channel_code,
 		pmt_payment_order.create_time                      paymentOrder_create_time,
 		pmt_payment_order.refund_amount                    paymentOrder_refund_amount,
 		pmt_payment_order.payment_way_code                 paymentOrder_payment_way_code,
@@ -131,6 +129,13 @@
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
+	<select id="selectByMessageId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List"/>
+		from pmt_refund_application
+		where message_id = #{messageId,jdbcType=VARCHAR}
+	</select>
+
 	<select id="selectByPage" resultMap="BaseResultMap" >
 		select
 		<include refid="Base_Column_List"/>
@@ -146,7 +151,7 @@
 		left JOIN
 		pmt_payment_order on pmt_refund_application.order_number = pmt_payment_order.order_number
 		left JOIN
-		pmt_payment_channel on pmt_payment_order.payment_channel_id = pmt_payment_channel.id
+		pmt_payment_channel on pmt_payment_order.channel_code = pmt_payment_channel.channel_code
 		left JOIN
 		pmt_payment_transaction on pmt_refund_application.refund_application_number = pmt_payment_transaction.internal_transaction_number
 		where 1=1
@@ -182,6 +187,19 @@
 		</if>
 		<if test="refundApplicationNumber!=null and refundApplicationNumber!=''">
 			and pmt_refund_application.refund_application_number = #{refundApplicationNumber}
+		</if>
+	</select>
+
+	<select id="selectByOrderNumberAndStatus" resultMap="BaseResultMap" >
+		select
+		<include refid="Base_Column_List"/>
+		from pmt_refund_application
+		where 1=1
+		<if test="orderNumber!=null and orderNumber!=''">
+			and pmt_refund_application.order_number =#{orderNumber}
+		</if>
+		<if test="status!=null">
+			and pmt_refund_application.status = #{status.value}
 		</if>
 	</select>
 

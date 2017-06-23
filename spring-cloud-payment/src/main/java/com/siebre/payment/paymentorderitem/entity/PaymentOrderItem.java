@@ -26,24 +26,9 @@ public class PaymentOrderItem extends BaseObject {
     private String policyNumber;
 
     /**
-     * 保额
-     */
-    private BigDecimal insuredAmount;
-
-    /**
      * 保费
      */
     private BigDecimal grossPremium;
-
-    /**
-     * 保险起期
-     */
-    private Date startDate;
-
-    /**
-     * 保险止期
-     */
-    private Date endDate;
 
     /**
      * 责任
@@ -63,13 +48,6 @@ public class PaymentOrderItem extends BaseObject {
      */
     private Long insuredPersonId;
     private PolicyRole insured;
-
-    /**
-     * 投被保人是否是同一人
-     * v2.0版本该字段放在被保人上
-     */
-    @Deprecated
-    private String samePerson;
 
     /**
      * 产品名称
@@ -110,14 +88,6 @@ public class PaymentOrderItem extends BaseObject {
         this.policyNumber = policyNumber;
     }
 
-    public BigDecimal getInsuredAmount() {
-        return insuredAmount;
-    }
-
-    public void setInsuredAmount(BigDecimal insuredAmount) {
-        this.insuredAmount = insuredAmount;
-    }
-
     public BigDecimal getGrossPremium() {
         return grossPremium;
     }
@@ -136,22 +106,6 @@ public class PaymentOrderItem extends BaseObject {
 
     public void setProductName(String productName) {
         this.productName = productName;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
     }
 
     public List<PolicyLibility> getLibilities() {
@@ -192,14 +146,6 @@ public class PaymentOrderItem extends BaseObject {
 
     public void setInsured(PolicyRole insured) {
         this.insured = insured;
-    }
-
-    public String getSamePerson() {
-        return samePerson;
-    }
-
-    public void setSamePerson(String samePerson) {
-        this.samePerson = samePerson;
     }
 
     public String getProductCode() {

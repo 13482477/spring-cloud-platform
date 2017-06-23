@@ -1,6 +1,10 @@
 package com.siebre.payment.paymenthandler.wechatpay.pay;
 
 import com.siebre.payment.entity.enums.EncryptionMode;
+import com.siebre.payment.entity.enums.ReturnCode;
+import com.siebre.payment.entity.enums.SubsequentAction;
+import com.siebre.payment.hostconfig.service.PaymentHostConfigService;
+import com.siebre.payment.paymentgateway.vo.WechatJsApiParams;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
@@ -13,6 +17,7 @@ import com.siebre.payment.utils.http.HttpTookit;
 import com.siebre.payment.utils.messageconvert.ConvertToXML;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -28,28 +33,36 @@ import java.util.UUID;
 @Component("weChatPublicPaymentHandler")
 public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
 
+    @Autowired
+    private PaymentHostConfigService hostConfig;
+
     @Override
-    protected PaymentResponse handleInternal(PaymentRequest request, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentOrder paymentOrder, PaymentTransaction paymentTransaction) {
+    protected void handleInternal(PaymentRequest request, PaymentResponse response, PaymentWay paymentWay, PaymentInterface paymentInterface, PaymentTransaction paymentTransaction) {
         //拼装请求参数
         Map<String, String> params = this.generateParamsMap(request, paymentWay, paymentInterface, paymentTransaction);
         //调用统一下单API 获得预付单信息prepay_id
         this.processSign(params, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
-        String prepayId = this.getPrepayId(paymentWay, params);
+        String prepayId = this.getPrepayId(paymentWay, params, response);
+        if(prepayId == null) {
+            return;
+        }
         //生成JSAPI页面调用的支付参数并签名
-        Map<String, String> jsApiParams = generateJsapiParams(paymentWay, prepayId);
+        WechatJsApiParams jsApiParams = generateJsapiParams(paymentWay, prepayId);
         this.processSign2(jsApiParams, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
-        return PaymentResponse.builder().body(jsApiParams).build();
+        response.setReturnCode(ReturnCode.SUCCESS.getDescription());
+        response.setWechatJsApiParams(jsApiParams);
+        response.setSubsequentAction(SubsequentAction.INVOKE_WECHAT_JS_API.getValue());
     }
 
-    private Map<String, String> generateJsapiParams(PaymentWay paymentWay, String prepayId) {
-        HashMap<String, String> paramMap = new HashMap<>();
-        paramMap.put("appId", paymentWay.getAppId());
-        paramMap.put("timeStamp", Long.valueOf(new Date().getTime()).toString());
-        paramMap.put("nonceStr", String.valueOf(UUID.randomUUID()).substring(0, 31));
+    private WechatJsApiParams generateJsapiParams(PaymentWay paymentWay, String prepayId) {
+        WechatJsApiParams wechatJsApiParams = new WechatJsApiParams();
+        wechatJsApiParams.setAppId(paymentWay.getAppId());
+        wechatJsApiParams.setTimeStamp(Long.valueOf(new Date().getTime()).toString());
+        wechatJsApiParams.setNonceStr(String.valueOf(UUID.randomUUID()).substring(0, 31));
         StringBuilder sb = new StringBuilder().append("prepay_id=").append(prepayId);
-        paramMap.put("package", sb.toString());
-        paramMap.put("signType", paymentWay.getEncryptionMode().getDescription());
-        return paramMap;
+        wechatJsApiParams.setPackageSrt(sb.toString());
+        wechatJsApiParams.setSignType(paymentWay.getEncryptionMode().getDescription());
+        return wechatJsApiParams;
     }
 
 
@@ -68,13 +81,13 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
         Date current = new Date();
         paramMap.put("time_start", DateFormatUtils.format(current, "yyyyMMddHHmmss")); // 交易起始时间
         paramMap.put("time_expire", DateFormatUtils.format(DateUtils.addMinutes(current, 30), "yyyyMMddHHmmss")); // 交易结束时间,设置为起始时间后30分钟
-        paramMap.put("notify_url", paymentInterface.getCallbackUrl()); // 支付成功后，回调地址
+        paramMap.put("notify_url", hostConfig.getPaymentHost() + paymentInterface.getCallbackUrl()); // 支付成功后，回调地址
         paramMap.put("trade_type", "JSAPI"); // 交易类型
         paramMap.put("openid", request.getOpenid()); // 交易类型为JSAPI时，必传的参数
         return paramMap;
     }
 
-    private String getPrepayId(PaymentWay paymentWay, Map<String, String> params) {
+    private String getPrepayId(PaymentWay paymentWay, Map<String, String> params, PaymentResponse response) {
         String payXml = ConvertToXML.toXml(params);
 
         logger.info("微信获取prepare请求信息={}", payXml);
@@ -83,14 +96,24 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
 
         String prepayOrderXml = HttpTookit.doPost(requestUrl, payXml);
         Map<String, String> resultMap = ConvertToXML.toMap(prepayOrderXml);
-
-        //TODO xml异常错误处理
-        logger.info("微信获取prepare返回信息={}", resultMap.toString());
-
-        String prepayId = resultMap.get("prepay_id");
-        logger.info("WechatScan url generated, prepayId={}", prepayId);
-
-        return prepayId;
+        if("FAIL".equals(resultMap.get("return_code"))) {
+            logger.info("调用预支付接口错误，错误原因：{}", resultMap.get("return_msg"));
+            response.setReturnCode(ReturnCode.FAIL.getDescription());
+            response.setReturnMessage(resultMap.get("return_msg"));
+            return null;
+        } else {
+            if("FAIL".equals(resultMap.get("result_code"))) {
+                logger.info("调用预支付接口错误，错误代码：{}，错误原因：{}", resultMap.get("err_code"), resultMap.get("return_msg"));
+                response.setReturnCode(ReturnCode.FAIL.getDescription());
+                response.setReturnMessage("调用预支付接口错误，错误代码：" + resultMap.get("err_code") + ",错误原因：" + resultMap.get("err_code_des"));
+                return null;
+            } else {
+                logger.info("微信获取prepare返回信息={}", resultMap.toString());
+                String prepayId = resultMap.get("prepay_id");
+                logger.info("WechatScan url generated, prepayId={}", prepayId);
+                return prepayId;
+            }
+        }
     }
 
     private void processSign(Map<String, String> params, EncryptionMode encryptionMode, String secretKey) {
@@ -102,11 +125,18 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
         }
     }
 
-    private void processSign2(Map<String, String> params, EncryptionMode encryptionMode, String secretKey) {
+    private void processSign2(WechatJsApiParams wechatJsApiParams, EncryptionMode encryptionMode, String secretKey) {
+        Map<String, String> params = new HashMap<>();
+        params.put("appId", wechatJsApiParams.getAppId());
+        params.put("timeStamp", wechatJsApiParams.getTimeStamp());
+        params.put("nonceStr", wechatJsApiParams.getNonceStr());
+        params.put("package", wechatJsApiParams.getPackageSrt());
+        params.put("signType", wechatJsApiParams.getSignType());
         if (EncryptionMode.MD5.equals(encryptionMode)) {
             String sign = WeChatParamConvert.signMd5(params, secretKey);
             logger.info("Wechat sign key generated, original paramerers={},encryptionMode={}, secretKey={},sign={}", params.toString(), encryptionMode.getDescription(), secretKey, sign);
             params.put("paySign", sign);
+            wechatJsApiParams.setPaySign(sign);
             return;
         }
     }

@@ -1,5 +1,7 @@
 package com.siebre.payment.paymenthandler.wechatpay.sdk;
 
+import com.siebre.payment.paymentcallback.controller.PaymentCallbackController;
+
 public class WeChatConfig {
 
     public static final String CHANNEL_CODE = "WECHAT_PAY";
@@ -17,13 +19,13 @@ public class WeChatConfig {
     public static final String QUERY_REQUEST_URL = "https://api.mch.weixin.qq.com/pay/orderquery";
 
     //扫码支付回调地址
-    public static final String SCAN_CALLBACK_URL = "http://tianci.vicp.io:14369/siebre-cloud-payment-service/payment/paymentGateWay/notify/" + WAY_SCAN_PAY;
+    public static final String SCAN_CALLBACK_URL = PaymentCallbackController.CALL_BACK_URI + WAY_SCAN_PAY;
 
     //公众号支付回调地址
-    public static final String PUBLIC_CALLBACK_URL = "http://tianci.vicp.io:14369/siebre-cloud-payment-service/payment/paymentGateWay/notify/" + WAY_PUBLIC_PAY;
+    public static final String PUBLIC_CALLBACK_URL = PaymentCallbackController.CALL_BACK_URI + WAY_PUBLIC_PAY;
 
     //同步回调地址
-    public static final String RETURN_PAGE_URL = "http://mobile.siebre.com/siebre-cloud/success";
+    public static final String RETURN_PAGE_URL = "/siebre-cloud/success";
 
     //统一退款接口
     public static final String REFUND_URL = "https://api.mch.weixin.qq.com/secapi/pay/refund";

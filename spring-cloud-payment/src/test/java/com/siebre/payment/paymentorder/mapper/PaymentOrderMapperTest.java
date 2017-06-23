@@ -29,7 +29,7 @@ public class PaymentOrderMapperTest extends DbTestConfig {
 
     private PaymentOrder newPaymentOrder() {
         PaymentOrder paymentOrder = new PaymentOrder();
-        paymentOrder.setPaymentChannelId(Long.valueOf("1"));
+        paymentOrder.setChannelCode("ALI_PAY");
         paymentOrder.setOrderNumber("TEST201706071358");
         paymentOrder.setAmount(new BigDecimal("0.01"));
         DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
@@ -46,8 +46,6 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         paymentOrder.setLockStatus(PaymentOrderLockStatus.UNLOCK);
         //paymentOrder.setRefundStatus(PaymentOrderRefundStatus.NOT_REFUND);
 
-        paymentOrder.setPaymentMethod(PaymentMethod.NET_GATEWAY);
-        paymentOrder.setPaymentProvider(PaymentProvider.ALIPAY);
         paymentOrder.setCurrency("CNY");
         paymentOrder.setPaymentAccountId(1L);
         paymentOrder.setSummary("KKKKKK");
@@ -59,14 +57,12 @@ public class PaymentOrderMapperTest extends DbTestConfig {
     }
 
     private void assertAllFiledTrue(PaymentOrder paymentOrder, PaymentOrder order) {
-        assertTrue(order.getPaymentChannelId().equals(paymentOrder.getPaymentChannelId()));
+        assertTrue(order.getChannelCode().equals(paymentOrder.getChannelCode()));
         assertTrue(order.getOrderNumber().equals(paymentOrder.getOrderNumber()));
         assertTrue(order.getAmount().equals(paymentOrder.getAmount()));
         assertTrue(order.getCheckTime().equals(paymentOrder.getCheckTime()));
         assertTrue(order.getCheckStatus().equals(paymentOrder.getCheckStatus()));
         assertTrue(order.getStatus().equals(paymentOrder.getStatus()));
-        assertTrue(order.getPaymentMethod().equals(paymentOrder.getPaymentMethod()));
-        assertTrue(order.getPaymentProvider().equals(paymentOrder.getPaymentProvider()));
         assertTrue(order.getCurrency().equals(paymentOrder.getCurrency()));
         assertTrue(order.getPaymentAccountId().equals(paymentOrder.getPaymentAccountId()));
         assertTrue(order.getSummary().equals(paymentOrder.getSummary()));
@@ -93,8 +89,6 @@ public class PaymentOrderMapperTest extends DbTestConfig {
     @Transactional
     public void insertSelective() throws Exception {
         PaymentOrder paymentOrder = new PaymentOrder();
-        paymentOrder.setPaymentMethod(PaymentMethod.NET_GATEWAY);
-        paymentOrder.setPaymentProvider(PaymentProvider.ALIPAY);
         paymentOrder.setCurrency("CNY");
         paymentOrder.setPaymentAccountId(1L);
         paymentOrder.setSummary("KKKKKK");
@@ -102,8 +96,6 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         paymentOrder.setExternalOrderNumber("EXhjka789236389");
         paymentOrderMapper.insertSelective(paymentOrder);
         PaymentOrder order = paymentOrderMapper.selectByPrimaryKey(paymentOrder.getId());
-        assertTrue(order.getPaymentMethod().equals(paymentOrder.getPaymentMethod()));
-        assertTrue(order.getPaymentProvider().equals(paymentOrder.getPaymentProvider()));
         assertTrue(order.getCurrency().equals(paymentOrder.getCurrency()));
         assertTrue(order.getPaymentAccountId().equals(paymentOrder.getPaymentAccountId()));
         assertTrue(order.getSummary().equals(paymentOrder.getSummary()));
@@ -128,8 +120,6 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         paymentOrderMapper.insert(paymentOrder);
         PaymentOrder p1 = new PaymentOrder();
         p1.setId(paymentOrder.getId());
-        p1.setPaymentMethod(PaymentMethod.PUBLIC_ACCOUNT_PAY);
-        p1.setPaymentProvider(PaymentProvider.BAOFOO);
         p1.setCurrency("CNY1");
         p1.setPaymentAccountId(2L);
         p1.setSummary("KKKKddKK");
@@ -138,16 +128,12 @@ public class PaymentOrderMapperTest extends DbTestConfig {
         paymentOrderMapper.updateByPrimaryKeySelective(p1);
         PaymentOrder order = paymentOrderMapper.selectByPrimaryKey(paymentOrder.getId());
 
-        assertTrue(order.getPaymentMethod().equals(p1.getPaymentMethod()));
-        assertTrue(order.getPaymentProvider().equals(p1.getPaymentProvider()));
         assertTrue(order.getCurrency().equals(p1.getCurrency()));
         assertTrue(order.getPaymentAccountId().equals(p1.getPaymentAccountId()));
         assertTrue(order.getSummary().equals(p1.getSummary()));
         assertTrue(order.getNotificationUrl().equals(p1.getNotificationUrl()));
         assertTrue(order.getExternalOrderNumber().equals(p1.getExternalOrderNumber()));
 
-        assertFalse(order.getPaymentMethod().equals(paymentOrder.getPaymentMethod()));
-        assertFalse(order.getPaymentProvider().equals(paymentOrder.getPaymentProvider()));
         assertFalse(order.getCurrency().equals(paymentOrder.getCurrency()));
         assertFalse(order.getPaymentAccountId().equals(paymentOrder.getPaymentAccountId()));
         assertFalse(order.getSummary().equals(paymentOrder.getSummary()));

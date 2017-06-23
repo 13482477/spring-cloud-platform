@@ -1,17 +1,17 @@
 package com.siebre.payment.paymentgateway.controller;
 
 import com.siebre.basic.applicationcontext.SpringContextUtil;
+import com.siebre.basic.service.ServiceResult;
 import com.siebre.basic.utils.HttpServletRequestUtil;
-import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.enums.PaymentOrderLockStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
+import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymentgateway.vo.*;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.config.HandlerBeanNameConfig;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
 import com.siebre.payment.paymenthandler.wechatpay.WeChatPublicAuthService;
-import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.service.PaymentOrderService;
 import com.siebre.payment.paymentroute.service.PaymentRefundRouteService;
@@ -48,9 +48,6 @@ public class PaymentGatewayController {
     private RefundApplicationService refundApplicationService;
 
     @Autowired
-    private PaymentRefundRouteService paymentRefundRouteService;
-
-    @Autowired
     private PaymentOrderService paymentOrderService;
 
     /**
@@ -68,95 +65,79 @@ public class PaymentGatewayController {
         return response;
     }
 
-    /**
-     * 统一支付接口
-     */
-    @ApiOperation(value = "统一支付接口(V1.0)", notes = "统一支付接口(V1.0)")
-    @RequestMapping(value = "/openApi/v1/paymentGateway/unifiedPay", method = POST)
-    public UnifiedPayResponse unipay(@RequestBody UnifiedPayRequest unipayRequest, HttpServletRequest request) {
-        PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrder(unipayRequest.getOrderNumber());
-        if(PaymentOrderLockStatus.LOCK.equals(paymentOrder.getLockStatus())){
-            UnifiedPayResponse response = new UnifiedPayResponse();
-            response.setBody("支付失败，订单已被锁定");
+    @ApiOperation(value = "统一支付接口(V2.0)", notes = "统一支付接口(V2.0)")
+    @RequestMapping(value = "/openApi/v2/paymentGateway/unifiedPay", method = POST)
+    public UnifiedPayResponse unipayV2(@RequestBody UnifiedPayRequest unifiedPayRequest, HttpServletRequest request) {
+        UnifiedPayResponse response = new UnifiedPayResponse();
+        PaymentOrderResponse orderResponse = paymentOrderService.creatPaymentOrder(unifiedPayRequest);
+        if (ReturnCode.FAIL.getDescription().equals(orderResponse.getReturnCode())) {
+            response.setReturnCode(orderResponse.getReturnCode());
+            response.setReturnMessage(orderResponse.getReturnMessage());
             return response;
         }
-        String handlerBeanName = HandlerBeanNameConfig.PAY_MAPPING.get(unipayRequest.getPayWayCode());
-        PaymentRequest paymentRequest = new PaymentRequest();
-        paymentRequest.setPaymentWayCode(unipayRequest.getPayWayCode());
-        paymentRequest.setOrderNumber(unipayRequest.getOrderNumber());
-        paymentRequest.setPaymentOrderItems(unipayRequest.getPaymentOrderItems());
-        paymentRequest.setIp(HttpServletRequestUtil.getIpAddress(request));
-        paymentRequest.setOpenid(unipayRequest.getOpenid());
+        String handlerBeanName = HandlerBeanNameConfig.PAY_MAPPING.get(unifiedPayRequest.getPaymentOrder().getPaymentWayCode());
+        PaymentRequest paymentRequest = assemblePaymentRequest(request, orderResponse);
+        PaymentResponse paymentResponse = new PaymentResponse();
         AbstractPaymentComponent paymentComponent = (AbstractPaymentComponent) SpringContextUtil.getBean(handlerBeanName);
-        PaymentResponse paymentResponse = paymentComponent.handle(paymentRequest);
-        UnifiedPayResponse response = new UnifiedPayResponse();
-        response.setPaymentUrl(paymentResponse.getPayUrl());
-        response.setBody(paymentResponse.getBody());
+        paymentComponent.handle(paymentRequest, paymentResponse);
+        response = assembleUnifiedPayResponse(unifiedPayRequest, paymentResponse);
         return response;
     }
 
-    @ApiOperation(value = "统一支付接口(V2.0)", notes = "统一支付接口(V2.0)")
-    @RequestMapping(value = "/openApi/v2/paymentGateway/unifiedPay", method = POST)
-    public Object unipayV2(@RequestBody UnifiedPayRequest unifiedPayRequest, HttpServletRequest request) {
-
-        return null;
+    private UnifiedPayResponse assembleUnifiedPayResponse(UnifiedPayRequest unifiedPayRequest, PaymentResponse paymentResponse) {
+        UnifiedPayResponse response = new UnifiedPayResponse();
+        response.setMessageId(unifiedPayRequest.getMessageId());
+        response.setRedirectUrl(paymentResponse.getPayUrl());
+        response.setReturnCode(paymentResponse.getReturnCode());
+        response.setReturnMessage(paymentResponse.getReturnMessage());
+        response.setSubsequentAction(paymentResponse.getSubsequentAction());
+        if (paymentResponse.getWechatJsApiParams() != null) {
+            response.setWeChatJsApiParams(paymentResponse.getWechatJsApiParams());
+        }
+        response.setPaymentOrder(assembleUnifiedPayResOrder(paymentResponse.getPaymentOrder()));
+        return response;
     }
 
-    /**
-     * 统一退款接口
-     *
-     * @param refundRequest
-     * @param servletRequest
-     * @return
-     */
-    @ApiOperation(value = "统一单笔退款接口(V1.0)", notes = "统一单笔退款接口(V1.0)")
-    @RequestMapping(value = "/openApi/v1/paymentGateWay/refund", method = POST)
-    public RefundResponse applicationRefund(@RequestBody RefundRequest refundRequest, HttpServletRequest servletRequest) {
-        //判断订单是否锁定
-        PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrder(refundRequest.getOrderNumber());
-        if (PaymentOrderLockStatus.LOCK.equals(paymentOrder.getLockStatus())) {
-            RefundResponse refundResponse = new RefundResponse();
-            refundResponse.setRefundStatus(RefundApplicationStatus.FAILED.getDescription());
-            refundResponse.setResponse("订单被锁定，不能退款");
-            return refundResponse;
+    private PaymentRequest assemblePaymentRequest(HttpServletRequest request, PaymentOrderResponse orderResponse) {
+        PaymentRequest paymentRequest = new PaymentRequest();
+        paymentRequest.setPaymentWayCode(orderResponse.getPaymentOrder().getPaymentWayCode());
+        paymentRequest.setOrderNumber(orderResponse.getPaymentOrder().getOrderNumber());
+        paymentRequest.setIp(HttpServletRequestUtil.getIpAddress(request));
+        if(orderResponse.getPaymentOrder().getPaymentAccount() != null) {
+            paymentRequest.setOpenid(orderResponse.getPaymentOrder().getPaymentAccount().getOpenid());
         }
+        paymentRequest.setPaymentOrder(orderResponse.getPaymentOrder());
+        return paymentRequest;
+    }
 
-        RefundApplication application = new RefundApplication();
-        application.setStatus(RefundApplicationStatus.APPLICATION);
-        application.setRequest(refundRequest.getReason());
-        application.setOrderNumber(refundRequest.getOrderNumber());
-        application.setRefundAmount(refundRequest.getRefundAmount());
-        // 创建RefundApplication
-        refundApplicationService.createRefundApplication(application);
-        if (RefundApplicationStatus.APPLICATION.equals(application.getStatus())) {
-            PaymentRefundRequest paymentRefundRequest = new PaymentRefundRequest();
-            paymentRefundRequest.setRefundApplication(application);
-            PaymentRefundResponse refundResponse = paymentRefundRouteService.route(paymentRefundRequest);
-            application = refundResponse.getRefundApplication();
-        }
-        RefundResponse refundResponse = new RefundResponse();
-        refundResponse.setRefundStatus(application.getStatus().toString());
-        refundResponse.setResponse(application.getResponse());
-        refundResponse.setApplicationNumber(application.getRefundApplicationNumber());
-        return refundResponse;
+    private UnifiedPayResOrder assembleUnifiedPayResOrder(PaymentOrder paymentOrder) {
+        UnifiedPayResOrder resOrder = new UnifiedPayResOrder();
+        resOrder.setPaymentWayCode(paymentOrder.getPaymentWayCode());
+        resOrder.setOrderNumber(paymentOrder.getOrderNumber());
+        resOrder.setStatus(paymentOrder.getStatus().getDescription());
+        resOrder.setCreatedOn(paymentOrder.getCreateTime());
+        return resOrder;
     }
 
     /**
      * 统一退款（v2.0）
+     *
      * @param refundRequest
      * @return
      */
     @ApiOperation(value = "统一单笔退款接口(V2.0)", notes = "统一单笔退款接口(V2.0)")
     @RequestMapping(value = "/openApi/v2/paymentGateWay/refund", method = POST)
-    public RefundResponse applicationRefund2(RefundRequest refundRequest) {
-
-        return null;
+    public RefundResponse applicationRefund2(@RequestBody RefundRequest refundRequest) {
+        RefundResponse refundResponse = new RefundResponse();
+        refundApplicationService.doRefund(refundRequest, refundResponse);
+        return refundResponse;
     }
 
     /**
      * 获取请求微信授权的url pageUrl 微信需要重定向的目标页面，会将code返回回来
      */
-    @RequestMapping(value = "/paymentGateway/unifiedPay/wechatauthorize", method = GET)
+    @ApiOperation(value = "获取微信授权", notes = "获取请求微信授权的redirectUrl:微信需要重定向的目标页面，会将code返回回来")
+    @RequestMapping(value = "/paymentGateway/unifiedPay/weChatAuthorize", method = GET)
     public Object weChatTest(HttpServletRequest request) {
         String pageUrl = request.getParameter("pageUrl");
         Map<String, String> result = new HashMap<>();
@@ -169,10 +150,10 @@ public class PaymentGatewayController {
 
     /**
      * 获取微信openid
-     *
      * @param request
      * @return
      */
+    @ApiOperation(value = "获取微信openid", notes = "获取微信openid")
     @RequestMapping(value = "/paymentGateway/unifiedPay/getWeChatOpenid", method = GET)
     public Object getWeChatOpenid(HttpServletRequest request) {
         Map<String, String> result = new HashMap<>();
