@@ -7,6 +7,8 @@ import java.io.Serializable;
  */
 public class Refund implements Serializable {
 
+    private Long refundApplicationId;
+
     private String orderNumber;
 
     private String refundNumber;
@@ -22,6 +24,14 @@ public class Refund implements Serializable {
     private String orderAmount;
 
     private String refundAmount;
+
+    public Long getRefundApplicationId() {
+        return refundApplicationId;
+    }
+
+    public void setRefundApplicationId(Long refundApplicationId) {
+        this.refundApplicationId = refundApplicationId;
+    }
 
     public String getOrderNumber() {
         return orderNumber;
