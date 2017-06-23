@@ -529,8 +529,9 @@
 
 	<select id="selectByOrderNumber" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
-		<include refid="Base_Column_List" />
+		<include refid="colnum_for_page" />
 		from pmt_payment_order
+		left join pmt_payment_channel on pmt_payment_order.channel_code = pmt_payment_channel.channel_code
 		where order_number = #{orderNumber,jdbcType=VARCHAR}
 	</select>
 

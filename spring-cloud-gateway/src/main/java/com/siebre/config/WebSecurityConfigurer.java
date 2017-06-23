@@ -23,10 +23,16 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.siebre.gateway.security.metadata.CustomerSecurityMetadata;
-import com.siebre.gateway.security.userdetails.CustomerUserDetailsService;
-import com.siebre.gateway.security.voter.FullyMatchRoleVoter;
+import com.siebre.security.filter.RestAuthenticationFailureHandler;
+import com.siebre.security.filter.RestAuthenticationSuccessHandler;
+import com.siebre.security.filter.RestUsernamePasswordAuthenticationFilter;
+import com.siebre.security.metadata.CustomerSecurityMetadata;
+import com.siebre.security.userdetails.CustomerUserDetailsService;
+import com.siebre.security.voter.FullyMatchRoleVoter;
 
 @SuppressWarnings("deprecation")
 @Configuration
@@ -35,16 +41,20 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		
 		http
 		.authorizeRequests()
-			.antMatchers("/login.html", "/login").permitAll()
+			.antMatchers("/login").permitAll()
+//			.antMatchers("/**").permitAll()
 			.anyRequest().authenticated()
 			.and()
-		.formLogin()
-			.loginPage("/login.html")
-			.loginProcessingUrl("/login")
-			.defaultSuccessUrl("/index.html")
-			.and()
+//		.formLogin()
+//			.loginPage("/login.html")
+//			.loginProcessingUrl("/login")
+//			.defaultSuccessUrl("/index.html")
+//			.and()
+		.addFilterAt(restUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+			
 		.logout()
 			.logoutUrl("/logout")
 			.logoutSuccessUrl("/login.html")
@@ -52,6 +62,22 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 			.and()
 		.csrf()
 			.disable();
+	}
+	
+	@Bean
+	public RestUsernamePasswordAuthenticationFilter restUsernamePasswordAuthenticationFilter() {
+		RestUsernamePasswordAuthenticationFilter authenticationFilter = new RestUsernamePasswordAuthenticationFilter();
+		return authenticationFilter;
+	}
+	
+	@Bean
+	public AuthenticationSuccessHandler authenticationSuccessHandler() {
+		return new RestAuthenticationSuccessHandler();
+	}
+	
+	@Bean
+	public AuthenticationFailureHandler authenticationFailureHandler() {
+		return new RestAuthenticationFailureHandler();
 	}
 	
 	@Override

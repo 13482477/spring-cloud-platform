@@ -12,11 +12,7 @@
 	<artifactId>spring-cloud-iproduct-webapp</artifactId>
 	<packaging>jar</packaging>
 	<dependencies>
-		<!-- <dependency>
-			<groupId>com.siebre</groupId>
-			<artifactId>products-picc</artifactId>
-			<version>0.0.46-SNAPSHOT</version>
-		</dependency> -->
+		<!-- <dependency> <groupId>com.siebre</groupId> <artifactId>products-picc</artifactId> <version>0.0.46-SNAPSHOT</version> </dependency> -->
 		<dependency>
 			<groupId>com.siebre</groupId>
 			<artifactId>iproduct-web</artifactId>

@@ -37,12 +37,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public FilterRegistrationBean MyFilterRegistration() {
+    public FilterRegistrationBean openSessionInViewFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new OpenSessionInViewFilter());
         registration.addUrlPatterns("/*");
-        registration.addInitParameter("paramName", "paramValue");
-        registration.setName("MyFilter");
+        registration.setName("openSessionInViewFilter");
         registration.setOrder(1);
         return registration;
     }

@@ -11,6 +11,7 @@ import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
 import com.siebre.payment.paymentorderitem.mapper.PaymentOrderItemMapper;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymenttransaction.mapper.PaymentTransactionMapper;
+import com.siebre.payment.paymenttransaction.vo.RefundDetail;
 import com.siebre.payment.paymenttransaction.vo.RefundRecord;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.refundapplication.dto.PaymentRefundResponse;
@@ -103,16 +104,29 @@ public class PaymentTransactionService {
 
     }
 
+    public RefundDetail refundDetail(Long refundApplicationId) {
+        RefundDetail detail = new RefundDetail();
+        RefundApplication refundApplication = this.refundApplicationMapper.selectByPrimaryKey(refundApplicationId);
+        PaymentOrder paymentOrder = this.paymentOrderMapper.selectByOrderNumber(refundApplication.getOrderNumber());
+        detail.setChannel(paymentOrder.getPaymentChannel().getChannelName());
+        detail.setOrderNumber(paymentOrder.getOrderNumber());
+        detail.setRefundAmount(paymentOrder.getRefundAmount());
+        detail.setRefundApplicationNumber(refundApplication.getRefundApplicationNumber());
+        detail.setRefundStatus(paymentOrder.getStatus().getDescription());
+        List<RefundRecord> refundRecords = getRefundRecordFlow(refundApplication);
+        detail.setRefundRecords(refundRecords);
+        return detail;
+    }
+
     /**
      * 获取退款流水记录
-     * @param refundApplicationId
+     * @param refundApplication
      * @return
      */
-    public List<RefundRecord> getRefundRecordFlow(Long refundApplicationId) {
+    public List<RefundRecord> getRefundRecordFlow(RefundApplication refundApplication) {
         String active = "ACTIVE";
         String complete = "COMPLETE";
         List<RefundRecord> result = new ArrayList<>();
-        RefundApplication refundApplication = this.refundApplicationMapper.selectByPrimaryKey(refundApplicationId);
 
         RefundRecord applyRefund = createRefundRecord(complete, refundApplication.getCreateDate(), "退款申请提交");
         result.add(applyRefund);

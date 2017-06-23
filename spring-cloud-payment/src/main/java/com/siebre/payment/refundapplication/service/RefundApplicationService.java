@@ -172,6 +172,7 @@ public class RefundApplicationService {
         List<Refund> result = new ArrayList<>();
         for (RefundApplication refundApp : refundsList) {
             Refund refund = new Refund();
+            refund.setRefundApplicationId(refundApp.getId());
             refund.setOrderNumber(refundApp.getOrderNumber());
             refund.setRefundNumber(refundApp.getRefundApplicationNumber());
             refund.setChannelName(refundApp.getPaymentOrder().getPaymentChannel().getChannelName());
