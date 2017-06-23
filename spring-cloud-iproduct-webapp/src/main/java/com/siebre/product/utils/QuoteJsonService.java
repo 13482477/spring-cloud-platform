@@ -50,16 +50,20 @@ public class QuoteJsonService {
 		Hibernate.initialize(product.getRoleSpecs());
 		for (SmfRole role : product.getRoleSpecs()) {
 			Hibernate.initialize(role.getRules());
+			Hibernate.initialize(role.getPropertySpecs());
+			Hibernate.initialize(role.getCalculations());
+			Hibernate.initialize(role.getConstantProperties());
 		}
 		Hibernate.initialize(product.getRequestSpecs());
 		Hibernate.initialize(product.getCalculations());
 		Hibernate.initialize(product.getRules());
 		Hibernate.initialize(product.getPropertySpecs());
 		Hibernate.initialize(product.getChildCompositions());
+		Hibernate.initialize(product.getConstantProperties());
 		
 		//InsuranceProduct product = mockProduct();
 		
-		AgreementDtoBuilder agreementDtoBuilder = DtoBuilders.agreementOf(productCode);;
+		AgreementDtoBuilder agreementDtoBuilder = DtoBuilders.agreementOf(productCode);
 		for (String key : properties.keySet()) {
 			if ("specCode".equals(key))
 				continue;
