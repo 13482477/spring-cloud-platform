@@ -52,7 +52,7 @@ public class QuoteController {
 	}
 	
 	String getMockJsonString() {
-		return "{\"specCode\": \"CYAXBJH\",\"premium\": \"0\",\"insuredAmount\": \"10000\"}";
+		return "{\"specCode\": \"FJHYX\",\"premium\": \"0\",\"insuredAmount\": \"10000\"}";
 	}
 	
 }
