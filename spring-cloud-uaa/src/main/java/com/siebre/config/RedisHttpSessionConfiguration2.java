@@ -29,6 +29,7 @@ import org.springframework.session.data.redis.config.ConfigureNotifyKeyspaceEven
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.session.web.http.CookieHttpSessionStrategy;
+import org.springframework.session.web.http.HeaderHttpSessionStrategy;
 import org.springframework.session.web.http.HttpSessionStrategy;
 import org.springframework.session.web.http.SessionRepositoryFilter;
 import org.springframework.util.Assert;
@@ -199,9 +200,9 @@ public class RedisHttpSessionConfiguration2 extends SpringHttpSessionConfigurati
     
     @Bean
     public HttpSessionStrategy httpSessionStrategy() {
-//    	return new HeaderHttpSessionStrategy();
+    	return new HeaderHttpSessionStrategy();
 //    	return new CookieHttpSessionStrategy();
-    	return new HeaderAndCookieSessionStrategy();
+//    	return new HeaderAndCookieSessionStrategy();
     }
     
 }

@@ -1,5 +1,6 @@
-package com.siebre.gateway.security.entity;
+package com.siebre.security.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,7 +12,9 @@ import java.util.Set;
  * Version:1.0
  * 资源模型
  */
-public class Resource {
+public class Resource implements Serializable {
+
+	private static final long serialVersionUID = 7209460166528324749L;
 
 	private Long id;
 	

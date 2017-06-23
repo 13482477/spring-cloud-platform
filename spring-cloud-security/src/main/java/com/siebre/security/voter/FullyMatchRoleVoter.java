@@ -1,4 +1,4 @@
-package com.siebre.gateway.security.voter;
+package com.siebre.security.voter;
 
 import java.util.Collection;
 import java.util.HashSet;

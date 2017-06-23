@@ -1,13 +1,16 @@
-package com.siebre.gateway.security.entity;
+package com.siebre.security.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 角色模型
  */
-public class Role {
+public class Role implements Serializable {
 	
+	private static final long serialVersionUID = 6092451018013645818L;
+
 	private Long id;
 
 	/**

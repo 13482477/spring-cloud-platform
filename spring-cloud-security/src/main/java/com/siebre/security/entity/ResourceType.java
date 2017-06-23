@@ -1,4 +1,4 @@
-package com.siebre.gateway.security.entity;
+package com.siebre.security.entity;
 
 public enum ResourceType {
 	

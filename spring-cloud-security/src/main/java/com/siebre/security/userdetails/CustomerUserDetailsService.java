@@ -1,4 +1,4 @@
-package com.siebre.gateway.security.userdetails;
+package com.siebre.security.userdetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import com.siebre.basic.web.WebResult;
-import com.siebre.gateway.security.entity.User;
+import com.siebre.security.entity.User;
 
 @Component
 public class CustomerUserDetailsService implements UserDetailsService {

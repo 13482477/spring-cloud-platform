@@ -1,4 +1,4 @@
-package com.siebre.gateway.security.metadata;
+package com.siebre.security.metadata;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.siebre.basic.web.WebResult;
-import com.siebre.gateway.security.entity.Resource;
+import com.siebre.security.entity.Resource;
 
 @FeignClient(value = "SPRING-CLOUD-UAA", fallback = ResourceRemoteServiceFallback.class)
 @Order(1)

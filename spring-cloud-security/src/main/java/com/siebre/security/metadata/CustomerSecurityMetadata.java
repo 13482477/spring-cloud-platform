@@ -1,4 +1,4 @@
-package com.siebre.gateway.security.metadata;
+package com.siebre.security.metadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -18,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
@@ -25,8 +25,9 @@ import org.springframework.security.web.access.intercept.FilterInvocationSecurit
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import com.siebre.gateway.security.entity.Authority;
-import com.siebre.gateway.security.entity.Resource;
+import com.siebre.basic.web.WebResult;
+import com.siebre.security.entity.Authority;
+import com.siebre.security.entity.Resource;
 
 /**
  * @author lizhiqiang
@@ -79,8 +80,8 @@ public class CustomerSecurityMetadata implements FilterInvocationSecurityMetadat
     }
 
     public void initSecurityMeta() {
-        List<Resource> resources = resourceRemoteService.allResourcesAndPermission().getData();
-        this.refreshRequestMap(resources);
+    	WebResult<List<Resource>> webResult = this.resourceRemoteService.allResourcesAndPermission();
+        this.refreshRequestMap(webResult.getData());
     }
 
     private void refreshRequestMap(List<Resource> resources) {

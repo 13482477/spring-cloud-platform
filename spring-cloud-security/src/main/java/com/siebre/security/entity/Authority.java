@@ -1,10 +1,14 @@
-package com.siebre.gateway.security.entity;
+package com.siebre.security.entity;
+
+import java.io.Serializable;
 
 /**
  * 权限模型
  */
-public class Authority {
+public class Authority implements Serializable {
 	
+	private static final long serialVersionUID = 4382105630022269739L;
+
 	private Long id;
 
 	/**

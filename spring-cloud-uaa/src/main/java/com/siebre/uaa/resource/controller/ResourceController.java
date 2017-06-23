@@ -1,23 +1,28 @@
 package com.siebre.uaa.resource.controller;
 
-import com.siebre.basic.web.WebResult;
-import com.siebre.uaa.resource.entity.Resource;
-import com.siebre.uaa.resource.service.ResourceService;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.siebre.basic.web.WebResult;
+import com.siebre.uaa.resource.entity.Resource;
+import com.siebre.uaa.resource.service.ResourceService;
+
 @RestController
 public class ResourceController {
 
-    private static Logger logger = LoggerFactory.getLogger(ResourceController.class);
+//    private static Logger logger = LoggerFactory.getLogger(ResourceController.class);
 
     @Autowired
     private ResourceService resourceService;
@@ -25,11 +30,11 @@ public class ResourceController {
     @RequestMapping(value ="/api/v1/resourcesAndPermission", method = {RequestMethod.GET})
     public WebResult<List<Resource>> allResourcesAndPermission() {
     	List<Resource> data = this.resourceService.loadAllResourceWithAuthority();
-        return WebResult.<List<Resource>>builder().returnCode("200").data(data).build();
+    	return WebResult.<List<Resource>>builder().returnCode("200").data(data).build();
     }
 
     @RequestMapping(value ="/api/v1/resource/{id}", method = {RequestMethod.GET})
-    public WebResult<Resource> load(@PathVariable Long id) {
+    public WebResult<Resource> load(@PathVariable Long id, HttpServletRequest request) {
         Resource resource = resourceService.getResourceByID(id);
         return WebResult.<Resource>builder().returnCode("200").data(resource).build();
     }
