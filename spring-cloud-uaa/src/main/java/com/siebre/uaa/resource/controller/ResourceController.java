@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.siebre.basic.web.WebResult;
@@ -51,8 +52,9 @@ public class ResourceController {
 
     @RequestMapping(value = "/api/v1/resource/{resourceId}", method = {RequestMethod.PUT})
     public WebResult<Resource> update(@PathVariable Long resourceId, @RequestBody Resource resource) {
+    	resource.setId(resourceId);
         String validateMessage = validateResource(resource);
-        if (StringUtils.isBlank(validateMessage)) {
+        if (StringUtils.isNotBlank(validateMessage)) {
             return WebResult.<Resource>builder().returnCode("500").returnMessage(validateMessage).build();
         }
         resourceService.updateResource(resource);

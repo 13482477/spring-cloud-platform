@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE r [
+		<!ELEMENT r (r*)>
+		<!ATTLIST r t (MENU|RESOURCE|SYSTEM) #REQUIRED>
+		<!ATTLIST r n ID #REQUIRED>
+		<!ATTLIST r c CDATA #REQUIRED>
+		<!ATTLIST r u CDATA #IMPLIED>
+		<!ATTLIST r d CDATA #IMPLIED>
+		]>
+<!--r:resource t:type (MENU|RESOURCE|SYSTEM) c:code u:url d:description-->
+<r t="SYSTEM" n="新保云管理平台" c="SIEBRE_CLOUD_ADMIN" u="" d="新保云管理平台">
+	<r t="MENU" n="首页" c="SIEBRE_CLOUD_INDEX" u="/index" d="首页">
+		<r t="MENU" n="控制面板" c="SIEBRE_CLOUD_DASHBOARD" u="/pages/dashboard/dashboard.jsp" d="控制面板"/>
+	</r>
+	<r t="MENU" n="IPay" c="SIEBRE_CLOUD_IPAY" u="" d="IPay">
+		<r t="MENU" n="支付渠道管理" c="SIEBRE_CLOUD_PAYMENT_CHANNEL" u="/payment/paymentChannel" d="支付渠道管理">
+			<r t="RESOURCE" n="支付渠道查询" c="SIEBRE_CLOUD_PAYMENT_CHANNEL_LIST" u="/payment/paymentChannel/list" d="支付渠道查询"/>
+			<r t="RESOURCE" n="支付渠道编辑" c="SIEBRE_CLOUD_PAYMENT_CHANNEL_UPDATE" u="/payment/paymentChannel/update" d="支付渠道编辑"/>
+			<r t="RESOURCE" n="支付渠道详情" c="SIEBRE_CLOUD_PAYMENT_CHANNEL_LOAD" u="/payment/paymentChannel/load/*" d="支付渠道详情"/>
+		</r>
+		<r t="MENU" n="支付接口管理" c="SIEBRE_CLOUD_PAYMENT_INTERFACE" u="/payment/paymentInterface" d="支付接口管理"/>
+		<r t="MENU" n="联调工具" c="SIEBRE_CLOUD_PAYMENT_TEST_TOOLS" u="/payment/paymentTestTools" d="联调工具"/>
+
+		<r t="MENU" n="订单管理" c="SIEBRE_CLOUD_PAYMENT_ORDER" u="/payment/order" d="订单管理">
+			<r t="RESOURCE" n="订单查询" c="SIEBRE_CLOUD_PAYMENT_ORDER_LIST" u="/payment/order/list" d="订单查询"/>
+			<r t="RESOURCE" n="订单明细" c="SIEBRE_CLOUD_PAYMENT_ORDER_DETAIL" u="/payment/order/detail" d="订单明细"/>
+			<r t="RESOURCE" n="订单明细查询" c="SIEBRE_CLOUD_PAYMENT_ORDER_LOAD" u="/payment/order/load/*" d="订单明细查询"/>
+		</r>
+
+		<r t="MENU" n="退款管理" c="SIEBRE_CLOUD_PAYMENT_REFUND" u="" d="退款管理"/>
+
+		<r t="MENU" n="交易对账" c="SIEBRE_CLOUD_PAYMENT_RECONCILIATION" u="/payment/reconciliation/order" d="交易对账">
+			<r t="RESOURCE" n="对账查询" c="SIEBRE_CLOUD_PAYMENT_REC_LIST" u="/payment/reconciliation/order/list" d="对账查询"/>
+			<r t="RESOURCE" n="对账明细" c="SIEBRE_CLOUD_PAYMENT_REC_DETAIL" u="/payment/reconciliation/order/detail" d="对账明细"/>
+			<r t="RESOURCE" n="对账明细查询" c="SIEBRE_CLOUD_PAYMENT_REC_LOAD" u="/payment/reconciliation/order/load/*" d="对账明细查询"/>
+		</r>
+
+		<r t="MENU" n="日结账单" c="SIEBRE_CLOUD_PAYMENT_DAILY_SETTLEMENT" u="" d="日结账单"/>
+		<r t="MENU" n="月结账单" c="SIEBRE_CLOUD_PAYMENT_MONTHLY_SETTLEMENT" u="" d="月结账单"/>
+		<r t="MENU" n="账户纵览" c="SIEBRE_CLOUD_PAYMENT_BI" u="" d="账户纵览"/>
+	</r>
+	<r t="MENU" n="系统管理" c="SIEBRE_CLOUD_SYSTEM" u="" d="系统管理">
+		<r t="MENU" n="用户管理" c="SIEBRE_CLOUD_USER" u="/user" d="用户管理">
+			<r t="RESOURCE" n="用户查询" c="SIEBRE_CLOUD_USER_LIST" u="/user/list" d="用户查询"/>
+			<r t="RESOURCE" n="用户新增" c="SIEBRE_CLOUD_USER_CREATE" u="/user/create" d="用户新增"/>
+			<r t="RESOURCE" n="用户编辑" c="SIEBRE_CLOUD_USER_UPDATE" u="/user/update" d="用户编辑"/>
+			<r t="RESOURCE" n="用户删除" c="SIEBRE_CLOUD_USER_DELETE" u="/user/delete" d="用户删除"/>
+			<r t="RESOURCE" n="用户详情" c="SIEBRE_CLOUD_USER_LOAD" u="/user/load/*" d="用户详情"/>
+			<r t="RESOURCE" n="用户所属角色" c="SIEBRE_CLOUD_USER_ROLE" u="/user/role/*" d="用户所属角色"/>
+			<r t="RESOURCE" n="用户校验" c="SIEBRE_CLOUD_USER_VALIDATOR" u="/user/validator" d="用户校验"/>
+		</r>
+		<r t="MENU" n="角色管理" c="SIEBRE_CLOUD_ROLE" u="/role" d="角色管理">
+			<r t="RESOURCE" n="角色查询" c="SIEBRE_CLOUD_ROLE_LIST" u="/role/list" d="角色查询"/>
+			<r t="RESOURCE" n="角色新增" c="SIEBRE_CLOUD_ROLE_CREATE" u="/role/create" d="角色新增"/>
+			<r t="RESOURCE" n="角色编辑" c="SIEBRE_CLOUD_ROLE_UPDATE" u="/role/update" d="角色编辑"/>
+			<r t="RESOURCE" n="角色删除" c="SIEBRE_CLOUD_ROLE_DELETE" u="/role/delete" d="角色删除"/>
+			<r t="RESOURCE" n="角色详情" c="SIEBRE_CLOUD_ROLE_LOAD" u="/role/load/*" d="角色详情"/>
+			<r t="RESOURCE" n="加载资源树" c="SIEBRE_CLOUD_ROLE_LOAD_RESOURCE_TREE" u="/role/loadResourceTree" d="加载资源树"/>
+			<r t="RESOURCE" n="角色授权" c="SIEBRE_CLOUD_ROLE_GRANT" u="/role/grant" d="角色授权"/>
+		</r>
+		<r t="MENU" n="资源管理" c="SIEBRE_CLOUD_RESOURCE" u="/resource" d="资源管理">
+			<r t="RESOURCE" n="资源查询" c="SIEBRE_CLOUD_RESOURCE_LIST" u="/resource/list" d="资源查询"/>
+			<r t="RESOURCE" n="资源新增" c="SIEBRE_CLOUD_RESOURCE_CREATE" u="/resource/create" d="资源新增"/>
+			<r t="RESOURCE" n="资源编辑" c="SIEBRE_CLOUD_RESOURCE_UPDATE" u="/resource/update" d="资源编辑"/>
+			<r t="RESOURCE" n="资源删除" c="SIEBRE_CLOUD_RESOURCE_DELETE" u="/resource/delete" d="资源删除"/>
+			<r t="RESOURCE" n="资源详情" c="SIEBRE_CLOUD_RESOURCE_LOAD" u="/resource/load/*" d="资源详情"/>
+			<r t="RESOURCE" n="资源刷新" c="SIEBRE_CLOUD_RESOURCE_REFRESH" u="/resource/refresh" d="资源刷新"/>
+			<r t="MENU" n="资源管理查询子节点" c="SIEBRE_CLOUD_RESOURCE_CHILD" u="/resource/child" d="资源管理查询子节点"/>
+		</r>
+	</r>
+</r>
