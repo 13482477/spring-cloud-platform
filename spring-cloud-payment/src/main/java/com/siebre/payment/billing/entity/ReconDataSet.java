@@ -3,6 +3,8 @@ package com.siebre.payment.billing.entity;
 public class ReconDataSet {
     private Long id;
 
+    private Long dataSourceId;
+
     private String jsonStr;
 
     private Integer lineNo;
@@ -15,6 +17,14 @@ public class ReconDataSet {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getDataSourceId() {
+        return dataSourceId;
+    }
+
+    public void setDataSourceId(Long dataSourceId) {
+        this.dataSourceId = dataSourceId;
     }
 
     public String getJsonStr() {

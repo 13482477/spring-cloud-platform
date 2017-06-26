@@ -1,15 +1,15 @@
 package com.siebre.payment.billing.entity;
 
-public class ReconMatchRule {
+public class ReconDataField {
     private Long id;
 
-    private Long jobId;
+    private Long dataSourceId;
 
     private String name;
 
     private String type;
 
-    private String matchCriteria;
+    private Integer fieldNo;
 
     private String description;
 
@@ -21,12 +21,12 @@ public class ReconMatchRule {
         this.id = id;
     }
 
-    public Long getJobId() {
-        return jobId;
+    public Long getDataSourceId() {
+        return dataSourceId;
     }
 
-    public void setJobId(Long jobId) {
-        this.jobId = jobId;
+    public void setDataSourceId(Long dataSourceId) {
+        this.dataSourceId = dataSourceId;
     }
 
     public String getName() {
@@ -45,12 +45,12 @@ public class ReconMatchRule {
         this.type = type == null ? null : type.trim();
     }
 
-    public String getMatchCriteria() {
-        return matchCriteria;
+    public Integer getFieldNo() {
+        return fieldNo;
     }
 
-    public void setMatchCriteria(String matchCriteria) {
-        this.matchCriteria = matchCriteria == null ? null : matchCriteria.trim();
+    public void setFieldNo(Integer fieldNo) {
+        this.fieldNo = fieldNo;
     }
 
     public String getDescription() {

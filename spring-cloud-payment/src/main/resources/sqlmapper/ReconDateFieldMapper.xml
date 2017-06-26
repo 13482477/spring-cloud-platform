@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.siebre.payment.billing.mapper.ReconDateFieldMapper" >
-  <resultMap id="BaseResultMap" type="com.siebre.payment.billing.entity.ReconDateField" >
+<mapper namespace="com.siebre.payment.billing.mapper.ReconDataFieldMapper" >
+  <resultMap id="BaseResultMap" type="com.siebre.payment.billing.entity.ReconDataField" >
     <id column="id" property="id" jdbcType="BIGINT" />
+    <id column="data_source_id" property="dataSourceId" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="VARCHAR" />
     <result column="field_no" property="fieldNo" jdbcType="INTEGER" />
     <result column="description" property="description" jdbcType="VARCHAR" />
-    <result column="param_no" property="paramNo" jdbcType="INTEGER" />
-    <result column="field_name" property="fieldName" jdbcType="VARCHAR" />
-    <result column="operator" property="operator" jdbcType="VARCHAR" />
-    <result column="param_name" property="paramName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, type, field_no, description, param_no, field_name, operator, param_name
+    id, data_source_id, name, type, field_no, description
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -21,25 +18,30 @@
     from recon_data_field
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="selectByDataSourceId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from recon_data_field
+    where data_source_id = #{dataSourceId,jdbcType=BIGINT}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from recon_data_field
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.siebre.payment.billing.entity.ReconDateField" useGeneratedKeys="true" keyProperty="id">
-    insert into recon_data_field (id, name, type, 
-      field_no, description, param_no, 
-      field_name, operator, param_name
-      )
-    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
-      #{fieldNo,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, #{paramNo,jdbcType=INTEGER}, 
-      #{fieldName,jdbcType=VARCHAR}, #{operator,jdbcType=VARCHAR}, #{paramName,jdbcType=VARCHAR}
-      )
+  <insert id="insert" parameterType="com.siebre.payment.billing.entity.ReconDataField" useGeneratedKeys="true" keyProperty="id">
+    insert into recon_data_field (id, data_source_id, name, type,
+      field_no, description)
+    values (#{id,jdbcType=BIGINT}, #{dataSourceId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
+      #{fieldNo,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.siebre.payment.billing.entity.ReconDateField" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insertSelective" parameterType="com.siebre.payment.billing.entity.ReconDataField" useGeneratedKeys="true" keyProperty="id">
     insert into recon_data_field
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
+      </if>
+      <if test="dataSourceId != null" >
+        data_source_id,
       </if>
       <if test="name != null" >
         name,
@@ -53,22 +55,13 @@
       <if test="description != null" >
         description,
       </if>
-      <if test="paramNo != null" >
-        param_no,
-      </if>
-      <if test="fieldName != null" >
-        field_name,
-      </if>
-      <if test="operator != null" >
-        operator,
-      </if>
-      <if test="paramName != null" >
-        param_name,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=BIGINT},
+      </if>
+      <if test="dataSourceId != null" >
+        #{dataSourceId,jdbcType=BIGINT},
       </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
@@ -82,23 +75,14 @@
       <if test="description != null" >
         #{description,jdbcType=VARCHAR},
       </if>
-      <if test="paramNo != null" >
-        #{paramNo,jdbcType=INTEGER},
-      </if>
-      <if test="fieldName != null" >
-        #{fieldName,jdbcType=VARCHAR},
-      </if>
-      <if test="operator != null" >
-        #{operator,jdbcType=VARCHAR},
-      </if>
-      <if test="paramName != null" >
-        #{paramName,jdbcType=VARCHAR},
-      </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.billing.entity.ReconDateField" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.billing.entity.ReconDataField" >
     update recon_data_field
     <set >
+      <if test="dataSourceId != null" >
+        data_source_id = #{dataSourceId,jdbcType=BIGINT},
+      </if>
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
@@ -111,31 +95,16 @@
       <if test="description != null" >
         description = #{description,jdbcType=VARCHAR},
       </if>
-      <if test="paramNo != null" >
-        param_no = #{paramNo,jdbcType=INTEGER},
-      </if>
-      <if test="fieldName != null" >
-        field_name = #{fieldName,jdbcType=VARCHAR},
-      </if>
-      <if test="operator != null" >
-        operator = #{operator,jdbcType=VARCHAR},
-      </if>
-      <if test="paramName != null" >
-        param_name = #{paramName,jdbcType=VARCHAR},
-      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.billing.entity.ReconDateField" >
+  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.billing.entity.ReconDataField" >
     update recon_data_field
-    set name = #{name,jdbcType=VARCHAR},
+    set data_source_id = #{dataSourceId,jdbcType=BIGINT},
+    name = #{name,jdbcType=VARCHAR},
       type = #{type,jdbcType=VARCHAR},
       field_no = #{fieldNo,jdbcType=INTEGER},
-      description = #{description,jdbcType=VARCHAR},
-      param_no = #{paramNo,jdbcType=INTEGER},
-      field_name = #{fieldName,jdbcType=VARCHAR},
-      operator = #{operator,jdbcType=VARCHAR},
-      param_name = #{paramName,jdbcType=VARCHAR}
+      description = #{description,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
