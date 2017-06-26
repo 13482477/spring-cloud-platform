@@ -1,7 +1,9 @@
 package com.siebre.payment.billing.mapper;
 
 import com.siebre.payment.billing.entity.ReconItem;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ReconItemMapper {
     int deleteByPrimaryKey(Long id);
 

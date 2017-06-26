@@ -16,6 +16,9 @@
     from recon_data_set
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <delete id="deleteAll" >
+    delete from recon_data_set
+  </delete>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from recon_data_set
     where id = #{id,jdbcType=BIGINT}

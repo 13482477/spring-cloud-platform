@@ -1,7 +1,9 @@
 package com.siebre.payment.billing.mapper;
 
 import com.siebre.payment.billing.entity.ReconMatchRule;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ReconMatchRuleMapper {
     int deleteByPrimaryKey(Long id);
 

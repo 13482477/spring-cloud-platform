@@ -1,7 +1,9 @@
 package com.siebre.payment.billing.mapper;
 
 import com.siebre.payment.billing.entity.ReconDataSource;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ReconDataSourceMapper {
     int deleteByPrimaryKey(Long id);
 

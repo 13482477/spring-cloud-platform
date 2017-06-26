@@ -1,7 +1,9 @@
 package com.siebre.payment.billing.mapper;
 
 import com.siebre.payment.billing.entity.ReconJobInstance;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ReconJobInstanceMapper {
     int deleteByPrimaryKey(Long id);
 

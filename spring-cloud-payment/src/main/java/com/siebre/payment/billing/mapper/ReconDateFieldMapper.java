@@ -1,7 +1,9 @@
 package com.siebre.payment.billing.mapper;
 
 import com.siebre.payment.billing.entity.ReconDateField;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ReconDateFieldMapper {
     int deleteByPrimaryKey(Long id);
 
