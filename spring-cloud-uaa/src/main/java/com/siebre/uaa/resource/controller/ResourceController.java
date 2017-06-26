@@ -41,7 +41,6 @@ public class ResourceController {
     }
     
     @RequestMapping(value = "/api/v1/resource", method = {RequestMethod.POST})
-    @ResponseBody
     public WebResult<Resource> create(@RequestBody Resource resource) {
         String errorMessage = validateResource(resource);
         if (StringUtils.isNotBlank(errorMessage)) {
@@ -55,7 +54,7 @@ public class ResourceController {
     public WebResult<Resource> update(@PathVariable Long resourceId, @RequestBody Resource resource) {
     	resource.setId(resourceId);
         String validateMessage = validateResource(resource);
-        if (StringUtils.isBlank(validateMessage)) {
+        if (StringUtils.isNotBlank(validateMessage)) {
             return WebResult.<Resource>builder().returnCode("500").returnMessage(validateMessage).build();
         }
         resourceService.updateResource(resource);
