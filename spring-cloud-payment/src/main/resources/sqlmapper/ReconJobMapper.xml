@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.billing.mapper.ReconJobMapper" >
+  <resultMap id="BaseResultMap" type="com.siebre.payment.billing.entity.ReconJob" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="remote_data_source" property="remoteDataSource" jdbcType="BIGINT" />
+    <result column="payment_data_source" property="paymentDataSource" jdbcType="BIGINT" />
+    <result column="process_name" property="processName" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, type, channel_code, remote_data_source, payment_data_source, process_name, 
+    description
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from recon_job
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from recon_job
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.siebre.payment.billing.entity.ReconJob" useGeneratedKeys="true" keyProperty="id">
+    insert into recon_job (id, name, type, 
+      channel_code, remote_data_source, payment_data_source, 
+      process_name, description)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{channelCode,jdbcType=VARCHAR}, #{remoteDataSource,jdbcType=BIGINT}, #{paymentDataSource,jdbcType=BIGINT}, 
+      #{processName,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.siebre.payment.billing.entity.ReconJob" useGeneratedKeys="true" keyProperty="id">
+    insert into recon_job
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="channelCode != null" >
+        channel_code,
+      </if>
+      <if test="remoteDataSource != null" >
+        remote_data_source,
+      </if>
+      <if test="paymentDataSource != null" >
+        payment_data_source,
+      </if>
+      <if test="processName != null" >
+        process_name,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="channelCode != null" >
+        #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="remoteDataSource != null" >
+        #{remoteDataSource,jdbcType=BIGINT},
+      </if>
+      <if test="paymentDataSource != null" >
+        #{paymentDataSource,jdbcType=BIGINT},
+      </if>
+      <if test="processName != null" >
+        #{processName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.billing.entity.ReconJob" >
+    update recon_job
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="channelCode != null" >
+        channel_code = #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="remoteDataSource != null" >
+        remote_data_source = #{remoteDataSource,jdbcType=BIGINT},
+      </if>
+      <if test="paymentDataSource != null" >
+        payment_data_source = #{paymentDataSource,jdbcType=BIGINT},
+      </if>
+      <if test="processName != null" >
+        process_name = #{processName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.billing.entity.ReconJob" >
+    update recon_job
+    set name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      channel_code = #{channelCode,jdbcType=VARCHAR},
+      remote_data_source = #{remoteDataSource,jdbcType=BIGINT},
+      payment_data_source = #{paymentDataSource,jdbcType=BIGINT},
+      process_name = #{processName,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
