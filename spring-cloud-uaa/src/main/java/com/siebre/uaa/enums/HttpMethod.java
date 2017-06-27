@@ -3,22 +3,30 @@ package com.siebre.uaa.enums;
 
 import com.siebre.basic.enumutil.BaseEnum;
 
-public enum ResourceType implements BaseEnum {
+public enum HttpMethod implements BaseEnum {
 	
-	MENU(1, "MENU"),
+	GET(1, "GET"),
 
-	RESOURCE(2, "RESOURCE"),
+	HEAD(2, "HEAD"),
 
-	SYSTEM(3, "SYSTEM"),
+	POST(3, "POST"),
 	
-	ROOT(4, "ROOT"),
+	PUT(4, "PUT"),
+
+	PATCH(5, "PATCH"),
+
+	DELETE(6, "DELETE"),
+
+	OPTIONS(7, "OPTIONS"),
+
+	TRACE(8, "TRACE"),
 	;
 	
 	private int value;
 
 	private String description;
 
-	ResourceType(int value, String description) {
+	HttpMethod(int value, String description) {
 		this.value = value;
 		this.description = description;
 	}
