@@ -15,6 +15,8 @@ public class AllinpayConfig {
     public static String ALLIN_URL = "https://113.108.182.3/aipg/ProcessServlet";
 
 
+    public static String CONNECT_TIMEOUT = "3000";
 
+    public static String READ_TIMEOUT = "3000";
 
 }
