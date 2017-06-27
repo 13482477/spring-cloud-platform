@@ -10,9 +10,9 @@ import org.springframework.core.env.Environment;
 @Configuration
 public class DatasourceConfig {
 	
-	@Bean()
+	@Bean("dataSource")
 	@Autowired
-	public DataSource master(Environment env) {
+	public DataSource dataSource(Environment env) {
 		DataSource ds = new DataSource();
 		ds.setDriverClassName(env.getProperty("jdbc.mysql.Driver"));
 		ds.setUrl(env.getProperty("jdbc.master.url"));

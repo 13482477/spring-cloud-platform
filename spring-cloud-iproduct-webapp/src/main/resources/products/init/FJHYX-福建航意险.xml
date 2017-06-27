@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="GBK"?>
-<product kind="Marketable Product" name="福建航意险" seqIndex="0" externalReference="FJHYX" instanceClassName="InsurancePolicy" shortName="福建航意险" groupType="PERSONAL" sellChannelType="RemoteSell">
+<product kind="Marketable Product" name="福建航意险" seqIndex="0" externalReference="testFJHYX" instanceClassName="InsurancePolicy" shortName="福建航意险" groupType="PERSONAL" sellChannelType="RemoteSell">
 	<description>人保寿险公共交通工具意外伤害保险（新标准版）</description>
 	<baseSpec version="0" />
 	<properties>
@@ -80,45 +80,17 @@
 	</roles>
 
 	<rules>
-		<rule kind="Eligibility" name="保障类型" seqIndex="0" language="GROOVY">
-			<body><![CDATA[return context.benefitPeriod == 7 && com.siebre.policy.enums.BenefitPeriodType.DAILY.equals(context.benefitPeriodType);]]>
-			</body>
-			<commentOnFailure>保障期限为七天</commentOnFailure>
-		</rule>
-		<rule kind="Eligibility" name="保单生效日" seqIndex="0" language="GROOVY">
-			<body><![CDATA[
-				            Calendar terminalDate = new GregorianCalendar(); 
-				            terminalDate.setTime(new Date()); 
-						    terminalDate.set(Calendar.DAY_OF_MONTH, terminalDate.get(Calendar.DAY_OF_MONTH)-1);
-							return context.inceptionDate.after(terminalDate.getTime());
-				]]>
-			</body>
-			<commentOnFailure>生效日期最早可指定当日零时生效</commentOnFailure>
-		</rule>
-		<rule kind="Eligibility" name="投保次数限制" seqIndex="0" language="GROOVY">
-			<body><![CDATA[
-						return applicationContext.getBean("riskManager").validateActiveTime(context);
-			]]>
-			</body>
-			<commentOnFailure>同一保险期间内,同一被保人最多投保2次</commentOnFailure>
-		</rule>
 	</rules>
 
 	<calculations>
 		<calculation kind="SetPreInsComponent" name="保费赋值" seqIndex="0" language="GROOVY">
-			<body><![CDATA[
-								context.getRiderOfSpec('63324').insuredAmount = 400000;
-								context.getRiderOfSpec('63324').premium = 0.4;
-								context.getRiderOfSpec('63327').insuredAmount = 400000;
-								context.getRiderOfSpec('63327').premium = 0.45;
-								context.grossPremium = 0.85;
-							]]>
+			<body><![CDATA[context.grossPremium = context.insuredAmount / 10000 * 20]]>
 			</body>
 		</calculation>
 	</calculations>
 
 	<requests>
-		<request kind="New" name="投保" seqIndex="0" instanceClassName="FinancialServicesRequest" preconditionKinds="Eligibility" postconditionKinds="" CalculationKinds="SetPreInsComponent" />
+		<request kind="newBusiness" name="投保" seqIndex="0" instanceClassName="FinancialServicesRequest" preconditionKinds="" postconditionKinds="" CalculationKinds="SetPreInsComponent" />
 	</requests>
 
 	<components>

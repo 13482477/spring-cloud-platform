@@ -14,10 +14,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-import javax.servlet.Filter;
+import java.nio.charset.Charset;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
+
+    private static final Charset UTF8 = Charset.forName("UTF-8");
+
 
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**");
@@ -29,23 +32,29 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public Filter characterEncodingFilter() {
+    public FilterRegistrationBean characterEncodingFilter() {
         CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
         characterEncodingFilter.setEncoding("UTF-8");
         characterEncodingFilter.setForceEncoding(true);
-        return characterEncodingFilter;
-    }
 
-    @Bean
-    public FilterRegistrationBean openSessionInViewFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new OpenSessionInViewFilter());
+        registration.setFilter(characterEncodingFilter);
         registration.addUrlPatterns("/*");
         registration.setName("openSessionInViewFilter");
         registration.setOrder(1);
         return registration;
     }
 
+    @Bean
+    public FilterRegistrationBean openSessionInViewFilter() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new OpenSessionInViewFilter());
+//        registration.setFilterter(characterEncodingFilter());
+        registration.addUrlPatterns("/*");
+        registration.setName("openSessionInViewFilter");
+        registration.setOrder(1);
+        return registration;
+    }
 
 //    public Filter authorizationFilter() {
 //        AuthorizationFilter authorizationFilter = new AuthorizationFilter();

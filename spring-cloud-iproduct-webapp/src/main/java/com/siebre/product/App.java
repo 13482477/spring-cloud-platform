@@ -18,7 +18,6 @@ import com.siebre.smf.groovy.GroovySmfInvokable;
 import com.siebre.smf.groovy.SpringBeanDependencyResolver;
 import com.siebre.smf.invokable.DependencyResolver;
 import com.siebre.smf.invokable.SmfInvokable;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,7 +26,6 @@ import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoCo
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.orm.hibernate4.support.OpenSessionInViewFilter;
 import org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor;
 import org.springframework.transaction.PlatformTransactionManager;
 

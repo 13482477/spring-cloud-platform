@@ -22,7 +22,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * 
+ *
+ * WARNING: This is duplicate class definition that use java class loader mechanism to override somewhere else. This
+ * class should be removed in the future if original changes has been made.
+ *
  * @author ZhangChi
  * @since 2013-4-8
  */
@@ -36,8 +39,8 @@ public class SmfBehaviorImpl extends SmfModelElementImpl {
 			@MetaValue(value = "A", targetEntity = AgreementSpecImpl.class),
 			@MetaValue(value = "P", targetEntity = ProductComponentImpl.class),
 			@MetaValue(value = "M", targetEntity = InsuranceProductImpl.class),
-			@MetaValue(value = "O", targetEntity = SmfRoleImpl.class),
-			@MetaValue(value = "Q", targetEntity = SmfRequestImpl.class)
+			@MetaValue(value = "R", targetEntity = SmfRoleImpl.class),
+			@MetaValue(value = "T", targetEntity = SmfRequestImpl.class)
 	})
 	@JoinColumn(name = "parentSmfClassId")
 	private SmfClass parentSmfClass;
