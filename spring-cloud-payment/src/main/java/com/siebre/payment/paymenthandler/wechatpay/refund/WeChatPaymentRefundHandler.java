@@ -9,7 +9,6 @@ import com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper;
 import com.siebre.payment.paymenthandler.basic.paymentrefund.AbstractPaymentRefundComponent;
 import com.siebre.payment.paymenthandler.wechatpay.sdk.WeChatParamConvert;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
-import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.refundapplication.dto.PaymentRefundRequest;
@@ -28,14 +27,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.net.ssl.SSLContext;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.security.*;
 import java.util.HashMap;
@@ -60,7 +55,7 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
 
         PaymentChannel channel = paymentChannelMapper.selectByChannelCode(paymentRefundRequest.getPaymentOrder().getChannelCode());
         //1.读取证书
-        CloseableHttpClient httpclient = this.getHttpClient(channel);
+        CloseableHttpClient httpclient = this.getHttpClient(channel, paymentWay);
         //2.拼装返回参数
         Map<String,String> params = this.generateRefundParams(paymentRefundRequest ,channel);
         //3.签名
@@ -118,13 +113,15 @@ public class WeChatPaymentRefundHandler extends AbstractPaymentRefundComponent {
         refundResponse.setRefundTransaction(refundTransaction);
     }
 
-    private CloseableHttpClient getHttpClient( PaymentChannel channel){
+    private CloseableHttpClient getHttpClient( PaymentChannel channel, PaymentWay paymentWay){
         String merchId = channel.getMerchantCode();
         KeyStore keyStore = null;
-        FileInputStream instream = null;
+        InputStream instream = null;
         try {
             keyStore = KeyStore.getInstance("PKCS12");
-            instream = new FileInputStream(new ClassPathResource("apiclient_cert.p12").getFile());
+            byte[] bytes = paymentWay.getApiClientCertPkcs();
+            //instream = new FileInputStream(new ClassPathResource("apiclient_cert.p12").getFile());
+            instream = new ByteArrayInputStream(bytes);
             keyStore.load(instream, merchId.toCharArray());
         }catch (Exception e) {
             logger.error("获取证书失败，请检查原因={}", e);
