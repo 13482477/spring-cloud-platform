@@ -1,5 +1,6 @@
 package com.siebre.payment.paymenthandler.wechatpay.paycallback;
 
+import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.entity.enums.EncryptionMode;
 import com.siebre.payment.paymenthandler.basic.paymentcallback.AbstractPaymentCallBackHandler;
 import com.siebre.payment.paymenthandler.wechatpay.sdk.WeChatParamConvert;
@@ -41,6 +42,9 @@ public class WeChatCallBackHandler extends AbstractPaymentCallBackHandler {
             byte[] bytes = this.readBytes(inputStream, request.getContentLength());
             String xml = new String(bytes);
             Map<String, String> map = ConvertToXML.toMap(xml);
+
+            String responseStr = JsonUtil.mapToJson(map);
+
             PaymentWay paymentWay = paymentWayMapper.selectByPrimaryKey(paymentInterface.getPaymentWayId()); //paymentInterface.getPaymentWay();
             if (validateSign(map, paymentWay)) {
 
@@ -54,7 +58,7 @@ public class WeChatCallBackHandler extends AbstractPaymentCallBackHandler {
                 DateFormat f = new SimpleDateFormat("yyyyMMddHHmmss");
                 try {
                     Date d = f.parse(time_end);
-                    this.paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, mch_id, total_fee, d);
+                    this.paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, mch_id, total_fee, d, responseStr);
                 } catch (ParseException e) {
                     logger.error("日期转换失败！");
                     e.printStackTrace();

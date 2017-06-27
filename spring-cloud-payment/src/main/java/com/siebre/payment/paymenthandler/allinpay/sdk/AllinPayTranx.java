@@ -8,6 +8,7 @@ import com.aipg.transquery.QTDetail;
 import com.aipg.transquery.QTransRsp;
 import com.allinpay.XmlTools;
 import com.siebre.basic.exception.SiebreRuntimeException;
+import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
 import com.siebre.payment.entity.enums.ReturnCode;
@@ -49,6 +50,10 @@ public class AllinPayTranx {
         AipgRsp aipgrsp = null;
         aipgrsp = XSUtil.parseRsp(retXml);
 
+        String responseStr = JsonUtil.toJson(aipgrsp, true);
+
+        paymentTransaction.setResponseJsonStr(JsonUtil.toJson(aipgrsp, true));
+
         Map<String, String> result = new HashMap<>();
         String internalTransactionNumber = paymentTransaction.getInternalTransactionNumber();
         String externalTransactionNumber = aipgrsp.getINFO().getREQ_SN();
@@ -63,7 +68,7 @@ public class AllinPayTranx {
                     String seller_id = paymentWay.getPaymentChannel().getMerchantCode();
                     BigDecimal total_fee = paymentTransaction.getPaymentAmount();
                     //TODO
-                    paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee, new Date());
+                    paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee, new Date(), responseStr);
 
                     result.put("transaction_result", ReturnCode.SUCCESS.getDescription());
                     result.put("orderNumber", internalTransactionNumber);
