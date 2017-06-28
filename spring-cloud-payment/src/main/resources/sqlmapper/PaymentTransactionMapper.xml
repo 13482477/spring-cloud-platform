@@ -18,8 +18,8 @@
 		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
 		<result column="sender" property="sender" jdbcType="VARCHAR"/>
 		<result column="receiver" property="receiver" jdbcType="VARCHAR"/>
-		<result column="request_json_str" property="requestJsonStr" jdbcType="VARCHAR"/>
-		<result column="response_json_str" property="responseJsonStr" jdbcType="VARCHAR"/>
+		<result column="request_str" property="requestStr" jdbcType="VARCHAR"/>
+		<result column="response_str" property="responseStr" jdbcType="VARCHAR"/>
 	</resultMap>
 	<sql id="Base_Column_List">
 		id,
@@ -38,8 +38,8 @@
 		update_date,
 		sender,
 		receiver,
-		request_json_str,
-		response_json_str
+		request_str,
+		response_str
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
@@ -71,8 +71,8 @@
 		create_date,
 		sender,
 		receiver,
-		request_json_str,
-		response_json_str
+		request_str,
+		response_str
 		)
 		VALUES (
 		#{paymentChannelId,jdbcType=BIGINT},
@@ -89,8 +89,8 @@
 		#{createDate,jdbcType=TIMESTAMP},
 		#{sender,jdbcType=VARCHAR},
         #{receiver,jdbcType=VARCHAR},
-        #{requestJsonStr,jdbcType=VARCHAR},
-        #{responseJsonStr,jdbcType=VARCHAR}
+        #{requestStr,jdbcType=VARCHAR},
+        #{responseStr,jdbcType=VARCHAR}
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.siebre.payment.paymenttransaction.entity.PaymentTransaction" useGeneratedKeys="true" keyProperty="id">
@@ -141,11 +141,11 @@
 			<if test="receiver !=null">
 				receiver,
 			</if>
-			<if test="requestJsonStr !=null">
-				request_json_str,
+			<if test="requestStr !=null">
+				request_str,
 			</if>
-			<if test="responseJsonStr !=null">
-				response_json_str,
+			<if test="responseStr !=null">
+				response_str,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -194,11 +194,11 @@
 			<if test="receiver != null">
 				#{receiver,jdbcType=VARCHAR},
 			</if>
-			<if test="requestJsonStr != null">
-				#{requestJsonStr,jdbcType=VARCHAR},
+			<if test="requestStr != null">
+				#{requestStr,jdbcType=VARCHAR},
 			</if>
-			<if test="responseJsonStr != null">
-				#{responseJsonStr,jdbcType=VARCHAR},
+			<if test="responseStr != null">
+				#{responseStr,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -251,11 +251,11 @@
 			<if test="receiver != null">
 				receiver = #{receiver,jdbcType=VARCHAR},
 			</if>
-			<if test="requestJsonStr != null">
-				request_json_str = #{requestJsonStr,jdbcType=VARCHAR},
+			<if test="requestStr != null">
+				request_str = #{requestStr,jdbcType=VARCHAR},
 			</if>
-			<if test="responseJsonStr != null">
-				response_json_str = #{responseJsonStr,jdbcType=VARCHAR},
+			<if test="responseStr != null">
+				response_str = #{responseStr,jdbcType=VARCHAR},
 			</if>
 		</set>
 		where id = #{id,jdbcType=BIGINT}
@@ -278,8 +278,8 @@
 		create_date = #{createDate,jdbcType=TIMESTAMP},
 		sender = #{sender,jdbcType=VARCHAR},
         receiver = #{receiver,jdbcType=VARCHAR},
-        request_json_str = #{requestJsonStr,jdbcType=VARCHAR},
-        response_json_str = #{responseJsonStr,jdbcType=VARCHAR}
+        request_str = #{requestStr,jdbcType=VARCHAR},
+        response_str = #{responseStr,jdbcType=VARCHAR}
 		WHERE
 		id = #{id,jdbcType=BIGINT}
 	</update>
@@ -300,8 +300,8 @@
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
 		<result column="sender" property="sender" jdbcType="VARCHAR"/>
 		<result column="receiver" property="receiver" jdbcType="VARCHAR"/>
-		<result column="request_json_str" property="requestJsonStr" jdbcType="VARCHAR"/>
-		<result column="response_json_str" property="responseJsonStr" jdbcType="VARCHAR"/>
+		<result column="request_str" property="requestStr" jdbcType="VARCHAR"/>
+		<result column="response_str" property="responseStr" jdbcType="VARCHAR"/>
 		<association property="paymentChannel" javaType="com.siebre.payment.paymentchannel.entity.PaymentChannel" notNullColumn="id" columnPrefix="paymentChannel_">
 			<result column="channel_name" property="channelName" jdbcType="VARCHAR" />
 			<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
@@ -372,8 +372,8 @@
 		pmt_payment_transaction.create_date create_date,
 		pmt_payment_transaction.sender sender,
 		pmt_payment_transaction.receiver receiver,
-		pmt_payment_transaction.request_json_str request_json_str,
-		pmt_payment_transaction.response_json_str response_json_str,
+		pmt_payment_transaction.request_str request_str,
+		pmt_payment_transaction.response_str response_str,
 		pmt_payment_order.id paymentOrder_id,
 		pmt_payment_order.order_number paymentOrder_order_number,
 		pmt_payment_order.business_plantform paymentOrder_business_plantform,

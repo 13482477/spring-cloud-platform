@@ -5,10 +5,10 @@ import java.util.Date;
 
 public interface AbstratReconcileFileManager {
 
-	/** »ñµÃÖ¸¶¨ÈÕÆÚµ±ÌìµÄ¶ÔÕËÎÄ¼ş */
+	/** æ ¹æ®æŒ‡å®šæ—¥æœŸä¸‹è½½å¯¹è´¦æ–‡ä»¶ */
 	File downloadReconcileFile(Date transDate);
 
-	/** »ñµÃÖ¸¶¨Ê±¼ä¶ÎµÄ¶ÔÕËÎÄ¼ş */
+	/** æ ¹æ®æŒ‡å®šæ—¶é—´æ®µä¸‹è½½å¯¹è´¦æ–‡ä»¶ */
 	File downloadReconcileFile(Date startDate, Date endDate);
 
 }

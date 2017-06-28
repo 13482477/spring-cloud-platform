@@ -42,7 +42,7 @@ public class WeChatScanPaymentHandler extends AbstractPaymentComponent {
 
 		this.processSign(params, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
 
-		paymentTransaction.setRequestJsonStr(JsonUtil.mapToJson(params));
+		paymentTransaction.setRequestStr(JsonUtil.mapToJson(params));
 
 		this.getPaymentUrl(response, paymentWay, params);
 

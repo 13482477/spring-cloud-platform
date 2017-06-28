@@ -38,10 +38,11 @@ public abstract class ReconcileFileManager implements AbstratReconcileFileManage
 
         logger.info("generate request message.");
         String requestMessage = generateRequestMessage(reconcileTransaction, startDate, endDate);
-        reconcileTransaction.setRequestJsonStr(requestMessage);
+
         logger.info("requestMessage: {}", requestMessage);
 
         byte[] bytes = doRequest(reconcileTransaction, requestMessage);
+        transactionService.updateBySelective(reconcileTransaction);
         
         File file  = convertFile(bytes, startDate, endDate);
 

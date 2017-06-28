@@ -63,7 +63,7 @@ public class ReconcileManager {
     @Autowired
     private ReconItemMapper itemMapper;
 
-    @Autowired
+    @Autowired(required = false)
     private JdbcTemplate jdbcTemplate;
 
     /** 由定时器启动对账任务 */

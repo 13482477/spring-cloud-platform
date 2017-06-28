@@ -91,7 +91,7 @@ public class AllinPayRealTimeHandler extends AbstractPaymentComponent {
 
         xml = XmlTools.buildXml(aipg, true);
         logger.info("request data: {}", xml);
-        paymentTransaction.setRequestJsonStr(JsonUtil.mapToJson(ConvertToXML.toMap(xml)));
+        paymentTransaction.setRequestStr(JsonUtil.mapToJson(ConvertToXML.toMap(xml)));
 
         Map<String, String> result = allinPayTranx.dealRetForPay(allinPayTranx.sendToTlt(xml, isTLTFront, url, paymentWay), trx_code, paymentTransaction, paymentWay);
 

@@ -42,7 +42,7 @@ public class AlipayTradeWapPaymentHandler extends AbstractPaymentComponent {
                 paymentWay.getPublicKey(), paymentWay.getEncryptionMode().getDescription()); //获得初始化的AlipayClient
 
         AlipayTradeWapPayRequest alipayRequest = buildAlipayTradeWapPayRequest(paymentWay, paymentInterface, paymentTransaction, paymentOrder);
-        paymentTransaction.setRequestJsonStr(JsonUtil.toJson(alipayRequest, true));
+        paymentTransaction.setRequestStr(JsonUtil.toJson(alipayRequest, true));
 
         String form = "";
         try {

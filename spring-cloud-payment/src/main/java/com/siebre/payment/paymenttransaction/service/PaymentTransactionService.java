@@ -62,7 +62,7 @@ public class PaymentTransactionService {
     }
 
     public void updateBySelective(PaymentTransaction transaction) {
-        this.updateBySelective(transaction);
+        this.paymentTransactionMapper.updateByPrimaryKeySelective(transaction);
     }
 
     /**
@@ -311,7 +311,7 @@ public class PaymentTransactionService {
         //更新transaction状态
         paymentTransaction.setExternalTransactionNumber(externalTransactionNumber);
         paymentTransaction.setPaymentStatus(PaymentTransactionStatus.PAY_SUCCESS);
-        paymentTransaction.setResponseJsonStr(responseStr);
+        paymentTransaction.setResponseStr(responseStr);
         this.paymentTransactionMapper.updateByPrimaryKeySelective(paymentTransaction);
 
         //更新order状态

@@ -39,7 +39,7 @@ public class AlipayWebPaymentHandler extends AbstractPaymentComponent {
 
 		this.processSign(paramsMap, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
 
-		paymentTransaction.setRequestJsonStr(JsonUtil.mapToJson(paramsMap));
+		paymentTransaction.setRequestStr(JsonUtil.mapToJson(paramsMap));
 		String url = this.getPaymentUrl(paymentWay, paramsMap);
 
 		response.setPayUrl(url);

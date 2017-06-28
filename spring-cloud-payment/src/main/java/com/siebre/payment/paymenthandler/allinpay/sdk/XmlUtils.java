@@ -67,7 +67,7 @@ public class XmlUtils {
         Enumeration<String> myEnum = keyStore.aliases();
         String keyAlias = null;
         RSAPrivateCrtKey prikey = null;
-        // IBM JDK必须使用While循环取最后一个别名，才能得到个人私钥别名
+        // IBM JDK蹇呴』浣跨敤While寰幆鍙栨渶鍚庝竴涓埆鍚嶏紝鎵嶈兘寰楀埌涓汉绉侀挜鍒悕
         while (myEnum.hasMoreElements()) {
             keyAlias = (String) myEnum.nextElement();
             if (keyStore.isKeyEntry(keyAlias)) {
@@ -84,7 +84,7 @@ public class XmlUtils {
             hex2Ascii(signed.length, signed, signAsc);
             result = new String(signAsc);
         } else {
-            throw new Exception("没有找到匹配私钥");
+            throw new Exception("娌℃湁鎵惧埌鍖归厤绉侀挜");
         }
         return result;
     }
@@ -275,18 +275,10 @@ public class XmlUtils {
         public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
         }
 
-        /**
-         * 可接受的 CA 发行者证书的非 null（可能为空）的数组
-         */
         public X509Certificate[] getAcceptedIssuers() {
             return null;
         }
 
-        /**
-         * @param hostname 主机名
-         * @param session  到主机的连接上使用的 SSLSession
-         * @return 如果主机名是可接受的，则返回 true
-         */
         public boolean verify(String hostname, SSLSession session) {
             return true;
         }

@@ -52,7 +52,7 @@ public class AllinPayTranx {
 
         String responseStr = JsonUtil.toJson(aipgrsp, true);
 
-        paymentTransaction.setResponseJsonStr(JsonUtil.toJson(aipgrsp, true));
+        paymentTransaction.setResponseStr(JsonUtil.toJson(aipgrsp, true));
 
         Map<String, String> result = new HashMap<>();
         String internalTransactionNumber = paymentTransaction.getInternalTransactionNumber();

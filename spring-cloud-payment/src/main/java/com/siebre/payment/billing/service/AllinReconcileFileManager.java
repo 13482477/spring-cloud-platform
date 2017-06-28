@@ -11,6 +11,7 @@ import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.utils.messageconvert.ConvertToXML;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.codehaus.jackson.JsonNode;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -22,28 +23,30 @@ import org.zeroturnaround.zip.ZipUtil;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
  * 通联对账文件下载类
  * 开发文档地址：http://113.108.182.3:8282/techsp/helper/filedetail/tlt/filedetail140.html
+ * 对账文件格式说明：http://113.108.182.3:8282/techsp/helper/filedetail/tlt/filedetail166.html
  */
-@Service("allinpayReconcileFileManager")
-public class AllinpayReconcileFileManager extends ReconcileFileManager {
+@Service("allinReconcileFileManager")
+public class AllinReconcileFileManager extends ReconcileFileManager {
 
-    private Logger logger = LoggerFactory.getLogger(AllinpayReconcileFileManager.class);
+    private Logger logger = LoggerFactory.getLogger(AllinReconcileFileManager.class);
 
     @Override
     protected String generateRequestMessage(PaymentTransaction reconcileTransaction, Date startDate, Date endDate) {
         String requestMessage = "";
         PaymentChannel channel = channelService.queryByChannelCode(AllinpayConfig.CHANNEL_CODE).getData();
 
-        requestMessage = marshalDownloadReconFile(channel, "0", "1", "1", startDate, endDate);
-
+        requestMessage = marshalDownloadReconFile(channel, reconcileTransaction, "0", "1", "1", startDate, endDate);
 
         reconcileTransaction.setPaymentChannel(channel);
         reconcileTransaction.setPaymentChannelId(channel.getId());
-        reconcileTransaction.setReceiver(JsonUtil.mapToJson(ConvertToXML.toMap(requestMessage)));
+        reconcileTransaction.setRequestStr(requestMessage);
         reconcileTransaction.setReceiver(AllinpayConfig.CHANNEL_CODE);
         return requestMessage;
     }
@@ -51,20 +54,18 @@ public class AllinpayReconcileFileManager extends ReconcileFileManager {
     @Override
     protected byte[] doRequest(PaymentTransaction reconcileTransaction, String requestMessage) {
         String responseMessage = "";
-        String requestUrl = "https://172.16.1.11/aipg/GetConFile.do";
+        String requestUrl = AllinpayConfig.RECONCILE_URL;
         try {
             responseMessage = XmlUtils.post(requestUrl, XmlUtils.sign(requestMessage));
-            reconcileTransaction.setResponseJsonStr(responseMessage);
+            //reconcileTransaction.setResponseStr(responseMessage);
             reconcileTransaction.setPaymentStatus(PaymentTransactionStatus.RECON_SUCCESS);
             reconcileTransaction.setUpdateDate(new Date());
-            transactionService.updateBySelective(reconcileTransaction);
             logger.info("responseMessage: {}", responseMessage);
         } catch (Exception e) {
-            reconcileTransaction.setPaymentStatus(PaymentTransactionStatus.RECON_FAILED);
-            reconcileTransaction.setUpdateDate(new Date());
-            transactionService.updateBySelective(reconcileTransaction);
             logger.info("请求对账文件异常：", e);
             e.printStackTrace();
+            reconcileTransaction.setPaymentStatus(PaymentTransactionStatus.RECON_FAILED);
+            reconcileTransaction.setUpdateDate(new Date());
         }
         String zipStr = unmarshalDownloadReconFile(responseMessage);
         byte[] bytes = Base64.decodeBase64(zipStr);
@@ -73,7 +74,7 @@ public class AllinpayReconcileFileManager extends ReconcileFileManager {
 
     @Override
     protected File convertFile(byte[] bytes, Date startDate, Date endDate) {
-        String localDir = "reconcileFile/Allinpay/";
+        String localDir = AllinpayConfig.LOCAL_DIR;
 
         File outputDir = new File(localDir);
 
@@ -100,12 +101,14 @@ public class AllinpayReconcileFileManager extends ReconcileFileManager {
      * @param endDate
      * @return
      */
-    public String marshalDownloadReconFile(PaymentChannel channel, String status, String type, String contfee, Date startDate, Date endDate) {
+    public String marshalDownloadReconFile(PaymentChannel channel, PaymentTransaction reconcileTransaction, String status, String type, String contfee, Date startDate, Date endDate) {
         Document document = DocumentHelper.createDocument();
         document.setXMLEncoding("GBK");
         Element root = document.addElement("AIPG");
 
         String id = UUID.randomUUID().toString();
+        reconcileTransaction.setInternalTransactionNumber(id);
+
         marshalHeader(AllinpayConstants.TRX_ReconFileDownload, root, id, channel);
 
         Element trans = root.addElement("QTRANSREQ");
