@@ -1,11 +1,12 @@
-package com.siebre.product.config;
+package com.siebre.config;
 
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import javax.servlet.Filter;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.orm.hibernate4.support.OpenSessionInViewFilter;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
@@ -14,16 +15,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-import java.nio.charset.Charset;
-
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
-    private static final Charset UTF8 = Charset.forName("UTF-8");
-
-
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**");
+        registry
+        	.addMapping("/**")
+        	.allowedMethods("*");
     }
 
     @Bean
@@ -32,29 +30,13 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public FilterRegistrationBean characterEncodingFilter() {
+    public Filter characterEncodingFilter() {
         CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
         characterEncodingFilter.setEncoding("UTF-8");
         characterEncodingFilter.setForceEncoding(true);
-
-        FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(characterEncodingFilter);
-        registration.addUrlPatterns("/*");
-        registration.setName("openSessionInViewFilter");
-        registration.setOrder(1);
-        return registration;
+        return characterEncodingFilter;
     }
 
-    @Bean
-    public FilterRegistrationBean openSessionInViewFilter() {
-        FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new OpenSessionInViewFilter());
-//        registration.setFilterter(characterEncodingFilter());
-        registration.addUrlPatterns("/*");
-        registration.setName("openSessionInViewFilter");
-        registration.setOrder(1);
-        return registration;
-    }
 
 //    public Filter authorizationFilter() {
 //        AuthorizationFilter authorizationFilter = new AuthorizationFilter();

@@ -150,7 +150,8 @@
     	<module>spring-cloud-iproduct</module>
     	<module>spring-cloud-uaa</module>
     	<module>spring-cloud-security</module>
-  </modules>
+    	<module>spring-cloud-tomcat</module>
+	</modules>
 
 	<build>
 		<plugins>

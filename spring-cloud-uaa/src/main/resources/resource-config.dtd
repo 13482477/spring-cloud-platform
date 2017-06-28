@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT resource (resource*)>
+<!ATTLIST resource type (MENU|RESOURCE|SYSTEM|ROOT) #REQUIRED>
+<!ATTLIST resource name ID #REQUIRED>
+<!ATTLIST resource code CDATA #REQUIRED>
+<!ATTLIST resource url CDATA>
+<!ATTLIST resource description CDATA #IMPLIED>
+<!ATTLIST resource httpMethod (GET|HEAD|POST|PUT|PATCH|DELETE|OPTIONS|TRACE) #IMPLIED>

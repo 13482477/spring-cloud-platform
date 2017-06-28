@@ -309,7 +309,7 @@ public class RepositoryInitializer implements ApplicationContextAware, Initializ
             return;
 
         synchronized(this) {
-            //initialize();
+//            initialize();
         }
     }
 
