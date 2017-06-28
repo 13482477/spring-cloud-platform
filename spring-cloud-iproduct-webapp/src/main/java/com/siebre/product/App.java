@@ -12,7 +12,7 @@ import com.siebre.product.dao.support.InsuranceProductProvider;
 import com.siebre.product.repository.InsuranceProductRepository;
 import com.siebre.product.repository.InsuranceProductRepositoryImpl;
 import com.siebre.repository.GeneralRepository;
-import com.siebre.repository.entity.RepositoryInitializer;
+import com.siebre.repository.entity.SiebreCloudRepositoryInitializer;
 import com.siebre.repository.rdb.hibernate.HibernateGeneralRepository;
 import com.siebre.smf.groovy.GroovySmfInvokable;
 import com.siebre.smf.groovy.SpringBeanDependencyResolver;
@@ -73,8 +73,8 @@ public class App {
 	}
 
 	@Bean
-	RepositoryInitializer repositoryInitializer() {
-		RepositoryInitializer result = new RepositoryInitializer();
+    SiebreCloudRepositoryInitializer repositoryInitializer() {
+		SiebreCloudRepositoryInitializer result = new SiebreCloudRepositoryInitializer();
 		result.setRepository(generalRepository());
 		result.setTxManager(txManager);
 		result.setAutoInitialize(true);

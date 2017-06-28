@@ -15,6 +15,8 @@ import com.siebre.policy.application.Application;
 import com.siebre.policy.application.SiebreCloudApplicationResult;
 import com.siebre.policy.factory.PolicyFactoryInterceptors;
 
+import java.math.BigDecimal;
+
 /**
  * Created by huangfei on 2017/06/27.
  */
@@ -41,6 +43,7 @@ public class SiebreCloudApplicationService {
     }
 
     public SiebreCloudApplicationResult quote(Application application) {
+
         AgreementSpec agreementSpec = application.getAgreementSpec();
         productRegistry.register(agreementSpec);
         Agreement policy = agreementFactory.create(application.toDto());
