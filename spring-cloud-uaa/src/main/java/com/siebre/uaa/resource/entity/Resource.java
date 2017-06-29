@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.siebre.basic.model.BaseObject;
 import com.siebre.uaa.authority.entity.Authority;
+import com.siebre.uaa.enums.HttpMethod;
 import com.siebre.uaa.enums.ResourceType;
 
 /**
@@ -33,6 +34,11 @@ public class Resource extends BaseObject {
 	 * 资源代码
 	 */
 	private String resourceCode;
+	
+	/**
+	 * http方法类型
+	 */
+	private HttpMethod httpMethod;
 
 	/**
      * 资源url
@@ -187,6 +193,14 @@ public class Resource extends BaseObject {
 
 	public void setChecked(Boolean checked) {
 		this.checked = checked;
+	}
+
+	public HttpMethod getHttpMethod() {
+		return httpMethod;
+	}
+
+	public void setHttpMethod(HttpMethod httpMethod) {
+		this.httpMethod = httpMethod;
 	}
 
 }

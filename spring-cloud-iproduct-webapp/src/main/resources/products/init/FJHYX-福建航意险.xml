@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="GBK"?>
-<product kind="Marketable Product" name="福建航意险" seqIndex="0" externalReference="FJHYX" instanceClassName="InsurancePolicy" shortName="福建航意险" groupType="PERSONAL" sellChannelType="RemoteSell">
+<product kind="Marketable Product" name="福建航意险" seqIndex="0" externalReference="FJHYXtestjml14" instanceClassName="InsurancePolicy" shortName="福建航意险" groupType="PERSONAL" sellChannelType="RemoteSell">
 	<description>人保寿险公共交通工具意外伤害保险（新标准版）</description>
 	<baseSpec version="0" />
 	<properties>
@@ -63,6 +63,7 @@
 				<property kind="addressLines" name="被保人通讯地址" seqIndex="600" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
 				<property kind="postalCode" name="被保人邮政编码" seqIndex="700" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
 				<property kind="relatedToRoleCode" name="与投保人关系" dataType="RelatedToRoleCode" beanProperty="true" isHidden="true" required="true" derived="false" group="Base" />
+				<property kind="socialInsuranceCoverd" name="有无社保" dataType="String" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
 			</properties>
 			<rules>
 				<rule kind="Eligibility" name="被保人的年龄限制" seqIndex="0" language="GROOVY">
@@ -87,8 +88,8 @@
 		</rule>
 		<rule kind="Eligibility" name="保单生效日" seqIndex="0" language="GROOVY">
 			<body><![CDATA[
-				            Calendar terminalDate = new GregorianCalendar(); 
-				            terminalDate.setTime(new Date()); 
+				            Calendar terminalDate = new GregorianCalendar();
+				            terminalDate.setTime(new Date());
 						    terminalDate.set(Calendar.DAY_OF_MONTH, terminalDate.get(Calendar.DAY_OF_MONTH)-1);
 							return context.inceptionDate.after(terminalDate.getTime());
 				]]>
@@ -107,18 +108,60 @@
 	<calculations>
 		<calculation kind="SetPreInsComponent" name="保费赋值" seqIndex="0" language="GROOVY">
 			<body><![CDATA[
-								context.getRiderOfSpec('63324').insuredAmount = 400000;
-								context.getRiderOfSpec('63324').premium = 0.4;
-								context.getRiderOfSpec('63327').insuredAmount = 400000;
-								context.getRiderOfSpec('63327').premium = 0.45;
-								context.grossPremium = 0.85;
-							]]>
+							def Ra = 1.0;
+							def Rb = 1.0;
+
+							def insured = context.getRoleOfKind("Insured");
+							System.out.println("insured.birthDate============="+insured.getBirthDate());
+							def birthYear = insured.getBirthDate().substring(0,3);
+							def age = 2017 - birthYear;
+							def socialInsuranceCoverd = insured.socialInsuranceCoverd;
+							System.out.println("age==="+age + "socialInsuranceCoverd==="+socialInsuranceCoverd);
+
+							def map1 = ['0':'6.99','1':'6.99','2':'6.99','3':'6.99','4':'6.99','5':'3.26','6':'3.26','7':'3.26','8':'3.26','9':'3.26','10':'3.26'];
+							def map2 = ['0':'12.90','1':'12.90','2':'12.90','3':'12.90','4':'12.90','5':'12.90','6':'6.29','7':'6.29','8':'6.29','9':'6.29','10':'6.29'];
+
+							System.out.println("map1['2']============="+map1['2']);
+							System.out.println("map1.get(2)============="+map1.get(2));
+
+							if(socialInsuranceCoverd == true) {
+								Ra = map1.get(age);
+								System.out.println("有社保Ra============="+Ra);
+							}else {
+								Ra = map2.get(age);
+								System.out.println("无社保Ra============="+Ra);
+							}
+
+							def Ca = 0.0;
+							def Cb = 0.0;
+
+							if(context.insuredAmount == 100000) {
+								Ca = 100000.0;
+								Cb = 100000.0;
+							} else if(context.insuredAmount == 200000) {
+								Ca = 150000.0;
+								Cb = 200000.0;
+							} else if(context.insuredAmount == 300000) {
+								Ca = 250000.0;
+								Cb = 300000.0;
+							} else if(context.insuredAmount == 400000) {
+								Ca = 350000.0;
+								Cb = 400000.0;
+							}
+
+							def premiumA = Ra * Ca / 100000.0;
+							def premiumB = Rb* Cb / 100000.0;
+							def premium = premiumA + premiumB;
+
+							System.out.println("premium============="+premium);
+							context.grossPremium = premium;
+						]]>
 			</body>
 		</calculation>
 	</calculations>
 
 	<requests>
-		<request kind="New" name="投保" seqIndex="0" instanceClassName="FinancialServicesRequest" preconditionKinds="Eligibility" postconditionKinds="" CalculationKinds="SetPreInsComponent" />
+		<request kind="quote" name="投保" seqIndex="0" instanceClassName="FinancialServicesRequest" preconditionKinds="" postconditionKinds="" CalculationKinds="SetPreInsComponent" />
 	</requests>
 
 	<components>

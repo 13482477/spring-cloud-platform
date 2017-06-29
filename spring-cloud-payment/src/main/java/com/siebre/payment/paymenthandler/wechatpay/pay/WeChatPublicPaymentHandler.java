@@ -72,7 +72,7 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
         paramMap.put("mch_id", paymentWay.getPaymentChannel().getMerchantCode()); // 商户号：开通微信支付后分配
         // 随机数
         paramMap.put("nonce_str", String.valueOf(UUID.randomUUID()).substring(0, 31));
-        paramMap.put("body", "保险产品"); // 商品描述
+        paramMap.put("body", "支付体验"); // 商品描述
         // 商户订单号：用户id + “|” + 随机16位字符
         paramMap.put("out_trade_no", paymentTransaction.getInternalTransactionNumber());
         paramMap.put("total_fee", paymentTransaction.getPaymentAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString()); // 金额必须为整数

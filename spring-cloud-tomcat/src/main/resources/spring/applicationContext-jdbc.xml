@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <bean id="master" class="org.apache.tomcat.jdbc.pool.DataSource">
+        <property name="driverClassName" value="${jdbc.mysql.Driver}"></property>
+        <property name="url" value="${jdbc.master.url}"></property>
+        <property name="username" value="${jdbc.master.username}"></property>
+        <property name="password" value="${jdbc.master.password}"></property>
+
+        <!--公共配置属性-->
+        <property name="maxActive" value="${jdbc.maxActive}"></property>
+        <property name="initialSize" value="${jdbc.initialSize}"></property>
+        <property name="minIdle" value="${jdbc.maxIdle}"></property>
+        <property name="jdbcInterceptors" value="${jdbc.jdbcInterceptors}"></property>
+
+
+        <property name="testWhileIdle" value="true"></property>
+        <property name="testOnBorrow" value="true"></property>
+        <property name="validationQuery" value="select 1"></property>
+        <property name="testOnReturn" value="false"></property>
+        <property name="validationInterval" value="30000"></property>
+        <property name="timeBetweenEvictionRunsMillis" value="5000"></property>
+        <property name="maxWait" value="15000"></property>
+        <property name="removeAbandoned" value="true"></property>
+        <property name="removeAbandonedTimeout" value="60"></property>
+        <property name="logAbandoned" value="false"></property>
+        <property name="minEvictableIdleTimeMillis" value="30"></property>
+        <property name="jmxEnabled" value="true"/>
+        <property name="name" value="jdbcPool"/>
+    </bean>
+
+
+    <bean id="slave" class="org.apache.tomcat.jdbc.pool.DataSource">
+        <property name="driverClassName" value="${jdbc.mysql.Driver}"></property>
+        <property name="url" value="${jdbc.slave.url}"></property>
+        <property name="username" value="${jdbc.slave.username}"></property>
+        <property name="password" value="${jdbc.slave.password}"></property>
+
+        <!--公共配置属性-->
+        <property name="maxActive" value="${jdbc.maxActive}"></property>
+        <property name="initialSize" value="${jdbc.initialSize}"></property>
+        <property name="minIdle" value="${jdbc.maxIdle}"></property>
+        <property name="jdbcInterceptors" value="${jdbc.jdbcInterceptors}"></property>
+
+        <property name="testWhileIdle" value="true"></property>
+        <property name="testOnBorrow" value="true"></property>
+        <property name="validationQuery" value="select 1"></property>
+        <property name="testOnReturn" value="false"></property>
+        <property name="validationInterval" value="30000"></property>
+        <property name="timeBetweenEvictionRunsMillis" value="5000"></property>
+        <property name="maxWait" value="15000"></property>
+        <property name="removeAbandoned" value="true"></property>
+        <property name="removeAbandonedTimeout" value="60"></property>
+        <property name="logAbandoned" value="false"></property>
+        <property name="minEvictableIdleTimeMillis" value="30"></property>
+        <property name="jmxEnabled" value="true"/>
+        <property name="name" value="jdbcPool"/>
+    </bean>
+
+    <bean id="dataSource" class="com.siebre.basic.db.DynamicDataSource">
+        <property name="master" ref="master"/>
+        <property name="slaves">
+            <list>
+                <ref bean="slave"/>
+            </list>
+        </property>
+    </bean>
+
+	<bean id="mySqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations">
+			<array>
+				<value>classpath*:sqlmapper/*Mapper.xml</value>
+			</array>
+		</property>
+		<property name="typeAliasesPackage" value="com.siebre.**.entity" />
+		<property name="typeHandlersPackage" value="com.siebre.**.entity.enums" />
+		<!-- 
+		 -->
+		<property name="plugins">
+			<array>
+				<bean class="com.siebre.basic.query.PagePlugin">
+					<property name="properties">
+						<props>
+							<prop key="dialect">mysql</prop>
+						</props>
+					</property>
+				</bean>
+			</array>
+		</property>
+	</bean>
+
+	<bean id="transactionManager" class="com.siebre.basic.db.DynamicDataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+        <property name="nestedTransactionAllowed" value="true"/>
+        <qualifier value="db"/>
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" lazy-init="true">
+		<property name="annotationClass" value="org.springframework.stereotype.Repository" />
+		<property name="basePackage" value="com.siebre.**.mapper" />
+		<property name="sqlSessionFactoryBeanName" value="mySqlSessionFactory" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>
+	
+</beans>

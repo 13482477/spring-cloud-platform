@@ -9,9 +9,14 @@ import static com.siebre.product.builder.ProductBuilders.marketableProduct;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.siebre.agreement.dto.annotation.Roles;
+import com.siebre.agreement.dto.support.RoleDtoBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,7 +67,7 @@ public class QuoteJsonService {
 		Hibernate.initialize(product.getConstantProperties());
 		
 		//InsuranceProduct product = mockProduct();
-		
+
 		AgreementDtoBuilder agreementDtoBuilder = DtoBuilders.agreementOf(productCode);
 		for (String key : properties.keySet()) {
 			if ("specCode".equals(key))
@@ -70,10 +75,28 @@ public class QuoteJsonService {
 			
 			agreementDtoBuilder.property(key, properties.get(key));
 		}
-		
-		
+
+		((List<Map<String, Object>>) properties.get("roles")).parallelStream()
+            .filter( roleMap -> {
+                    String kind = (String) roleMap.get("kind");
+//                    return "insured".equals(kind)
+//                            || "applicant".equals(kind)
+//                            || "beneficiary".equals(kind);
+                    return StringUtils.isNotBlank(kind);
+                }
+            ).forEach(roleMap -> {
+                RoleDtoBuilder roleBuilder = DtoBuilders.roleOf((String) roleMap.get("kind"));
+                roleMap.entrySet().parallelStream().forEach(
+                    property -> {
+                        roleBuilder.property(property.getKey(), property.getValue());
+                        agreementDtoBuilder.roles(roleBuilder);
+                    }
+                );
+            }
+        );
+
 		Application app = new Application(product, agreementDtoBuilder.build());
-		
+
 		return app;
 	}
 	

@@ -75,7 +75,7 @@ public class AlipayTradeWapPaymentHandler extends AbstractPaymentComponent {
      */
     private String generateBizContent(PaymentWay paymentWay, PaymentTransaction paymentTransaction, PaymentOrder paymentOrder) {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("subject", "保险产品");
+        params.put("subject", "支付体验");
         params.put("out_trade_no", paymentTransaction.getInternalTransactionNumber());
         params.put("timeout_express", "30m"); //30分钟后没有付款，将关闭交易
         params.put("total_amount", paymentOrder.getAmount());

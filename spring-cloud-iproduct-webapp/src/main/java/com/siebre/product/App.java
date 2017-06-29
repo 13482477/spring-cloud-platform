@@ -12,13 +12,12 @@ import com.siebre.product.dao.support.InsuranceProductProvider;
 import com.siebre.product.repository.InsuranceProductRepository;
 import com.siebre.product.repository.InsuranceProductRepositoryImpl;
 import com.siebre.repository.GeneralRepository;
-import com.siebre.repository.entity.RepositoryInitializer;
+import com.siebre.repository.entity.SiebreCloudRepositoryInitializer;
 import com.siebre.repository.rdb.hibernate.HibernateGeneralRepository;
 import com.siebre.smf.groovy.GroovySmfInvokable;
 import com.siebre.smf.groovy.SpringBeanDependencyResolver;
 import com.siebre.smf.invokable.DependencyResolver;
 import com.siebre.smf.invokable.SmfInvokable;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,7 +26,6 @@ import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoCo
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.orm.hibernate4.support.OpenSessionInViewFilter;
 import org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -75,8 +73,8 @@ public class App {
 	}
 
 	@Bean
-	RepositoryInitializer repositoryInitializer() {
-		RepositoryInitializer result = new RepositoryInitializer();
+    SiebreCloudRepositoryInitializer repositoryInitializer() {
+		SiebreCloudRepositoryInitializer result = new SiebreCloudRepositoryInitializer();
 		result.setRepository(generalRepository());
 		result.setTxManager(txManager);
 		result.setAutoInitialize(true);
