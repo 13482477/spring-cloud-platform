@@ -88,10 +88,10 @@ public class QuoteJsonService {
                 RoleDtoBuilder roleBuilder = DtoBuilders.roleOf((String) roleMap.get("kind"));
                 roleMap.entrySet().parallelStream().forEach(
                     property -> {
-                        roleBuilder.property(property.getKey(), property.getValue());
-                        agreementDtoBuilder.roles(roleBuilder);
+                    	roleBuilder.property(property.getKey(), property.getValue());
                     }
                 );
+				agreementDtoBuilder.roles(roleBuilder);
             }
         );
 
