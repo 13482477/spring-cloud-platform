@@ -19,7 +19,6 @@ public class AllinpayConfig {
 
     public static String LOCAL_DIR = "d:/reconcileFile";
 
-
     public static String CONNECT_TIMEOUT = "60000";
 
     public static String READ_TIMEOUT = "60000";

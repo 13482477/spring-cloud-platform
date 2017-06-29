@@ -66,7 +66,9 @@ public class ReconcileManager {
     @Autowired(required = false)
     private JdbcTemplate jdbcTemplate;
 
-    /** 由定时器启动对账任务 */
+    /**
+     * 由定时器启动对账任务
+     */
     public void runReconJob(String reconJobName) {
         Date transDate = new Date();
         transDate = DateUtils.addDays(transDate, -1);
@@ -87,7 +89,9 @@ public class ReconcileManager {
         }
     }
 
-    /** 启动对账任务 */
+    /**
+     * 启动对账任务
+     */
     public void runReconJob(ReconJob reconJob, Map<String, Object> reconJobParams) throws Exception {
 
         ReconJobInstance jobInstance = createNewJobInstance(reconJob, reconJobParams);
@@ -110,17 +114,23 @@ public class ReconcileManager {
 
     }
 
-    /** 获得指定日期当天的对账文件 */
+    /**
+     * 获得指定日期当天的对账文件
+     */
     public File downloadReconcileFile(Date transDate) {
         return null;
     }
 
-    /** 获得指定时间段的对账文件 */
+    /**
+     * 获得指定时间段的对账文件
+     */
     public File downloadReconcileFile(Date startDate, Date endDate) {
         return null;
     }
 
-    /** 创建对账作业实例 */
+    /**
+     * 创建对账作业实例
+     */
     private ReconJobInstance createNewJobInstance(ReconJob reconJob, Map<String, Object> reconJobParams) {
 
         ReconJobInstance jobInstance = new ReconJobInstance();
@@ -128,14 +138,16 @@ public class ReconcileManager {
         jobInstance.setChannelCode(reconJob.getChannelCode());
         jobInstance.setTransDate((Date) reconJobParams.get("TransDate"));
         jobInstance.setReconcileTime(new Date());
-        jobInstance.setReconcileStatus("Completed");
+        jobInstance.setReconcileStatus("Proceed");
 
         jobInstanceMapper.insert(jobInstance);
 
         return jobInstance;
     }
 
-    /** 获得远程对账数据集 */
+    /**
+     * 获得远程对账数据集
+     */
     private ReconDataSource extractRemoteDataSet(ReconJob reconJob, Map<String, Object> reconJobParams) throws IOException {
         ReconDataSource remoteDS = reconDataSourceMapper.selectByPrimaryKey(reconJob.getRemoteDataSource());
         String dsDefinition = remoteDS.getDsDefinition();
@@ -210,11 +222,14 @@ public class ReconcileManager {
         return remoteDS;
     }
 
-    /** 获得本地对账数据集 */
+    /**
+     * 获得本地对账数据集
+     */
     private ReconDataSource extractLocalDataSet(ReconJob reconJob, Map<String, Object> reconJobParams) {
         ReconDataSource localDS = reconDataSourceMapper.selectByPrimaryKey(reconJob.getPaymentDataSource());
 
         String dsDefinition = localDS.getDsDefinition();
+        Date satrtDate = (Date) reconJobParams.get("StartDate");
         Date endDate = (Date) reconJobParams.get("EndDate");
 
         List<ReconDataField> dataFields = dataFieldMapper.selectByDataSourceId(localDS.getId());
@@ -234,7 +249,7 @@ public class ReconcileManager {
                     dataSetMapper.insert(reconDataSet);
                 }
 
-            }, endDate);
+            }, satrtDate, endDate);
         } catch (DataAccessException e) {
             e.printStackTrace();
         }
@@ -243,9 +258,10 @@ public class ReconcileManager {
 
     /**
      * 执行两个数据集的比对
-     * @param remoteDS 远程数据集
-     * @param localDS 本地数据集
-     * @param rules 比对的规则
+     *
+     * @param remoteDS    远程数据集
+     * @param localDS     本地数据集
+     * @param rules       比对的规则
      * @param jobInstance 对账对象实例
      * @return reconResult 对账结果
      * @throws Exception 对账过程中出现的问题
@@ -334,7 +350,9 @@ public class ReconcileManager {
         return reconResult;
     }
 
-    /** 创建对账明细（结果） */
+    /**
+     * 创建对账明细（结果）
+     */
     private void createReconItem(ReconJobInstance reconJobInstance, JsonNode remoteJS, JsonNode localJS, String reconResult) {
         ReconItem reconItem = new ReconItem();
 
@@ -371,7 +389,9 @@ public class ReconcileManager {
         return node != null ? node.getTextValue() : null;
     }
 
-    /** 根据所有匹配规则类型为MATCH的规则进行匹配，已确定两笔记录是否相同 */
+    /**
+     * 根据所有匹配规则类型为MATCH的规则进行匹配，已确定两笔记录是否相同
+     */
     private String match(JsonNode remoteJN, JsonNode localJN, List<ReconMatchRule> matchRules) {
         for (ReconMatchRule matchRule : matchRules) {
             if (!match(remoteJN, localJN, matchRule))
@@ -380,7 +400,9 @@ public class ReconcileManager {
         return null;
     }
 
-    /** 对一条规则执行校验 */
+    /**
+     * 对一条规则执行校验
+     */
     private boolean match(JsonNode remoteJN, JsonNode localJN, ReconMatchRule matchRule) {
         String matchCriteria = matchRule.getMatchCriteria();
         String[] crits = matchCriteria.split("=");
@@ -391,10 +413,24 @@ public class ReconcileManager {
         return remoteValue.equals(localValue);
     }
 
-    /** 获得本地对应的对账数据 */
+    /**
+     * 获得本地对应的对账数据
+     */
     private JsonNode getLocalRecord(ReconResult reconResult, Map<JsonNode, ReconDataSet> unMatchLocalDS, JsonNode remoteJN, String[] keys) {
         String remoteKey = keys[0];
         String localKey = keys[1];
+
+        for (int i = 0; i < keys.length; i++) {
+            if (keys[i].contains("#1")) {
+                remoteKey = keys[i].split("\\.")[1];
+                continue;
+            }
+            if(keys[i].contains("#2")) {
+                localKey = keys[i].split("\\.")[1];
+                continue;
+            }
+        }
+
         String remoteValue = remoteJN.get(remoteKey).getTextValue();
 
         for (JsonNode localJS : unMatchLocalDS.keySet()) {
@@ -409,7 +445,9 @@ public class ReconcileManager {
         return null;
     }
 
-    /** 获取匹配两条数据是否是同一条的业务数据的规则 */
+    /**
+     * 获取匹配两条数据是否是同一条的业务数据的规则
+     */
     private ReconMatchRule getPairRule(List<ReconMatchRule> matchRules) {
         for (ReconMatchRule rule : matchRules) {
             if ("PAIR".equals(rule.getType())) {
@@ -419,7 +457,9 @@ public class ReconcileManager {
         return null;
     }
 
-    /** 获取用于匹配两条是否匹配的规则集 */
+    /**
+     * 获取用于匹配两条是否匹配的规则集
+     */
     private List<ReconMatchRule> getMatchRules(List<ReconMatchRule> matchRules) {
         List<ReconMatchRule> result = Lists.newArrayList();
         for (ReconMatchRule com : matchRules) {
@@ -457,7 +497,7 @@ public class ReconcileManager {
             String type = field.getType();
             if (values.length >= index) {
                 String value = values[index - 1].trim();
-                if ("Decimal(分)".equals(type)) {
+                if ("Currency(Fen)".equals(type)) {
                     value = new BigDecimal(value).movePointLeft(2).toString();
                 }
                 rootNode.put(name, value);

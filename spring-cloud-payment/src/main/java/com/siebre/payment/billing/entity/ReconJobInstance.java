@@ -34,6 +34,7 @@ public class ReconJobInstance {
 
     private String mchType;
 
+    //Completed  Proceed
     private String reconcileStatus;
 
     private String reconcileStatusMessage;

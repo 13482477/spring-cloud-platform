@@ -23,6 +23,7 @@
     <include refid="Base_Column_List" />
     from recon_data_field
     where data_source_id = #{dataSourceId,jdbcType=BIGINT}
+    order by field_no asc
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from recon_data_field

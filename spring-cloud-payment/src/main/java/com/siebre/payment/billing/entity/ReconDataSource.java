@@ -1,24 +1,33 @@
 package com.siebre.payment.billing.entity;
 
 public class ReconDataSource {
+
+    //TODO 使用string key
     private Long id;
 
     private String name;
 
+    //TXTFile/CSVFile  Table  ExcelFile
     private String type;
 
+    //bean-name/sql
     private String dsDefinition;
 
+    //   \\s:空格
     private String seperatorChar;
 
+    // \n
     private String lineSeperatorChar;
 
+    //忽略的行
     private Integer ingoreFirst;
 
+    //忽略的结尾
     private Integer ingoreEnd;
 
     private Integer bytesLength;
 
+    //文件编码
     private String encoding;
 
     private String startFlag;
