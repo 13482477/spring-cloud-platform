@@ -46,14 +46,12 @@ public class InitializerController {
 
 	@RequestMapping(value = "/api/v1/initializer", method = RequestMethod.POST)
 	public WebResult<String> createUser(String username, String password, ModelMap map) {
-		URL resource = this.getClass().getClassLoader().getResource("resource.xml");
+		URL resource = this.getClass().getClassLoader().getResource("resource2.xml");
 
 		if (resource == null) {
 			WebResult.<String>builder().returnCode("500").returnMessage("无法找到初始化文件!").build();
 		}
 		File xml = new File(resource.getFile());
-		
-		tool.initResourceFromFile(xml);
 		
 		initAdminAuth(username, password);
 

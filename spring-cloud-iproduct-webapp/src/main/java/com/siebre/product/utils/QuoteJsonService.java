@@ -1,29 +1,35 @@
 package com.siebre.product.utils;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.siebre.agreement.dto.support.AgreementDtoBuilder;
-import com.siebre.agreement.dto.support.DtoBuilders;
+import static com.siebre.agreement.builder.SmfSpecBuilders.calculation;
+import static com.siebre.agreement.builder.SmfSpecBuilders.propertySpec;
+import static com.siebre.agreement.builder.SmfSpecBuilders.requestSpec;
+import static com.siebre.product.builder.ProductBuilders.marketableProduct;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.siebre.agreement.dto.annotation.Roles;
 import com.siebre.agreement.dto.support.RoleDtoBuilder;
-import com.siebre.policy.application.Application;
-import com.siebre.product.InsuranceProduct;
-import com.siebre.product.repository.InsuranceProductRepository;
-import com.siebre.smf.SmfRole;
-import com.siebre.smf.groovy.GroovyMetaClassEnhancer;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.siebre.agreement.builder.SmfSpecBuilders.*;
-import static com.siebre.product.builder.ProductBuilders.marketableProduct;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.siebre.agreement.dto.support.AgreementDtoBuilder;
+import com.siebre.agreement.dto.support.DtoBuilders;
+import com.siebre.policy.application.Application;
+import com.siebre.product.InsuranceProduct;
+import com.siebre.product.repository.InsuranceProductRepository;
+import com.siebre.smf.SmfRole;
+import com.siebre.smf.groovy.GroovyMetaClassEnhancer;
 
 @Service
 @Transactional
@@ -70,24 +76,25 @@ public class QuoteJsonService {
 			agreementDtoBuilder.property(key, properties.get(key));
 		}
 
-//		ArrayList<Object> roles = (ArrayList<Object>)properties.get("roles");
-//		String insuredRole = (String)roles.get(0);
-//		Map<String, Object> roleProperties = jsonMapper.readValue(insuredRole, HashMap.class);
-//		RoleDtoBuilder roleDtoBuilder = DtoBuilders.roleOf(roleProperties.get("kind").toString());
-//		for (String key : roleProperties.keySet()) {
-//			roleDtoBuilder.property(key, roleProperties.get(key));
-//		}
+		((List<Map<String, Object>>) properties.get("roles")).parallelStream()
+            .filter( roleMap -> {
+                    String kind = (String) roleMap.get("kind");
+//                    return "insured".equals(kind)
+//                            || "applicant".equals(kind)
+//                            || "beneficiary".equals(kind);
+                    return StringUtils.isNotBlank(kind);
+                }
+            ).forEach(roleMap -> {
+                RoleDtoBuilder roleBuilder = DtoBuilders.roleOf((String) roleMap.get("kind"));
+                roleMap.entrySet().parallelStream().forEach(
+                    property -> {
+                    	roleBuilder.property(property.getKey(), property.getValue());
+                    }
+                );
+				agreementDtoBuilder.roles(roleBuilder);
+            }
+        );
 
-		RoleDtoBuilder roleDtoBuilder2 = DtoBuilders.roleOf("insured");
-		Map<String, Object> insuredProperties = ((List<Map<String, Object>>) properties.get("roles")).parallelStream().filter(o ->
-			"insured".equals(o.get("kind"))
-		).findFirst().get();
-
-		for (String key : insuredProperties.keySet()) {
-			roleDtoBuilder2.property(key, insuredProperties.get(key));
-		}
-
-		agreementDtoBuilder.roles(roleDtoBuilder2);
 		Application app = new Application(product, agreementDtoBuilder.build());
 
 		return app;
