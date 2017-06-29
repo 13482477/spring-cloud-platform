@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.web.WebResult;
-import com.siebre.uaa.role.entity.Role;
 import com.siebre.uaa.role.service.RoleService;
 import com.siebre.uaa.user.entity.User;
 import com.siebre.uaa.user.service.UserService;
@@ -22,9 +21,6 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-
-	@Autowired
-	private RoleService roleService;
 
 	/**
 	 * 用户信息根据pageInfo分页展示
@@ -56,7 +52,7 @@ public class UserController {
 	/**
 	 * 创建用户
 	 * 
-	 * @param user
+	 * @param user;
 	 *            用户信息
 	 * @return 创建成功|失败
 	 */
@@ -73,24 +69,13 @@ public class UserController {
 	 *            用户信息
 	 * @return 更新成功|失败
 	 */
-	@RequestMapping(value = "/api/v1/user", method = RequestMethod.PUT)
-	public WebResult<User> updateUser(@RequestBody User user) {
+	@RequestMapping(value = "/api/v1/user/{userId}", method = RequestMethod.PUT)
+	public WebResult<User> updateUser(@PathVariable("userId")Long userId, @RequestBody User user) {
+		user.setId(userId);
 		userService.updateUser(user);
 		return WebResult.<User>builder().returnCode("200").data(user).build();
 	}
 
-	/**
-	 * 用户角色信息
-	 * 
-	 * @param id
-	 *            用户id
-	 * @return 用户所属的角色列表
-	 */
-	@RequestMapping(value = "/api/v1/roles/user/{userId}", method = RequestMethod.GET)
-	public WebResult<List<Role>> userRole(@PathVariable Long userId) {
-		List<Role> roles = this.roleService.getUserRoles(userId);
-		return WebResult.<List<Role>>builder().returnCode("200").data(roles).build();
-	}
 
 	/**
 	 * 更新用户角色信息

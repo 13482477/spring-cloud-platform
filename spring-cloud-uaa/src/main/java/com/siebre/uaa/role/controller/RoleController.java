@@ -55,5 +55,18 @@ public class RoleController {
 		this.roleService.grant(roleId, resourceIds);
 		return WebResult.<Object>builder().returnCode("200").build();
 	}
+	
+	/**
+	 * 用户角色信息
+	 * 
+	 * @param id
+	 *            用户id
+	 * @return 用户所属的角色列表
+	 */
+	@RequestMapping(value = "/api/v1/roles/user/{userId}", method = RequestMethod.GET)
+	public WebResult<List<Role>> userRole(@PathVariable Long userId) {
+		List<Role> roles = this.roleService.getUserRoles(userId);
+		return WebResult.<List<Role>>builder().returnCode("200").data(roles).build();
+	}
 
 }
