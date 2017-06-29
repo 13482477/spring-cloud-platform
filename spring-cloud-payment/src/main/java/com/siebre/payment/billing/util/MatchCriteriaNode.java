@@ -1,14 +1,12 @@
 package com.siebre.payment.billing.util;
 
 import com.siebre.payment.billing.entity.ReconDataField;
-import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Created by tianci.huang on 2017/6/29.
+ * @author Huang Tianci
  */
 public class MatchCriteriaNode {
 

@@ -8,7 +8,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Created by tianci.huang on 2017/6/29.
+ * @author Huang Tianci 2017/6/29.
+ * 对账表达式解析引擎 v1.0
+ * 目前只支持表达式中包含一对括号的情况
  */
 public class MatchCriteriaEngine {
 
