@@ -37,7 +37,7 @@ import com.siebre.security.voter.FullyMatchRoleVoter;
 @SuppressWarnings("deprecation")
 @Configuration
 @AutoConfigureAfter(value = RibbonAutoConfiguration.class)
-public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -46,7 +46,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 		.authorizeRequests()
 			.antMatchers("/login").permitAll()
 //			.antMatchers("/**").permitAll()
-			.anyRequest().authenticated()
+//			.anyRequest().authenticated()
 			.and()
 //		.formLogin()
 //			.loginPage("/login.html")
@@ -54,6 +54,8 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 //			.defaultSuccessUrl("/index.html")
 //			.and()
 		.addFilterAt(restUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+		
+		.addFilterBefore(this.filterSecurityInterceptor(), FilterSecurityInterceptor.class)
 			
 		.logout()
 			.logoutUrl("/logout")
@@ -118,8 +120,8 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		web
-			.debug(true)
-			.securityInterceptor(this.filterSecurityInterceptor());
+			.debug(true);
+//			.securityInterceptor(this.filterSecurityInterceptor());
 	}
 	
 	@Bean
