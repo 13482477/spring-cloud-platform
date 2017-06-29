@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="GBK"?>
-<product kind="Marketable Product" name="福建航意险" seqIndex="0" externalReference="FJHYXtestjml41" instanceClassName="InsurancePolicy" shortName="福建航意险" groupType="PERSONAL" sellChannelType="RemoteSell">
+<product kind="Marketable Product" name="福建航意险" seqIndex="0" externalReference="FJHYXtestjml43" instanceClassName="InsurancePolicy" shortName="福建航意险" groupType="PERSONAL" sellChannelType="RemoteSell">
 	<description>人保寿险公共交通工具意外伤害保险（新标准版）</description>
 	<baseSpec version="0" />
 	<properties>
@@ -113,8 +113,20 @@
 
 							def insured = context.getRoleOfKind("Insured");
 							System.out.println("insured.birthDate=====" + insured.birthDate);
-							def birth = new java.text.SimpleDateFormat("yyyyMMdd").format(insured.birthDate);
-							def age = 2017 - Integer.parseInt(birth.substring(0,4));
+
+							Calendar cal = Calendar.getInstance();
+							def yearNow = cal.get(Calendar.YEAR);
+							def monthNow = cal.get(Calendar.MONTH)+1;
+							def dayOfMonthNow = cal.get(Calendar.DAY_OF_MONTH);
+
+							cal.setTime(insured.birthDate);
+							def yearBirth = cal.get(Calendar.YEAR);
+							def monthBirth = cal.get(Calendar.MONTH);
+							def dayOfMonthBirth = cal.get(Calendar.DAY_OF_MONTH);
+							def age = yearNow - yearBirth;
+							if(monthNow == monthBirth && dayOfMonthNow < dayOfMonthBirth) {
+								age = age - 1 ;
+							}
 							System.out.println("age====" + age);
 							def socialInsuranceCoverd = insured.getSmfProperty("socialInsuranceCoverd");
 							System.out.println("socialInsuranceCoverd==="+socialInsuranceCoverd);
