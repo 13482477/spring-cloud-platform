@@ -7,5 +7,7 @@ public enum ResourceType {
 	RESOURCE,
 
 	SYSTEM,
+
+	ROOT
 	;
 }
