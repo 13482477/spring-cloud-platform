@@ -405,6 +405,14 @@ public class ReconcileManager {
      */
     private boolean match(JsonNode remoteJN, JsonNode localJN, ReconMatchRule matchRule) {
         String matchCriteria = matchRule.getMatchCriteria();
+        //TODO 目前表达式规定只能解析一层括号
+        if(matchCriteria.contains("(")) {
+            int start = StringUtils.indexOf(matchCriteria, "(") + 1;
+            int end = StringUtils.indexOf(matchCriteria, ")");
+
+        } else {
+
+        }
         String[] crits = matchCriteria.split("=");
 
         String remoteValue = remoteJN.get(crits[0]).getTextValue();
