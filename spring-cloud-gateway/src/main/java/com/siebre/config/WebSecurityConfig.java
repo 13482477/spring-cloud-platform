@@ -41,25 +41,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
 		http
 		.authorizeRequests()
 			.antMatchers("/login").permitAll()
-//			.antMatchers("/**").permitAll()
-//			.anyRequest().authenticated()
 			.and()
-//		.formLogin()
-//			.loginPage("/login.html")
-//			.loginProcessingUrl("/login")
-//			.defaultSuccessUrl("/index.html")
-//			.and()
 		.addFilterAt(restUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-		
 		.addFilterBefore(this.filterSecurityInterceptor(), FilterSecurityInterceptor.class)
-			
 		.logout()
 			.logoutUrl("/logout")
-			.logoutSuccessUrl("/login.html")
 			.invalidateHttpSession(true)
 			.and()
 		.csrf()
@@ -121,7 +110,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) throws Exception {
 		web
 			.debug(true);
-//			.securityInterceptor(this.filterSecurityInterceptor());
 	}
 	
 	@Bean
