@@ -45,7 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.authorizeRequests()
 			.antMatchers("/login").permitAll()
 			.and()
-		.addFilterAt(restUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+		.addFilterAt(this.restUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 		.addFilterBefore(this.filterSecurityInterceptor(), FilterSecurityInterceptor.class)
 		.logout()
 			.logoutUrl("/logout")
