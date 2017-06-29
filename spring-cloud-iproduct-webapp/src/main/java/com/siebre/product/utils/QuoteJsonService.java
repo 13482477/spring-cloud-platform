@@ -16,6 +16,7 @@ import java.util.Map;
 
 import com.siebre.agreement.dto.annotation.Roles;
 import com.siebre.agreement.dto.support.RoleDtoBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,24 +76,25 @@ public class QuoteJsonService {
 			agreementDtoBuilder.property(key, properties.get(key));
 		}
 
-//		ArrayList<Object> roles = (ArrayList<Object>)properties.get("roles");
-//		String insuredRole = (String)roles.get(0);
-//		Map<String, Object> roleProperties = jsonMapper.readValue(insuredRole, HashMap.class);
-//		RoleDtoBuilder roleDtoBuilder = DtoBuilders.roleOf(roleProperties.get("kind").toString());
-//		for (String key : roleProperties.keySet()) {
-//			roleDtoBuilder.property(key, roleProperties.get(key));
-//		}
+		((List<Map<String, Object>>) properties.get("roles")).parallelStream()
+            .filter( roleMap -> {
+                    String kind = (String) roleMap.get("kind");
+//                    return "insured".equals(kind)
+//                            || "applicant".equals(kind)
+//                            || "beneficiary".equals(kind);
+                    return StringUtils.isNotBlank(kind);
+                }
+            ).forEach(roleMap -> {
+                RoleDtoBuilder roleBuilder = DtoBuilders.roleOf((String) roleMap.get("kind"));
+                roleMap.entrySet().parallelStream().forEach(
+                    property -> {
+                        roleBuilder.property(property.getKey(), property.getValue());
+                        agreementDtoBuilder.roles(roleBuilder);
+                    }
+                );
+            }
+        );
 
-		RoleDtoBuilder roleDtoBuilder2 = DtoBuilders.roleOf("insured");
-		Map<String, Object> insuredProperties = ((List<Map<String, Object>>) properties.get("roles")).parallelStream().filter(o -> {
-			return "insured".equals(o.get("kind"));
-		}).findFirst().get();
-
-		for (String key : insuredProperties.keySet()) {
-			roleDtoBuilder2.property(key, insuredProperties.get(key));
-		}
-
-		agreementDtoBuilder.roles(roleDtoBuilder2);
 		Application app = new Application(product, agreementDtoBuilder.build());
 
 		return app;
