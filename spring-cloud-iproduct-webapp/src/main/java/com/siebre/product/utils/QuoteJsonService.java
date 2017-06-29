@@ -1,34 +1,29 @@
 package com.siebre.product.utils;
 
 
-import static com.siebre.agreement.builder.SmfSpecBuilders.calculation;
-import static com.siebre.agreement.builder.SmfSpecBuilders.propertySpec;
-import static com.siebre.agreement.builder.SmfSpecBuilders.requestSpec;
-import static com.siebre.product.builder.ProductBuilders.marketableProduct;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.siebre.agreement.dto.annotation.Roles;
-import com.siebre.agreement.dto.support.RoleDtoBuilder;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.siebre.agreement.dto.support.AgreementDtoBuilder;
 import com.siebre.agreement.dto.support.DtoBuilders;
+import com.siebre.agreement.dto.support.RoleDtoBuilder;
 import com.siebre.policy.application.Application;
 import com.siebre.product.InsuranceProduct;
 import com.siebre.product.repository.InsuranceProductRepository;
 import com.siebre.smf.SmfRole;
 import com.siebre.smf.groovy.GroovyMetaClassEnhancer;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.siebre.agreement.builder.SmfSpecBuilders.*;
+import static com.siebre.product.builder.ProductBuilders.marketableProduct;
 
 @Service
 @Transactional
@@ -84,9 +79,9 @@ public class QuoteJsonService {
 //		}
 
 		RoleDtoBuilder roleDtoBuilder2 = DtoBuilders.roleOf("insured");
-		Map<String, Object> insuredProperties = ((List<Map<String, Object>>) properties.get("roles")).parallelStream().filter(o -> {
-			return "insured".equals(o.get("kind"));
-		}).findFirst().get();
+		Map<String, Object> insuredProperties = ((List<Map<String, Object>>) properties.get("roles")).parallelStream().filter(o ->
+			"insured".equals(o.get("kind"))
+		).findFirst().get();
 
 		for (String key : insuredProperties.keySet()) {
 			roleDtoBuilder2.property(key, insuredProperties.get(key));
