@@ -9,27 +9,27 @@ import java.util.List;
  * Project:siebre-cloud-platform
  * Version:1.0
  */
-@XmlRootElement(name = "r")
+@XmlRootElement(name = "resource")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType
 public class ResourceDTO {
 
-    @XmlAttribute(name="t")
+    @XmlAttribute(name="type")
     private String type;
 
-    @XmlAttribute(name="n")
+    @XmlAttribute(name="name")
     private String name;
 
-    @XmlAttribute(name="c")
+    @XmlAttribute(name="code")
     private String code;
 
-    @XmlAttribute(name="u")
+    @XmlAttribute(name="url")
     private String url;
 
-    @XmlAttribute(name="d")
+    @XmlAttribute(name="description")
     private String description;
 
-    @XmlElement(name="r")
+    @XmlElement(name="resource")
     private List<ResourceDTO> resourceList = new ArrayList<>();
 
     public String getType() {

@@ -1,6 +1,8 @@
-<?xml version="1.0" standalone="no"?>    
+<?xml version="1.0" ?>
+<!-- 
 <!DOCTYPE resource SYSTEM "resource-config.dtd" >
-<resource code="SPRING_PLANTFORM" name="新保云" type="MENU">
+ -->    
+<resource code="SPRING_PLANTFORM" name="新保云" type="ROOT">
 	<resource code="SPRING_UAA" name="用户中心" type="SYSTEM">
 		<resource 
 				name="权限查询(角色ID)"
@@ -117,6 +119,34 @@
 				code="UAA_USER_LOAD_BY_USER_NAME" 
 				url="/uaa/api/v1/user/loadUserByUserName/{username}" 
 				httpMethod="GET" 
+				/>
+		<resource 
+				name="用户信息校验" 
+				type="RESOURCE" 
+				code="UAA_USER_VALIDATION" 
+				url="/uaa/api/v1/user/validation/{username}" 
+				httpMethod="GET" 
+				/>
+		<resource 
+				name="用户明细查询" 
+				type="RESOURCE" 
+				code="UAA_USER_LOAD_DETAIL" 
+				url="/uaa/api/v1/user/{id}" 
+				httpMethod="GET" 
+				/>
+		<resource 
+				name="用户角色分配" 
+				type="RESOURCE" 
+				code="UAA_USER_ROLE_ASSIGEMENT" 
+				url="/uaa/api/v1/user/{userId}/role" 
+				httpMethod="POST"
+				/>
+		<resource 
+				name="用户列表查询" 
+				type="RESOURCE" 
+				code="UAA_USER_FIND" 
+				url="/uaa/api/v1/users" 
+				httpMethod="GET"
 				/>
 	</resource>
 </resource>
