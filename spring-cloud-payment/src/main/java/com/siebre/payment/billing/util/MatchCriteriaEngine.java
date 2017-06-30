@@ -75,7 +75,6 @@ public class MatchCriteriaEngine {
             setRightNode(temp[2], root);
         } else { //仅有一个等号
             root.setLeaf(true);
-            return;
         }
     }
 
@@ -104,7 +103,9 @@ public class MatchCriteriaEngine {
     /**
      * 匹配计算结果,不在乎是否包含括号
      */
-    public static boolean match(String expressionStr, JsonNode remoteJN, JsonNode localJN, List<ReconDataField> remoteDataFields, List<ReconDataField> localDataFields) throws Exception {
+    public static boolean match(String expressionStr,
+                                JsonNode remoteJN, JsonNode localJN,
+                                List<ReconDataField> remoteDataFields, List<ReconDataField> localDataFields) throws Exception {
         if(StringUtils.isBlank(expressionStr)) {
             throw new Exception("表达式为空");
         }
@@ -115,7 +116,9 @@ public class MatchCriteriaEngine {
     /**
      * 仅在表达式没有括号的情况下，匹配计算结果
      */
-    public static boolean matchWithOutBracket(String expressionStr, JsonNode remoteJN, JsonNode localJN, List<ReconDataField> remoteDataFields, List<ReconDataField> localDataFields) throws Exception {
+    public static boolean matchWithOutBracket(String expressionStr,
+                                              JsonNode remoteJN, JsonNode localJN,
+                                              List<ReconDataField> remoteDataFields, List<ReconDataField> localDataFields) throws Exception {
         if(StringUtils.isBlank(expressionStr)) {
             throw new Exception("表达式为空");
         }

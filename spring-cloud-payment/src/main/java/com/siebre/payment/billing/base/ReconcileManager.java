@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.siebre.basic.applicationcontext.SpringContextUtil;
 import com.siebre.payment.billing.entity.*;
 import com.siebre.payment.billing.mapper.*;
+import com.siebre.payment.billing.util.MatchCriteriaEngine;
 import com.siebre.payment.entity.enums.PaymentOrderCheckStatus;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
@@ -98,13 +99,18 @@ public class ReconcileManager {
 
         dataSetMapper.deleteAll();
 
-        ReconDataSource remoteDS = extractRemoteDataSet(reconJob, reconJobParams);
-        ReconDataSource localDS = extractLocalDataSet(reconJob, reconJobParams);
+        ReconDataSource remoteDS = reconDataSourceMapper.selectByPrimaryKey(reconJob.getRemoteDataSource());
+        List<ReconDataField> remoteDataFields = dataFieldMapper.selectByDataSourceId(remoteDS.getId());
+        extractRemoteDataSet(reconJobParams, remoteDS, remoteDataFields);
+
+        ReconDataSource localDS = reconDataSourceMapper.selectByPrimaryKey(reconJob.getPaymentDataSource());
+        List<ReconDataField> localDataFields = dataFieldMapper.selectByDataSourceId(localDS.getId());
+        extractLocalDataSet(reconJobParams, localDS, localDataFields);
 
         List<ReconDataSet> remoteDataSets = dataSetMapper.selectByDateSourceId(remoteDS.getId());
         List<ReconDataSet> localDataSets = dataSetMapper.selectByDateSourceId(localDS.getId());
         List<ReconMatchRule> rules = matchRuleMapper.selectByJobId(reconJob.getId());
-        ReconResult reconResult = matchDataSets(remoteDataSets, localDataSets, rules, jobInstance);
+        ReconResult reconResult = matchDataSets(remoteDataFields, remoteDataSets, localDataFields, localDataSets, rules, jobInstance);
 
         jobInstance.setTransCount(reconResult.getTxnCount());
         jobInstance.setMatchedCount(reconResult.getMatchedCount());
@@ -148,8 +154,8 @@ public class ReconcileManager {
     /**
      * 获得远程对账数据集
      */
-    private ReconDataSource extractRemoteDataSet(ReconJob reconJob, Map<String, Object> reconJobParams) throws IOException {
-        ReconDataSource remoteDS = reconDataSourceMapper.selectByPrimaryKey(reconJob.getRemoteDataSource());
+    private void extractRemoteDataSet(Map<String, Object> reconJobParams, ReconDataSource remoteDS, List<ReconDataField> dataFields) throws IOException {
+
         String dsDefinition = remoteDS.getDsDefinition();
 
         Date satrtDate = (Date) reconJobParams.get("StartDate");
@@ -166,7 +172,7 @@ public class ReconcileManager {
             inputStream = new FileInputStream(file);
         }
 
-        List<ReconDataField> dataFields = dataFieldMapper.selectByDataSourceId(remoteDS.getId());
+
 
         String type = remoteDS.getType();
         String splitter = remoteDS.getSeperatorChar();
@@ -207,6 +213,7 @@ public class ReconcileManager {
                 ReconDataSet reconDataSet = new ReconDataSet();
                 String[] lineParts = line.split(splitter);
 
+                reconDataSet.setDataSourceId(remoteDS.getId());
                 reconDataSet.setLineNo(lineNo);
                 String jsonStr = toJsonStr(dataFields, lineParts);
                 reconDataSet.setLineContent(jsonStr);
@@ -219,20 +226,16 @@ public class ReconcileManager {
         }
 
         inputStream.close();
-        return remoteDS;
     }
 
     /**
      * 获得本地对账数据集
      */
-    private ReconDataSource extractLocalDataSet(ReconJob reconJob, Map<String, Object> reconJobParams) {
-        ReconDataSource localDS = reconDataSourceMapper.selectByPrimaryKey(reconJob.getPaymentDataSource());
+    private void extractLocalDataSet(Map<String, Object> reconJobParams, ReconDataSource localDS, List<ReconDataField> dataFields) {
 
         String dsDefinition = localDS.getDsDefinition();
-        Date satrtDate = (Date) reconJobParams.get("StartDate");
+        Date startDate = (Date) reconJobParams.get("StartDate");
         Date endDate = (Date) reconJobParams.get("EndDate");
-
-        List<ReconDataField> dataFields = dataFieldMapper.selectByDataSourceId(localDS.getId());
 
         try {
 
@@ -249,11 +252,10 @@ public class ReconcileManager {
                     dataSetMapper.insert(reconDataSet);
                 }
 
-            }, satrtDate, endDate);
+            }, startDate, endDate);
         } catch (DataAccessException e) {
             e.printStackTrace();
         }
-        return localDS;
     }
 
     /**
@@ -266,7 +268,9 @@ public class ReconcileManager {
      * @return reconResult 对账结果
      * @throws Exception 对账过程中出现的问题
      */
-    private ReconResult matchDataSets(List<ReconDataSet> remoteDS, List<ReconDataSet> localDS, List<ReconMatchRule> rules, ReconJobInstance jobInstance) throws Exception {
+    private ReconResult matchDataSets(List<ReconDataField> remoteDataFields, List<ReconDataSet> remoteDS,
+                                      List<ReconDataField> localDataFields, List<ReconDataSet> localDS,
+                                      List<ReconMatchRule> rules, ReconJobInstance jobInstance) throws Exception {
         ReconResult reconResult = new ReconResult();
 
         //远程对账数据集
@@ -287,7 +291,6 @@ public class ReconcileManager {
 
         ReconMatchRule pairRule = getPairRule(rules);
         String matchCriteria = pairRule.getMatchCriteria();
-        String[] pairRuleParts = matchCriteria.split("=");
 
         List<ReconMatchRule> matchRules = getMatchRules(rules);
 
@@ -295,27 +298,21 @@ public class ReconcileManager {
         while (it.hasNext()) {
             Map.Entry<JsonNode, ReconDataSet> entry = it.next();
             JsonNode remoteJN = entry.getKey();
-            JsonNode localJN = getLocalRecord(reconResult, unMatchLocalDS, remoteJN, pairRuleParts);
+            JsonNode localJN = getLocalRecord(reconResult, unMatchLocalDS, remoteJN, matchCriteria, remoteDataFields, localDataFields);
 
             if (localJN == null)
                 continue;
 
             PaymentOrder paymentOrder = orderMapper.selectByOrderNumber(localJN.get("orderNumber").getTextValue());
-            if (PaymentOrderPayStatus.PAID.equals(paymentOrder.getStatus())) {
-                String result = match(remoteJN, localJN, matchRules);
-                if (result == null) {
-                    createReconItem(jobInstance, remoteJN, localJN, "MATCH");
-                    paymentOrder.setCheckStatus(PaymentOrderCheckStatus.SUCCESS);
-                } else {
-                    createReconItem(jobInstance, remoteJN, localJN, "UNMATCH");
-                    paymentOrder.setCheckStatus(PaymentOrderCheckStatus.FAIL);
-                }
-                paymentOrder.setCheckTime(new Date());
+            if (PaymentOrderPayStatus.PAID.equals(paymentOrder.getStatus())) {  //订单状态为支付成功的
+                processPaidOrderMatch(remoteDataFields, localDataFields, jobInstance, matchRules, remoteJN, localJN, paymentOrder);
+            } else if(PaymentOrderPayStatus.REFUNDERROR.equals(paymentOrder.getStatus()) && paymentOrder.getRefundAmount().compareTo(BigDecimal.ZERO) == 0) {
+                //订单状态为退款失败，但是退款金额为0的，实际上也是支付成功的订单
+                processPaidOrderMatch(remoteDataFields, localDataFields, jobInstance, matchRules, remoteJN, localJN, paymentOrder);
             } else {
-                createReconItem(jobInstance, remoteJN, localJN, "UNMATCH");
+                //远端支付成功，本地支付失败  TODO  有问题：本地无法确定是支付失败的状态
+                createReconItem(jobInstance, remoteJN, localJN, "UNMATCH", "远端支付成功，本地支付失败");
                 paymentOrder.setCheckStatus(PaymentOrderCheckStatus.FAIL);
-                //TODO why
-                //paymentOrder.set("Description", "远端成功，本地失败。");
             }
 
             orderMapper.updateByPrimaryKeySelective(paymentOrder);
@@ -327,22 +324,21 @@ public class ReconcileManager {
         }
 
         for (Map.Entry<JsonNode, ReconDataSet> record : unMatchRemoteDS.entrySet()) {
-            createReconItem(jobInstance, record.getKey(), null, "UNMATCH");
+            createReconItem(jobInstance, record.getKey(), null, "UNMATCH", "未在本地找到对应业务数据");
             reconResult.setTxnCount(reconResult.getTxnCount() + 1);
         }
 
         for (Map.Entry<JsonNode, ReconDataSet> record : unMatchLocalDS.entrySet()) {
             JsonNode localJN = record.getKey();
-            createReconItem(jobInstance, null, localJN, "UNMATCH");
+            createReconItem(jobInstance, null, localJN, "UNMATCH", "未在远程找到对应的业务数据");
             reconResult.setTxnCount(reconResult.getTxnCount() + 1);
 
             PaymentOrder paymentOrder = orderMapper.selectByOrderNumber(localJN.get("orderNumber").getTextValue());
+            //TODO 未在远程找到对于的数据 订单状态如何更新
             if (PaymentOrderPayStatus.PAID.equals(paymentOrder.getStatus())) {
                 paymentOrder.setCheckStatus(PaymentOrderCheckStatus.FAIL);
-                //paymentOrder.set("Description", "无远端记录");
-            } else {
-                paymentOrder.setCheckStatus(PaymentOrderCheckStatus.SUCCESS);
-                //paymentOrder.set("Description", "对账成功");
+            } else if (PaymentOrderPayStatus.REFUNDERROR.equals(paymentOrder.getStatus()) && paymentOrder.getRefundAmount().compareTo(BigDecimal.ZERO) == 0) {
+                paymentOrder.setCheckStatus(PaymentOrderCheckStatus.FAIL);
             }
             orderMapper.updateByPrimaryKeySelective(paymentOrder);
         }
@@ -350,10 +346,25 @@ public class ReconcileManager {
         return reconResult;
     }
 
+    /** 对支付成功的订单进行对账规则匹配 */
+    private void processPaidOrderMatch(List<ReconDataField> remoteDataFields, List<ReconDataField> localDataFields, ReconJobInstance jobInstance, List<ReconMatchRule> matchRules, JsonNode remoteJN, JsonNode localJN, PaymentOrder paymentOrder) {
+        String result = match(remoteJN, localJN, matchRules, remoteDataFields, localDataFields);
+        if (result == null) {
+            //匹配成功
+            createReconItem(jobInstance, remoteJN, localJN, "MATCH", "匹配成功");
+            paymentOrder.setCheckStatus(PaymentOrderCheckStatus.SUCCESS);
+        } else {
+            //匹配失败
+            createReconItem(jobInstance, remoteJN, localJN, "UNMATCH", "匹配失败");
+            paymentOrder.setCheckStatus(PaymentOrderCheckStatus.FAIL);
+        }
+        paymentOrder.setCheckTime(new Date());
+    }
+
     /**
      * 创建对账明细（结果）
      */
-    private void createReconItem(ReconJobInstance reconJobInstance, JsonNode remoteJS, JsonNode localJS, String reconResult) {
+    private void createReconItem(ReconJobInstance reconJobInstance, JsonNode remoteJS, JsonNode localJS, String reconResult, String message) {
         ReconItem reconItem = new ReconItem();
 
         if (localJS != null) {
@@ -372,11 +383,6 @@ public class ReconcileManager {
             reconItem.set("PaymentAmount", getTextValue(remoteJS, "TotalFee"));*/
         }
 
-        String message = "";
-        if (remoteJS == null)
-            message = "无远端记录";
-        if (localJS == null)
-            message = "无本地记录";
 
         reconItem.setReconResult(reconResult);
         reconItem.setDescription(message);
@@ -392,9 +398,10 @@ public class ReconcileManager {
     /**
      * 根据所有匹配规则类型为MATCH的规则进行匹配，已确定两笔记录是否相同
      */
-    private String match(JsonNode remoteJN, JsonNode localJN, List<ReconMatchRule> matchRules) {
+    private String match(JsonNode remoteJN, JsonNode localJN, List<ReconMatchRule> matchRules,
+                         List<ReconDataField> remoteDataFields, List<ReconDataField> localDataFields) {
         for (ReconMatchRule matchRule : matchRules) {
-            if (!match(remoteJN, localJN, matchRule))
+            if (!match(remoteJN, localJN, matchRule, remoteDataFields, localDataFields))
                 return matchRule.getName();
         }
         return null;
@@ -403,51 +410,33 @@ public class ReconcileManager {
     /**
      * 对一条规则执行校验
      */
-    private boolean match(JsonNode remoteJN, JsonNode localJN, ReconMatchRule matchRule) {
+    private boolean match(JsonNode remoteJN, JsonNode localJN, ReconMatchRule matchRule,
+                          List<ReconDataField> remoteDataFields, List<ReconDataField> localDataFields) {
         String matchCriteria = matchRule.getMatchCriteria();
-        //TODO 目前表达式规定只能解析一层括号
-        if(matchCriteria.contains("(")) {
-            int start = StringUtils.indexOf(matchCriteria, "(") + 1;
-            int end = StringUtils.indexOf(matchCriteria, ")");
-
-        } else {
-
+        boolean result = false;
+        try {
+            result = MatchCriteriaEngine.match(matchCriteria, remoteJN, localJN, remoteDataFields, localDataFields);
+        } catch (Exception e) {
+            logger.debug("匹配规则失败", e);
         }
-        String[] crits = matchCriteria.split("=");
-
-        String remoteValue = remoteJN.get(crits[0]).getTextValue();
-        String localValue = localJN.get(crits[1]).getTextValue();
-
-        return remoteValue.equals(localValue);
+        return result;
     }
 
     /**
      * 获得本地对应的对账数据
      */
-    private JsonNode getLocalRecord(ReconResult reconResult, Map<JsonNode, ReconDataSet> unMatchLocalDS, JsonNode remoteJN, String[] keys) {
-        String remoteKey = keys[0];
-        String localKey = keys[1];
-
-        for (int i = 0; i < keys.length; i++) {
-            if (keys[i].contains("#1")) {
-                remoteKey = keys[i].split("\\.")[1];
-                continue;
-            }
-            if(keys[i].contains("#2")) {
-                localKey = keys[i].split("\\.")[1];
-                continue;
-            }
-        }
-
-        String remoteValue = remoteJN.get(remoteKey).getTextValue();
+    private JsonNode getLocalRecord(ReconResult reconResult, Map<JsonNode, ReconDataSet> unMatchLocalDS, JsonNode remoteJN,
+                                    String matchCriteria, List<ReconDataField> remoteDataFields, List<ReconDataField> localDataFields) {
 
         for (JsonNode localJS : unMatchLocalDS.keySet()) {
-            String localValue = localJS.get(localKey).getTextValue();
-
-            if (remoteValue.equalsIgnoreCase(localValue)) {
-                reconResult.setTxnCount(reconResult.getTxnCount() + 1);
-                reconResult.setMatchedCount(reconResult.getMatchedCount() + 1);
-                return localJS;
+            try {
+                if (MatchCriteriaEngine.matchWithOutBracket(matchCriteria, remoteJN, localJS, remoteDataFields, localDataFields)) {
+                    reconResult.setTxnCount(reconResult.getTxnCount() + 1);
+                    reconResult.setMatchedCount(reconResult.getMatchedCount() + 1);
+                    return localJS;
+                }
+            } catch (Exception e) {
+                logger.debug("业务数据匹配失败，失败原因：", e);
             }
         }
         return null;
