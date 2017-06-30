@@ -3,6 +3,8 @@ package com.siebre.payment.billing.util;
 import com.siebre.payment.billing.entity.ReconDataField;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.List;
  */
 public class MatchCriteriaEngine {
 
+    private static Logger logger = LoggerFactory.getLogger(MatchCriteriaEngine.class);
+
     public static String left_bracket = "(";
 
     public static String right_bracket = ")";
@@ -24,8 +28,11 @@ public class MatchCriteriaEngine {
 
     public static String or = "or";
 
-    /** 解析表达式 */
+    /**
+     * 解析表达式
+     */
     private static MatchCriteriaNode analysisExpression(String expressionStr) {
+        logger.info("解析表达式：{}", expressionStr);
         MatchCriteriaNode root = new MatchCriteriaNode();
         root.setExpressionStr(expressionStr);
         root.setParent(null);
@@ -72,7 +79,9 @@ public class MatchCriteriaEngine {
             String[] temp = expressionStr.split("\\s");
             setLeftNode(temp[0], root);
             root.setLeftRightRelation(temp[1]);
-            setRightNode(temp[2], root);
+            int subLength = temp[0].length() + temp[1].length() + 1;
+            String nextStr = StringUtils.substring(expressionStr, subLength, expressionStr.length());
+            setRightNode(nextStr, root);
         } else { //仅有一个等号
             root.setLeaf(true);
         }
@@ -81,6 +90,7 @@ public class MatchCriteriaEngine {
     /** 设置右节点 */
     private static void setRightNode(String nextStr, MatchCriteriaNode parent) {
         nextStr = StringUtils.trim(nextStr);
+        logger.info("左表达式：{}", nextStr);
         MatchCriteriaNode rightNode = new MatchCriteriaNode();
         rightNode.setExpressionStr(nextStr);
         rightNode.setParent(parent);
@@ -92,6 +102,7 @@ public class MatchCriteriaEngine {
     /** 设置左节点 */
     private static void setLeftNode(String substring, MatchCriteriaNode parent) {
         substring = StringUtils.trim(substring);
+        logger.info("右表达式：{}", substring);
         MatchCriteriaNode leftNode = new MatchCriteriaNode();
         leftNode.setExpressionStr(substring);
         leftNode.setParent(parent);
@@ -110,6 +121,7 @@ public class MatchCriteriaEngine {
             throw new Exception("表达式为空");
         }
         MatchCriteriaNode root = analysisExpression(expressionStr);
+        logger.info("开始计算");
         return root.calculate(remoteJN, localJN, remoteDataFields, localDataFields);
     }
 

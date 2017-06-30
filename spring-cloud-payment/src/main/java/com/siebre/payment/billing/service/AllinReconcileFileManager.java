@@ -75,6 +75,7 @@ public class AllinReconcileFileManager extends ReconcileFileManager {
     @Override
     protected File convertFile(byte[] bytes, Date startDate, Date endDate) {
         String localDir = AllinpayConfig.LOCAL_DIR;
+        PaymentChannel channel = channelService.queryByChannelCode(AllinpayConfig.CHANNEL_CODE).getData();
 
         File outputDir = new File(localDir);
 
@@ -83,7 +84,7 @@ public class AllinReconcileFileManager extends ReconcileFileManager {
 
         StringBuilder filePath = new StringBuilder(localDir);
         filePath.append("PDS");
-        filePath.append(AllinpayConfig.CHANNEL_CODE);
+        filePath.append(channel.getMerchantCode());
         filePath.append(DateFormatUtils.format(startDate, "yyyyMMddHHmmss"));
         filePath.append("-");
         filePath.append(DateFormatUtils.format(endDate, "yyyyMMddHHmmss"));

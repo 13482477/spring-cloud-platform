@@ -2,6 +2,8 @@ package com.siebre.payment.billing.util;
 
 import com.siebre.payment.billing.entity.ReconDataField;
 import org.codehaus.jackson.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -9,6 +11,8 @@ import java.util.List;
  * @author Huang Tianci
  */
 public class MatchCriteriaNode {
+
+    private Logger logger = LoggerFactory.getLogger(MatchCriteriaNode.class);
 
     //父节点
     private MatchCriteriaNode parent;
@@ -31,8 +35,10 @@ public class MatchCriteriaNode {
     /** 计算表达式 */
     public boolean calculate(JsonNode remoteJN, JsonNode localJN, List<ReconDataField> remoteDataFields, List<ReconDataField> localDataFields) throws Exception {
         if(isLeaf) {
+            logger.info("当前节点是叶子节点，表达式：{}", expressionStr);
             return MatchCriteriaEngine.matchWithOutBracket(expressionStr, remoteJN, localJN, remoteDataFields, localDataFields);
         } else {
+            logger.info("当前节点是父节点，子节点关系：{}，计算子节点, 左节点表达式：{}，右节点表达式：{}", leftRightRelation, leftChild.getExpressionStr(), rightChild.getExpressionStr());
             if(MatchCriteriaEngine.and.equals(leftRightRelation)) {
                 return leftChild.calculate(remoteJN, localJN, remoteDataFields, localDataFields) &&
                         rightChild.calculate(remoteJN, localJN, remoteDataFields, localDataFields);

@@ -1,5 +1,6 @@
 package com.siebre.payment.billing;
 
+import com.siebre.payment.billing.base.ReconcileManager;
 import com.siebre.payment.billing.service.AllinReconcileFileManager;
 import com.siebre.payment.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,16 @@ public class ReconcileController {
     @Autowired
     private AllinReconcileFileManager allinReconcileFileManager;
 
+    @Autowired
+    private ReconcileManager reconcileManager;
+
     @RequestMapping(value = "/test/reconclie", method = RequestMethod.GET)
     public void testReconcile(HttpServletResponse response) {
+        reconcileManager.runReconJob("allin-pay-realtime-reconcile-job");
+    }
+
+    @RequestMapping(value = "/test/reconclie/allin", method = RequestMethod.GET)
+    public void testReconcileAllin(HttpServletResponse response) {
         Date today = new Date();
         Date start = DateUtil.getDayStart(today);
         Date end = DateUtil.getDayEnd(today);

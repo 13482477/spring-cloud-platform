@@ -2,6 +2,7 @@ package com.siebre.payment.billing.base;
 
 import com.google.common.collect.Lists;
 import com.siebre.basic.applicationcontext.SpringContextUtil;
+import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.billing.entity.*;
 import com.siebre.payment.billing.mapper.*;
 import com.siebre.payment.billing.util.MatchCriteriaEngine;
@@ -71,8 +72,9 @@ public class ReconcileManager {
      * 由定时器启动对账任务
      */
     public void runReconJob(String reconJobName) {
+        logger.info("开始对账");
         Date transDate = new Date();
-        transDate = DateUtils.addDays(transDate, -1);
+        transDate = DateUtils.addDays(transDate, -2);
         Date satrtDate = DateUtil.getDayStart(transDate);
         Date endDate = DateUtil.getDayEnd(transDate);
 
@@ -114,7 +116,9 @@ public class ReconcileManager {
 
         jobInstance.setTransCount(reconResult.getTxnCount());
         jobInstance.setMatchedCount(reconResult.getMatchedCount());
-        jobInstanceMapper.insert(jobInstance);
+        jobInstance.setReconcileStatus("Completed");
+        jobInstanceMapper.updateByPrimaryKeySelective(jobInstance);
+        logger.info("对账完成");
 
         //TODO 发送邮件通知相关人员 sendReconResultToMail(reconJobParams);
 
@@ -141,6 +145,7 @@ public class ReconcileManager {
 
         ReconJobInstance jobInstance = new ReconJobInstance();
 
+        jobInstance.setReconJobId(reconJob.getId());
         jobInstance.setChannelCode(reconJob.getChannelCode());
         jobInstance.setTransDate((Date) reconJobParams.get("TransDate"));
         jobInstance.setReconcileTime(new Date());
@@ -238,7 +243,6 @@ public class ReconcileManager {
         Date endDate = (Date) reconJobParams.get("EndDate");
 
         try {
-
             jdbcTemplate.query(dsDefinition, new RowCallbackHandler() {
 
                 public void processRow(ResultSet rs) throws SQLException {
@@ -303,17 +307,9 @@ public class ReconcileManager {
             if (localJN == null)
                 continue;
 
-            PaymentOrder paymentOrder = orderMapper.selectByOrderNumber(localJN.get("orderNumber").getTextValue());
-            if (PaymentOrderPayStatus.PAID.equals(paymentOrder.getStatus())) {  //订单状态为支付成功的
-                processPaidOrderMatch(remoteDataFields, localDataFields, jobInstance, matchRules, remoteJN, localJN, paymentOrder);
-            } else if(PaymentOrderPayStatus.REFUNDERROR.equals(paymentOrder.getStatus()) && paymentOrder.getRefundAmount().compareTo(BigDecimal.ZERO) == 0) {
-                //订单状态为退款失败，但是退款金额为0的，实际上也是支付成功的订单
-                processPaidOrderMatch(remoteDataFields, localDataFields, jobInstance, matchRules, remoteJN, localJN, paymentOrder);
-            } else {
-                //远端支付成功，本地支付失败  TODO  有问题：本地无法确定是支付失败的状态
-                createReconItem(jobInstance, remoteJN, localJN, "UNMATCH", "远端支付成功，本地支付失败");
-                paymentOrder.setCheckStatus(PaymentOrderCheckStatus.FAIL);
-            }
+            PaymentOrder paymentOrder = orderMapper.selectByOrderNumber(localJN.get("order_number").getTextValue());
+            //业务复杂性交给匹配表达式
+            processPaidOrderMatch(remoteDataFields, localDataFields, jobInstance, matchRules, remoteJN, localJN, paymentOrder);
 
             orderMapper.updateByPrimaryKeySelective(paymentOrder);
 
@@ -333,8 +329,7 @@ public class ReconcileManager {
             createReconItem(jobInstance, null, localJN, "UNMATCH", "未在远程找到对应的业务数据");
             reconResult.setTxnCount(reconResult.getTxnCount() + 1);
 
-            PaymentOrder paymentOrder = orderMapper.selectByOrderNumber(localJN.get("orderNumber").getTextValue());
-            //TODO 未在远程找到对于的数据 订单状态如何更新
+            PaymentOrder paymentOrder = orderMapper.selectByOrderNumber(localJN.get("order_number").getTextValue());
             if (PaymentOrderPayStatus.PAID.equals(paymentOrder.getStatus())) {
                 paymentOrder.setCheckStatus(PaymentOrderCheckStatus.FAIL);
             } else if (PaymentOrderPayStatus.REFUNDERROR.equals(paymentOrder.getStatus()) && paymentOrder.getRefundAmount().compareTo(BigDecimal.ZERO) == 0) {
@@ -367,23 +362,14 @@ public class ReconcileManager {
     private void createReconItem(ReconJobInstance reconJobInstance, JsonNode remoteJS, JsonNode localJS, String reconResult, String message) {
         ReconItem reconItem = new ReconItem();
 
+        reconItem.setTransId(reconJobInstance.getId());
         if (localJS != null) {
             reconItem.setOrderNumber(getTextValue(localJS, "OrderNumber"));
-            /*reconItem.set("PaymentRequestId", getTextValue(localJS, "Oid"));
-            reconItem.set("TransTime", getTextValue(localJS, "StartTime"));
-            reconItem.set("PaySuccessTime", getTextValue(localJS, "EndTime"));
-            reconItem.set("OutTradeNo", getTextValue(localJS, "OutTradeNo"));
-            reconItem.set("PaymentAmount", getTextValue(localJS, "TotalFee"));*/
-        } else if (remoteJS != null) {
-            reconItem.setOrderNumber(getTextValue(localJS, "OrderNumber"));
-            /*reconItem.set("PaymentRequestId", getTextValue(remoteJS, "Oid"));
-            reconItem.set("TransTime", getTextValue(remoteJS, "StartTime"));
-            reconItem.set("PaySuccessTime", getTextValue(remoteJS, "EndTime"));
-            reconItem.set("OutTradeNo", getTextValue(remoteJS, "OutTradeNo"));
-            reconItem.set("PaymentAmount", getTextValue(remoteJS, "TotalFee"));*/
+            reconItem.setPaymentDataSourceJsonStr(JsonUtil.toJson(localJS, true));
         }
-
-
+        if (remoteJS != null) {
+            reconItem.setRemoteDataSourceJsonStr(JsonUtil.toJson(remoteJS, true));
+        }
         reconItem.setReconResult(reconResult);
         reconItem.setDescription(message);
 
