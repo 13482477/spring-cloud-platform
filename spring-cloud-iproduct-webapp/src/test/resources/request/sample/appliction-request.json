@@ -1,0 +1,10 @@
+{
+    "insuredAmount": "500000",
+    "specCode": "FJHYXtestjml14",
+    "roles": [
+    	{
+    		"kind": "insured",
+    		"birthDate": "1987-06-23"
+    	}
+    ]
+}
