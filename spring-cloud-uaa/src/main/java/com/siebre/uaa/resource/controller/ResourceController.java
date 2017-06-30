@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.siebre.basic.web.WebResult;
@@ -36,6 +34,8 @@ public class ResourceController {
 
     @RequestMapping(value ="/api/v1/resource/{id}", method = {RequestMethod.GET})
     public WebResult<Resource> load(@PathVariable Long id, HttpServletRequest request) {
+    	String token = request.getHeader("x-auth-token");
+    	System.out.println(token);
         Resource resource = resourceService.getResourceByID(id);
         return WebResult.<Resource>builder().returnCode("200").data(resource).build();
     }
