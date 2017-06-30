@@ -37,7 +37,7 @@ public class AgreementDtoJsonBuilder extends AgreementDtoBuilder {
         return super.build();
     }
 
-    protected void buildComponent(Map<String, Object> componentMap) {
+    public void buildComponent(Map<String, Object> componentMap) {
         enterComponentBinding(componentMap);
 
         componentMap.forEach((key, value) -> {
