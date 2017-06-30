@@ -74,7 +74,7 @@ public class ReconcileManager {
     public void runReconJob(String reconJobName) {
         logger.info("开始对账");
         Date transDate = new Date();
-        transDate = DateUtils.addDays(transDate, -2);
+        transDate = DateUtils.addDays(transDate, -1);
         Date satrtDate = DateUtil.getDayStart(transDate);
         Date endDate = DateUtil.getDayEnd(transDate);
 
