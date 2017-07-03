@@ -1,8 +1,10 @@
 package com.siebre.agreement.dto.support;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.siebre.agreement.dto.AgreementDto;
+import com.siebre.agreement.dto.ComponentData;
+import com.siebre.agreement.dto.annotation.support.AnnotatedDto;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -31,10 +33,14 @@ public class AgreementDtoJsonBuilderTest {
     }
 
     public void testUnmarshal() throws IOException {
-        AgreementDtoJsonBuilder builder = SiebreCloundDtoBuilders.agreementOfJson(request);
-        AgreementDto agreementDto = builder.build();
+//        AgreementDtoJsonBuilder builder = SiebreCloundDtoBuilders.agreementOfJson(request);
+//        AgreementDto agreementDto = builder.build();
+//
+//        Assert.assertEquals(agreementDto.getSpecCode(), "FJHYXtestjml14");
 
-        Assert.assertEquals(agreementDto.getSpecCode(), "FJHYXtestjml14");
+        ObjectMapper mapper = new ObjectMapper();
+        ComponentData<String, Object> componentData = mapper.readValue(request, ComponentData.class);
+        AgreementDto agreementDto = AnnotatedDto.wrapAs(componentData, AgreementDto.class);
     }
 
 }

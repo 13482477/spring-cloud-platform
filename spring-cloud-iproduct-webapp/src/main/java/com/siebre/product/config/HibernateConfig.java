@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.aspectj.AnnotationBeanConfigurerAspect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableLoadTimeWeaving;
-import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
@@ -26,13 +24,22 @@ import java.util.Properties;
 //@EnableLoadTimeWeaving
 public class HibernateConfig {
     @Value("${hibernate.dialect}")
-    String hibernateDialect;
+    String hibernate_dialect;
 
     @Value("${hibernate.show_sql}")
-    boolean hibernateShowSql;
+    boolean hibernate_showSql;
 
     @Value("${hibernate.hbm2ddl.auto}")
-    String hibernateHbm2ddlAuto;
+    String hibernate_hbm2ddl_auto;
+
+    @Value("${jdbc.master.url}")
+    String jdbc_master_url;
+
+    @Value("${jdbc.master.username}")
+    String jdbc_master_username;
+
+    @Value("${jdbc.master.password}")
+    String jdbc_master_password;
 
     @Autowired
     DataSource dataSource;
@@ -97,13 +104,13 @@ public class HibernateConfig {
     public Properties getHibernateProperties() {
         Properties properties = new Properties();
         properties.put("hibernate.dialect", "org.hibernate.dialect.SiebreMySQL5Dialect");
-        properties.put("hibernate.show_sql", hibernateShowSql);
-        properties.put("hibernate.hbm2ddl.auto", hibernateHbm2ddlAuto);
+        properties.put("hibernate.show_sql", hibernate_showSql);
+        properties.put("hibernate.hbm2ddl.auto", hibernate_hbm2ddl_auto);
         properties.put("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
 //        properties.put("hibernate.connection.provider_class", "org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl");
-        properties.put("hibernate.connection.url", "jdbc:mysql://192.168.18.158:3306/siebre-message-demo?characterEncoding=utf8");
-        properties.put("hibernate.connection.username", "root");
-        properties.put("hibernate.connection.password", "1qaz@WSX");
+        properties.put("hibernate.connection.url", jdbc_master_url);
+        properties.put("hibernate.connection.username", jdbc_master_username);
+        properties.put("hibernate.connection.password", jdbc_master_password);
         properties.put("hibernate.current_session_context_class", "org.springframework.orm.hibernate4.SpringSessionContext");
 
         return properties;
