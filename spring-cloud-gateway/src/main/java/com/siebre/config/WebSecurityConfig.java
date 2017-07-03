@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.vote.AffirmativeBased;
@@ -27,6 +28,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.siebre.security.filter.CustomerFilterSecurityInterceptor;
 import com.siebre.security.filter.RestAuthenticationFailureHandler;
 import com.siebre.security.filter.RestAuthenticationSuccessHandler;
 import com.siebre.security.filter.RestUsernamePasswordAuthenticationFilter;
@@ -44,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 		.authorizeRequests()
 			.antMatchers("/login").permitAll()
+			.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 			.and()
 		.addFilterAt(this.restUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 		.addFilterBefore(this.filterSecurityInterceptor(), FilterSecurityInterceptor.class)
@@ -114,7 +117,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Bean
 	public FilterSecurityInterceptor filterSecurityInterceptor() {
-		FilterSecurityInterceptor filterSecurityInterceptor = new FilterSecurityInterceptor();
+		FilterSecurityInterceptor filterSecurityInterceptor = new CustomerFilterSecurityInterceptor();
 		filterSecurityInterceptor.setSecurityMetadataSource(this.securityMetadataSource());
 		filterSecurityInterceptor.setAccessDecisionManager(this.accessDecisionManager());
 		return filterSecurityInterceptor;

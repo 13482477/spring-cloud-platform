@@ -10,7 +10,9 @@ import java.util.*;
 /**
  * Created by huangfei on 2017/06/28.
  */
-public class AgreementDtoJsonBuilder extends AgreementDtoBuilder {
+public class AgreementDtoJsonBuilder {
+
+    private AgreementDtoBuilder agreementDtoBuilder;
 
     private static Logger log = org.slf4j.LoggerFactory.getLogger(AgreementDtoJsonBuilder.class);
 
@@ -20,12 +22,14 @@ public class AgreementDtoJsonBuilder extends AgreementDtoBuilder {
 
     private static final String SPEC_CODE = "specCode";
 
+    private static final String KIND = "kind";
+
     private static final List<String> COMPLEX_PROPERTY_NAMES = Arrays.asList(ROLES_PROPERTY_NAME, COMPONENTS_PROPERTY_NAME);
 
     private Stack<ActualDtoBuilder> builders = new Stack<ActualDtoBuilder>();
 
-    protected AgreementDtoJsonBuilder(Class<? extends AgreementDto> type, String specCode) {
-        super(type, specCode);
+    public AgreementDtoJsonBuilder(AgreementDtoBuilder agreementDtoBuilder) {
+        this.agreementDtoBuilder = agreementDtoBuilder;
     }
 
     public AgreementDto build(String jsonString) throws IOException {
@@ -34,21 +38,27 @@ public class AgreementDtoJsonBuilder extends AgreementDtoBuilder {
 
         buildComponent(agreementDtoMap);
 
-        return super.build();
+        return agreementDtoBuilder.build();
     }
 
     public void buildComponent(Map<String, Object> componentMap) {
         enterComponentBinding(componentMap);
-
         componentMap.forEach((key, value) -> {
             if (COMPLEX_PROPERTY_NAMES.contains(key)) {
                 if (ROLES_PROPERTY_NAME.equals(key)) {
-                    ((List<Map<String, Object>>) value).parallelStream().forEach(roleMap -> buildRole(roleMap));
-                } else if (COMPLEX_PROPERTY_NAMES.equals(key)) {
-                    ((List<Map<String, Object>>) value).parallelStream().forEach(subComponentMap -> buildComponent(subComponentMap));
+                    for(Map<String, Object> roleMap : (List<Map<String, Object>>) value) {
+                        buildRole(roleMap);
+                    }
+                    //((List<Map<String, Object>>) value).parallelStream().forEach(roleMap -> buildRole(roleMap));
+                } else if (COMPONENTS_PROPERTY_NAME.equals(key)) {
+                    for(Map<String, Object> subComponentMap : (List<Map<String, Object>>) value) {
+                        buildComponent(subComponentMap);
+                    }
+                    //((List<Map<String, Object>>) value).parallelStream().forEach(subComponentMap -> buildComponent(subComponentMap));
                 }
             } else {
-                property(key, value);
+                ComponentDtoBuilderSupport currentBuilder = (ComponentDtoBuilderSupport) builders.peek();
+                currentBuilder.property(key, value);
             }
         });
 
@@ -58,25 +68,35 @@ public class AgreementDtoJsonBuilder extends AgreementDtoBuilder {
     private void enterComponentBinding(Map<String, Object> componentMap) {
         ActualDtoBuilder builder = null;
         if (builders.empty()) {
-            builder = this;
+            builder = agreementDtoBuilder;
         } else {
+            //TODO throw an exception here when specCode is null
             ComponentDtoBuilder componentBuilder = DtoBuilders.componentOf((String) componentMap.get(SPEC_CODE));
             builder = componentBuilder;
-
-            ActualDtoBuilder parentBuilder = builders.peek();
-            if (parentBuilder instanceof ComponentDtoBuilderSupport) {
-                ((ComponentDtoBuilderSupport) parentBuilder).components(componentBuilder);
-            } else {
-                log.warn("Unsupported structure.");
-                //TODO enhance the error message.
-            }
         }
 
         builders.push(builder);
     }
 
     private void exitComponentBinding(Map<String, Object> componentMap) {
-        builders.pop();
+        ActualDtoBuilder currentBuilder = builders.pop();
+        ComponentDtoBuilder currentComponentBuilder = null;
+        if (currentBuilder instanceof ComponentDtoBuilder) {
+            currentComponentBuilder = (ComponentDtoBuilder) currentBuilder;
+        } else if (currentBuilder instanceof AgreementDtoBuilder) {
+            return;
+        }
+
+        ComponentDtoBuilderSupport parentBuilder = (ComponentDtoBuilderSupport) builders.peek();
+//        if (currentBuilder instanceof ComponentDtoBuilderSupport) {
+//            ((ComponentDtoBuilderSupport) currentBuilder).components(componentBuilder);
+//        } else {
+//            log.warn("Unsupported structure.");
+//            //TODO enhance the error message.
+//        }
+        parentBuilder.components(currentComponentBuilder);
+
+//        builders.pop();
     }
 
     /**
@@ -84,7 +104,22 @@ public class AgreementDtoJsonBuilder extends AgreementDtoBuilder {
      * @param roleMap
      */
     protected void buildRole(Map<String, Object> roleMap) {
-        roleMap.forEach((key, value) -> property(key, value));
+        RoleDtoBuilder roleDtoBuilder = DtoBuilders.roleOf((String) roleMap.get(KIND));
+        roleMap.forEach((key, value) -> roleDtoBuilder.property(key, value));
+
+        ComponentDtoBuilderSupport parnetBuilder = (ComponentDtoBuilderSupport) builders.peek();
+        parnetBuilder.roles(roleDtoBuilder);
     }
 
+    public AgreementDtoBuilder getAgreementDtoBuilder() {
+        return agreementDtoBuilder;
+    }
+
+    public void setAgreementDtoBuilder(AgreementDtoBuilder agreementDtoBuilder) {
+        this.agreementDtoBuilder = agreementDtoBuilder;
+    }
+
+    public Object build() {
+        return agreementDtoBuilder.build();
+    }
 }

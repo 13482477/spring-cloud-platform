@@ -1,10 +1,32 @@
 {
-    "insuredAmount": "500000",
-    "specCode": "FJHYXtestjml14",
-    "roles": [
-    	{
-    		"kind": "insured",
-    		"birthDate": "1987-06-23"
-    	}
-    ]
+  "insuredAmount": "500000",
+  "specCode": "FJHYXtestjml45",
+  "roles": [
+    {
+      "kind": "insured",
+      "socialInsuranceCovered":true,
+      "birthDate": "2017-06-30",
+      "gender":"MALE"
+    },
+    {
+      "kind": "applicant",
+      "fullName":"张三",
+      "birthDate": "2017-06-30",
+      "gender":"MALE"
+    }
+  ],
+  "components": [
+    {
+      "specCode": "componentsSpecCode",
+      "coverage": "民航班机意外身故",
+      "premium": "1000",
+      "insuredAmount":"2000"
+    },
+    {
+      "specCode": "componentsSpecCode2",
+      "coverage": "民航班机意外身故2",
+      "premium": "10002",
+      "insuredAmount":"20002"
+    }
+  ]
 }
