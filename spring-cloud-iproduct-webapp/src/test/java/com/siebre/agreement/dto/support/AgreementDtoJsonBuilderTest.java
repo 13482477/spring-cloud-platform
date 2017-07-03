@@ -32,9 +32,9 @@ public class AgreementDtoJsonBuilderTest {
 
     public void testUnmarshal() throws IOException {
         AgreementDtoJsonBuilder builder = SiebreCloundDtoBuilders.agreementOfJson(request);
-        AgreementDto agreementDto = builder.build();
+        AgreementDto agreementDto = (AgreementDto) builder.build();
 
-        Assert.assertEquals(agreementDto.getSpecCode(), "FJHYXtestjml14");
+        Assert.assertEquals(agreementDto.getSpecCode(), "FJHYXtestjml45");
     }
 
 }

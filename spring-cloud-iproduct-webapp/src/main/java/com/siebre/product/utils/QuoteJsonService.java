@@ -14,8 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.siebre.agreement.dto.AgreementDto;
 import com.siebre.agreement.dto.annotation.Roles;
-import com.siebre.agreement.dto.support.RoleDtoBuilder;
+import com.siebre.agreement.dto.support.*;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.siebre.agreement.dto.support.AgreementDtoBuilder;
-import com.siebre.agreement.dto.support.DtoBuilders;
 import com.siebre.policy.application.Application;
 import com.siebre.product.InsuranceProduct;
 import com.siebre.product.repository.InsuranceProductRepository;
@@ -68,34 +67,35 @@ public class QuoteJsonService {
 		
 		//InsuranceProduct product = mockProduct();
 
-		AgreementDtoBuilder agreementDtoBuilder = DtoBuilders.agreementOf(productCode);
-		for (String key : properties.keySet()) {
-			if ("specCode".equals(key))
-				continue;
-			
-			agreementDtoBuilder.property(key, properties.get(key));
-		}
+//		AgreementDtoBuilder agreementDtoBuilder = DtoBuilders.agreementOf(productCode);
+//		for (String key : properties.keySet()) {
+//			if ("specCode".equals(key))
+//				continue;
+//
+//			agreementDtoBuilder.property(key, properties.get(key));
+//		}
+//
+//		((List<Map<String, Object>>) properties.get("roles")).parallelStream()
+//            .filter( roleMap -> {
+//                    String kind = (String) roleMap.get("kind");
+////                    return "insured".equals(kind)
+////                            || "applicant".equals(kind)
+////                            || "beneficiary".equals(kind);
+//                    return StringUtils.isNotBlank(kind);
+//                }
+//            ).forEach(roleMap -> {
+//                RoleDtoBuilder roleBuilder = DtoBuilders.roleOf((String) roleMap.get("kind"));
+//                roleMap.entrySet().parallelStream().forEach(
+//                    property -> {
+//                    	roleBuilder.property(property.getKey(), property.getValue());
+//                    }
+//                );
+//				agreementDtoBuilder.roles(roleBuilder);
+//            }
+//        );
 
-		((List<Map<String, Object>>) properties.get("roles")).parallelStream()
-            .filter( roleMap -> {
-                    String kind = (String) roleMap.get("kind");
-//                    return "insured".equals(kind)
-//                            || "applicant".equals(kind)
-//                            || "beneficiary".equals(kind);
-                    return StringUtils.isNotBlank(kind);
-                }
-            ).forEach(roleMap -> {
-                RoleDtoBuilder roleBuilder = DtoBuilders.roleOf((String) roleMap.get("kind"));
-                roleMap.entrySet().parallelStream().forEach(
-                    property -> {
-                    	roleBuilder.property(property.getKey(), property.getValue());
-                    }
-                );
-				agreementDtoBuilder.roles(roleBuilder);
-            }
-        );
-
-		Application app = new Application(product, agreementDtoBuilder.build());
+		AgreementDtoJsonBuilder builder = SiebreCloundDtoBuilders.agreementOfJson(requestJsonString);
+		Application app = new Application(product, (AgreementDto) builder.build());
 
 		return app;
 	}
