@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="GBK"?>
-<product kind="Marketable Product" name="福建航意险" seqIndex="0" externalReference="FJHYXtestjml43" instanceClassName="InsurancePolicy" shortName="福建航意险" groupType="PERSONAL" sellChannelType="RemoteSell">
+<product kind="Marketable Product" name="福建航意险" seqIndex="0" externalReference="FJHYXtestjml45" instanceClassName="InsurancePolicy" shortName="福建航意险" groupType="PERSONAL" sellChannelType="RemoteSell">
 	<description>人保寿险公共交通工具意外伤害保险（新标准版）</description>
 	<baseSpec version="0" />
 	<properties>
@@ -63,7 +63,7 @@
 				<property kind="addressLines" name="被保人通讯地址" seqIndex="600" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
 				<property kind="postalCode" name="被保人邮政编码" seqIndex="700" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
 				<property kind="relatedToRoleCode" name="与投保人关系" dataType="RelatedToRoleCode" beanProperty="true" isHidden="true" required="true" derived="false" group="Base" />
-				<property kind="socialInsuranceCoverd" name="有无社保" dataType="Boolean" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
+				<property kind="socialInsuranceCovered" name="有无社保" dataType="Boolean" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
 			</properties>
 			<rules>
 				<rule kind="Eligibility" name="被保人的年龄限制" seqIndex="0" language="GROOVY">
@@ -128,8 +128,8 @@
 								age = age - 1 ;
 							}
 							System.out.println("age====" + age);
-							def socialInsuranceCoverd = insured.getSmfProperty("socialInsuranceCoverd");
-							System.out.println("socialInsuranceCoverd==="+socialInsuranceCoverd);
+							def socialInsuranceCovered = insured.getSmfProperty("socialInsuranceCovered");
+							System.out.println("socialInsuranceCovered==="+socialInsuranceCovered);
 
 							def map1 = [0:6.99,1:6.99,2:6.99,3:6.99,4:6.99,5:3.26,6:3.26,7:3.26,8:3.26,9:3.26,10:3.26,11:1.12,12:1.12,13:1.12,14:1.12,15:1.12,16:1.12,17:1.12,18:1.12,19:1.12,20:1.12,
 21:2.19,22:2.19,23:2.19,24:2.19,25:2.19,26:2.79,27:2.79,28:2.79,29:2.79,30:2.79,31:3.49,32:3.49,33:3.49,34:3.49,35:3.49,36:4.28,37:4.28,38:4.28,39:4.28,40:4.74,
@@ -148,7 +148,7 @@
 41:53.20,42:56.00,43:58.80,44:62.60,45:66.40,46:70.40,47:74.60,48:78.80,49:83.20,50:87.60,51:91.50,52:95.80,53:99.20,54:103.50,55:108.40,56:112.40,57:116.70,58:120.40,59:124.60,60:128.60];
 
 							System.out.println("insured.gender===="+insured.gender);
-							if(socialInsuranceCoverd == true) {
+							if(socialInsuranceCovered == true) {
 								Ra = map1.get(age);
 								System.out.println("有社保Ra===="+Ra);
 							}else {
