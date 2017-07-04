@@ -57,7 +57,7 @@ public class AlipayWebPaymentHandler extends AbstractPaymentComponent {
 		params.put("return_url", hostConfig.getFrontHost() + paymentInterface.getReturnPageUrl() + "?orderNumber=" + paymentOrder.getOrderNumber());
 		params.put("payment_type", AlipayConfig.PAYMENT_TYPE);
 		params.put("seller_email", paymentWay.getPaymentChannel().getPayeeAccount());
-		params.put("subject", "保险产品");
+		params.put("subject", "支付体验");
 		params.put("out_trade_no", paymentTransaction.getInternalTransactionNumber());
 		params.put("total_fee", paymentOrder.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
 		params.put("it_b_pay", "30m");
