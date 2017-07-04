@@ -80,7 +80,11 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
         paramMap.put("out_trade_no", paymentTransaction.getInternalTransactionNumber());
         paramMap.put("total_fee", paymentTransaction.getPaymentAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString()); // 金额必须为整数
         // 单位为分
-        paramMap.put("spbill_create_ip", request.getIp()); // 用户端ip
+        String ip = request.getIp();
+        if(ip.contains(",")) {
+            ip = ip.split(",")[0];
+        }
+        paramMap.put("spbill_create_ip", ip); // 用户端ip
         Date current = new Date();
         paramMap.put("time_start", DateFormatUtils.format(current, "yyyyMMddHHmmss")); // 交易起始时间
         paramMap.put("time_expire", DateFormatUtils.format(DateUtils.addMinutes(current, 30), "yyyyMMddHHmmss")); // 交易结束时间,设置为起始时间后30分钟
