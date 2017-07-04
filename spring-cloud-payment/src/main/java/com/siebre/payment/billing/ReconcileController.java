@@ -24,12 +24,12 @@ public class ReconcileController {
     @Autowired
     private ReconcileManager reconcileManager;
 
-    @RequestMapping(value = "/test/reconclie", method = RequestMethod.GET)
+    @RequestMapping(value = "/reconclie/allin/refundjob", method = RequestMethod.GET)
     public void testReconcile(HttpServletResponse response) {
         reconcileManager.runReconJob("allin-pay-realtime-reconcile-job");
     }
 
-    @RequestMapping(value = "/test/reconclie/allin", method = RequestMethod.GET)
+    @RequestMapping(value = "/reconclie/allin/downloadfile", method = RequestMethod.GET)
     public void testReconcileAllin(HttpServletResponse response) {
         Date today = new Date();
         Date start = DateUtil.getDayStart(today);
