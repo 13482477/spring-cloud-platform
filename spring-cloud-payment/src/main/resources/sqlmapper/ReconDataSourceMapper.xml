@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.billing.mapper.ReconDataSourceMapper" >
+  <resultMap id="BaseResultMap" type="com.siebre.payment.billing.entity.ReconDataSource" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="ds_definition" property="dsDefinition" jdbcType="VARCHAR" />
+    <result column="seperator_char" property="seperatorChar" jdbcType="VARCHAR" />
+    <result column="line_seperator_char" property="lineSeperatorChar" jdbcType="VARCHAR" />
+    <result column="ingore_first" property="ingoreFirst" jdbcType="INTEGER" />
+    <result column="ingore_end" property="ingoreEnd" jdbcType="INTEGER" />
+    <result column="bytes_length" property="bytesLength" jdbcType="INTEGER" />
+    <result column="encoding" property="encoding" jdbcType="VARCHAR" />
+    <result column="start_flag" property="startFlag" jdbcType="VARCHAR" />
+    <result column="end_flag" property="endFlag" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, type, ds_definition, seperator_char, line_seperator_char, ingore_first, 
+    ingore_end, bytes_length, encoding, start_flag, end_flag, description
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from recon_data_source
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from recon_data_source
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.siebre.payment.billing.entity.ReconDataSource" useGeneratedKeys="true" keyProperty="id">
+    insert into recon_data_source (id, name, type, 
+      ds_definition, seperator_char, line_seperator_char, 
+      ingore_first, ingore_end, bytes_length, 
+      encoding, start_flag, end_flag, 
+      description)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{dsDefinition,jdbcType=VARCHAR}, #{seperatorChar,jdbcType=VARCHAR}, #{lineSeperatorChar,jdbcType=VARCHAR}, 
+      #{ingoreFirst,jdbcType=INTEGER}, #{ingoreEnd,jdbcType=INTEGER}, #{bytesLength,jdbcType=INTEGER}, 
+      #{encoding,jdbcType=VARCHAR}, #{startFlag,jdbcType=VARCHAR}, #{endFlag,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.siebre.payment.billing.entity.ReconDataSource" useGeneratedKeys="true" keyProperty="id">
+    insert into recon_data_source
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="dsDefinition != null" >
+        ds_definition,
+      </if>
+      <if test="seperatorChar != null" >
+        seperator_char,
+      </if>
+      <if test="lineSeperatorChar != null" >
+        line_seperator_char,
+      </if>
+      <if test="ingoreFirst != null" >
+        ingore_first,
+      </if>
+      <if test="ingoreEnd != null" >
+        ingore_end,
+      </if>
+      <if test="bytesLength != null" >
+        bytes_length,
+      </if>
+      <if test="encoding != null" >
+        encoding,
+      </if>
+      <if test="startFlag != null" >
+        start_flag,
+      </if>
+      <if test="endFlag != null" >
+        end_flag,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="dsDefinition != null" >
+        #{dsDefinition,jdbcType=VARCHAR},
+      </if>
+      <if test="seperatorChar != null" >
+        #{seperatorChar,jdbcType=VARCHAR},
+      </if>
+      <if test="lineSeperatorChar != null" >
+        #{lineSeperatorChar,jdbcType=VARCHAR},
+      </if>
+      <if test="ingoreFirst != null" >
+        #{ingoreFirst,jdbcType=INTEGER},
+      </if>
+      <if test="ingoreEnd != null" >
+        #{ingoreEnd,jdbcType=INTEGER},
+      </if>
+      <if test="bytesLength != null" >
+        #{bytesLength,jdbcType=INTEGER},
+      </if>
+      <if test="encoding != null" >
+        #{encoding,jdbcType=VARCHAR},
+      </if>
+      <if test="startFlag != null" >
+        #{startFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="endFlag != null" >
+        #{endFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.billing.entity.ReconDataSource" >
+    update recon_data_source
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="dsDefinition != null" >
+        ds_definition = #{dsDefinition,jdbcType=VARCHAR},
+      </if>
+      <if test="seperatorChar != null" >
+        seperator_char = #{seperatorChar,jdbcType=VARCHAR},
+      </if>
+      <if test="lineSeperatorChar != null" >
+        line_seperator_char = #{lineSeperatorChar,jdbcType=VARCHAR},
+      </if>
+      <if test="ingoreFirst != null" >
+        ingore_first = #{ingoreFirst,jdbcType=INTEGER},
+      </if>
+      <if test="ingoreEnd != null" >
+        ingore_end = #{ingoreEnd,jdbcType=INTEGER},
+      </if>
+      <if test="bytesLength != null" >
+        bytes_length = #{bytesLength,jdbcType=INTEGER},
+      </if>
+      <if test="encoding != null" >
+        encoding = #{encoding,jdbcType=VARCHAR},
+      </if>
+      <if test="startFlag != null" >
+        start_flag = #{startFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="endFlag != null" >
+        end_flag = #{endFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.billing.entity.ReconDataSource" >
+    update recon_data_source
+    set name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      ds_definition = #{dsDefinition,jdbcType=VARCHAR},
+      seperator_char = #{seperatorChar,jdbcType=VARCHAR},
+      line_seperator_char = #{lineSeperatorChar,jdbcType=VARCHAR},
+      ingore_first = #{ingoreFirst,jdbcType=INTEGER},
+      ingore_end = #{ingoreEnd,jdbcType=INTEGER},
+      bytes_length = #{bytesLength,jdbcType=INTEGER},
+      encoding = #{encoding,jdbcType=VARCHAR},
+      start_flag = #{startFlag,jdbcType=VARCHAR},
+      end_flag = #{endFlag,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

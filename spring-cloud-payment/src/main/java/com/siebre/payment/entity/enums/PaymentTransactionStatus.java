@@ -16,6 +16,12 @@ public enum PaymentTransactionStatus implements BaseEnum {
 
 	REFUND_FAILED(7, "退款失败"),
 
+	RECON_PROCESSING(8, "开始对账文件下载"),
+
+	RECON_SUCCESS(9, "对账文件下载成功"),
+
+	RECON_FAILED(10, "对账文件下载失败"),
+
 	CLOSED(4, "交易关闭"),
 	;
 

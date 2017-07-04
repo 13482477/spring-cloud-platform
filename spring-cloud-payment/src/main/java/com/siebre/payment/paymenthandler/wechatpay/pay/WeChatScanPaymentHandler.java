@@ -1,5 +1,6 @@
 package com.siebre.payment.paymenthandler.wechatpay.pay;
 
+import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.entity.enums.EncryptionMode;
 import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.entity.enums.SubsequentAction;
@@ -41,8 +42,9 @@ public class WeChatScanPaymentHandler extends AbstractPaymentComponent {
 
 		this.processSign(params, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
 
-		this.getPaymentUrl(response, paymentWay, params);
+		paymentTransaction.setRequestStr(JsonUtil.mapToJson(params));
 
+		this.getPaymentUrl(response, paymentWay, params);
 
 	}
 

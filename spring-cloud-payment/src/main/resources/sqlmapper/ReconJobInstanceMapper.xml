@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.billing.mapper.ReconJobInstanceMapper" >
+  <resultMap id="BaseResultMap" type="com.siebre.payment.billing.entity.ReconJobInstance" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="recon_job_id" property="reconJobId" jdbcType="BIGINT" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="trans_date" property="transDate" jdbcType="TIMESTAMP" />
+    <result column="trans_no" property="transNo" jdbcType="VARCHAR" />
+    <result column="reconcile_time" property="reconcileTime" jdbcType="TIMESTAMP" />
+    <result column="total_amount" property="totalAmount" jdbcType="DECIMAL" />
+    <result column="trans_count" property="transCount" jdbcType="INTEGER" />
+    <result column="matched_count" property="matchedCount" jdbcType="INTEGER" />
+    <result column="pay_total_amount" property="payTotalAmount" jdbcType="DECIMAL" />
+    <result column="pay_trans_count" property="payTransCount" jdbcType="INTEGER" />
+    <result column="refund_total_amount" property="refundTotalAmount" jdbcType="DECIMAL" />
+    <result column="refund_trans_count" property="refundTransCount" jdbcType="INTEGER" />
+    <result column="response_sign_type" property="responseSignType" jdbcType="VARCHAR" />
+    <result column="mch_type" property="mchType" jdbcType="VARCHAR" />
+    <result column="reconcile_status" property="reconcileStatus" jdbcType="VARCHAR" />
+    <result column="reconcile_status_message" property="reconcileStatusMessage" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, recon_job_id, channel_code, trans_date, trans_no, reconcile_time, total_amount, 
+    trans_count, matched_count, pay_total_amount, pay_trans_count, refund_total_amount, 
+    refund_trans_count, response_sign_type, mch_type, reconcile_status, reconcile_status_message
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from recon_job_instance
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from recon_job_instance
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.siebre.payment.billing.entity.ReconJobInstance" useGeneratedKeys="true" keyProperty="id">
+    insert into recon_job_instance (id, recon_job_id, channel_code, 
+      trans_date, trans_no, reconcile_time, 
+      total_amount, trans_count, matched_count, 
+      pay_total_amount, pay_trans_count, refund_total_amount, 
+      refund_trans_count, response_sign_type, mch_type, 
+      reconcile_status, reconcile_status_message
+      )
+    values (#{id,jdbcType=BIGINT}, #{reconJobId,jdbcType=BIGINT}, #{channelCode,jdbcType=VARCHAR}, 
+      #{transDate,jdbcType=TIMESTAMP}, #{transNo,jdbcType=VARCHAR}, #{reconcileTime,jdbcType=TIMESTAMP}, 
+      #{totalAmount,jdbcType=DECIMAL}, #{transCount,jdbcType=INTEGER}, #{matchedCount,jdbcType=INTEGER}, 
+      #{payTotalAmount,jdbcType=DECIMAL}, #{payTransCount,jdbcType=INTEGER}, #{refundTotalAmount,jdbcType=DECIMAL}, 
+      #{refundTransCount,jdbcType=INTEGER}, #{responseSignType,jdbcType=VARCHAR}, #{mchType,jdbcType=VARCHAR}, 
+      #{reconcileStatus,jdbcType=VARCHAR}, #{reconcileStatusMessage,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.siebre.payment.billing.entity.ReconJobInstance" useGeneratedKeys="true" keyProperty="id">
+    insert into recon_job_instance
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="reconJobId != null" >
+        recon_job_id,
+      </if>
+      <if test="channelCode != null" >
+        channel_code,
+      </if>
+      <if test="transDate != null" >
+        trans_date,
+      </if>
+      <if test="transNo != null" >
+        trans_no,
+      </if>
+      <if test="reconcileTime != null" >
+        reconcile_time,
+      </if>
+      <if test="totalAmount != null" >
+        total_amount,
+      </if>
+      <if test="transCount != null" >
+        trans_count,
+      </if>
+      <if test="matchedCount != null" >
+        matched_count,
+      </if>
+      <if test="payTotalAmount != null" >
+        pay_total_amount,
+      </if>
+      <if test="payTransCount != null" >
+        pay_trans_count,
+      </if>
+      <if test="refundTotalAmount != null" >
+        refund_total_amount,
+      </if>
+      <if test="refundTransCount != null" >
+        refund_trans_count,
+      </if>
+      <if test="responseSignType != null" >
+        response_sign_type,
+      </if>
+      <if test="mchType != null" >
+        mch_type,
+      </if>
+      <if test="reconcileStatus != null" >
+        reconcile_status,
+      </if>
+      <if test="reconcileStatusMessage != null" >
+        reconcile_status_message,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="reconJobId != null" >
+        #{reconJobId,jdbcType=BIGINT},
+      </if>
+      <if test="channelCode != null" >
+        #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="transDate != null" >
+        #{transDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="transNo != null" >
+        #{transNo,jdbcType=VARCHAR},
+      </if>
+      <if test="reconcileTime != null" >
+        #{reconcileTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="totalAmount != null" >
+        #{totalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="transCount != null" >
+        #{transCount,jdbcType=INTEGER},
+      </if>
+      <if test="matchedCount != null" >
+        #{matchedCount,jdbcType=INTEGER},
+      </if>
+      <if test="payTotalAmount != null" >
+        #{payTotalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="payTransCount != null" >
+        #{payTransCount,jdbcType=INTEGER},
+      </if>
+      <if test="refundTotalAmount != null" >
+        #{refundTotalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="refundTransCount != null" >
+        #{refundTransCount,jdbcType=INTEGER},
+      </if>
+      <if test="responseSignType != null" >
+        #{responseSignType,jdbcType=VARCHAR},
+      </if>
+      <if test="mchType != null" >
+        #{mchType,jdbcType=VARCHAR},
+      </if>
+      <if test="reconcileStatus != null" >
+        #{reconcileStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="reconcileStatusMessage != null" >
+        #{reconcileStatusMessage,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.billing.entity.ReconJobInstance" >
+    update recon_job_instance
+    <set >
+      <if test="reconJobId != null" >
+        recon_job_id = #{reconJobId,jdbcType=BIGINT},
+      </if>
+      <if test="channelCode != null" >
+        channel_code = #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="transDate != null" >
+        trans_date = #{transDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="transNo != null" >
+        trans_no = #{transNo,jdbcType=VARCHAR},
+      </if>
+      <if test="reconcileTime != null" >
+        reconcile_time = #{reconcileTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="totalAmount != null" >
+        total_amount = #{totalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="transCount != null" >
+        trans_count = #{transCount,jdbcType=INTEGER},
+      </if>
+      <if test="matchedCount != null" >
+        matched_count = #{matchedCount,jdbcType=INTEGER},
+      </if>
+      <if test="payTotalAmount != null" >
+        pay_total_amount = #{payTotalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="payTransCount != null" >
+        pay_trans_count = #{payTransCount,jdbcType=INTEGER},
+      </if>
+      <if test="refundTotalAmount != null" >
+        refund_total_amount = #{refundTotalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="refundTransCount != null" >
+        refund_trans_count = #{refundTransCount,jdbcType=INTEGER},
+      </if>
+      <if test="responseSignType != null" >
+        response_sign_type = #{responseSignType,jdbcType=VARCHAR},
+      </if>
+      <if test="mchType != null" >
+        mch_type = #{mchType,jdbcType=VARCHAR},
+      </if>
+      <if test="reconcileStatus != null" >
+        reconcile_status = #{reconcileStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="reconcileStatusMessage != null" >
+        reconcile_status_message = #{reconcileStatusMessage,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.billing.entity.ReconJobInstance" >
+    update recon_job_instance
+    set recon_job_id = #{reconJobId,jdbcType=BIGINT},
+      channel_code = #{channelCode,jdbcType=VARCHAR},
+      trans_date = #{transDate,jdbcType=TIMESTAMP},
+      trans_no = #{transNo,jdbcType=VARCHAR},
+      reconcile_time = #{reconcileTime,jdbcType=TIMESTAMP},
+      total_amount = #{totalAmount,jdbcType=DECIMAL},
+      trans_count = #{transCount,jdbcType=INTEGER},
+      matched_count = #{matchedCount,jdbcType=INTEGER},
+      pay_total_amount = #{payTotalAmount,jdbcType=DECIMAL},
+      pay_trans_count = #{payTransCount,jdbcType=INTEGER},
+      refund_total_amount = #{refundTotalAmount,jdbcType=DECIMAL},
+      refund_trans_count = #{refundTransCount,jdbcType=INTEGER},
+      response_sign_type = #{responseSignType,jdbcType=VARCHAR},
+      mch_type = #{mchType,jdbcType=VARCHAR},
+      reconcile_status = #{reconcileStatus,jdbcType=VARCHAR},
+      reconcile_status_message = #{reconcileStatusMessage,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

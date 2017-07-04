@@ -1,5 +1,6 @@
 package com.siebre.payment.paymenthandler.alipay.pay;
 
+import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.entity.enums.EncryptionMode;
 import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.entity.enums.SubsequentAction;
@@ -13,6 +14,7 @@ import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +39,7 @@ public class AlipayWebPaymentHandler extends AbstractPaymentComponent {
 
 		this.processSign(paramsMap, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
 
+		paymentTransaction.setRequestStr(JsonUtil.mapToJson(paramsMap));
 		String url = this.getPaymentUrl(paymentWay, paramsMap);
 
 		response.setPayUrl(url);

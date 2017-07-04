@@ -1,5 +1,6 @@
 package com.siebre.payment.paymenthandler.wechatpay.pay;
 
+import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.entity.enums.EncryptionMode;
 import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.entity.enums.SubsequentAction;
@@ -49,6 +50,8 @@ public class WeChatPublicPaymentHandler extends AbstractPaymentComponent {
         //生成JSAPI页面调用的支付参数并签名
         WechatJsApiParams jsApiParams = generateJsapiParams(paymentWay, prepayId);
         this.processSign2(jsApiParams, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
+        paymentTransaction.setRequestStr(JsonUtil.toJson(jsApiParams, true));
+
         response.setReturnCode(ReturnCode.SUCCESS.getDescription());
         response.setWechatJsApiParams(jsApiParams);
         response.setSubsequentAction(SubsequentAction.INVOKE_WECHAT_JS_API.getValue());

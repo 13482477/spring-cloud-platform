@@ -1,6 +1,7 @@
 package com.siebre.payment.paymenthandler.unionpay.paycallback;
 
 import com.siebre.basic.utils.HttpServletRequestUtil;
+import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.paymenthandler.basic.paymentcallback.AbstractPaymentCallBackHandler;
 import com.siebre.payment.paymenthandler.unionpay.sdk.UnionPayUtil;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
@@ -32,23 +33,25 @@ public class UnionPayCallBackHandler extends AbstractPaymentCallBackHandler {
 
         Map<String,String > paramsMap = HttpServletRequestUtil.getParameterMap(request);
 
+        String responseStr = JsonUtil.mapToJson(paramsMap);
+
         PaymentWay paymentWay  = paymentWayMapper.selectByPrimaryKey(paymentInterface.getPaymentWayId()); //paymentInterface.getPaymentWay();
 
         if(UnionPayUtil.validateSign(paramsMap,paymentWay.getSecretKey())){
             logger.info("银联签名验证成功!");
-            processUnionPayReturnType(paramsMap,response);
+            processUnionPayReturnType(paramsMap,response, responseStr);
         }else{
             logger.info("银联签名验证失败");
         }
         return null;
     }
 
-    private void processUnionPayReturnType(Map<String,String> paramsMap,HttpServletResponse response){
+    private void processUnionPayReturnType(Map<String,String> paramsMap,HttpServletResponse response, String responseStr){
         String returnType =  paramsMap.get("txnType");
 
         if("01".equals(returnType)){
             //消费类型
-            processTransactionAndOrder(paramsMap,response);
+            processTransactionAndOrder(paramsMap,response, responseStr);
 
         }else if ("04".equals(returnType)){
             //退款类型
@@ -56,7 +59,7 @@ public class UnionPayCallBackHandler extends AbstractPaymentCallBackHandler {
         }
     }
 
-    private void processTransactionAndOrder(Map<String,String> paramsMap,HttpServletResponse response){
+    private void processTransactionAndOrder(Map<String,String> paramsMap,HttpServletResponse response, String responseStr){
         logger.info("银联支付回调成功");
 
         String respCode =  paramsMap.get("respCode"); //判断respCode=00、A6后，对涉及资金类的交易，请再发起查询接口查询，确定交易成功后更新数据库。
@@ -69,7 +72,7 @@ public class UnionPayCallBackHandler extends AbstractPaymentCallBackHandler {
             String merId = paramsMap.get("merId");
             BigDecimal txnAmt = new BigDecimal(paramsMap.get("txnAmt")).divide(new BigDecimal("100"));
             //TODO  支付成功时间从返回报文中取
-            this.paymentTransactionService.paymentConfirm(orderId,queryId , merId, txnAmt, new Date());
+            this.paymentTransactionService.paymentConfirm(orderId,queryId , merId, txnAmt, new Date(), responseStr);
         }
     }
 
