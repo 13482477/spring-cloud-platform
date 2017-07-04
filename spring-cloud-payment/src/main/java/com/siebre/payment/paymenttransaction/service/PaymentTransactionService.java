@@ -162,7 +162,7 @@ public class PaymentTransactionService {
             RefundRecord finish = createRefundRecord(active, null, "预计3-5个工作日完成退款");
             result.add(finish);
         } else if (PaymentTransactionStatus.REFUND_FAILED.equals(paymentTransaction.getPaymentStatus())) {
-            RefundRecord finish = createRefundRecord(complete, paymentTransaction.getUpdateDate(), "退款失败，失败原因：" + refundApplication.getResponse());
+            RefundRecord finish = createRefundRecord(complete, paymentTransaction.getUpdateDate(), refundApplication.getResponse());
             result.add(finish);
         } else if (PaymentTransactionStatus.REFUND_SUCCESS.equals(paymentTransaction.getPaymentStatus())) {
             RefundRecord finish = createRefundRecord(complete, paymentTransaction.getUpdateDate(), "退款成功");
