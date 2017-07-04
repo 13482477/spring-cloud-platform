@@ -64,11 +64,10 @@ public class AllinPayTranx {
                 logger.info("transaction result =" + ret.getRET_CODE() + ":" + ret.getERR_MSG());
                 if ("0000".equals(ret.getRET_CODE())) {
                     logger.info("transaction success(last result)");
-                    //修改订单交易状态
-                    String seller_id = paymentWay.getPaymentChannel().getMerchantCode();
-                    BigDecimal total_fee = paymentTransaction.getPaymentAmount();
-                    //TODO
-                    paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee, new Date(), responseStr);
+
+                    paymentTransaction.setExternalTransactionNumber(externalTransactionNumber);
+                    paymentTransaction.setPaymentStatus(PaymentTransactionStatus.PAY_SUCCESS);
+                    paymentTransaction.setResponseStr(responseStr);
 
                     result.put("transaction_result", ReturnCode.SUCCESS.getDescription());
                     result.put("orderNumber", internalTransactionNumber);

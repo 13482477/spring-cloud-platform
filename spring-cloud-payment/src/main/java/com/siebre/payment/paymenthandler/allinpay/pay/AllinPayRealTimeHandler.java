@@ -6,6 +6,7 @@ import com.aipg.rtreq.Trans;
 import com.allinpay.XmlTools;
 import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
+import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.entity.enums.SubsequentAction;
 import com.siebre.payment.paymentaccount.entity.PaymentAccount;
@@ -60,6 +61,7 @@ public class AllinPayRealTimeHandler extends AbstractPaymentComponent {
         response.setReturnMessage(result.get("msg"));
         if(ReturnCode.SUCCESS.getDescription().equals(result.get("transaction_result"))) {
             paymentOrderService.updateOrderStatus(request.getPaymentOrder(), PaymentOrderPayStatus.PAID, new Date());
+            paymentTransactionService.updateBySelective(paymentTransaction);
             response.setSubsequentAction(SubsequentAction.READ_PAY_RESULT.getValue());
         }
 
