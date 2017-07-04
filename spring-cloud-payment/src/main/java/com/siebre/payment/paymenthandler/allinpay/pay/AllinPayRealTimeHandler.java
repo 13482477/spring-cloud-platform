@@ -60,6 +60,7 @@ public class AllinPayRealTimeHandler extends AbstractPaymentComponent {
         response.setReturnMessage(result.get("msg"));
         if(ReturnCode.SUCCESS.getDescription().equals(result.get("transaction_result"))) {
             paymentOrderService.updateOrderStatus(request.getPaymentOrder(), PaymentOrderPayStatus.PAID, new Date());
+            paymentTransactionService.updateBySelective(paymentTransaction);
             response.setSubsequentAction(SubsequentAction.READ_PAY_RESULT.getValue());
         }
 
