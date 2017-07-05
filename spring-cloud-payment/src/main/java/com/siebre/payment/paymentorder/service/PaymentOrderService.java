@@ -331,10 +331,10 @@ public class PaymentOrderService {
 
     public ServiceResult<List<CheckOrderVo>> selectCheckOrderByPage(String orderNumber, List<String> channelCodeList,
                                                                     List<PaymentOrderPayStatus> payStatusList, List<PaymentOrderCheckStatus> checkStatusList,
-                                                                    Date checkStartDate, Date checkEndDate, PageInfo pageInfo) {
+                                                                    Date startDate, Date endDate, PageInfo pageInfo) {
 
         ServiceResult<List<CheckOrderVo>> result = new ServiceResult<>();
-        List<PaymentOrder> orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, payStatusList, checkStatusList, checkStartDate, checkEndDate, pageInfo);
+        List<PaymentOrder> orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, payStatusList, checkStatusList, startDate, endDate, pageInfo);
 
         List<CheckOrderVo> checkOrderVos = new ArrayList<>();
         for (PaymentOrder order : orders) {
@@ -358,6 +358,10 @@ public class PaymentOrderService {
             if (order.getCheckTime() != null) {
                 String dateStr = DateFormatUtils.format(order.getCheckTime(), "yyyy-MM-dd HH:mm:ss");
                 checkOrderVo.setCheckTime(dateStr);
+            }
+            if (order.getPayTime() != null) {
+                String dateStr = DateFormatUtils.format(order.getPayTime(), "yyyy-MM-dd HH:mm:ss");
+                checkOrderVo.setPayTime(dateStr);
             }
 
             checkOrderVos.add(checkOrderVo);

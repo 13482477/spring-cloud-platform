@@ -90,6 +90,6 @@ public interface PaymentOrderMapper {
     List<PaymentOrder> selectCheckOrderByPage(@Param("orderNumber") String orderNumber, @Param("channelCodeList") List<String> channelCodeList,
                                               @Param("payStatusList") List<PaymentOrderPayStatus> payStatusList,
                                               @Param("checkStatusList") List<PaymentOrderCheckStatus> checkStatusList,
-                                              @Param("checkStartDate") Date checkStartDate, @Param("checkEndDate") Date checkEndDate,PageInfo pageInfo);
+                                              @Param("startDate") Date startDate, @Param("endDate") Date endDate,PageInfo pageInfo);
 
 }
