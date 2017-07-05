@@ -299,7 +299,7 @@ public class PaymentOrderService {
         PaymentChannel paymentChannel = paymentChannelMapper.selectByChannelCode(order.getChannelCode());
         orderVo.setChannelCode(paymentChannel.getChannelCode());
         orderVo.setChannelName(paymentChannel.getChannelName());
-        orderVo.setExternalTransactionNumber(orderNumber);//暂时用订单号
+        orderVo.setExternalTransactionNumber(order.getExternalOrderNumber());//暂时用订单号
         orderVo.setPayTime(dateStrCreate);
         //orderVo.setRealAmount(order.getAmount());
         orderVo.setRealPayStatus(order.getStatus().getDescription());
