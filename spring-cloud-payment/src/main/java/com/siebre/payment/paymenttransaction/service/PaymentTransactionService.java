@@ -110,7 +110,7 @@ public class PaymentTransactionService {
         PaymentOrder paymentOrder = this.paymentOrderMapper.selectByOrderNumber(refundApplication.getOrderNumber());
         detail.setChannel(paymentOrder.getPaymentChannel().getChannelName());
         detail.setOrderNumber(paymentOrder.getOrderNumber());
-        detail.setRefundAmount(paymentOrder.getRefundAmount());
+        detail.setRefundAmount(refundApplication.getRefundAmount());
         detail.setRefundApplicationNumber(refundApplication.getRefundApplicationNumber());
         detail.setRefundStatus(paymentOrder.getStatus().getDescription());
         List<RefundRecord> refundRecords = getRefundRecordFlow(refundApplication);
