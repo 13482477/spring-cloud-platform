@@ -11,6 +11,7 @@ import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.config.HandlerBeanNameConfig;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
+import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.paymenthandler.wechatpay.WeChatPublicAuthService;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.service.PaymentOrderService;
@@ -58,10 +59,8 @@ public class PaymentGatewayController {
      */
     @ApiOperation(value = "查询订单支付状态（去第三方渠道）", notes = "到第三方渠道去查询订单")
     @RequestMapping(value = "/openApi/v1/paymentGateway/query/{orderNumber}", method = GET)
-    public PaymentOrderQueryResponse payQuery(@PathVariable String orderNumber) throws Exception {
-        PaymentOrderQueryRequest request = new PaymentOrderQueryRequest();
-        request.setOrderNumber(orderNumber);
-        PaymentOrderQueryResponse response = queryApplicationService.queryOrderStatusByOrderNumber(request).getData();
+    public PaymentQueryResponse payQuery(@PathVariable String orderNumber) throws Exception {
+        PaymentQueryResponse response = queryApplicationService.queryOrderStatusByOrderNumber(orderNumber);
         return response;
     }
 

@@ -9,13 +9,15 @@ import com.siebre.payment.paymenthandler.basic.paymentquery.AbstractPaymentQuery
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
  * Created by meilan on 2017/5/17.
- * 通联实时代扣--查询
+ * 通联实时代扣--交易结果查询
+ * 文档地址：http://113.108.182.3:8282/techsp/helper/filedetail/tlt/filedetail134.html
  */
 @Service("allinPayQueryHandler")
 public class AllinPayQueryHandler extends AbstractPaymentQueryComponent {
@@ -32,10 +34,11 @@ public class AllinPayQueryHandler extends AbstractPaymentQueryComponent {
         PaymentWay paymentWay = request.getPaymentWay();
         PaymentInterface paymentInterface = request.getPaymentInterface();
 
-        queryTransaction(paymentInterface.getRequestUrl(), trx_code, isTLTFront, paymentWay, request, response);
+        queryTransaction(paymentInterface.getRequestUrl(), trx_code, isTLTFront, paymentWay, response);
     }
 
-    private void queryTransaction(String url, String trx_code, boolean isTLTFront, PaymentWay paymentWay, PaymentQueryRequest request, PaymentQueryResponse response) {
+    private void queryTransaction(String url, String trx_code, boolean isTLTFront, PaymentWay paymentWay, PaymentQueryResponse response) {
+        PaymentOrder order = response.getLocalOrder();
         String xml = "";
         AipgReq aipgReq = new AipgReq();
         InfoReq info = allinPayTranx.makeReq(trx_code, paymentWay);
@@ -45,17 +48,12 @@ public class AllinPayQueryHandler extends AbstractPaymentQueryComponent {
         aipgReq.addTrx(transQueryReq);
         transQueryReq.setMERCHANT_ID(paymentWay.getPaymentChannel().getMerchantCode());
 
-        String reqsn = request.getExternalNumber();//外部交易流水号
+        String reqsn = order.getExternalOrderNumber();//外部交易流水号
 
 
         transQueryReq.setQUERY_SN(reqsn);//原请求交易中的REQ_SN的值
         transQueryReq.setSTATUS(2);//交易状态条件, 0成功,1失败, 2全部,3退票
         transQueryReq.setTYPE(1);//0.按完成日期1.按提交日期，默认为1
-
-        if (reqsn == null || "".equals(reqsn)) {//若不填QUERY_SN则必填开始日/结束日
-            transQueryReq.setSTART_DAY(request.getStartDate().toString());
-            transQueryReq.setEND_DAY(request.getEndDate().toString());
-        }
 
         xml = XmlTools.buildXml(aipgReq, true);
 

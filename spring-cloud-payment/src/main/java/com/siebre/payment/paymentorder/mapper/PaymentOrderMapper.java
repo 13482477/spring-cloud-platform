@@ -60,7 +60,7 @@ public interface PaymentOrderMapper {
 
     List<Map<String, Object>> selectOrderSummery(@Param("orderNumber") String orderNumber, @Param("applicationNumber") String applicationNumber, @Param("channelId") Long channelId);
 
-    int updateOrderStatusToClose(String orderNumber);
+    int updateOrderStatusToInvalid(String orderNumber);
 
     BigDecimal getSuccessedPaymentAmount();
 

@@ -501,9 +501,9 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 
-	<update id="updateOrderStatusToClose">
+	<update id="updateOrderStatusToInvalid">
 		update pmt_payment_order
-		set status = 4
+		set status = 8
 		where
 		status != 3
 		and

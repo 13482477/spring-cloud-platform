@@ -7,16 +7,21 @@ import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.entity.enums.EncryptionMode;
-import com.siebre.payment.entity.enums.PaymentTransactionStatus;
+import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
+import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
+import com.siebre.payment.paymenthandler.paymentquery.OrderQueryReturnVo;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
-import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.paymentway.mapper.PaymentWayMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,36 +29,42 @@ import java.util.Map;
  * Created by AdamTang on 2017/4/26.
  * Project:siebre-cloud-platform
  * Version:1.0
+ * 开发文档地址：https://doc.open.alipay.com/doc2/apiDetail.htm?apiId=757&docType=4
  */
 @Service("alipayPaymentQueryHandler")
 public class AlipayPaymentQueryHandler extends AbstractPaymentQueryComponent {
 
+    @Autowired
+    private PaymentWayMapper paymentWayMapper;
+
     @Override
     protected void handleInternal(PaymentQueryRequest request, PaymentQueryResponse response) {
+        //TODO 对于支付宝电脑网关支付，使用的是手机网关支付的paymentWay
+        PaymentOrder order = response.getLocalOrder();
         PaymentWay paymentWay = request.getPaymentWay();
+        if(paymentWay.getCode().equals(AlipayConfig.WAY_WEB_PAY)) {
+            paymentWay = paymentWayMapper.getPaymentWayByCode(AlipayConfig.WAY_TRADE_PAY);
+        }
         PaymentInterface paymentInterface = request.getPaymentInterface();
-        PaymentTransaction paymentTransaction = request.getPaymentTransaction();
 
         AlipayClient alipayClient = new DefaultAlipayClient(paymentInterface.getRequestUrl(),
                 paymentWay.getAppId(), paymentWay.getSecretKey(), "json", AlipayConfig.INPUT_CHARSET_UTF,
                 paymentWay.getPublicKey(), EncryptionMode.RSA.getDescription()); //获得初始化的AlipayClient
 
-        AlipayTradeQueryRequest alipayRequest = buildAlipayQueryRequest(paymentWay, paymentTransaction);
+        AlipayTradeQueryRequest alipayRequest = buildAlipayQueryRequest(order);
 
-        processQuery(alipayClient, alipayRequest);
+        processQuery(alipayClient, alipayRequest, response);
 
     }
 
     /**
      * 构造请求参数
      *
-     * @param paymentWay
-     * @param paymentTransaction
      * @return
      */
-    private AlipayTradeQueryRequest buildAlipayQueryRequest(PaymentWay paymentWay, PaymentTransaction paymentTransaction) {
+    private AlipayTradeQueryRequest buildAlipayQueryRequest(PaymentOrder order) {
         AlipayTradeQueryRequest alipayRequest = new AlipayTradeQueryRequest();//创建API对应的request
-        alipayRequest.setBizContent(generateBizContent(paymentWay, paymentTransaction));
+        alipayRequest.setBizContent(generateBizContent(order));
         return alipayRequest;
     }
 
@@ -62,46 +73,56 @@ public class AlipayPaymentQueryHandler extends AbstractPaymentQueryComponent {
      *
      * @return
      */
-    private String generateBizContent(PaymentWay paymentWay, PaymentTransaction paymentTransaction) {
+    private String generateBizContent(PaymentOrder order) {
         Map<String, String> params = new HashMap<>();
 
-        params.put("out_trade_no", paymentTransaction.getInternalTransactionNumber());
-        params.put("trade_no", paymentTransaction.getExternalTransactionNumber());
+        params.put("out_trade_no", order.getOrderNumber());
+        params.put("trade_no", order.getExternalOrderNumber());
 
         return JsonUtil.mapToJson(params);
     }
 
 
-    private PaymentQueryResponse processQuery(AlipayClient alipayClient, AlipayTradeQueryRequest alipayRequest) {
-        PaymentQueryResponse queryResponse = new PaymentQueryResponse();
-
+    private void processQuery(AlipayClient alipayClient, AlipayTradeQueryRequest alipayRequest, PaymentQueryResponse response) {
         try {
+            PaymentOrder order = response.getLocalOrder();
+            AlipayTradeQueryResponse alipayResponse = alipayClient.execute(alipayRequest);
 
-            AlipayTradeQueryResponse response = alipayClient.execute(alipayRequest);
-
-            if (response.isSuccess()) {
-                String status = response.getTradeStatus();
-                //支付成功
-                if ("TRADE_SUCCESS".equals(status)) {
-                    queryResponse.setStatus(PaymentTransactionStatus.PAY_SUCCESS);
-                } else if ("WAIT_BUYER_PAY".equals(status)) {//等待支付
-                    queryResponse.setStatus(PaymentTransactionStatus.PAY_PROCESSING);
-                } else if ("TRADE_FINISHED".equals(status)) {//支付关闭
-                    queryResponse.setStatus(PaymentTransactionStatus.CLOSED);
-                } else if ("TRADE_CLOSED".equals(status)) {//支付失败（未付款交易超时关闭，或支付完成后全额退款
-                    queryResponse.setStatus(PaymentTransactionStatus.PAY_FAILED);
+            if (alipayResponse.isSuccess()) {
+                logger.info("调用成功");
+                OrderQueryReturnVo queryResult = new OrderQueryReturnVo();
+                String status = alipayResponse.getTradeStatus();
+                if ("WAIT_BUYER_PAY".equals(status)) { //交易创建，等待买家付款
+                    queryResult.setTradeState(PaymentOrderPayStatus.PAYING);
+                } else if ("TRADE_CLOSED".equals(status)) {  //未付款交易超时关闭，或支付完成后全额退款
+                    if(PaymentOrderPayStatus.PAYING.equals(order.getStatus())) {
+                        queryResult.setTradeState(PaymentOrderPayStatus.INVALID);
+                    } else if (PaymentOrderPayStatus.INVALID.equals(order.getStatus())) {
+                        queryResult.setTradeState(PaymentOrderPayStatus.INVALID);
+                    } else if (PaymentOrderPayStatus.FULL_REFUND.equals(order.getStatus())) {
+                        queryResult.setTradeState(PaymentOrderPayStatus.FULL_REFUND);
+                    }
+                } else if ("TRADE_SUCCESS".equals(status)) { //TRADE_SUCCESS
+                    queryResult.setTradeState(PaymentOrderPayStatus.PAID);
+                    queryResult.setRemoteOrderAmount(new BigDecimal(alipayResponse.getTotalAmount()));
+                    queryResult.setRemotePayTime(alipayResponse.getSendPayDate());
+                } else if ("TRADE_FINISHED".equals(status)) { //交易结束，不可退款
+                    // https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7386797.0.0.pFtKIz&source=search&treeId=193&articleId=106448&docType=1
+                    // TODO 待讨论
                 }
 
-                logger.info("调用成功");
+                response.setReturnCode(ReturnCode.SUCCESS.getDescription());
+                response.setQueryResult(queryResult);
             } else {
-
-                logger.info("调用失败");
+                logger.info("查询失败，失败原因：{}, {}", alipayResponse.getMsg(), alipayResponse.getSubMsg());
+                response.setReturnCode(ReturnCode.FAIL.getDescription());
+                response.setReturnMessage("查询失败，失败原因：" + alipayResponse.getMsg() + ", " + alipayResponse.getSubMsg());
             }
         } catch (AlipayApiException e) {
             logger.error("支付宝查询接口调用异常", e);
+            response.setReturnCode(ReturnCode.FAIL.getDescription());
+            response.setReturnMessage("支付宝查询接口调用异常");
         }
-
-        return queryResponse;
     }
 
 }

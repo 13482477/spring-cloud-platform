@@ -436,7 +436,8 @@ public class PaymentTransactionService {
 
     @Transactional("db")
     public void outOfTime(String orderNumber) {
-        paymentOrderMapper.updateOrderStatusToClose(orderNumber);
+        //将订单更新为已失效
+        paymentOrderMapper.updateOrderStatusToInvalid(orderNumber);
         paymentTransactionMapper.updateTransactionStatusToClose(orderNumber);
     }
 
