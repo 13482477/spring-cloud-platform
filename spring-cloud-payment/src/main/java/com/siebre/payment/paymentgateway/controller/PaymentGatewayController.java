@@ -59,7 +59,7 @@ public class PaymentGatewayController {
      */
     @ApiOperation(value = "查询订单支付状态（去第三方渠道）", notes = "到第三方渠道去查询订单")
     @RequestMapping(value = "/openApi/v1/paymentGateway/query/{orderNumber}", method = GET)
-    public PaymentQueryResponse payQuery(@PathVariable String orderNumber) throws Exception {
+    public PaymentQueryResponse payQuery(@PathVariable String orderNumber) {
         PaymentQueryResponse response = queryApplicationService.queryOrderStatusByOrderNumber(orderNumber);
         return response;
     }

@@ -11,7 +11,7 @@ import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
-import com.siebre.payment.paymentorder.service.PaymentOrderService;
+import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.paymentway.service.PaymentWayService;
 import org.slf4j.Logger;
@@ -30,15 +30,15 @@ public class QueryApplicationService {
     private PaymentWayService paymentWayService;
 
     @Autowired
-    private PaymentOrderService orderService;
+    private PaymentOrderMapper orderMapper;
 
     /**
      * 去远程查询第三方支付系统中本地订单对应的支付状态
      */
-    public PaymentQueryResponse queryOrderStatusByOrderNumber(String orderNumber) throws Exception {
+    public PaymentQueryResponse queryOrderStatusByOrderNumber(String orderNumber) {
         logger.info("开始去第三方渠道查询订单状态，订单编号：{}", orderNumber);
         PaymentQueryResponse response = new PaymentQueryResponse();
-        PaymentOrder order = orderService.queryPaymentOrder(orderNumber);
+        PaymentOrder order = orderMapper.selectByOrderNumber(orderNumber);
         if (order == null) {
             logger.info("未在本地查询到该订单号对应的订单。订单号：{}", orderNumber);
             response.setReturnCode(ReturnCode.FAIL.getDescription());

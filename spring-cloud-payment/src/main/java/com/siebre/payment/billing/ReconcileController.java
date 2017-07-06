@@ -1,5 +1,6 @@
 package com.siebre.payment.billing;
 
+import com.siebre.payment.billing.amqp.RealTimeReconcileProduct;
 import com.siebre.payment.billing.base.ReconcileManager;
 import com.siebre.payment.billing.service.AllinReconcileFileManager;
 import com.siebre.payment.utils.DateUtil;
@@ -23,6 +24,14 @@ public class ReconcileController {
 
     @Autowired
     private ReconcileManager reconcileManager;
+
+    @Autowired
+    private RealTimeReconcileProduct realTimeReconcileProduct;
+
+    @RequestMapping(value = "/reconclie/test/realtime", method = RequestMethod.GET)
+    public void testRealTime(HttpServletResponse response) {
+        realTimeReconcileProduct.sendToRealTimeExchange("SO2017070400001104");
+    }
 
     @RequestMapping(value = "/reconclie/allin/refundjob", method = RequestMethod.GET)
     public void testReconcile(HttpServletResponse response) {
