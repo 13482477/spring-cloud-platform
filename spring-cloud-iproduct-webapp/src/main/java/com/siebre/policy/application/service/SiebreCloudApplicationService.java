@@ -7,11 +7,21 @@ import com.siebre.agreement.*;
 import com.siebre.agreement.factory.AgreementFactory;
 import com.siebre.agreement.factory.DtoAgreementFactory;
 import com.siebre.agreement.service.AgreementRequestExecutor;
+import com.siebre.policy.InsurancePolicy;
+import com.siebre.policy.InsurancePolicyImpl;
 import com.siebre.policy.application.Application;
 import com.siebre.policy.application.Exception.SiebreCloudAgreementValidationError;
 import com.siebre.policy.application.SiebreCloudApplicationResult;
+import com.siebre.policy.dao.InsurancePolicyRepository;
 import com.siebre.policy.factory.PolicyFactoryInterceptors;
+import com.siebre.repository.rdb.hibernate.HibernateUtils;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +37,12 @@ public class SiebreCloudApplicationService {
     private ProductRegistry productRegistry;
 
     private AgreementFactory agreementFactory;
+
+    @Autowired
+    private InsurancePolicyRepository insurancePolicyRepository;
+
+    @Autowired
+    private SessionFactory sessionFactory;
 
     public SiebreCloudApplicationService(AgreementRequestExecutor requestExecutor) {
         this.requestExecutor = requestExecutor;
@@ -83,7 +99,11 @@ public class SiebreCloudApplicationService {
 
                 //与保险公司核保接口mock
 
-            } else {
+
+                //保存保单操作
+                saveAgreement(policy);
+
+            }else {
                 result.setUnderwritingResult(false);
                 Set<String> flag = new HashSet<>();
                 List<SiebreCloudAgreementValidationError> errors = new ArrayList<SiebreCloudAgreementValidationError>();
@@ -91,7 +111,6 @@ public class SiebreCloudApplicationService {
                     if(flag.contains(errorMessage)) {
                         continue;
                     }
-
                     flag.add(errorMessage);
                     SiebreCloudAgreementValidationError error = new SiebreCloudAgreementValidationError(null,null,null);
                     error.setDescription(errorMessage);
@@ -100,8 +119,8 @@ public class SiebreCloudApplicationService {
                 result.setErrors(errors);
             }
             return result;
-        } catch (AgreementException e) {
-            e.printStackTrace();
+        }catch (AgreementException e) {
+            //e.printStackTrace();
             List<SiebreCloudAgreementValidationError> errors = new ArrayList<SiebreCloudAgreementValidationError>();
             SiebreCloudAgreementValidationError error = new SiebreCloudAgreementValidationError(null,e.getCause().getCause().getMessage(), null);
             error.setDescription(e.getCause().getCause().getMessage());
@@ -109,6 +128,19 @@ public class SiebreCloudApplicationService {
             return new SiebreCloudApplicationResult(policy, errors);
         }
     }
+
+    public void saveAgreement(Agreement policy) {
+        insurancePolicyRepository.save((InsurancePolicy) policy);
+
+//        Session session = HibernateUtils.getCurrentSession(sessionFactory);
+//        session.getTransaction().begin();
+//        Serializable id = session.save(agreement);
+//        System.out.println("- id = " + id);
+//        System.out.println("- agreement.getOid() = " + agreement.getOid());
+//        session.flush();
+//        session.getTransaction().commit();
+    }
+
       /**
      * A temporary product registry to serve products to AgreementFactory.
      *
