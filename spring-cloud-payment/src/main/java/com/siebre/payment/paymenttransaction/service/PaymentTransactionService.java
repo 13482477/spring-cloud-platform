@@ -129,7 +129,6 @@ public class PaymentTransactionService {
 
     /**
      * 获取退款流水记录
-     * @param refundApplication
      * @return
      */
     public List<RefundRecord> getRefundRecordFlow(RefundApplication refundApplication) {
@@ -287,7 +286,6 @@ public class PaymentTransactionService {
      * 如果没有做过处理，根据订单号internalTransactionNumber在订单系统中查到该笔订单的详细，并执行业务程序
      * 判断请求时的total_fee、seller_id与通知时获取的total_fee、seller_id为一致的
      * 如果有做过处理，不执行业务程序
-     *
      * @param internalTransactionNumber 内部交易号(订单号)
      * @param externalTransactionNumber 外部交易流水号
      * @return

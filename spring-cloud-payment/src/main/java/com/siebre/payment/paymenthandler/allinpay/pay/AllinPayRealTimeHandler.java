@@ -6,6 +6,7 @@ import com.aipg.rtreq.Trans;
 import com.allinpay.XmlTools;
 import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
+import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.entity.enums.SubsequentAction;
 import com.siebre.payment.paymentaccount.entity.PaymentAccount;
