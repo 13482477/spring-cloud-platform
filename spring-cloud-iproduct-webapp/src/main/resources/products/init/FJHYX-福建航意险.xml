@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="GBK"?>
-<product kind="Marketable Product" name="福建航意险" seqIndex="0" externalReference="FJHYXtestjml62" instanceClassName="InsurancePolicy" shortName="福建航意险" groupType="PERSONAL" sellChannelType="RemoteSell">
+<product kind="Marketable Product" name="福建航意险" seqIndex="0" externalReference="FJHYXtestjml66" instanceClassName="InsurancePolicy" shortName="福建航意险" groupType="PERSONAL" sellChannelType="RemoteSell">
 	<description>人保寿险公共交通工具意外伤害保险（新标准版）</description>
 	<baseSpec version="0" />
 	<properties>
-		<property kind="policySerialNumber" name="单证流水号" seqIndex="100" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
+		<property kind="policySerialNumber" name="单证流水号" seqIndex="100" dataType="String" beanProperty="false" isHidden="false" required="false" derived="false" group="Base" />
 		<property kind="inceptionDate" name="生效日期" seqIndex="200" dataType="Date" beanProperty="true" isHidden="false" required="true" derived="false" defaultValue="new java.util.Date()" group="Base" />
 		<property kind="benefitPeriodType" name="保障类型" seqIndex="300" dataType="BenefitPeriodType" beanProperty="true" isHidden="true" required="true" derived="true" defaultValue="DAILY" group="Base" allowedValues="DAILY" />
 		<property kind="benefitPeriod" name="保障类型年期" seqIndex="400" dataType="Integer" beanProperty="true" isHidden="true" required="true" derived="true" defaultValue="7" group="Base" />
 		<property kind="premium" name="保费" seqIndex="500" dataType="Decimal" beanProperty="true" isHidden="false" required="false" derived="false" />
 		<property kind="insuredAmount" name="保额" seqIndex="600" dataType="Decimal" beanProperty="true" isHidden="false" required="false" derived="false" />
 		<property kind="grossPremium" name="总保费" seqIndex="700" dataType="Decimal" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
-		<property kind="beneficiaryMode" name="受益人类型" seqIndex="800" dataType="BeneficiaryMode" beanProperty="true" isHidden="true" required="false" defaultValue="BY_LAW" derived="false" />
-		<property kind="unitCount" name="份数" seqIndex="900" dataType="Integer" beanProperty="true" isHidden="true" required="false" defaultValue="1" derived="false" />
+		<property kind="unitCount" name="份数" seqIndex="900" dataType="Integer" beanProperty="false" isHidden="true" required="false" defaultValue="1" derived="false" />
 		<property kind="flightNubmer" name="机票票号" seqIndex="1000" dataType="String" beanProperty="false" isHidden="false" required="false" derived="false" group="Base" />
 		<property kind="branchNubmer" name="网点工号" seqIndex="1100" dataType="String" beanProperty="false" isHidden="false" required="false" group="Base,Quote" />
 	</properties>
@@ -39,9 +38,9 @@
 				<property kind="idNumber" name="投保人证件号码" seqIndex="300" dataType="String" beanProperty="true" isHidden="false" required="true" derived="false" group="Base" />
 				<property kind="gender" name="投保人性别" seqIndex="350" dataType="Gender" beanProperty="true" isHidden="false" required="false" derived="false" group="Base,Quote" defaultValue="M" />
 				<property kind="birthDate" name="投保人出生日期" seqIndex="360" dataType="Date" beanProperty="true" isHidden="false" required="false" derived="false" defaultValue="" group="Base,Quote" allowedValues="" />
-				<property kind="phoneNumber" name="投保人电话号码" seqIndex="370" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
-				<property kind="addressLines" name="投保人通讯地址" seqIndex="600" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
-				<property kind="postalCode" name="投保人邮政编码" seqIndex="700" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
+				<property kind="phoneNumber" name="投保人电话号码" seqIndex="370" dataType="String" beanProperty="false" isHidden="false" required="false" derived="false" group="Base" />
+				<property kind="addressLines" name="投保人通讯地址" seqIndex="600" dataType="String" beanProperty="false" isHidden="false" required="false" derived="false" group="Base" />
+				<property kind="postalCode" name="投保人邮政编码" seqIndex="700" dataType="String" beanProperty="false" isHidden="false" required="false" derived="false" group="Base" />
 			</properties>
 			<rules>
 				<rule kind="ageLimit" name="投保人的年龄限制" seqIndex="0" language="GROOVY">
@@ -77,9 +76,9 @@
 				<property kind="idNumber" name="被保人证件号码" seqIndex="300" dataType="String" beanProperty="true" isHidden="false" required="true" derived="false" group="Base" />
 				<property kind="gender" name="被保人性别" seqIndex="350" dataType="Gender" beanProperty="true" isHidden="false" required="false" derived="false" group="Base,Quote" defaultValue="M" />
 				<property kind="birthDate" name="被保人出生日期" seqIndex="360" dataType="Date" beanProperty="true" isHidden="false" required="false" derived="false" defaultValue="" group="Base,Quote" allowedValues="" />
-				<property kind="phoneNumber" name="被保人电话号码" seqIndex="370" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
-				<property kind="addressLines" name="被保人通讯地址" seqIndex="600" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
-				<property kind="postalCode" name="被保人邮政编码" seqIndex="700" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
+				<property kind="phoneNumber" name="被保人电话号码" seqIndex="370" dataType="String" beanProperty="false" isHidden="false" required="false" derived="false" group="Base" />
+				<property kind="addressLines" name="被保人通讯地址" seqIndex="600" dataType="String" beanProperty="false" isHidden="false" required="false" derived="false" group="Base" />
+				<property kind="postalCode" name="被保人邮政编码" seqIndex="700" dataType="String" beanProperty="false" isHidden="false" required="false" derived="false" group="Base" />
 				<property kind="relatedToRoleCode" name="与投保人关系" dataType="RelatedToRoleCode" beanProperty="true" isHidden="true" required="true" derived="false" group="Base" />
 				<property kind="socialInsuranceCovered" name="有无社保" dataType="Boolean" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
 			</properties>
@@ -132,9 +131,10 @@
 				<property kind="idNumber" name="受益人证件号码" seqIndex="300" dataType="String" beanProperty="true" isHidden="false" required="true" derived="false" group="Base" />
 				<property kind="gender" name="受益人性别" seqIndex="350" dataType="Gender" beanProperty="true" isHidden="false" required="false" derived="false" group="Base,Quote" defaultValue="M" />
 				<property kind="birthDate" name="受益人出生日期" seqIndex="360" dataType="Date" beanProperty="true" isHidden="false" required="false" derived="false" defaultValue="" group="Base,Quote" allowedValues="" />
-				<property kind="phoneNumber" name="受益人电话号码" seqIndex="370" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
+				<property kind="phoneNumber" name="受益人电话号码" seqIndex="370" dataType="String" beanProperty="false" isHidden="false" required="false" derived="false" group="Base" />
 				<property kind="relatedToRoleCode" name="受益人与被保人关系" seqIndex="380" dataType="RelatedToRoleCode" beanProperty="true" isHidden="false" required="false" derived="false" group="Base,Quote" />
 				<property kind="interestPercent" name="受益比例" seqIndex="390" dataType="Decimal" beanProperty="true" isHidden="false" required="false" derived="false" group="Base,Quote" />
+				<property kind="beneficiaryMode" name="受益人类型" seqIndex="400" dataType="BeneficiaryMode" beanProperty="false" isHidden="true" required="false" derived="false" group="Base,Quote" defaultValue="BY_LAW" />
 			</properties>
 			<rules>
 				<rule kind="ageLimit" name="收益比例校验" seqIndex="0" language="GROOVY">

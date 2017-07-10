@@ -40,14 +40,4 @@ public class UnderwritingController {
         return applicationService.underwriting(application);
     }
 
-    @RequestMapping(path = "/api/v1/underwritingAgain", method = RequestMethod.POST)
-    @ResponseStatus(code = HttpStatus.OK)
-    @ApiOperation(value = "核保", notes = "与保险公司核保提交保单的json数据")
-    public SiebreCloudApplicationResult underwritingAgain(HttpServletRequest request, HttpServletResponse response) {
-
-        //SiebreCloudApplicationResult siebreCloudApplicationResult = new SiebreCloudApplicationResult();
-        return null;
-    }
-
-
 }
