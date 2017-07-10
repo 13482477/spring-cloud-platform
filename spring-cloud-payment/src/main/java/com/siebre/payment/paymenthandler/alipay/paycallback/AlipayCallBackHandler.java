@@ -1,11 +1,13 @@
 package com.siebre.payment.paymenthandler.alipay.paycallback;
 
+import com.siebre.basic.service.ServiceResult;
 import com.siebre.basic.utils.HttpServletRequestUtil;
 import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.entity.enums.EncryptionMode;
 import com.siebre.payment.paymenthandler.alipay.sdk.AlipaySign;
 import com.siebre.payment.paymenthandler.basic.paymentcallback.AbstractPaymentCallBackHandler;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
+import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.paymentway.mapper.PaymentWayMapper;
@@ -64,7 +66,10 @@ public class AlipayCallBackHandler extends AbstractPaymentCallBackHandler {
                 DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 try {
                     Date successDate = f.parse(request.getParameter("gmt_payment"));
-                    this.paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee, successDate, responseStr);
+                    ServiceResult<PaymentTransaction> result = this.paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee, successDate, responseStr);
+                    if(result.getSuccess()) {
+                        realTimeReconcileProduct.sendToRealTimeExchange(internalTransactionNumber);
+                    }
                 } catch (ParseException e) {
                     logger.error("日期转换失败");
                     e.printStackTrace();

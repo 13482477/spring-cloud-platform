@@ -50,7 +50,6 @@ public class RabbitmqConfig {
     @Bean
     public RabbitTemplate rabbitTemplate() {
         RabbitTemplate template = new RabbitTemplate(connectionFactory());
-        template.setMessageConverter(jsonMessageConverter());
         return template;
     }
 
@@ -58,11 +57,6 @@ public class RabbitmqConfig {
     public AmqpAdmin amqpAdmin() {
         RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory());
         return rabbitAdmin ;
-    }
-
-    @Bean
-    public MessageConverter jsonMessageConverter() {
-        return new JsonMessageConverter();
     }
 
     /** 订单支付超时 exchange */
@@ -75,9 +69,9 @@ public class RabbitmqConfig {
 
     /** 订单实时对账 exchange */
     @Bean
-    public DirectExchange orderRealTimeReconExchange() {
-        DirectExchange directExchange = new DirectExchange(order_real_time_recon_exchange);
-        return directExchange;
+    public TopicExchange orderRealTimeReconExchange() {
+        TopicExchange topicExchange = new TopicExchange(order_real_time_recon_exchange);
+        return topicExchange;
     }
 
     /** 订单支付超时 queue */
@@ -100,13 +94,13 @@ public class RabbitmqConfig {
 
     @Bean
     public Binding outOfTimeBinding() {
-        Binding binding = new Binding("", Binding.DestinationType.QUEUE, order_out_of_time_exchange, order_out_of_time_key, null);
+        Binding binding = BindingBuilder.bind(orderOutOfTimeQueue()).to(orderOutOfTimeExchange()).with(order_out_of_time_key);
         return binding;
     }
 
     @Bean
     public Binding realTimeBinding() {
-        Binding binding = new Binding("", Binding.DestinationType.QUEUE, order_real_time_recon_exchange, order_real_time_recon_key, null);
+        Binding binding = BindingBuilder.bind(orderRealTimeReconQueue()).to(orderRealTimeReconExchange()).with(order_real_time_recon_key);
         return binding;
     }
 
@@ -125,6 +119,5 @@ public class RabbitmqConfig {
         container.setMessageListener(realTimeReconcileListener());
         return container;
     }
-
 
 }

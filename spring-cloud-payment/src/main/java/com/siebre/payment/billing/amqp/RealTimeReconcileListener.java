@@ -26,10 +26,11 @@ public class RealTimeReconcileListener implements MessageListener {
 
     @Override
     public void onMessage(Message message) {
+
         String orderNumber = new String(message.getBody());
         logger.info("实时对账队列接受到新的请求，开始去第三方查询订单状态，订单编号：{}", orderNumber);
         PaymentQueryResponse response = queryApplicationService.queryOrderStatusByOrderNumber(orderNumber);
-        if(ReturnCode.SUCCESS.equals(response.getReturnCode())) {
+        if(ReturnCode.SUCCESS.getDescription().equals(response.getReturnCode())) {
             reconcileManager.realTimeReconJob(response.getLocalOrder().getOrderNumber(), response.getQueryResult(), response.getRemoteJson());
         } else {
             logger.error("调用远程查询订单信息失败，无法开始实时对账，原因：{}", response.getReturnMessage());

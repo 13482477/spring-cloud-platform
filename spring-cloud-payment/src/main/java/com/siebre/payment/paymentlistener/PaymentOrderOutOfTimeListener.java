@@ -36,7 +36,7 @@ public class PaymentOrderOutOfTimeListener implements ChannelAwareMessageListene
 
             //TODO  订单的超时处理逻辑需要再优化
             //transactionService.outOfTime(orderNumber);
-            queryApplicationService.queryOrderStatusByOrderNumber(orderNumber);
+            //queryApplicationService.queryOrderStatusByOrderNumber(orderNumber);
 
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false); //确认消息成功消费
         } catch (Exception e) {

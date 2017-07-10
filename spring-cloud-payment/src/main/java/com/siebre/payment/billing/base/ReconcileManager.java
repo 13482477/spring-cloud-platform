@@ -42,6 +42,14 @@ public class ReconcileManager {
 
     private static Logger logger = LoggerFactory.getLogger(ReconcileManager.class);
 
+    public static String pay_real_time = "pay_real_time";
+
+    public static String pay_file = "pay_file";
+
+    public static String refund_real_time = "refund_real_time";
+
+    public static String refund_file = "refund_file";
+
     @Autowired
     private PaymentOrderMapper orderMapper;
 
@@ -73,6 +81,7 @@ public class ReconcileManager {
     public void realTimeReconJob(String orderNumber, OrderQueryReturnVo returnVo, String remoteJson) {
         logger.info("开始对账");
         ReconItem reconItem = new ReconItem();
+        reconItem.setType(pay_real_time);
         PaymentOrder order = orderMapper.selectByOrderNumber(orderNumber);
         if(order.getStatus().equals(returnVo.getTradeState())) {
             reconItem.setReconResult("MATCH");
@@ -87,6 +96,7 @@ public class ReconcileManager {
         reconItem.setOutTradeNo(order.getExternalOrderNumber());
         reconItem.setRemoteDataSourceJsonStr(remoteJson);
         reconItem.setPaymentDataSourceJsonStr(JsonUtil.toJson(order, true));
+        itemMapper.insert(reconItem);
         //更新order状态
         order.setCheckTime(new Date());
         orderMapper.updateByPrimaryKeySelective(order);
@@ -95,6 +105,7 @@ public class ReconcileManager {
 
     public void createFailRealTimeReconJob(String orderNumber, String errorMsg) {
         ReconItem reconItem = new ReconItem();
+        reconItem.setType(pay_real_time);
         PaymentOrder order = orderMapper.selectByOrderNumber(orderNumber);
         reconItem.setReconResult("UNMATCH");
         reconItem.setOrderNumber(orderNumber);
@@ -401,7 +412,7 @@ public class ReconcileManager {
      */
     private void createReconItem(ReconJobInstance reconJobInstance, JsonNode remoteJS, JsonNode localJS, String reconResult, String message) {
         ReconItem reconItem = new ReconItem();
-
+        reconItem.setType(pay_file);
         reconItem.setTransId(reconJobInstance.getId());
         if (localJS != null) {
             reconItem.setOrderNumber(getTextValue(localJS, "OrderNumber"));

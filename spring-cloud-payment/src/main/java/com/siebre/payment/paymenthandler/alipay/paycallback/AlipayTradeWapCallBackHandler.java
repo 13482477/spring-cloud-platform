@@ -2,10 +2,12 @@ package com.siebre.payment.paymenthandler.alipay.paycallback;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
+import com.siebre.basic.service.ServiceResult;
 import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.paymenthandler.alipay.sdk.AlipayConfig;
 import com.siebre.payment.paymenthandler.basic.paymentcallback.AbstractPaymentCallBackHandler;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
+import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.paymentway.mapper.PaymentWayMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +62,10 @@ public class AlipayTradeWapCallBackHandler extends AbstractPaymentCallBackHandle
 
                     try {
                         Date successDate = f.parse(request.getParameter("gmt_payment"));
-                        this.paymentTransactionService.paymentConfirm(out_trade_no, trade_no, seller_id, total_amount, successDate, responseStr);
+                        ServiceResult<PaymentTransaction> result = this.paymentTransactionService.paymentConfirm(out_trade_no, trade_no, seller_id, total_amount, successDate, responseStr);
+                        if(result.getSuccess()) {
+                            realTimeReconcileProduct.sendToRealTimeExchange(out_trade_no);
+                        }
                     } catch (ParseException e) {
                         logger.error("日期转换失败");
                         e.printStackTrace();
