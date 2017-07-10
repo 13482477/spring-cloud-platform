@@ -18,6 +18,7 @@ import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.paymentway.mapper.PaymentWayMapper;
+import com.siebre.payment.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +88,7 @@ public class AlipayPaymentQueryHandler extends AbstractPaymentQueryComponent {
         try {
             PaymentOrder order = response.getLocalOrder();
             AlipayTradeQueryResponse alipayResponse = alipayClient.execute(alipayRequest);
-
+            response.setRemoteJson(JsonUtil.toJson(alipayResponse, true));
             if (alipayResponse.isSuccess()) {
                 logger.info("调用成功");
                 OrderQueryReturnVo queryResult = new OrderQueryReturnVo();
@@ -95,20 +96,28 @@ public class AlipayPaymentQueryHandler extends AbstractPaymentQueryComponent {
                 if ("WAIT_BUYER_PAY".equals(status)) { //交易创建，等待买家付款
                     queryResult.setTradeState(PaymentOrderPayStatus.PAYING);
                 } else if ("TRADE_CLOSED".equals(status)) {  //未付款交易超时关闭，或支付完成后全额退款
-                    if(PaymentOrderPayStatus.PAYING.equals(order.getStatus())) {
+                    if (PaymentOrderPayStatus.PAYING.equals(order.getStatus())) {
+                        //如果本地订单状态是支付中，那么订单状态应该是已失效
                         queryResult.setTradeState(PaymentOrderPayStatus.INVALID);
-                    } else if (PaymentOrderPayStatus.INVALID.equals(order.getStatus())) {
-                        queryResult.setTradeState(PaymentOrderPayStatus.INVALID);
-                    } else if (PaymentOrderPayStatus.FULL_REFUND.equals(order.getStatus())) {
-                        queryResult.setTradeState(PaymentOrderPayStatus.FULL_REFUND);
+                    } else {
+                        if (PaymentOrderPayStatus.INVALID.equals(order.getStatus())) {
+                            queryResult.setTradeState(PaymentOrderPayStatus.INVALID);
+                        } else {
+                            if (PaymentOrderPayStatus.FULL_REFUND.equals(order.getStatus())) {
+                                //如果本地订单状态是全额退款，那么本次查询的订单状态应该是全额退款
+                                queryResult.setTradeState(PaymentOrderPayStatus.FULL_REFUND);
+                            }
+                        }
                     }
                 } else if ("TRADE_SUCCESS".equals(status)) { //TRADE_SUCCESS
                     queryResult.setTradeState(PaymentOrderPayStatus.PAID);
                     queryResult.setRemoteOrderAmount(new BigDecimal(alipayResponse.getTotalAmount()));
                     queryResult.setRemotePayTime(alipayResponse.getSendPayDate());
                 } else if ("TRADE_FINISHED".equals(status)) { //交易结束，不可退款
-                    // https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7386797.0.0.pFtKIz&source=search&treeId=193&articleId=106448&docType=1
-                    // TODO 待讨论
+                    // 如果本地订单状态是支付成功，那么改状态对应的应该是支付成功
+                    if(PaymentOrderPayStatus.PAID.equals(order.getStatus())) {
+                        queryResult.setTradeState(PaymentOrderPayStatus.PAID);
+                    }
                 }
 
                 response.setReturnCode(ReturnCode.SUCCESS.getDescription());

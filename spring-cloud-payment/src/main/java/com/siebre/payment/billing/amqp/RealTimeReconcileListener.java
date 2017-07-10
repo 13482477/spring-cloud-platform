@@ -1,5 +1,6 @@
 package com.siebre.payment.billing.amqp;
 
+import com.siebre.payment.billing.base.ReconcileManager;
 import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.service.queryapplication.QueryApplicationService;
@@ -20,17 +21,19 @@ public class RealTimeReconcileListener implements MessageListener {
     @Autowired
     private QueryApplicationService queryApplicationService;
 
+    @Autowired
+    private ReconcileManager reconcileManager;
+
     @Override
     public void onMessage(Message message) {
         String orderNumber = new String(message.getBody());
-
-        logger.info("开始执行实时对账，订单编号：{}", orderNumber);
-        //TODO 实时对账
+        logger.info("实时对账队列接受到新的请求，开始去第三方查询订单状态，订单编号：{}", orderNumber);
         PaymentQueryResponse response = queryApplicationService.queryOrderStatusByOrderNumber(orderNumber);
         if(ReturnCode.SUCCESS.equals(response.getReturnCode())) {
-
+            reconcileManager.realTimeReconJob(response.getLocalOrder().getOrderNumber(), response.getQueryResult(), response.getRemoteJson());
         } else {
-            logger.error("实时对账失败，原因：{}", response.getReturnMessage());
+            logger.error("调用远程查询订单信息失败，无法开始实时对账，原因：{}", response.getReturnMessage());
+            reconcileManager.createFailRealTimeReconJob(response.getLocalOrder().getOrderNumber(), response.getReturnMessage());
         }
     }
 }

@@ -3,6 +3,7 @@
 <mapper namespace="com.siebre.payment.billing.mapper.ReconItemMapper" >
   <resultMap id="BaseResultMap" type="com.siebre.payment.billing.entity.ReconItem" >
     <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
     <result column="trans_id" property="transId" jdbcType="BIGINT" />
     <result column="recon_result" property="reconResult" jdbcType="VARCHAR" />
     <result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
@@ -17,7 +18,7 @@
     <result column="payment_data_source_json_str" property="paymentDataSourceJsonStr" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, trans_id, recon_result, order_number, out_trade_no, payment_amount, refund_amount, 
+    id, type, trans_id, recon_result, order_number, out_trade_no, payment_amount, refund_amount,
     trans_time, pay_success_time, refund_success_time, description, remote_data_source_json_str, 
     payment_data_source_json_str
   </sql>
@@ -32,12 +33,12 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.siebre.payment.billing.entity.ReconItem" useGeneratedKeys="true" keyProperty="id">
-    insert into recon_item (id, trans_id, recon_result, 
+    insert into recon_item (id, type, trans_id, recon_result,
       order_number, out_trade_no, payment_amount, 
       refund_amount, trans_time, pay_success_time, 
       refund_success_time, description, remote_data_source_json_str, 
       payment_data_source_json_str)
-    values (#{id,jdbcType=BIGINT}, #{transId,jdbcType=BIGINT}, #{reconResult,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{transId,jdbcType=BIGINT}, #{reconResult,jdbcType=VARCHAR},
       #{orderNumber,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{paymentAmount,jdbcType=DECIMAL}, 
       #{refundAmount,jdbcType=DECIMAL}, #{transTime,jdbcType=TIMESTAMP}, #{paySuccessTime,jdbcType=TIMESTAMP}, 
       #{refundSuccessTime,jdbcType=TIMESTAMP}, #{description,jdbcType=VARCHAR}, #{remoteDataSourceJsonStr,jdbcType=VARCHAR}, 
@@ -48,6 +49,9 @@
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
+      </if>
+      <if test="type != null" >
+        type,
       </if>
       <if test="transId != null" >
         trans_id,
@@ -90,6 +94,9 @@
       <if test="id != null" >
         #{id,jdbcType=BIGINT},
       </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
       <if test="transId != null" >
         #{transId,jdbcType=BIGINT},
       </if>
@@ -131,6 +138,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.billing.entity.ReconItem" >
     update recon_item
     <set >
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
       <if test="transId != null" >
         trans_id = #{transId,jdbcType=BIGINT},
       </if>
@@ -172,7 +182,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.siebre.payment.billing.entity.ReconItem" >
     update recon_item
-    set trans_id = #{transId,jdbcType=BIGINT},
+    set type = #{type,jdbcType=VARCHAR},
+      trans_id = #{transId,jdbcType=BIGINT},
       recon_result = #{reconResult,jdbcType=VARCHAR},
       order_number = #{orderNumber,jdbcType=VARCHAR},
       out_trade_no = #{outTradeNo,jdbcType=VARCHAR},

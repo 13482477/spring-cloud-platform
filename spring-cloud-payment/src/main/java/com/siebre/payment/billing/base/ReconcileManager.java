@@ -8,6 +8,7 @@ import com.siebre.payment.billing.mapper.*;
 import com.siebre.payment.billing.util.MatchCriteriaEngine;
 import com.siebre.payment.entity.enums.PaymentOrderCheckStatus;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
+import com.siebre.payment.paymenthandler.paymentquery.OrderQueryReturnVo;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
 import com.siebre.payment.utils.DateUtil;
@@ -67,6 +68,45 @@ public class ReconcileManager {
 
     @Autowired(required = false)
     private JdbcTemplate jdbcTemplate;
+
+    /** 实时对账任务 */
+    public void realTimeReconJob(String orderNumber, OrderQueryReturnVo returnVo, String remoteJson) {
+        logger.info("开始对账");
+        ReconItem reconItem = new ReconItem();
+        PaymentOrder order = orderMapper.selectByOrderNumber(orderNumber);
+        if(order.getStatus().equals(returnVo.getTradeState())) {
+            reconItem.setReconResult("MATCH");
+            reconItem.setDescription("匹配成功");
+            order.setCheckStatus(PaymentOrderCheckStatus.REAL_TIME_SUCCESS);
+        } else {
+            reconItem.setReconResult("UNMATCH");
+            reconItem.setDescription("远程订单状态是：" + returnVo.getTradeState() + "; 本地订单状态是：" + order.getStatus());
+            order.setCheckStatus(PaymentOrderCheckStatus.REAL_TIME_FAIL);
+        }
+        reconItem.setOrderNumber(orderNumber);
+        reconItem.setOutTradeNo(order.getExternalOrderNumber());
+        reconItem.setRemoteDataSourceJsonStr(remoteJson);
+        reconItem.setPaymentDataSourceJsonStr(JsonUtil.toJson(order, true));
+        //更新order状态
+        order.setCheckTime(new Date());
+        orderMapper.updateByPrimaryKeySelective(order);
+        logger.info("对账结束");
+    }
+
+    public void createFailRealTimeReconJob(String orderNumber, String errorMsg) {
+        ReconItem reconItem = new ReconItem();
+        PaymentOrder order = orderMapper.selectByOrderNumber(orderNumber);
+        reconItem.setReconResult("UNMATCH");
+        reconItem.setOrderNumber(orderNumber);
+        reconItem.setOutTradeNo(order.getExternalOrderNumber());
+        reconItem.setPaymentDataSourceJsonStr(JsonUtil.toJson(order, true));
+        reconItem.setDescription(errorMsg);
+        itemMapper.insert(reconItem);
+        //更新order状态
+        order.setCheckTime(new Date());
+        order.setCheckStatus(PaymentOrderCheckStatus.REAL_TIME_FAIL);
+        orderMapper.updateByPrimaryKeySelective(order);
+    }
 
     /**
      * 由定时器启动对账任务

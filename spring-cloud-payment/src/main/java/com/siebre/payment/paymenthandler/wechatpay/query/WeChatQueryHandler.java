@@ -1,5 +1,6 @@
 package com.siebre.payment.paymenthandler.wechatpay.query;
 
+import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.entity.enums.EncryptionMode;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
@@ -50,7 +51,7 @@ public class WeChatQueryHandler extends AbstractPaymentQueryComponent {
         String queryXml = ConvertToXML.toXml(params);
         String resultXml = HttpTookit.doPost(requestUrl, queryXml);
         Map<String, String> resultMap = ConvertToXML.toMap(resultXml);
-        response.setRemoteResult(resultMap);
+        response.setRemoteJson(JsonUtil.toJson(resultMap, true));
         if ("SUCCESS".equals(resultMap.get("return_code"))) {
             OrderQueryReturnVo queryResult = new OrderQueryReturnVo();
             String trade_state = resultMap.get("trade_state");

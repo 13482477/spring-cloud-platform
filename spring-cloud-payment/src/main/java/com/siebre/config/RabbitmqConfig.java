@@ -99,6 +99,18 @@ public class RabbitmqConfig {
     }
 
     @Bean
+    public Binding outOfTimeBinding() {
+        Binding binding = new Binding("", Binding.DestinationType.QUEUE, order_out_of_time_exchange, order_out_of_time_key, null);
+        return binding;
+    }
+
+    @Bean
+    public Binding realTimeBinding() {
+        Binding binding = new Binding("", Binding.DestinationType.QUEUE, order_real_time_recon_exchange, order_real_time_recon_key, null);
+        return binding;
+    }
+
+    @Bean
     public MessageListener realTimeReconcileListener() {
         return new RealTimeReconcileListener();
     }

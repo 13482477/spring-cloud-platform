@@ -6,6 +6,9 @@ import java.util.Date;
 public class ReconItem {
     private Long id;
 
+    //pay_file  refund_file   pay_real_time  refund_real_time
+    private String type;
+
     private Long transId;
 
     private String reconResult;
@@ -36,6 +39,14 @@ public class ReconItem {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Long getTransId() {

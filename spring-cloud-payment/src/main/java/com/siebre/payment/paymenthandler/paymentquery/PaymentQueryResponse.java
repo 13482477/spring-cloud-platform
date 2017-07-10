@@ -1,6 +1,7 @@
 package com.siebre.payment.paymenthandler.paymentquery;
 
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
+import org.codehaus.jackson.JsonNode;
 
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class PaymentQueryResponse {
     private OrderQueryReturnVo queryResult;
 
     //查询订单交易状态的返回报文
-    private Map<String, String> remoteResult;
+    private String remoteJson;
 
     public String getReturnCode() {
         return returnCode;
@@ -50,11 +51,11 @@ public class PaymentQueryResponse {
         this.queryResult = queryResult;
     }
 
-    public Map<String, String> getRemoteResult() {
-        return remoteResult;
+    public String getRemoteJson() {
+        return remoteJson;
     }
 
-    public void setRemoteResult(Map<String, String> remoteResult) {
-        this.remoteResult = remoteResult;
+    public void setRemoteJson(String remoteJson) {
+        this.remoteJson = remoteJson;
     }
 }
