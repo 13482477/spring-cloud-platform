@@ -63,6 +63,16 @@ public class ComponentData<K,V> extends HashMap<K,V> {
         return roles;
     }
 
+    public void addRoleData(RoleData role) {
+        List<Map<K, V>> roleNodes = (List<Map<K, V>>) super.get(ROLES_PROPERTY_NAME);
+        if (roleNodes == null) {
+            roleNodes = new ArrayList<Map<K, V>>();
+            super.put((K) ROLES_PROPERTY_NAME, (V) roleNodes);
+        }
+
+        roleNodes.add(role);
+    }
+
     @Components
     public List<ComponentData<K, V>> getComponents() {
         List<Map<K, V>> componentNodes = (List<Map<K, V>>) super.get(COMPONENTS_PROPERTY_NAME);
@@ -75,5 +85,16 @@ public class ComponentData<K,V> extends HashMap<K,V> {
                 .collect(Collectors.toList());
 
         return components;
+    }
+
+
+    public void addComponentData(ComponentData component) {
+        List<Map<K, V>> componentNodes = (List<Map<K, V>>) super.get(COMPONENTS_PROPERTY_NAME);
+        if (componentNodes == null) {
+            componentNodes = new ArrayList<Map<K, V>>();
+            super.put((K) COMPONENTS_PROPERTY_NAME, (V) componentNodes);
+        }
+
+        componentNodes.add(component);
     }
 }

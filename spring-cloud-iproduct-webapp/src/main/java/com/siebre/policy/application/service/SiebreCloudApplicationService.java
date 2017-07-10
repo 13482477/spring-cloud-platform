@@ -7,15 +7,11 @@ import com.siebre.agreement.*;
 import com.siebre.agreement.factory.AgreementFactory;
 import com.siebre.agreement.factory.DtoAgreementFactory;
 import com.siebre.agreement.service.AgreementRequestExecutor;
-import com.siebre.agreement.validation.AgreementValidationError;
-import com.siebre.agreement.validation.InvalidAgreementException;
 import com.siebre.policy.application.Application;
 import com.siebre.policy.application.Exception.SiebreCloudAgreementValidationError;
-import com.siebre.policy.application.Exception.SiebreCloudRequestExecutionException;
 import com.siebre.policy.application.SiebreCloudApplicationResult;
 import com.siebre.policy.factory.PolicyFactoryInterceptors;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -87,7 +83,7 @@ public class SiebreCloudApplicationService {
 
                 //与保险公司核保接口mock
 
-            }else {
+            } else {
                 result.setUnderwritingResult(false);
                 Set<String> flag = new HashSet<>();
                 List<SiebreCloudAgreementValidationError> errors = new ArrayList<SiebreCloudAgreementValidationError>();
@@ -95,6 +91,7 @@ public class SiebreCloudApplicationService {
                     if(flag.contains(errorMessage)) {
                         continue;
                     }
+
                     flag.add(errorMessage);
                     SiebreCloudAgreementValidationError error = new SiebreCloudAgreementValidationError(null,null,null);
                     error.setDescription(errorMessage);
@@ -103,7 +100,7 @@ public class SiebreCloudApplicationService {
                 result.setErrors(errors);
             }
             return result;
-        }catch (AgreementException e) {
+        } catch (AgreementException e) {
             e.printStackTrace();
             List<SiebreCloudAgreementValidationError> errors = new ArrayList<SiebreCloudAgreementValidationError>();
             SiebreCloudAgreementValidationError error = new SiebreCloudAgreementValidationError(null,e.getCause().getCause().getMessage(), null);
