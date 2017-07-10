@@ -1,18 +1,17 @@
 package com.siebre.payment.service.queryapplication;
 
 import com.siebre.basic.applicationcontext.SpringContextUtil;
-import com.siebre.basic.service.ServiceResult;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
+import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
+import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
-import com.siebre.payment.paymentgateway.vo.PaymentOrderQueryRequest;
-import com.siebre.payment.paymentgateway.vo.PaymentOrderQueryResponse;
 import com.siebre.payment.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
 import com.siebre.payment.paymenthandler.config.HandlerBeanNameConfig;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
-import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
-import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
+import com.siebre.payment.paymentorder.entity.PaymentOrder;
+import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.paymentway.service.PaymentWayService;
 import org.slf4j.Logger;
@@ -28,40 +27,50 @@ public class QueryApplicationService {
     Logger logger = LoggerFactory.getLogger(QueryApplicationService.class);
 
     @Autowired
-    private PaymentTransactionService paymentTransactionService;
-
-    @Autowired
     private PaymentWayService paymentWayService;
 
-    public ServiceResult<PaymentOrderQueryResponse> queryOrderStatusByOrderNumber(PaymentOrderQueryRequest request) throws Exception {
-        PaymentTransaction transaction = paymentTransactionService.getPaymentTransactionForQuery(request.getOrderNumber());
-        if (null == transaction) {
-            logger.error("查询失败，没有找到对应的有效交易orderNumber={}", request.getOrderNumber());
-            return ServiceResult.<PaymentOrderQueryResponse>builder().success(false).message("没有找到对应的有效交易=" + request.getOrderNumber()).build();
+    @Autowired
+    private PaymentOrderMapper orderMapper;
+
+    /**
+     * 去远程查询第三方支付系统中本地订单对应的支付状态
+     */
+    public PaymentQueryResponse queryOrderStatusByOrderNumber(String orderNumber) {
+        logger.info("开始去第三方渠道查询订单状态，订单编号：{}", orderNumber);
+        PaymentQueryResponse response = new PaymentQueryResponse();
+        PaymentOrder order = orderMapper.selectByOrderNumber(orderNumber);
+        if (order == null) {
+            logger.info("未在本地查询到该订单号对应的订单。订单号：{}", orderNumber);
+            response.setReturnCode(ReturnCode.FAIL.getDescription());
+            response.setReturnMessage("未在本地查询到该订单号对应的订单。订单号：" + orderNumber);
+            return response;
         }
-        //根据交易的transaction找到支付对应的paymentWay,再获得退款对应的paymentInterface
-        PaymentWay paymentWay = paymentWayService.getPaymentWay(transaction.getPaymentWay().getCode());
+        response.setLocalOrder(order);
+        if (PaymentOrderPayStatus.UNPAID.equals(order.getStatus())) {
+            logger.info("订单状态为未支付，无法查询。订单号：{}", orderNumber);
+            response.setReturnCode(ReturnCode.FAIL.getDescription());
+            response.setReturnMessage("订单状态为未支付，无法查询");
+            return response;
+        }
+        if (PaymentOrderPayStatus.INVALID.equals(order.getStatus())) {
+            logger.info("该订单状态为已失效，无法查询。订单号：{}", orderNumber);
+            response.setReturnCode(ReturnCode.FAIL.getDescription());
+            response.setReturnMessage("该订单状态为已失效，无法查询");
+            return response;
+        }
+        PaymentWay paymentWay = paymentWayService.getPaymentWay(order.getPaymentWayCode());
         PaymentChannel channel = paymentWay.getPaymentChannel();
         PaymentInterface paymentInterface = paymentWayService.getPaymentInterface(paymentWay.getCode(), PaymentInterfaceType.QUERY);
 
-        PaymentQueryRequest paymentQueryRequest = new PaymentQueryRequest();
-        paymentQueryRequest.setPaymentTransaction(transaction);
-        paymentQueryRequest.setOrderNumber(request.getOrderNumber());
-        paymentQueryRequest.setExternalNumber(transaction.getExternalTransactionNumber());
-        paymentQueryRequest.setInternalNumber(transaction.getInternalTransactionNumber());
-        paymentQueryRequest.setPaymentChannel(channel);
-        paymentQueryRequest.setPaymentWay(paymentWay);
-        paymentQueryRequest.setPaymentInterface(paymentInterface);
-
-        PaymentQueryResponse paymentQueryResponse = new PaymentQueryResponse();
+        PaymentQueryRequest request = new PaymentQueryRequest();
+        request.setPaymentChannel(channel);
+        request.setPaymentWay(paymentWay);
+        request.setPaymentInterface(paymentInterface);
 
         String handlerBeanName = HandlerBeanNameConfig.QUERY_MAPPING.get(paymentWay.getCode());
         AbstractPaymentQueryComponent paymentComponent = (AbstractPaymentQueryComponent) SpringContextUtil.getBean(handlerBeanName);
-        paymentComponent.handle(paymentQueryRequest, paymentQueryResponse);
+        paymentComponent.handle(request, response);
 
-        PaymentOrderQueryResponse paymentOrderQueryResponse = new PaymentOrderQueryResponse();
-        paymentOrderQueryResponse.setStatus(paymentQueryResponse.getStatus());
-
-        return ServiceResult.<PaymentOrderQueryResponse>builder().success(true).data(paymentOrderQueryResponse).build();
+        return response;
     }
 }

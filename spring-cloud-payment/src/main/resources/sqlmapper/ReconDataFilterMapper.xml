@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.billing.mapper.ReconDataFilterMapper" >
+  <resultMap id="BaseResultMap" type="com.siebre.payment.billing.entity.ReconDataFilter" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="param_no" property="paramNo" jdbcType="INTEGER" />
+    <result column="field_name" property="fieldName" jdbcType="VARCHAR" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="param_name" property="paramName" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, param_no, field_name, operator, param_name, description
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from recon_data_filter
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from recon_data_filter
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.siebre.payment.billing.entity.ReconDataFilter" useGeneratedKeys="true" keyProperty="id">
+    insert into recon_data_filter (id, param_no, field_name, 
+      operator, param_name, description
+      )
+    values (#{id,jdbcType=BIGINT}, #{paramNo,jdbcType=INTEGER}, #{fieldName,jdbcType=VARCHAR}, 
+      #{operator,jdbcType=VARCHAR}, #{paramName,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.siebre.payment.billing.entity.ReconDataFilter" useGeneratedKeys="true" keyProperty="id">
+    insert into recon_data_filter
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="paramNo != null" >
+        param_no,
+      </if>
+      <if test="fieldName != null" >
+        field_name,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="paramName != null" >
+        param_name,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="paramNo != null" >
+        #{paramNo,jdbcType=INTEGER},
+      </if>
+      <if test="fieldName != null" >
+        #{fieldName,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="paramName != null" >
+        #{paramName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.billing.entity.ReconDataFilter" >
+    update recon_data_filter
+    <set >
+      <if test="paramNo != null" >
+        param_no = #{paramNo,jdbcType=INTEGER},
+      </if>
+      <if test="fieldName != null" >
+        field_name = #{fieldName,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="paramName != null" >
+        param_name = #{paramName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.billing.entity.ReconDataFilter" >
+    update recon_data_filter
+    set param_no = #{paramNo,jdbcType=INTEGER},
+      field_name = #{fieldName,jdbcType=VARCHAR},
+      operator = #{operator,jdbcType=VARCHAR},
+      param_name = #{paramName,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

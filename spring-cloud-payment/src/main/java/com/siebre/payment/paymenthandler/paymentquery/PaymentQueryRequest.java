@@ -9,15 +9,6 @@ import java.util.Date;
 
 public class PaymentQueryRequest {
 
-    //订单号
-    private String orderNumber;
-
-    //内部流水号
-    private String internalNumber;
-
-    //外部流水号
-    private String externalNumber;
-
     //交易渠道
     private PaymentChannel paymentChannel;
 
@@ -26,56 +17,6 @@ public class PaymentQueryRequest {
 
     //查询接口
     private PaymentInterface paymentInterface;
-
-    //交易
-    private PaymentTransaction paymentTransaction;
-
-    //开始时间
-    private Date startDate;
-
-    //结束时间
-    private Date endDate;
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    public String getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(String orderNumber) {
-        this.orderNumber = orderNumber;
-    }
-
-    public String getInternalNumber() {
-        return internalNumber;
-    }
-
-    public void setInternalNumber(String internalNumber) {
-        this.internalNumber = internalNumber;
-    }
-
-    public String getExternalNumber() {
-        return externalNumber;
-    }
-
-    public void setExternalNumber(String externalNumber) {
-        this.externalNumber = externalNumber;
-    }
-
 
     public PaymentChannel getPaymentChannel() {
         return paymentChannel;
@@ -101,21 +42,4 @@ public class PaymentQueryRequest {
         this.paymentInterface = paymentInterface;
     }
 
-    public PaymentTransaction getPaymentTransaction() {
-        return paymentTransaction;
-    }
-
-    public void setPaymentTransaction(PaymentTransaction paymentTransaction) {
-        this.paymentTransaction = paymentTransaction;
-    }
-
-    @Override
-    public String toString() {
-        return "PaymentQueryRequest{" +
-                "orderNumber='" + orderNumber + '\'' +
-                ", internalNumber='" + internalNumber + '\'' +
-                ", externalNumber='" + externalNumber + '\'' +
-                ", paymentChannel='" + paymentChannel + '\'' +
-                '}';
-    }
 }

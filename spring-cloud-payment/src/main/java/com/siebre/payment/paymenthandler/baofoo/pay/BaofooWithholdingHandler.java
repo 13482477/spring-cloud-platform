@@ -1,5 +1,6 @@
 package com.siebre.payment.paymenthandler.baofoo.pay;
 
+import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.paymenthandler.baofoo.pay.prepay.BaofooCon;
 import com.siebre.payment.paymenthandler.baofoo.sdk.BaofooApiClient;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
@@ -43,6 +44,9 @@ public class BaofooWithholdingHandler extends AbstractPaymentComponent {
         Map<String, Object> requestDate = requestParams(paymentTransaction,paymentWay,paymentOrder);
 
         Map<String, String> resultMap = baofooApiClient.send(requestDate,paymentInterface.getRequestUrl(),"pay");
+
+        String responseStr = JsonUtil.mapToJson(resultMap);
+
         Map<String, Object> result = new HashMap<String, Object>();
 
         String seller_id = resultMap.get("member_id");
@@ -50,7 +54,7 @@ public class BaofooWithholdingHandler extends AbstractPaymentComponent {
         String externalTransactionNumber = resultMap.get("trans_no");
         if(resultMap.get("resp_code ") != null && resultMap.get("resp_code ").equals("0000")) {//交易成功且业务成功
             //TODO 支付成功时间从回调中获取
-            this.paymentTransactionService.paymentConfirm(paymentTransaction.getInternalTransactionNumber(), externalTransactionNumber, seller_id, total_fee, new Date());
+            this.paymentTransactionService.paymentConfirm(paymentTransaction.getInternalTransactionNumber(), externalTransactionNumber, seller_id, total_fee, new Date(), responseStr);
 
             result.put("transaction_result","success");
         }else {//失败

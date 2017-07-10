@@ -1,5 +1,6 @@
 package com.siebre.payment.paymenthandler.baofoo.pay;
 
+import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.paymenthandler.baofoo.pay.dto.BaofooRequest;
 import com.siebre.payment.paymenthandler.baofoo.pay.dto.BaofooResponse;
 import com.siebre.payment.paymenthandler.baofoo.pay.dto.BindCard;
@@ -50,6 +51,9 @@ public class BaofooQuickPaymentHandler extends AbstractPaymentComponent {
         boofooRequest.setBindCard(bindCard);
 
         BaofooResponse baofooResponse = baofooQuickPayPrePay.prePay(boofooRequest, paymentTransaction, paymentOrder, paymentWay, paymentInterface);//预支付
+
+        String responseStr = JsonUtil.toJson(baofooResponse, true);
+
         boofooRequest.setBusinessCode(baofooResponse.getBusinessNumber());//宝付业务流水号
 
         Map<String, Object> result = new HashMap<String, Object>();
@@ -60,7 +64,7 @@ public class BaofooQuickPaymentHandler extends AbstractPaymentComponent {
             if (baofooResponse.getSuccess()) {//支付成功
                 BigDecimal total_fee = new BigDecimal(baofooResponse.getSuccessAmount());
                 //TODO 需要从回调中取出支付成功时间
-                this.paymentTransactionService.paymentConfirm(paymentTransaction.getInternalTransactionNumber(), externalTransactionNumber, seller_id, total_fee, new Date());
+                this.paymentTransactionService.paymentConfirm(paymentTransaction.getInternalTransactionNumber(), externalTransactionNumber, seller_id, total_fee, new Date(), responseStr);
                 result.put("transaction_result", "success");
             } else {
                 this.paymentTransactionService.setFailStatus(paymentTransaction.getInternalTransactionNumber(), externalTransactionNumber);

@@ -4,6 +4,7 @@ import com.aipg.common.AipgReq;
 import com.aipg.common.InfoReq;
 import com.aipg.rtreq.Trans;
 import com.allinpay.XmlTools;
+import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.entity.enums.SubsequentAction;
@@ -17,6 +18,8 @@ import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.service.PaymentOrderService;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymentway.entity.PaymentWay;
+import com.siebre.payment.utils.messageconvert.ConvertToXML;
+import com.siebre.payment.utils.messageconvert.Converts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +59,8 @@ public class AllinPayRealTimeHandler extends AbstractPaymentComponent {
         response.setReturnCode(result.get("transaction_result"));
         response.setReturnMessage(result.get("msg"));
         if(ReturnCode.SUCCESS.getDescription().equals(result.get("transaction_result"))) {
-            //TODO 找黄飞确认
             paymentOrderService.updateOrderStatus(request.getPaymentOrder(), PaymentOrderPayStatus.PAID, new Date());
+            paymentTransactionService.updateBySelective(paymentTransaction);
             response.setSubsequentAction(SubsequentAction.READ_PAY_RESULT.getValue());
         }
 
@@ -89,6 +92,7 @@ public class AllinPayRealTimeHandler extends AbstractPaymentComponent {
 
         xml = XmlTools.buildXml(aipg, true);
         logger.info("request data: {}", xml);
+        paymentTransaction.setRequestStr(JsonUtil.mapToJson(ConvertToXML.toMap(xml)));
 
         Map<String, String> result = allinPayTranx.dealRetForPay(allinPayTranx.sendToTlt(xml, isTLTFront, url, paymentWay), trx_code, paymentTransaction, paymentWay);
 

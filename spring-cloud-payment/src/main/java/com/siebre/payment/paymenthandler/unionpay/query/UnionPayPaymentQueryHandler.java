@@ -33,11 +33,11 @@ public class UnionPayPaymentQueryHandler extends AbstractPaymentQueryComponent {
 
         String url = paymentInterface.getRequestUrl();
 
-        Map<String, String> requestParams = generateParamsMap(request, paymentWay, request.getPaymentTransaction());
+        //Map<String, String> requestParams = generateParamsMap(request, paymentWay, request.getPaymentTransaction());
 
 
-        PaymentTransactionStatus status = doPost(url, requestParams);
-        response.setStatus(status);
+        /*PaymentTransactionStatus status = doPost(url, requestParams);
+        response.setStatus(status);*/
     }
 
     private Map<String, String> generateParamsMap(PaymentQueryRequest request, PaymentWay paymentWay, PaymentTransaction paymentTransaction) {

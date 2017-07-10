@@ -1,5 +1,6 @@
 package com.siebre.payment.paymentlistener;
 
+import com.siebre.config.RabbitmqConfig;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
@@ -18,12 +19,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class PaymentOrderOutOfTimeService {
 
-    public static final  String QUEUE_NAME = "orderOutOfTimeQueue";
-
-    public static final  String EXCHANGE = "orderOutOfTimeExchange";
-
-    public static final  String ROUTING_KET = "orderOutOfTimeKey";
-
     public static final int OUT_OF_TIME = 1000 * 60 * 30;//默认30分钟
 
     @Autowired
@@ -32,7 +27,7 @@ public class PaymentOrderOutOfTimeService {
 
     public void newOrder(PaymentOrder order) {
 
-        rabbitTemplate.convertAndSend(EXCHANGE, ROUTING_KET, order.getOrderNumber(),
+        rabbitTemplate.convertAndSend(RabbitmqConfig.order_out_of_time_exchange, RabbitmqConfig.order_out_of_time_key, order.getOrderNumber(),
                 new MessagePostProcessor() {
                     @Override
                     public Message postProcessMessage(Message message) throws AmqpException {
