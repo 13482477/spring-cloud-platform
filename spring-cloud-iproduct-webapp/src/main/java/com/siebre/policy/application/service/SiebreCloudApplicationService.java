@@ -3,19 +3,23 @@ package com.siebre.policy.application.service;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.siebre.agreement.Agreement;
-import com.siebre.agreement.AgreementRequest;
-import com.siebre.agreement.AgreementRequestResult;
-import com.siebre.agreement.AgreementSpec;
+import com.siebre.agreement.*;
 import com.siebre.agreement.factory.AgreementFactory;
 import com.siebre.agreement.factory.DtoAgreementFactory;
 import com.siebre.agreement.service.AgreementRequestExecutor;
+import com.siebre.agreement.validation.AgreementValidationError;
 import com.siebre.agreement.validation.InvalidAgreementException;
 import com.siebre.policy.application.Application;
+import com.siebre.policy.application.Exception.SiebreCloudAgreementValidationError;
+import com.siebre.policy.application.Exception.SiebreCloudRequestExecutionException;
 import com.siebre.policy.application.SiebreCloudApplicationResult;
 import com.siebre.policy.factory.PolicyFactoryInterceptors;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by huangfei on 2017/06/27.
@@ -57,12 +61,58 @@ public class SiebreCloudApplicationService {
         try {
             AgreementRequestResult requestResult = requestExecutor.execute(request);
             return new SiebreCloudApplicationResult(requestResult);
-        } catch (InvalidAgreementException e) {
-            return new SiebreCloudApplicationResult(policy, e.getErrors());
+        } catch (AgreementException e) {
+            //e.printStackTrace();
+            List<SiebreCloudAgreementValidationError> errors = new ArrayList<SiebreCloudAgreementValidationError>();
+            SiebreCloudAgreementValidationError error = new SiebreCloudAgreementValidationError(null,null,null);
+            error.setDescription(e.getCause().getCause().getMessage());
+            errors.add(error);
+            return new SiebreCloudApplicationResult(policy, errors);
         }
     }
 
-    /**
+    public SiebreCloudApplicationResult underwriting(Application application) {
+        AgreementSpec agreementSpec = application.getAgreementSpec();
+        productRegistry.register(agreementSpec);
+        Agreement policy = agreementFactory.create(application.toDto());
+
+        //AgreementRole applicantRole = policy.createRole("Applicant");
+        AgreementRequest request = policy.createRequest("underwriting");
+
+        try {
+            AgreementRequestResult requestResult = requestExecutor.execute(request);
+            SiebreCloudApplicationResult result = new SiebreCloudApplicationResult(policy,null);
+            if (requestResult.getErrorMessages().size() == 0){
+                result.setUnderwritingResult(true);
+
+                //与保险公司核保接口mock
+
+            }else {
+                result.setUnderwritingResult(false);
+                Set<String> flag = new HashSet<>();
+                List<SiebreCloudAgreementValidationError> errors = new ArrayList<SiebreCloudAgreementValidationError>();
+                for(String errorMessage: requestResult.getErrorMessages()){
+                    if(flag.contains(errorMessage)) {
+                        continue;
+                    }
+                    flag.add(errorMessage);
+                    SiebreCloudAgreementValidationError error = new SiebreCloudAgreementValidationError(null,null,null);
+                    error.setDescription(errorMessage);
+                    errors.add(error);
+                }
+                result.setErrors(errors);
+            }
+            return result;
+        }catch (AgreementException e) {
+            e.printStackTrace();
+            List<SiebreCloudAgreementValidationError> errors = new ArrayList<SiebreCloudAgreementValidationError>();
+            SiebreCloudAgreementValidationError error = new SiebreCloudAgreementValidationError(null,e.getCause().getCause().getMessage(), null);
+            error.setDescription(e.getCause().getCause().getMessage());
+            errors.add(error);
+            return new SiebreCloudApplicationResult(policy, errors);
+        }
+    }
+      /**
      * A temporary product registry to serve products to AgreementFactory.
      *
      * @author ZhangChi

@@ -3,6 +3,7 @@ package com.siebre.policy.application;
 import com.siebre.agreement.Agreement;
 import com.siebre.agreement.AgreementRequestResult;
 import com.siebre.agreement.validation.AgreementValidationError;
+import com.siebre.policy.application.Exception.SiebreCloudAgreementValidationError;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,18 +13,21 @@ import java.util.List;
  */
 public class SiebreCloudApplicationResult {
 
-    protected String applicationNumber;
+    private String applicationNumber;
 
-    protected BigDecimal grossPremium;
+    private BigDecimal grossPremium;
 
-    public SiebreCloudApplicationResult(Agreement agreement, List<AgreementValidationError> errors) {
-//        super(agreement, errors);
+    private Boolean underwritingResult;
+
+    private List<SiebreCloudAgreementValidationError> errors;
+
+    public SiebreCloudApplicationResult(Agreement agreement, List<SiebreCloudAgreementValidationError> errors) {
         this.applicationNumber = "A0011";
         this.grossPremium = (BigDecimal) agreement.getSmfProperty("grossPremium");
+        this.errors = errors;
     }
 
     public SiebreCloudApplicationResult(AgreementRequestResult requestResult) {
-//        super(requestResult);
         Agreement agreement = requestResult.getAgreement();
         this.applicationNumber = "A0011";
         this.grossPremium = (BigDecimal) agreement.getSmfProperty("grossPremium");
@@ -43,5 +47,21 @@ public class SiebreCloudApplicationResult {
 
     public void setGrossPremium(BigDecimal grossPremium) {
         this.grossPremium = grossPremium;
+    }
+
+    public List<SiebreCloudAgreementValidationError> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<SiebreCloudAgreementValidationError> errors) {
+        this.errors = errors;
+    }
+
+    public Boolean getUnderwritingResult() {
+        return underwritingResult;
+    }
+
+    public void setUnderwritingResult(Boolean underwritingResult) {
+        this.underwritingResult = underwritingResult;
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="GBK"?>
-<product kind="Marketable Product" name="福建航意险" seqIndex="0" externalReference="FJHYXtestjml45" instanceClassName="InsurancePolicy" shortName="福建航意险" groupType="PERSONAL" sellChannelType="RemoteSell">
+<product kind="Marketable Product" name="福建航意险" seqIndex="0" externalReference="FJHYXtestjml62" instanceClassName="InsurancePolicy" shortName="福建航意险" groupType="PERSONAL" sellChannelType="RemoteSell">
 	<description>人保寿险公共交通工具意外伤害保险（新标准版）</description>
 	<baseSpec version="0" />
 	<properties>
@@ -44,8 +44,26 @@
 				<property kind="postalCode" name="投保人邮政编码" seqIndex="700" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
 			</properties>
 			<rules>
-				<rule kind="Eligibility" name="投保人的年龄限制" seqIndex="0" language="GROOVY">
-					<body><![CDATA[context.age >= 18]]>
+				<rule kind="ageLimit" name="投保人的年龄限制" seqIndex="0" language="GROOVY">
+					<body><![CDATA[
+							System.out.println("applicant.birthDate=====" + context.birthDate);
+
+							Calendar cal = Calendar.getInstance();
+							def yearNow = cal.get(Calendar.YEAR);
+							def monthNow = cal.get(Calendar.MONTH)+1;
+							def dayOfMonthNow = cal.get(Calendar.DAY_OF_MONTH);
+
+							cal.setTime(context.birthDate);
+							def yearBirth = cal.get(Calendar.YEAR);
+							def monthBirth = cal.get(Calendar.MONTH);
+							def dayOfMonthBirth = cal.get(Calendar.DAY_OF_MONTH);
+							def age = yearNow - yearBirth;
+							if(monthNow == monthBirth && dayOfMonthNow < dayOfMonthBirth) {
+								age = age - 1 ;
+							}
+							System.out.println("applicant age====" + age);
+							return age >= 18;
+					]]>
 					</body>
 					<commentOnFailure>投保人不能小于18周岁</commentOnFailure>
 				</rule>
@@ -66,17 +84,75 @@
 				<property kind="socialInsuranceCovered" name="有无社保" dataType="Boolean" beanProperty="false" isHidden="true" required="false" derived="false" group="Base" />
 			</properties>
 			<rules>
-				<rule kind="Eligibility" name="被保人的年龄限制" seqIndex="0" language="GROOVY">
-					<body><![CDATA[context.ageInDays >= 28 && context.age <=80 ]]>
+				<rule kind="ageLimit" name="被保人的年龄限制" seqIndex="0" language="GROOVY">
+					<body><![CDATA[
+					System.out.println("insured.birthDate=====" + context.birthDate);
+
+					Calendar cal = Calendar.getInstance();
+					def yearNow = cal.get(Calendar.YEAR);
+					def monthNow = cal.get(Calendar.MONTH)+1;
+					def dayOfMonthNow = cal.get(Calendar.DAY_OF_MONTH);
+
+					cal.setTime(context.birthDate);
+					def yearBirth = cal.get(Calendar.YEAR);
+					def monthBirth = cal.get(Calendar.MONTH);
+					def dayOfMonthBirth = cal.get(Calendar.DAY_OF_MONTH);
+					def age = yearNow - yearBirth;
+					if(monthNow == monthBirth && dayOfMonthNow < dayOfMonthBirth) {
+						age = age - 1 ;
+					}
+					System.out.println("insured age====" + age);
+
+					Calendar calNow = Calendar.getInstance();
+					calNow.setTime(new java.util.Date());
+					//设置时间为0时
+					 cal.set(Calendar.HOUR_OF_DAY, 0);
+					 cal.set(Calendar.MINUTE, 0);
+					 cal.set(Calendar.SECOND, 0);
+					 calNow.set(Calendar.HOUR_OF_DAY, 0);
+					 calNow.set(Calendar.MINUTE, 0);
+					 calNow.set(Calendar.SECOND, 0);
+					//得到两个日期相差的天数
+					def days = ((calNow.getTime().getTime()/1000)-(cal.getTime().getTime()/1000))/3600/24;
+					System.out.println("insured days====" + days);
+
+					return days >= 28 && age <= 60;
+
+					]]>
 					</body>
-					<commentOnFailure>被保人的年龄必须大于等于28天，小于等于80周岁</commentOnFailure>
+					<commentOnFailure>被保人的年龄必须大于等于28天，小于等于60周岁</commentOnFailure>
 				</rule>
 			</rules>
 		</role>
 
 		<role kind="Beneficiary" name="受益人" seqIndex="2" minOccurrence="0" instanceClassName="PartyRoleInPolicy">
 			<properties>
+				<property kind="fullName" name="受益人姓名" seqIndex="100" dataType="String" beanProperty="true" isHidden="false" required="true" derived="false" group="Base" />
+				<property kind="idType" name="受益人证件类型" seqIndex="200" dataType="IdType" beanProperty="true" isHidden="false" required="true" derived="false" group="Base" defaultValue="SHENFENG_CARD" />
+				<property kind="idNumber" name="受益人证件号码" seqIndex="300" dataType="String" beanProperty="true" isHidden="false" required="true" derived="false" group="Base" />
+				<property kind="gender" name="受益人性别" seqIndex="350" dataType="Gender" beanProperty="true" isHidden="false" required="false" derived="false" group="Base,Quote" defaultValue="M" />
+				<property kind="birthDate" name="受益人出生日期" seqIndex="360" dataType="Date" beanProperty="true" isHidden="false" required="false" derived="false" defaultValue="" group="Base,Quote" allowedValues="" />
+				<property kind="phoneNumber" name="受益人电话号码" seqIndex="370" dataType="String" beanProperty="true" isHidden="false" required="false" derived="false" group="Base" />
+				<property kind="relatedToRoleCode" name="受益人与被保人关系" seqIndex="380" dataType="RelatedToRoleCode" beanProperty="true" isHidden="false" required="false" derived="false" group="Base,Quote" />
+				<property kind="interestPercent" name="受益比例" seqIndex="390" dataType="Decimal" beanProperty="true" isHidden="false" required="false" derived="false" group="Base,Quote" />
 			</properties>
+			<rules>
+				<rule kind="ageLimit" name="收益比例校验" seqIndex="0" language="GROOVY">
+					<body><![CDATA[
+					System.out.println("Beneficiary.interestPercent=====" + context.interestPercent.intValue());
+					def roles = context.parent.getRolesOfKind("Beneficiary");
+					def total = 0;
+					for(def role: roles){
+						total = total + role.interestPercent.intValue();
+					}
+					System.out.println("total=====" + total);
+					return total <= 100 ;
+
+					]]>
+					</body>
+					<commentOnFailure>受益比例之和不能超过100%</commentOnFailure>
+				</rule>
+			</rules>
 		</role>
 	</roles>
 
@@ -151,7 +227,7 @@
 							if(socialInsuranceCovered == true) {
 								Ra = map1.get(age);
 								System.out.println("有社保Ra===="+Ra);
-							}else {
+							}else if(socialInsuranceCovered == false) {
 								Ra = map2.get(age);
 								System.out.println("无社保Ra===="+Ra);
 							}
@@ -194,6 +270,7 @@
 
 	<requests>
 		<request kind="quote" name="投保" seqIndex="0" instanceClassName="FinancialServicesRequest" preconditionKinds="" postconditionKinds="" CalculationKinds="SetPreInsComponent" />
+		<request kind="underwriting" name="核保" seqIndex="0" instanceClassName="FinancialServicesRequest" preconditionKinds="ageLimit" postconditionKinds="" CalculationKinds="SetPreInsComponent" />
 	</requests>
 
 	<components>
