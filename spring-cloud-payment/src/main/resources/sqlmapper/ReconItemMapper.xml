@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.billing.mapper.ReconItemMapper" >
+  <resultMap id="BaseResultMap" type="com.siebre.payment.billing.entity.ReconItem" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="trans_id" property="transId" jdbcType="BIGINT" />
+    <result column="recon_result" property="reconResult" jdbcType="VARCHAR" />
+    <result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
+    <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
+    <result column="payment_amount" property="paymentAmount" jdbcType="DECIMAL" />
+    <result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
+    <result column="trans_time" property="transTime" jdbcType="TIMESTAMP" />
+    <result column="pay_success_time" property="paySuccessTime" jdbcType="TIMESTAMP" />
+    <result column="refund_success_time" property="refundSuccessTime" jdbcType="TIMESTAMP" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="remote_data_source_json_str" property="remoteDataSourceJsonStr" jdbcType="VARCHAR" />
+    <result column="payment_data_source_json_str" property="paymentDataSourceJsonStr" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, type, trans_id, recon_result, order_number, out_trade_no, payment_amount, refund_amount,
+    trans_time, pay_success_time, refund_success_time, description, remote_data_source_json_str, 
+    payment_data_source_json_str
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from recon_item
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from recon_item
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.siebre.payment.billing.entity.ReconItem" useGeneratedKeys="true" keyProperty="id">
+    insert into recon_item (id, type, trans_id, recon_result,
+      order_number, out_trade_no, payment_amount, 
+      refund_amount, trans_time, pay_success_time, 
+      refund_success_time, description, remote_data_source_json_str, 
+      payment_data_source_json_str)
+    values (#{id,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{transId,jdbcType=BIGINT}, #{reconResult,jdbcType=VARCHAR},
+      #{orderNumber,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{paymentAmount,jdbcType=DECIMAL}, 
+      #{refundAmount,jdbcType=DECIMAL}, #{transTime,jdbcType=TIMESTAMP}, #{paySuccessTime,jdbcType=TIMESTAMP}, 
+      #{refundSuccessTime,jdbcType=TIMESTAMP}, #{description,jdbcType=VARCHAR}, #{remoteDataSourceJsonStr,jdbcType=VARCHAR}, 
+      #{paymentDataSourceJsonStr,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.siebre.payment.billing.entity.ReconItem" useGeneratedKeys="true" keyProperty="id">
+    insert into recon_item
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="transId != null" >
+        trans_id,
+      </if>
+      <if test="reconResult != null" >
+        recon_result,
+      </if>
+      <if test="orderNumber != null" >
+        order_number,
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no,
+      </if>
+      <if test="paymentAmount != null" >
+        payment_amount,
+      </if>
+      <if test="refundAmount != null" >
+        refund_amount,
+      </if>
+      <if test="transTime != null" >
+        trans_time,
+      </if>
+      <if test="paySuccessTime != null" >
+        pay_success_time,
+      </if>
+      <if test="refundSuccessTime != null" >
+        refund_success_time,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="remoteDataSourceJsonStr != null" >
+        remote_data_source_json_str,
+      </if>
+      <if test="paymentDataSourceJsonStr != null" >
+        payment_data_source_json_str,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="transId != null" >
+        #{transId,jdbcType=BIGINT},
+      </if>
+      <if test="reconResult != null" >
+        #{reconResult,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNumber != null" >
+        #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentAmount != null" >
+        #{paymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="refundAmount != null" >
+        #{refundAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="transTime != null" >
+        #{transTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paySuccessTime != null" >
+        #{paySuccessTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="refundSuccessTime != null" >
+        #{refundSuccessTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="remoteDataSourceJsonStr != null" >
+        #{remoteDataSourceJsonStr,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentDataSourceJsonStr != null" >
+        #{paymentDataSourceJsonStr,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.billing.entity.ReconItem" >
+    update recon_item
+    <set >
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="transId != null" >
+        trans_id = #{transId,jdbcType=BIGINT},
+      </if>
+      <if test="reconResult != null" >
+        recon_result = #{reconResult,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNumber != null" >
+        order_number = #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentAmount != null" >
+        payment_amount = #{paymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="refundAmount != null" >
+        refund_amount = #{refundAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="transTime != null" >
+        trans_time = #{transTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paySuccessTime != null" >
+        pay_success_time = #{paySuccessTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="refundSuccessTime != null" >
+        refund_success_time = #{refundSuccessTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="remoteDataSourceJsonStr != null" >
+        remote_data_source_json_str = #{remoteDataSourceJsonStr,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentDataSourceJsonStr != null" >
+        payment_data_source_json_str = #{paymentDataSourceJsonStr,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.billing.entity.ReconItem" >
+    update recon_item
+    set type = #{type,jdbcType=VARCHAR},
+      trans_id = #{transId,jdbcType=BIGINT},
+      recon_result = #{reconResult,jdbcType=VARCHAR},
+      order_number = #{orderNumber,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      payment_amount = #{paymentAmount,jdbcType=DECIMAL},
+      refund_amount = #{refundAmount,jdbcType=DECIMAL},
+      trans_time = #{transTime,jdbcType=TIMESTAMP},
+      pay_success_time = #{paySuccessTime,jdbcType=TIMESTAMP},
+      refund_success_time = #{refundSuccessTime,jdbcType=TIMESTAMP},
+      description = #{description,jdbcType=VARCHAR},
+      remote_data_source_json_str = #{remoteDataSourceJsonStr,jdbcType=VARCHAR},
+      payment_data_source_json_str = #{paymentDataSourceJsonStr,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

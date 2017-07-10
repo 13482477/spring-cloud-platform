@@ -17,45 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class AbstractPaymentQueryComponent implements PaymentInterfaceComponent<PaymentQueryRequest, PaymentQueryResponse> {
     protected Logger logger  = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private PaymentOrderService orderService;
-
-    @Autowired
-    private PaymentTransactionService transactionService;
-
-    @Autowired
-    private PaymentWayService paymentWayService;
-
     @Override
     public void handle(PaymentQueryRequest request, PaymentQueryResponse response){
         logger.info("订单查询接口处理");
         this.handleInternal(request, response);
-
-        this.processOrderStatus(request,response);
     }
 
     protected abstract void handleInternal(PaymentQueryRequest request, PaymentQueryResponse response);
-
-
-    private void processOrderStatus(PaymentQueryRequest request,PaymentQueryResponse response){
-        PaymentTransaction transaction = request.getPaymentTransaction();
-        PaymentOrder order = transaction.getPaymentOrder();
-        //TODO 查询结果处理订单进行更新
-        PaymentOrderPayStatus orderPayStatus = bindingPayStatus(response.getStatus());
-        transactionService.updateTransactionAndOrderStatus(transaction.getId(), response.getStatus(),order.getId(),orderPayStatus);
-    }
-
-    private PaymentOrderPayStatus bindingPayStatus(PaymentTransactionStatus paymentTransactionStatus){
-        if(PaymentTransactionStatus.PAY_SUCCESS.equals(paymentTransactionStatus)){
-            return PaymentOrderPayStatus.PAID;
-        }else if(PaymentTransactionStatus.PAY_FAILED.equals(paymentTransactionStatus)){
-            return PaymentOrderPayStatus.PAYERROR;
-        }else if(PaymentTransactionStatus.PAY_PROCESSING.equals(paymentTransactionStatus)){
-            return PaymentOrderPayStatus.PAYING;
-        }else if(PaymentTransactionStatus.CLOSED.equals(paymentTransactionStatus)){
-            return PaymentOrderPayStatus.INVALID;
-        }
-        return null;
-    }
 
 }

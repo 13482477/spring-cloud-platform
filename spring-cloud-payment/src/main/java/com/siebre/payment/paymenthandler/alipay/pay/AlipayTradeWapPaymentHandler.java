@@ -4,6 +4,7 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
+import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.entity.enums.SubsequentAction;
 import com.siebre.payment.hostconfig.entity.PaymentHostConfig;
@@ -39,7 +40,10 @@ public class AlipayTradeWapPaymentHandler extends AbstractPaymentComponent {
         AlipayClient alipayClient = new DefaultAlipayClient(paymentInterface.getRequestUrl(),
                 paymentWay.getAppId(), paymentWay.getSecretKey(), "json", AlipayConfig.INPUT_CHARSET_UTF,
                 paymentWay.getPublicKey(), paymentWay.getEncryptionMode().getDescription()); //获得初始化的AlipayClient
+
         AlipayTradeWapPayRequest alipayRequest = buildAlipayTradeWapPayRequest(paymentWay, paymentInterface, paymentTransaction, paymentOrder);
+        paymentTransaction.setRequestStr(JsonUtil.toJson(alipayRequest, true));
+
         String form = "";
         try {
             form = alipayClient.sdkExecute(alipayRequest).getBody(); //调用SDK生成表单

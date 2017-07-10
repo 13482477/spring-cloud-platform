@@ -61,6 +61,10 @@ public class PaymentTransaction extends BaseObject {
      */
     private String receiver;
 
+    private String requestStr;
+
+    private String responseStr;
+
     public Long getPaymentChannelId() {
         return paymentChannelId;
     }
@@ -187,5 +191,21 @@ public class PaymentTransaction extends BaseObject {
 
     public void setReceiver(String receiver) {
         this.receiver = receiver;
+    }
+
+    public String getRequestStr() {
+        return requestStr;
+    }
+
+    public void setRequestStr(String requestStr) {
+        this.requestStr = requestStr;
+    }
+
+    public String getResponseStr() {
+        return responseStr;
+    }
+
+    public void setResponseStr(String responseStr) {
+        this.responseStr = responseStr;
     }
 }

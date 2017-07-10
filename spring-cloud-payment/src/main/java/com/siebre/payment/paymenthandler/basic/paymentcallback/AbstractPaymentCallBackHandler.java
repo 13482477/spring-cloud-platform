@@ -1,5 +1,6 @@
 package com.siebre.payment.paymenthandler.basic.paymentcallback;
 
+import com.siebre.payment.billing.amqp.RealTimeReconcileProduct;
 import com.siebre.payment.paymentinterface.entity.PaymentInterface;
 import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
 import com.siebre.payment.paymentway.service.PaymentWayService;
@@ -24,6 +25,9 @@ public abstract class AbstractPaymentCallBackHandler {
 
     @Autowired
     protected PaymentWayService paymentWayService;
+
+    @Autowired
+    protected RealTimeReconcileProduct realTimeReconcileProduct;
 
 
     public Object callBackHandle(HttpServletRequest request, HttpServletResponse response,PaymentInterface paymentInterface){

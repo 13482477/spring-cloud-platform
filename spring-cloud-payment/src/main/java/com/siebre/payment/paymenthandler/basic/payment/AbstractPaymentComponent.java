@@ -59,9 +59,6 @@ public abstract class AbstractPaymentComponent implements PaymentInterfaceCompon
     @Autowired
     protected PaymentOrderMapper paymentOrderMapper;
 
-    @Autowired
-    private QueryApplicationService queryApplicationService;
-
     @Override
     public void handle(PaymentRequest request, PaymentResponse response) {
         PaymentOrder paymentOrder = request.getPaymentOrder();
@@ -95,6 +92,8 @@ public abstract class AbstractPaymentComponent implements PaymentInterfaceCompon
         PaymentInterface paymentInterface = getPayTypeInterface(paymentWay);
 
         this.handleInternal(request, response, paymentWay, paymentInterface, paymentTransaction);
+
+        paymentTransactionMapper.updateByPrimaryKeySelective(paymentTransaction);
 
         if (ReturnCode.FAIL.getDescription().equals(response.getReturnCode())) {
             this.paymentOrderService.updateOrderStatus(paymentOrder, PaymentOrderPayStatus.PAYERROR, null);

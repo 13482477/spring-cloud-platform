@@ -2,12 +2,12 @@ package com.siebre.payment.paymentlistener;
 
 import com.rabbitmq.client.Channel;
 import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
+import com.siebre.payment.service.queryapplication.QueryApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.ChannelAwareMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by AdamTang on 2017/4/11.
@@ -25,19 +25,23 @@ public class PaymentOrderOutOfTimeListener implements ChannelAwareMessageListene
     @Autowired
     private PaymentTransactionService transactionService;
 
+    @Autowired
+    private QueryApplicationService queryApplicationService;
+
     @Override
-    @Transactional("mq")
     public void onMessage(Message message, Channel channel) throws Exception {
 
         try {
             String orderNumber = new String(message.getBody());
 
-            transactionService.outOfTime(orderNumber);
+            //TODO  订单的超时处理逻辑需要再优化
+            //transactionService.outOfTime(orderNumber);
+            //queryApplicationService.queryOrderStatusByOrderNumber(orderNumber);
 
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false); //确认消息成功消费
-        }catch (Exception e){
+        } catch (Exception e) {
             //异常不对消息进行确认
-            logger.error("订单超时处理失败",e);
+            logger.error("订单超时处理失败", e);
         }
     }
 }
