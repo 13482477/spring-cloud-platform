@@ -16,6 +16,9 @@ public class UnifiedPayRequest implements Serializable {
 	@ApiModelProperty(value = "支付回调地址", required = false)
 	private String notificationUrl;
 
+	@ApiModelProperty(value = "支付前端回调地址", required = false)
+	private String returnUrl;
+
 	@ApiModelProperty(value = "支付订单信息", required = true)
 	private UnifiedPayOrder paymentOrder;
 
@@ -33,6 +36,14 @@ public class UnifiedPayRequest implements Serializable {
 
 	public void setNotificationUrl(String notificationUrl) {
 		this.notificationUrl = notificationUrl;
+	}
+
+	public String getReturnUrl() {
+		return returnUrl;
+	}
+
+	public void setReturnUrl(String returnUrl) {
+		this.returnUrl = returnUrl;
 	}
 
 	public UnifiedPayOrder getPaymentOrder() {

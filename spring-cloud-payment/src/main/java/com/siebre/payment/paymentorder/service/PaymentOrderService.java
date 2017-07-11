@@ -190,6 +190,7 @@ public class PaymentOrderService {
         PaymentOrder paymentOrder = new PaymentOrder();
         paymentOrder.setMessageId(unifiedPayRequest.getMessageId());
         paymentOrder.setNotificationUrl(unifiedPayRequest.getNotificationUrl());
+        paymentOrder.setReturnUrl(unifiedPayRequest.getReturnUrl());
 
         UnifiedPayOrder unifiedPayOrder = unifiedPayRequest.getPaymentOrder();
         paymentOrder.setPaymentWayCode(unifiedPayOrder.getPaymentWayCode());

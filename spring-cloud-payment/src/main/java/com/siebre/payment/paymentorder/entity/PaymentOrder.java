@@ -49,6 +49,7 @@ public class PaymentOrder extends BaseObject {
     //前端唯一标识一次提交订单的字段
     private String messageId;
     private String notificationUrl;
+    private String returnUrl;
     //外部订单交易编号
     private String externalOrderNumber;
     private String channelCode;
@@ -258,6 +259,14 @@ public class PaymentOrder extends BaseObject {
 
     public void setNotificationUrl(String notificationUrl) {
         this.notificationUrl = notificationUrl;
+    }
+
+    public String getReturnUrl() {
+        return returnUrl;
+    }
+
+    public void setReturnUrl(String returnUrl) {
+        this.returnUrl = returnUrl;
     }
 
     public String getExternalOrderNumber() {

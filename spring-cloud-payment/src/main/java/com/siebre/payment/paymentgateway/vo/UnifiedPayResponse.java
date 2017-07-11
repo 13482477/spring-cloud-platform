@@ -10,8 +10,6 @@ public class UnifiedPayResponse implements Serializable{
 	
 	private String redirectUrl;
 
-	private String returnUrl;
-
 	private String returnCode;
 
 	private String returnMessage;
@@ -49,14 +47,6 @@ public class UnifiedPayResponse implements Serializable{
 
 	public void setRedirectUrl(String redirectUrl) {
 		this.redirectUrl = redirectUrl;
-	}
-
-	public String getReturnUrl() {
-		return returnUrl;
-	}
-
-	public void setReturnUrl(String returnUrl) {
-		this.returnUrl = returnUrl;
 	}
 
 	public String getReturnCode() {
