@@ -1,17 +1,21 @@
 package com.siebre.policy.application;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.siebre.agreement.Agreement;
 import com.siebre.agreement.AgreementRequestResult;
 import com.siebre.agreement.dto.ComponentData;
 import com.siebre.agreement.dto.support.AgreementConverter;
+import com.siebre.policy.InsurancePolicy;
 import com.siebre.policy.application.Exception.SiebreCloudAgreementValidationError;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by huangfei on 2017/06/27.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SiebreCloudApplicationResult {
 
     private String applicationNumber;
@@ -20,26 +24,48 @@ public class SiebreCloudApplicationResult {
 
     private ComponentData policy;
 
-    private Boolean underwritingResult; //This can be replaced with HTTP response status code.
+    private int resultCode; //This can be replaced with HTTP response status code.
 
-    private List<SiebreCloudAgreementValidationError> errors;
+    private List<SiebreCloudAgreementValidationError> message;
 
     public SiebreCloudApplicationResult(Agreement agreement, List<SiebreCloudAgreementValidationError> errors) {
-        this.applicationNumber = "A0011";
-        this.grossPremium = (BigDecimal) agreement.getSmfProperty("grossPremium");
-        this.errors = errors;
-
-        AgreementConverter converter = new AgreementConverter(agreement);
-        policy = converter.covert();
+        if (agreement != null){
+            AgreementConverter converter = new AgreementConverter(agreement);
+            policy = converter.covert();
+        }
+        this.message = errors;
     }
 
     public SiebreCloudApplicationResult(AgreementRequestResult requestResult) {
-        Agreement agreement = requestResult.getAgreement();
-        this.applicationNumber = "A0011";
-        this.grossPremium = (BigDecimal) agreement.getSmfProperty("grossPremium");
+        InsurancePolicy policy = (InsurancePolicy) requestResult.getAgreement();
+        this.applicationNumber = UUID.randomUUID().toString();
+        this.grossPremium = policy.getGrossPremium();
+        //AgreementConverter converter = new AgreementConverter(agreement);
+        //policy = converter.covert();
+    }
 
-        AgreementConverter converter = new AgreementConverter(agreement);
-        policy = converter.covert();
+    public int getResultCode() {
+        return resultCode;
+    }
+
+    public void setResultCode(int resultCode) {
+        this.resultCode = resultCode;
+    }
+
+    public List<SiebreCloudAgreementValidationError> getMessage() {
+        return message;
+    }
+
+    public void setMessage(List<SiebreCloudAgreementValidationError> message) {
+        this.message = message;
+    }
+
+    public ComponentData getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(ComponentData policy) {
+        this.policy = policy;
     }
 
     public String getApplicationNumber() {
@@ -56,29 +82,5 @@ public class SiebreCloudApplicationResult {
 
     public void setGrossPremium(BigDecimal grossPremium) {
         this.grossPremium = grossPremium;
-    }
-
-    public List<SiebreCloudAgreementValidationError> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(List<SiebreCloudAgreementValidationError> errors) {
-        this.errors = errors;
-    }
-
-    public Boolean getUnderwritingResult() {
-        return underwritingResult;
-    }
-
-    public void setUnderwritingResult(Boolean underwritingResult) {
-        this.underwritingResult = underwritingResult;
-    }
-
-    public ComponentData getPolicy() {
-        return policy;
-    }
-
-    public void setPolicy(ComponentData policy) {
-        this.policy = policy;
     }
 }

@@ -1,6 +1,8 @@
 package com.siebre.product.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.siebre.policy.application.Application;
+import com.siebre.policy.application.Exception.SiebreCloudAgreementValidationError;
 import com.siebre.policy.application.SiebreCloudApplicationResult;
 import com.siebre.policy.application.service.SiebreCloudApplicationService;
 import com.siebre.product.messagedemo.controller.messageobject.QuoteResult;
@@ -16,6 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by meilan on 2017/7/5.
@@ -28,6 +34,8 @@ public class UnderwritingController {
     @Autowired
     private QuoteJsonService quoteJsonService;
 
+    private ObjectMapper jsonMapper = new ObjectMapper();
+
     @RequestMapping(path = "/api/v1/underwriting", method = RequestMethod.POST)
     @ResponseStatus(code = HttpStatus.OK)
     @ApiOperation(value = "预核保", notes = "预核保提交保单的json数据")
@@ -35,9 +43,26 @@ public class UnderwritingController {
         QuoteResult quoteResult = new QuoteResult();
 
         String requestJsonString = IOUtils.toString(request.getInputStream());
-        Application application = quoteJsonService.toApplication(requestJsonString);
+        Application application = null;
+        try {
+            application = quoteJsonService.toApplication(requestJsonString);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            List<SiebreCloudAgreementValidationError> errors = new ArrayList<SiebreCloudAgreementValidationError>();
+            SiebreCloudAgreementValidationError error = new SiebreCloudAgreementValidationError(null,null, null);
+            error.setDescription("requestData to application error");
+            errors.add(error);
+            SiebreCloudApplicationResult result = new SiebreCloudApplicationResult(null,errors);
+            result.setResultCode(500);
+            return result;
+        }
 
-        return applicationService.underwriting(application);
+        Map<String, Object> properties = jsonMapper.readValue(requestJsonString, HashMap.class);
+        String applicationNumber = (String) properties.get("applicationNumber");
+
+        SiebreCloudApplicationResult result = applicationService.underwriting(application, applicationNumber);
+        result.setResultCode(response.getStatus());
+        return result;
     }
 
 }
