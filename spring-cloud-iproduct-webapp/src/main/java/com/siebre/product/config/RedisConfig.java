@@ -1,9 +1,6 @@
 package com.siebre.product.config;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import com.siebre.basic.cache.RedisCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +14,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.siebre.basic.cache.RedisCacheService;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Configuration
 public class RedisConfig {
@@ -117,5 +116,5 @@ public class RedisConfig {
 		
 		return cacheService;
 	}
-	
+
 }

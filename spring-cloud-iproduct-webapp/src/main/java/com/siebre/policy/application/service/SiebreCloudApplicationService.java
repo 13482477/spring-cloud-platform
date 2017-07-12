@@ -8,23 +8,19 @@ import com.siebre.agreement.factory.AgreementFactory;
 import com.siebre.agreement.factory.DtoAgreementFactory;
 import com.siebre.agreement.service.AgreementRequestExecutor;
 import com.siebre.policy.InsurancePolicy;
-import com.siebre.policy.InsurancePolicyImpl;
 import com.siebre.policy.application.Application;
 import com.siebre.policy.application.Exception.SiebreCloudAgreementValidationError;
 import com.siebre.policy.application.SiebreCloudApplicationResult;
 import com.siebre.policy.dao.InsurancePolicyRepository;
 import com.siebre.policy.factory.PolicyFactoryInterceptors;
-import com.siebre.repository.rdb.hibernate.HibernateUtils;
-import org.hibernate.Session;
+import com.siebre.redis.sequence.SequenceGenerator;
 import org.hibernate.SessionFactory;
-import org.omg.PortableServer.POA;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by huangfei on 2017/06/27.
@@ -40,6 +36,8 @@ public class SiebreCloudApplicationService {
     @Autowired
     private InsurancePolicyRepository insurancePolicyRepository;
 
+    private SequenceGenerator applicationNumberGenerator;
+
     @Autowired
     private SessionFactory sessionFactory;
 
@@ -49,6 +47,16 @@ public class SiebreCloudApplicationService {
         agreementFactory = new DtoAgreementFactory(productRegistry).withInterceptors(PolicyFactoryInterceptors
                 .customRegistrar()
                 .buildParentRelation().build());
+    }
+
+    public SiebreCloudApplicationService(AgreementRequestExecutor requestExecutor, SequenceGenerator applicationNumberGenerator) {
+        this.requestExecutor = requestExecutor;
+        productRegistry = new ProductRegistry();
+        agreementFactory = new DtoAgreementFactory(productRegistry).withInterceptors(PolicyFactoryInterceptors
+                .customRegistrar()
+                .buildParentRelation().build());
+
+        this.applicationNumberGenerator = applicationNumberGenerator;
     }
 
     public SiebreCloudApplicationService(AgreementFactory agreementFactory, AgreementRequestExecutor requestExecutor) {

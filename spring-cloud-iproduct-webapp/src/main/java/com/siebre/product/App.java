@@ -6,6 +6,8 @@ import com.siebre.agreement.dao.AgreementSpecRepositoryImpl;
 import com.siebre.agreement.filter.SmfBehaviorInternalReferenceGenerator;
 import com.siebre.agreement.io.AgreementSpecReaderFactory;
 import com.siebre.agreement.io.support.XmlAgreementSpecReaderFactory;
+import com.siebre.agreement.service.DefaultAgreementRequestExecutor;
+import com.siebre.policy.application.service.SiebreCloudApplicationService;
 import com.siebre.policy.dao.InsurancePolicyRepository;
 import com.siebre.policy.repository.InsurancePolicyRepositoryImpl;
 import com.siebre.product.dao.ProductComponentRepository;
@@ -13,6 +15,8 @@ import com.siebre.product.dao.ProductComponentRepositoryImpl;
 import com.siebre.product.dao.support.InsuranceProductProvider;
 import com.siebre.product.repository.InsuranceProductRepository;
 import com.siebre.product.repository.InsuranceProductRepositoryImpl;
+import com.siebre.redis.sequence.RedisBasedSequenceGenerator;
+import com.siebre.redis.sequence.SequenceGenerator;
 import com.siebre.repository.GeneralRepository;
 import com.siebre.repository.entity.SiebreCloudRepositoryInitializer;
 import com.siebre.repository.rdb.hibernate.HibernateGeneralRepository;
@@ -28,6 +32,8 @@ import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoCo
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -36,6 +42,7 @@ import java.util.Properties;
 //@EnableDiscoveryClient
 //@EnableFeignClients
 @SpringBootApplication(exclude = {SessionAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class})
+@ComponentScan("com.siebre.policy.application.service;com.siebre.product")
 //@ImportResource({"classpath:spring/applicationContext-*.xml"})
 public class App {
 	
@@ -44,6 +51,9 @@ public class App {
 		systemProperties.remove("javax.xml.parsers.DocumentBuilderFactory");
 		SpringApplication.run(App.class, args);
 	}
+
+	@Autowired
+	private RedisTemplate redisTemplate;
 
 	@Autowired
 	private PlatformTransactionManager txManager;
@@ -108,11 +118,20 @@ public class App {
 		return new OpenSessionInViewInterceptor();
 	}
 
-
-
 	public void afterPropertiesSet() throws Exception {
 		//TODO move to WebApplicationInitializer
 		SmfInvokable.setImplClass(GroovySmfInvokable.class);
+	}
+
+	@Bean("applicationNumberGenerator")
+	RedisBasedSequenceGenerator applicationNumberGenerator() {
+		return new RedisBasedSequenceGenerator(redisTemplate, "application_number");
+	}
+
+
+	@Bean
+	public SiebreCloudApplicationService applicationService(@Autowired SequenceGenerator applicationNumberGenerator) {
+		return new SiebreCloudApplicationService(new DefaultAgreementRequestExecutor(), applicationNumberGenerator);
 	}
 
 }
