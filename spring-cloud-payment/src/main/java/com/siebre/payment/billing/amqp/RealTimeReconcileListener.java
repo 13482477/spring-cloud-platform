@@ -34,7 +34,7 @@ public class RealTimeReconcileListener implements MessageListener {
             reconcileManager.realTimeReconJob(response.getLocalOrder().getOrderNumber(), response.getQueryResult(), response.getRemoteJson());
         } else {
             logger.error("调用远程查询订单信息失败，无法开始实时对账，原因：{}", response.getReturnMessage());
-            reconcileManager.createFailRealTimeReconJob(response.getLocalOrder().getOrderNumber(), response.getReturnMessage());
+            reconcileManager.createFailRealTimeReconJob(response.getLocalOrder().getOrderNumber(), response.getReturnMessage(), ReconcileManager.pay_real_time);
         }
     }
 }

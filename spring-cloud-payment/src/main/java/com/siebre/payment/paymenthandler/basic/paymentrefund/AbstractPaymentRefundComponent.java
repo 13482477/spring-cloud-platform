@@ -1,5 +1,6 @@
 package com.siebre.payment.paymenthandler.basic.paymentrefund;
 
+import com.siebre.payment.billing.amqp.RealTimeReconcileProduct;
 import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
@@ -32,6 +33,9 @@ public abstract class AbstractPaymentRefundComponent implements PaymentInterface
 
     @Autowired
     private SerialNumberMapper SerialNumberMapper;
+
+    @Autowired
+    private RealTimeReconcileProduct realTimeReconcileProduct;
 
     @Override
     public void handle(PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse paymentRefundResponse) {
@@ -76,6 +80,10 @@ public abstract class AbstractPaymentRefundComponent implements PaymentInterface
         //同步状态下更新 退款application 退款transaction
         if (paymentRefundResponse.getSynchronize()) {
             paymentTransactionService.synchronizedRefundConfirm(paymentOrder, paymentRefundResponse);
+            if (RefundApplicationStatus.SUCCESS.equals(refundApplication.getStatus())) {
+                //放入退款实时对账队列
+                realTimeReconcileProduct.sendToRefundRealTimeExchange(paymentOrder.getOrderNumber());
+            }
         }
 
     }

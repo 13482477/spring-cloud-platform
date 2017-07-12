@@ -1,6 +1,7 @@
 package com.siebre.config;
 
 import com.siebre.payment.billing.amqp.RealTimeReconcileListener;
+import com.siebre.payment.billing.amqp.RefundRealTimeReconcileListener;
 import com.siebre.payment.paymentlistener.PaymentOrderOutOfTimeListener;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
@@ -34,6 +35,12 @@ public class RabbitmqConfig {
     public static String order_real_time_recon_queue = "orderRealTimeReconQueue";
 
     public static String order_real_time_recon_key = order_real_time_recon_queue;
+
+    public static String order_refund_real_time_recon_exchange = "orderRefundRealTimeReconExchange";
+
+    public static String order_refund_real_time_recon_queue = "orderRefundRealTimeReconQueue";
+
+    public static String order_refund_real_time_recon_key = order_refund_real_time_recon_queue;
 
     @Autowired
     private Environment environment;
@@ -74,6 +81,13 @@ public class RabbitmqConfig {
         return topicExchange;
     }
 
+    /** 订单退款实时对账 exchange */
+    @Bean
+    public TopicExchange orderRefundRealTimeReconExchange() {
+        TopicExchange topicExchange = new TopicExchange(order_refund_real_time_recon_exchange);
+        return topicExchange;
+    }
+
     /** 订单支付超时 queue */
     @Bean
     public Queue orderOutOfTimeQueue() {
@@ -86,10 +100,26 @@ public class RabbitmqConfig {
         return new Queue(order_real_time_recon_queue);
     }
 
+    /** 订单退款实时对账 queue */
+    @Bean
+    public Queue orderRefundRealTimeReconQueue() {
+        return new Queue(order_refund_real_time_recon_queue);
+    }
+
     /** 订单消息超时处理类 */
     @Bean
     public ChannelAwareMessageListener paymentOrderOutOfTimeListener() {
         return new PaymentOrderOutOfTimeListener();
+    }
+
+    @Bean
+    public MessageListener realTimeReconcileListener() {
+        return new RealTimeReconcileListener();
+    }
+
+    @Bean
+    public MessageListener refundRealTimeReconcileListener() {
+        return new RefundRealTimeReconcileListener();
     }
 
     @Bean
@@ -105,8 +135,9 @@ public class RabbitmqConfig {
     }
 
     @Bean
-    public MessageListener realTimeReconcileListener() {
-        return new RealTimeReconcileListener();
+    public Binding refundRealTimeBinding() {
+        Binding binding = BindingBuilder.bind(orderRefundRealTimeReconQueue()).to(orderRefundRealTimeReconExchange()).with(order_refund_real_time_recon_key);
+        return binding;
     }
 
     @Bean
@@ -115,8 +146,10 @@ public class RabbitmqConfig {
         container.setConnectionFactory(connectionFactory());
         container.setQueueNames(order_out_of_time_queue);
         container.setQueueNames(order_real_time_recon_queue);
+        container.setQueueNames(order_refund_real_time_recon_queue);
         container.setMessageListener(paymentOrderOutOfTimeListener());
         container.setMessageListener(realTimeReconcileListener());
+        container.setMessageListener(refundRealTimeReconcileListener());
         return container;
     }
 

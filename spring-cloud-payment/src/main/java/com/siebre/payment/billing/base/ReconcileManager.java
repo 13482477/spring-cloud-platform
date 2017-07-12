@@ -103,9 +103,41 @@ public class ReconcileManager {
         logger.info("对账结束");
     }
 
-    public void createFailRealTimeReconJob(String orderNumber, String errorMsg) {
+    /** 退款实时对账任务 */
+    public void refundRealTimeReconJob(String orderNumber, OrderQueryReturnVo returnVo, String remoteJson) {
+        logger.info("开始对账");
         ReconItem reconItem = new ReconItem();
-        reconItem.setType(pay_real_time);
+        reconItem.setType(refund_real_time);
+        PaymentOrder order = orderMapper.selectByOrderNumber(orderNumber);
+        if(order.getStatus().equals(returnVo.getTradeState())) {
+            if(order.getRefundAmount().compareTo(returnVo.getRemoteOrderRefundAmount()) == 0) {
+                reconItem.setReconResult("MATCH");
+                reconItem.setDescription("匹配成功");
+                order.setCheckStatus(PaymentOrderCheckStatus.REAL_TIME_SUCCESS);
+            } else {
+                reconItem.setReconResult("UNMATCH");
+                reconItem.setDescription("退款金额不一致！远程：" + returnVo.getRemoteOrderRefundAmount() + ", 本地：" + order.getRefundAmount());
+                order.setCheckStatus(PaymentOrderCheckStatus.REAL_TIME_FAIL);
+            }
+        } else {
+            reconItem.setReconResult("UNMATCH");
+            reconItem.setDescription("远程订单状态是：" + returnVo.getTradeState() + "; 本地订单状态是：" + order.getStatus());
+            order.setCheckStatus(PaymentOrderCheckStatus.REAL_TIME_FAIL);
+        }
+        reconItem.setOrderNumber(orderNumber);
+        reconItem.setOutTradeNo(order.getExternalOrderNumber());
+        reconItem.setRemoteDataSourceJsonStr(remoteJson);
+        reconItem.setPaymentDataSourceJsonStr(JsonUtil.toJson(order, true));
+        itemMapper.insert(reconItem);
+        //更新order状态
+        order.setCheckTime(new Date());
+        orderMapper.updateByPrimaryKeySelective(order);
+        logger.info("对账结束");
+    }
+
+    public void createFailRealTimeReconJob(String orderNumber, String errorMsg, String type) {
+        ReconItem reconItem = new ReconItem();
+        reconItem.setType(type);
         PaymentOrder order = orderMapper.selectByOrderNumber(orderNumber);
         reconItem.setReconResult("UNMATCH");
         reconItem.setOrderNumber(orderNumber);

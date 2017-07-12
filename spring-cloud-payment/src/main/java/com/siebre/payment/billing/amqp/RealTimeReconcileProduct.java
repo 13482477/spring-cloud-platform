@@ -21,9 +21,16 @@ public class RealTimeReconcileProduct {
     @Qualifier("rabbitTemplate")
     private RabbitTemplate rabbitTemplate;
 
+    /** 支付的实时对账队列 */
     public void sendToRealTimeExchange(String orderNumber) {
-        logger.info("发送到实时对账Exchange, 订单编号为：{}", orderNumber);
+        logger.info("发送到支付实时对账Exchange, 订单编号为：{}", orderNumber);
         rabbitTemplate.convertAndSend(RabbitmqConfig.order_real_time_recon_exchange, RabbitmqConfig.order_real_time_recon_key, orderNumber);
+    }
+
+    /** 退款的实时对账队列 */
+    public void sendToRefundRealTimeExchange(String orderNumber) {
+        logger.info("发送到退款实时对账Exchange, 订单编号为：{}", orderNumber);
+        rabbitTemplate.convertAndSend(RabbitmqConfig.order_refund_real_time_recon_exchange, RabbitmqConfig.order_refund_real_time_recon_key, orderNumber);
     }
 
 }

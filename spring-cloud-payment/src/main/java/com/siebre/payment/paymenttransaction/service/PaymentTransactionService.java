@@ -1,14 +1,14 @@
 package com.siebre.payment.paymenttransaction.service;
 
-import com.siebre.basic.query.PageInfo;
 import com.siebre.basic.service.ServiceResult;
-import com.siebre.payment.entity.enums.*;
+import com.siebre.payment.entity.enums.PaymentInterfaceType;
+import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
+import com.siebre.payment.entity.enums.PaymentTransactionStatus;
+import com.siebre.payment.entity.enums.RefundApplicationStatus;
 import com.siebre.payment.paymentchannel.mapper.PaymentChannelMapper;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
 import com.siebre.payment.paymentorder.mapper.PaymentOrderMapper;
 import com.siebre.payment.paymentorder.service.PaymentOrderService;
-import com.siebre.payment.paymentorderitem.entity.PaymentOrderItem;
-import com.siebre.payment.paymentorderitem.mapper.PaymentOrderItemMapper;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymenttransaction.mapper.PaymentTransactionMapper;
 import com.siebre.payment.paymenttransaction.vo.RefundDetail;
@@ -20,7 +20,6 @@ import com.siebre.payment.refundapplication.mapper.RefundApplicationMapper;
 import com.siebre.payment.serialnumber.service.SerialNumberService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -432,6 +431,7 @@ public class PaymentTransactionService {
             }
             refundApplication.setUpdateDate(current);
             paymentTransaction.setUpdateDate(current);
+
         } else if (RefundApplicationStatus.FAILED.equals(refundApplication.getStatus())) {
             paymentOrder.setStatus(PaymentOrderPayStatus.REFUNDERROR);
             refundApplication.setUpdateDate(current);
