@@ -5,7 +5,7 @@ import com.siebre.payment.entity.enums.PaymentInterfaceType;
 import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymentchannel.entity.PaymentChannel;
-import com.siebre.payment.paymenthandler.basic.paymentquery.AbstractPaymentQueryComponent;
+import com.siebre.payment.paymenthandler.basic.paymentquery.AbstractPaymentRefundQueryComponent;
 import com.siebre.payment.paymenthandler.config.HandlerBeanNameConfig;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryRequest;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
@@ -23,8 +23,9 @@ import org.springframework.stereotype.Service;
  * @author Huang Tianci
  */
 @Service
-public class QueryApplicationService {
-    Logger logger = LoggerFactory.getLogger(QueryApplicationService.class);
+public class RefundQueryApplicationService {
+
+    Logger logger = LoggerFactory.getLogger(RefundQueryApplicationService.class);
 
     @Autowired
     private PaymentWayService paymentWayService;
@@ -32,9 +33,9 @@ public class QueryApplicationService {
     @Autowired
     private PaymentOrderMapper orderMapper;
 
-    /** 去第三方查询本地支付订单的状态 */
-    public PaymentQueryResponse queryOrderPayStatusByOrderNumber(String orderNumber) {
-        logger.info("开始去第三方渠道查询订单状态，订单编号：{}", orderNumber);
+    /** 去第三方查询本地退款订单的状态 */
+    public PaymentQueryResponse queryOrderRefundStatusByOrderNumber(String orderNumber) {
+        logger.info("交易退款查询，订单编号：{}", orderNumber);
         PaymentQueryResponse response = new PaymentQueryResponse();
         PaymentOrder order = orderMapper.selectByOrderNumber(orderNumber);
         if (order == null) {
@@ -44,31 +45,32 @@ public class QueryApplicationService {
             return response;
         }
         response.setLocalOrder(order);
-        if (PaymentOrderPayStatus.UNPAID.equals(order.getStatus())) {
-            logger.info("订单状态为未支付，无法查询。订单号：{}", orderNumber);
+        if (PaymentOrderPayStatus.UNPAID.equals(order.getStatus()) ||
+                PaymentOrderPayStatus.PAYING.equals(order.getStatus()) ||
+                PaymentOrderPayStatus.PAID.equals(order.getStatus()) ||
+                PaymentOrderPayStatus.INVALID.equals(order.getStatus()) ||
+                PaymentOrderPayStatus.PAYERROR.equals(order.getStatus()) ||
+                PaymentOrderPayStatus.REFUNDING.equals(order.getStatus())) {
+            logger.info("订单状态为{}，无法查询。订单号：{}", order.getStatus().getDescription(), orderNumber);
             response.setReturnCode(ReturnCode.FAIL.getDescription());
-            response.setReturnMessage("订单状态为未支付，无法查询");
+            response.setReturnMessage("订单状态为" + order.getStatus().getDescription() + "，无法查询");
             return response;
         }
-        if (PaymentOrderPayStatus.INVALID.equals(order.getStatus())) {
-            logger.info("该订单状态为已失效，无法查询。订单号：{}", orderNumber);
-            response.setReturnCode(ReturnCode.FAIL.getDescription());
-            response.setReturnMessage("该订单状态为已失效，无法查询");
-            return response;
-        }
+
         PaymentWay paymentWay = paymentWayService.getPaymentWay(order.getPaymentWayCode());
         PaymentChannel channel = paymentWay.getPaymentChannel();
-        PaymentInterface paymentInterface = paymentWayService.getPaymentInterface(paymentWay.getCode(), PaymentInterfaceType.QUERY);
+        PaymentInterface paymentInterface = paymentWayService.getPaymentInterface(paymentWay.getCode(), PaymentInterfaceType.REFUND_QUERY);
 
         PaymentQueryRequest request = new PaymentQueryRequest();
         request.setPaymentChannel(channel);
         request.setPaymentWay(paymentWay);
         request.setPaymentInterface(paymentInterface);
 
-        String handlerBeanName = HandlerBeanNameConfig.QUERY_MAPPING.get(paymentWay.getCode());
-        AbstractPaymentQueryComponent paymentComponent = (AbstractPaymentQueryComponent) SpringContextUtil.getBean(handlerBeanName);
+        String handlerBeanName = HandlerBeanNameConfig.REFUND_QUERY_MAPPING.get(paymentWay.getCode());
+        AbstractPaymentRefundQueryComponent paymentComponent = (AbstractPaymentRefundQueryComponent) SpringContextUtil.getBean(handlerBeanName);
         paymentComponent.handle(request, response);
 
         return response;
     }
+
 }

@@ -29,7 +29,7 @@ public class RealTimeReconcileListener implements MessageListener {
 
         String orderNumber = new String(message.getBody());
         logger.info("实时对账队列接受到新的请求，开始去第三方查询订单状态，订单编号：{}", orderNumber);
-        PaymentQueryResponse response = queryApplicationService.queryOrderStatusByOrderNumber(orderNumber);
+        PaymentQueryResponse response = queryApplicationService.queryOrderPayStatusByOrderNumber(orderNumber);
         if(ReturnCode.SUCCESS.getDescription().equals(response.getReturnCode())) {
             reconcileManager.realTimeReconJob(response.getLocalOrder().getOrderNumber(), response.getQueryResult(), response.getRemoteJson());
         } else {

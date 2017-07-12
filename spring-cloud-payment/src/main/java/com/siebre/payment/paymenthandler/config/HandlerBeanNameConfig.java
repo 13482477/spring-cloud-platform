@@ -23,12 +23,16 @@ public class HandlerBeanNameConfig {
 
     public static final Map<String, String> QUERY_MAPPING = new ConcurrentHashMap<>();
 
+    //退款查询
+    public static final Map<String, String> REFUND_QUERY_MAPPING = new ConcurrentHashMap<>();
+
 
     static {
         initPayMapping();
         initCallBackMapping();
         initRefundMapping();
         initQueryMapping();
+        initRefundQueryMapping();
     }
 
     private static void initPayMapping() {
@@ -95,6 +99,13 @@ public class HandlerBeanNameConfig {
 
         //银联查询接口
         QUERY_MAPPING.put("UNIONPAY_ACP_PAY", "unionPayPaymentQueryHandler");
+    }
+
+    private static void initRefundQueryMapping() {
+        //支付宝-即时到账
+        REFUND_QUERY_MAPPING.put(AlipayConfig.WAY_WEB_PAY, "alipayPaymentRefundQueryHandler");
+        //支付宝-手机网关
+        QUERY_MAPPING.put(AlipayConfig.WAY_TRADE_PAY, "alipayPaymentRefundQueryHandler");
     }
 
 }

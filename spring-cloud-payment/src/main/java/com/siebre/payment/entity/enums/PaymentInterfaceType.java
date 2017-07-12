@@ -13,6 +13,8 @@ public enum PaymentInterfaceType implements BaseEnum {
 	RECONCILIATION(4, "对账"),
 
 	PAY_NOTIFY(5,"回调"),
+
+	REFUND_QUERY(6, "退款查询"),
 	;
 
 	private PaymentInterfaceType(int value, String description) {

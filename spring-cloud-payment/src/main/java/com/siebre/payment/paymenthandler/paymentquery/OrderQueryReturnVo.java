@@ -19,6 +19,9 @@ public class OrderQueryReturnVo implements Serializable{
     //远程订单金额
     private BigDecimal remoteOrderAmount;
 
+    //远程订单退款金额
+    private BigDecimal remoteOrderRefundAmount;
+
     //远程支付完成时间
     private Date remotePayTime;
 
@@ -44,5 +47,13 @@ public class OrderQueryReturnVo implements Serializable{
 
     public void setRemotePayTime(Date remotePayTime) {
         this.remotePayTime = remotePayTime;
+    }
+
+    public BigDecimal getRemoteOrderRefundAmount() {
+        return remoteOrderRefundAmount;
+    }
+
+    public void setRemoteOrderRefundAmount(BigDecimal remoteOrderRefundAmount) {
+        this.remoteOrderRefundAmount = remoteOrderRefundAmount;
     }
 }

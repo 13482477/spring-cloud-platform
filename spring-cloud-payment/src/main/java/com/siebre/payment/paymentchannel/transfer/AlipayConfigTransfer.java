@@ -129,6 +129,10 @@ public class AlipayConfigTransfer {
         initAlipayFastPayCallBackConfig(webPayWay);
         //支付宝即时到账退款接口
         initAlipayFastPayRefundConfig(webPayWay);
+        //即时到账查询接口
+        initAlipayFastPayQueryConfig(webPayWay);
+        //即时到账退款查询接口
+        initAlipayFastPayRefundQueryConfig(webPayWay);
     }
 
     /**
@@ -152,6 +156,8 @@ public class AlipayConfigTransfer {
         initTradeRefundConfig(tradeWapPayWay);
         //支付宝手机网关查询接口
         initTradeQueryConfig(tradeWapPayWay);
+        //手机网关退款查询接口
+        initTradeRefundQueryConfig(tradeWapPayWay);
     }
 
     private void initAlipayFastPayRefundConfig(PaymentWay webPayWay) {
@@ -163,6 +169,26 @@ public class AlipayConfigTransfer {
         fastPayRefund.setPaymentInterfaceType(PaymentInterfaceType.REFUND);
         paymentInterfaceService.createPaymentInterface(fastPayRefund);
         fastPayRefund.setPaymentWay(webPayWay);
+    }
+
+    private void initAlipayFastPayQueryConfig(PaymentWay webPayWay) {
+        PaymentInterface qeury = new PaymentInterface();
+        qeury.setPaymentWayId(webPayWay.getId());
+        qeury.setInterfaceName("支付宝即时到账查询接口");
+        qeury.setRequestUrl(AlipayConfig.TRADE_REQUEST_URL);
+        qeury.setPaymentInterfaceType(PaymentInterfaceType.QUERY);
+        paymentInterfaceService.createPaymentInterface(qeury);
+        qeury.setPaymentWay(webPayWay);
+    }
+
+    private void initAlipayFastPayRefundQueryConfig(PaymentWay webPayWay) {
+        PaymentInterface refundQuery = new PaymentInterface();
+        refundQuery.setPaymentWayId(webPayWay.getId());
+        refundQuery.setInterfaceName("支付宝即时到账退款查询接口");
+        refundQuery.setRequestUrl(AlipayConfig.TRADE_REQUEST_URL);
+        refundQuery.setPaymentInterfaceType(PaymentInterfaceType.REFUND_QUERY);
+        paymentInterfaceService.createPaymentInterface(refundQuery);
+        refundQuery.setPaymentWay(webPayWay);
     }
 
     private void initAlipayFastPayCallBackConfig(PaymentWay webPayWay) {
@@ -194,6 +220,16 @@ public class AlipayConfigTransfer {
         tradeQuery.setPaymentInterfaceType(PaymentInterfaceType.QUERY);
         paymentInterfaceService.createPaymentInterface(tradeQuery);
         tradeQuery.setPaymentWay(tradeWapPayWay);
+    }
+
+    private void initTradeRefundQueryConfig(PaymentWay tradeWapPayWay) {
+        PaymentInterface refundQuery = new PaymentInterface();
+        refundQuery.setPaymentWayId(tradeWapPayWay.getId());
+        refundQuery.setInterfaceName("支付宝手机网关退款查询接口");
+        refundQuery.setRequestUrl(AlipayConfig.TRADE_REQUEST_URL);
+        refundQuery.setPaymentInterfaceType(PaymentInterfaceType.REFUND_QUERY);
+        paymentInterfaceService.createPaymentInterface(refundQuery);
+        refundQuery.setPaymentWay(tradeWapPayWay);
     }
 
     private void initTradeRefundConfig(PaymentWay tradeWapPayWay) {

@@ -21,6 +21,7 @@ import com.siebre.payment.refundapplication.dto.PaymentRefundResponse;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
 import com.siebre.payment.refundapplication.service.RefundApplicationService;
 import com.siebre.payment.service.queryapplication.QueryApplicationService;
+import com.siebre.payment.service.queryapplication.RefundQueryApplicationService;
 import com.siebre.payment.utils.MsgUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +46,20 @@ public class PaymentGatewayController {
     private QueryApplicationService queryApplicationService;
 
     @Autowired
+    private RefundQueryApplicationService refundQueryApplicationService;
+
+    @Autowired
     private RefundApplicationService refundApplicationService;
 
     @Autowired
     private PaymentOrderService paymentOrderService;
+
+    @ApiOperation(value = "查询订单退款状态（去第三方渠道）", notes = "到第三方渠道去查询订单")
+    @RequestMapping(value = "/openApi/v1/paymentGateway/refundQuery/{orderNumber}", method = GET)
+    public PaymentQueryResponse refundQuery(@PathVariable String orderNumber) {
+        PaymentQueryResponse response = refundQueryApplicationService.queryOrderRefundStatusByOrderNumber(orderNumber);
+        return response;
+    }
 
     /**
      * 到第三方渠道去查询订单
@@ -59,7 +70,7 @@ public class PaymentGatewayController {
     @ApiOperation(value = "查询订单支付状态（去第三方渠道）", notes = "到第三方渠道去查询订单")
     @RequestMapping(value = "/openApi/v1/paymentGateway/query/{orderNumber}", method = GET)
     public PaymentQueryResponse payQuery(@PathVariable String orderNumber) {
-        PaymentQueryResponse response = queryApplicationService.queryOrderStatusByOrderNumber(orderNumber);
+        PaymentQueryResponse response = queryApplicationService.queryOrderPayStatusByOrderNumber(orderNumber);
         return response;
     }
 
