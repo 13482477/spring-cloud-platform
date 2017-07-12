@@ -25,7 +25,7 @@ public class SiebreCloudApplicationResult {
     private List<SiebreCloudAgreementValidationError> errors;
 
     public SiebreCloudApplicationResult(Agreement agreement, List<SiebreCloudAgreementValidationError> errors) {
-        this.applicationNumber = "A0011";
+        this.applicationNumber = (String) agreement.getSmfProperty("applicationNumber");
         this.grossPremium = (BigDecimal) agreement.getSmfProperty("grossPremium");
         this.errors = errors;
 
@@ -35,7 +35,7 @@ public class SiebreCloudApplicationResult {
 
     public SiebreCloudApplicationResult(AgreementRequestResult requestResult) {
         Agreement agreement = requestResult.getAgreement();
-        this.applicationNumber = "A0011";
+        this.applicationNumber = (String) agreement.getSmfProperty("applicationNumber");
         this.grossPremium = (BigDecimal) agreement.getSmfProperty("grossPremium");
 
         AgreementConverter converter = new AgreementConverter(agreement);

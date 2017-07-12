@@ -6,9 +6,11 @@ import com.siebre.policy.application.SiebreCloudApplicationResult;
 import com.siebre.policy.application.service.SiebreCloudApplicationService;
 import com.siebre.product.messagedemo.controller.messageobject.QuoteResult;
 import com.siebre.product.utils.QuoteJsonService;
+import com.siebre.redis.sequence.SequenceGenerator;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,10 +29,14 @@ public class QuoteController {
 	
 	@Autowired
 	private QuoteJsonService quoteJsonService;
-	
+
+	@Autowired
+	@Qualifier("applicationNumberGenerator")
+	private SequenceGenerator applicationNumberGenerator;
+
 	@Bean
-	public SiebreCloudApplicationService applicationService() {
-		return new SiebreCloudApplicationService(new DefaultAgreementRequestExecutor());
+	public SiebreCloudApplicationService applicationService(@Autowired SequenceGenerator applicationNumberGenerator) {
+		return new SiebreCloudApplicationService(new DefaultAgreementRequestExecutor(), applicationNumberGenerator);
 	}
 	
 	@RequestMapping(path = "/api/v1/quote", method = RequestMethod.POST)

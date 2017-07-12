@@ -11,6 +11,7 @@ import com.siebre.product.dao.ProductComponentRepositoryImpl;
 import com.siebre.product.dao.support.InsuranceProductProvider;
 import com.siebre.product.repository.InsuranceProductRepository;
 import com.siebre.product.repository.InsuranceProductRepositoryImpl;
+import com.siebre.redis.sequence.RedisBasedSequenceGenerator;
 import com.siebre.repository.GeneralRepository;
 import com.siebre.repository.entity.SiebreCloudRepositoryInitializer;
 import com.siebre.repository.rdb.hibernate.HibernateGeneralRepository;
@@ -26,6 +27,8 @@ import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoCo
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -34,6 +37,7 @@ import java.util.Properties;
 //@EnableDiscoveryClient
 //@EnableFeignClients
 @SpringBootApplication(exclude = {SessionAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class})
+@ComponentScan("com.siebre.policy.application.service;com.siebre.product")
 //@ImportResource({"classpath:spring/applicationContext-*.xml"})
 public class App {
 	
@@ -44,8 +48,10 @@ public class App {
 	}
 
 	@Autowired
-	private PlatformTransactionManager txManager;
+	private RedisTemplate redisTemplate;
 
+	@Autowired
+	private PlatformTransactionManager txManager;
 
 	@Bean
 	DependencyResolver smfBehaviorDependencyResolver() {
@@ -101,11 +107,14 @@ public class App {
 		return new OpenSessionInViewInterceptor();
 	}
 
-
-
 	public void afterPropertiesSet() throws Exception {
 		//TODO move to WebApplicationInitializer
 		SmfInvokable.setImplClass(GroovySmfInvokable.class);
+	}
+
+	@Bean("applicationNumberGenerator")
+	RedisBasedSequenceGenerator applicationNumberGenerator() {
+		return new RedisBasedSequenceGenerator(redisTemplate, "application_number");
 	}
 
 }
