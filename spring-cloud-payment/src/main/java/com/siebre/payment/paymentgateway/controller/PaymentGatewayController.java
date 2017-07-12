@@ -3,9 +3,7 @@ package com.siebre.payment.paymentgateway.controller;
 import com.siebre.basic.applicationcontext.SpringContextUtil;
 import com.siebre.basic.service.ServiceResult;
 import com.siebre.basic.utils.HttpServletRequestUtil;
-import com.siebre.payment.entity.enums.PaymentOrderLockStatus;
-import com.siebre.payment.entity.enums.RefundApplicationStatus;
-import com.siebre.payment.entity.enums.ReturnCode;
+import com.siebre.payment.entity.enums.*;
 import com.siebre.payment.paymentgateway.vo.*;
 import com.siebre.payment.paymenthandler.basic.payment.AbstractPaymentComponent;
 import com.siebre.payment.paymenthandler.config.HandlerBeanNameConfig;
@@ -23,6 +21,7 @@ import com.siebre.payment.refundapplication.dto.PaymentRefundResponse;
 import com.siebre.payment.refundapplication.entity.RefundApplication;
 import com.siebre.payment.refundapplication.service.RefundApplicationService;
 import com.siebre.payment.service.queryapplication.QueryApplicationService;
+import com.siebre.payment.utils.MsgUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -68,12 +67,69 @@ public class PaymentGatewayController {
     @RequestMapping(value = "/openApi/v2/paymentGateway/unifiedPay", method = POST)
     public UnifiedPayResponse unipayV2(@RequestBody UnifiedPayRequest unifiedPayRequest, HttpServletRequest request) {
         UnifiedPayResponse response = new UnifiedPayResponse();
-        PaymentOrderResponse orderResponse = paymentOrderService.creatPaymentOrder(unifiedPayRequest);
+        response.setMessageId(unifiedPayRequest.getMessageId());
+
+        PaymentOrderResponse orderResponse = null;
+
+        //必填项校验
+        MsgUtil msgUtil = paymentOrderService.validateNecessaryInfo(unifiedPayRequest);
+        if (ReturnCode.FAIL.getDescription().equals(msgUtil.getResult().getDescription())) {
+            response.setReturnCode(ReturnCode.FAIL.getDescription());
+            response.setReturnMessage(msgUtil.getMsg());
+            return response;
+        }
+        //channel是iPay
+        if("iPay".equalsIgnoreCase(unifiedPayRequest.getPaymentOrder().getPaymentWayCode())) {
+            MsgUtil msgUtil1 = paymentOrderService.hasMessageId(unifiedPayRequest);
+            if (ReturnCode.FAIL.getDescription().equals(msgUtil1.getResult().getDescription())) {
+                response.setReturnCode(ReturnCode.FAIL.getDescription());
+                response.setReturnMessage(msgUtil1.getMsg());
+                return response;
+            }
+
+            PaymentOrder paymentOrder = paymentOrderService.idempotencyValidate(unifiedPayRequest.getMessageId());
+            if(paymentOrder != null) {
+                if(PaymentOrderPayStatus.UNPAID.equals(paymentOrder.getStatus())) {
+                    response.setReturnCode(ReturnCode.SUCCESS.getDescription());
+                    response.setRedirectUrl("");//TODO 前端的选择支付渠道的地址
+                    response.setReturnMessage("调用成功," + SubsequentAction.REDIRECT_TO_PAYMENT_GATEWAY.getDescription());
+                    response.setSubsequentAction(SubsequentAction.REDIRECT_TO_PAYMENT_GATEWAY.getValue());
+                    response.setPaymentOrder(assembleUnifiedPayResOrder(paymentOrder));
+                    return response;
+                } else {
+                    response.setReturnCode(ReturnCode.FAIL.getDescription());
+                    response.setReturnMessage("支付失败，该messageId对应的订单状态为：" + paymentOrder.getStatus().getDescription());
+                    response.setPaymentOrder(assembleUnifiedPayResOrder(paymentOrder));
+                    return response;
+                }
+            } else {
+                //创建新的订单
+                orderResponse = paymentOrderService.createPaymentOrder(unifiedPayRequest);
+            }
+
+        } else if(unifiedPayRequest.getPaymentOrder().getOrderNumber() != null) { //包含orderNumber
+            if(paymentOrderService.isIpayChannelAndUnpaidOrder(unifiedPayRequest.getPaymentOrder().getOrderNumber())) {
+                //TODO 将原order记录插入历史表中，并删除原order以及级联的信息，插入新的order记录
+
+            } else {
+                response.setReturnCode(ReturnCode.FAIL.getDescription());
+                response.setReturnMessage("非法的请求");
+                return response;
+            }
+        } else { //不包含orderNumber，channel也不是iPay
+            PaymentOrder paymentOrder = paymentOrderService.idempotencyValidate(unifiedPayRequest.getMessageId());
+            if(paymentOrder == null) {
+                //创建新的订单
+                orderResponse = paymentOrderService.createPaymentOrder(unifiedPayRequest);
+            }
+        }
+
         if (ReturnCode.FAIL.getDescription().equals(orderResponse.getReturnCode())) {
             response.setReturnCode(orderResponse.getReturnCode());
             response.setReturnMessage(orderResponse.getReturnMessage());
             return response;
         }
+
         String handlerBeanName = HandlerBeanNameConfig.PAY_MAPPING.get(unifiedPayRequest.getPaymentOrder().getPaymentWayCode());
         PaymentRequest paymentRequest = assemblePaymentRequest(request, orderResponse);
         PaymentResponse paymentResponse = new PaymentResponse();

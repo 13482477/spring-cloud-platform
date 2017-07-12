@@ -103,20 +103,7 @@ public class PaymentOrderService {
      * @return
      */
     @Transactional("db")
-    public PaymentOrderResponse creatPaymentOrder(UnifiedPayRequest unifiedPayRequest) {
-        //必填项校验
-        MsgUtil validateInfo = validateNecessaryInfo(unifiedPayRequest);
-        if (ReturnCode.FAIL.equals(validateInfo.getResult())) {
-            return PaymentOrderResponse.FAIL(validateInfo.getMsg());
-        }
-        //幂等性校验
-        MsgUtil mdxMsf = idempotencyValidate(unifiedPayRequest.getMessageId());
-        if (ReturnCode.FAIL.equals(mdxMsf.getResult())) {
-            PaymentOrder order = (PaymentOrder) mdxMsf.getData();
-            PaymentAccount account = this.paymentAccountService.getPaymentAccountById(order.getPaymentAccountId());
-            order.setPaymentAccount(account);
-            return PaymentOrderResponse.SUCCESS("订单已创建", order);
-        }
+    public PaymentOrderResponse createPaymentOrder(UnifiedPayRequest unifiedPayRequest) {
         //模型转换
         PaymentOrder paymentOrder = transfer(unifiedPayRequest);
         saveNewOrder(paymentOrder);
@@ -164,28 +151,30 @@ public class PaymentOrderService {
         }
     }
 
-    /**
-     * 幂等性校验
-     *
-     * @param messageId
-     * @return
-     */
-    private MsgUtil idempotencyValidate(String messageId) {
+    /** 幂等性校验 */
+    public PaymentOrder idempotencyValidate(String messageId) {
         PaymentOrder order = paymentOrderMapper.selectByMessageId(messageId);
         if (order != null) {
-            MsgUtil msgUtil = new MsgUtil(ReturnCode.FAIL, "该订单已创建");
-            msgUtil.setData(order);
-            return msgUtil;
+           //组装paymentOrder
+            order = getOrderWithItemInfo(order.getOrderNumber());
+            return order;
         }
-        return new MsgUtil(ReturnCode.SUCCESS, "");
+        return null;
     }
 
-    /**
-     * UnifiedPayRequest模型转换为PaymentOrder
-     *
-     * @param unifiedPayRequest
-     * @return
-     */
+    /** 组装order的所有业务级联信息 */
+    public PaymentOrder getOrderWithItemInfo(String orderNumber) {
+        PaymentOrder order = paymentOrderMapper.selectByOrderNumber(orderNumber);
+        List<PaymentOrderItem> items = paymentOrderItemMapper.selectByPaymentOrderId(order.getId());
+        order.setItems(items);
+        if(order.getPaymentAccountId() != null) {
+            PaymentAccount account = paymentAccountService.getPaymentAccountById(order.getPaymentAccountId());
+            order.setPaymentAccount(account);
+        }
+        return order;
+    }
+
+    /** UnifiedPayRequest模型转换为PaymentOrder */
     private PaymentOrder transfer(UnifiedPayRequest unifiedPayRequest) {
         PaymentOrder paymentOrder = new PaymentOrder();
         paymentOrder.setMessageId(unifiedPayRequest.getMessageId());
@@ -226,16 +215,16 @@ public class PaymentOrderService {
         return paymentOrder;
     }
 
-    /**
-     * 校验前端传递的模型是否缺一些必要信息
-     *
-     * @param unifiedPayRequest
-     * @return
-     */
-    private MsgUtil validateNecessaryInfo(UnifiedPayRequest unifiedPayRequest) {
+    /** 是否包含messageId */
+    public MsgUtil hasMessageId(UnifiedPayRequest unifiedPayRequest) {
         if (StringUtils.isBlank(unifiedPayRequest.getMessageId())) {
             return new MsgUtil(ReturnCode.FAIL, "messageId不能为空");
         }
+        return new MsgUtil(ReturnCode.SUCCESS, "");
+    }
+
+    /** 校验统一支付接口前端传递的模型是否缺一些必要信息 */
+    public MsgUtil validateNecessaryInfo(UnifiedPayRequest unifiedPayRequest) {
         if (StringUtils.isBlank(unifiedPayRequest.getPaymentOrder().getPaymentWayCode())) {
             return new MsgUtil(ReturnCode.FAIL, "paymentWayCode不能为空");
         }
@@ -259,6 +248,16 @@ public class PaymentOrderService {
             }
         }
         return new MsgUtil(ReturnCode.SUCCESS, "");
+    }
+
+    /** 判断该order是否是未支付状态，并且该order的历史版本中最早的版本对应的支付方式是否是iPay */
+    public boolean isIpayChannelAndUnpaidOrder(String orderNumber) {
+        PaymentOrder order = paymentOrderMapper.selectByOrderNumber(orderNumber);
+        if(!order.getStatus().equals(PaymentOrderPayStatus.UNPAID)) {
+            return false;
+        }
+        //TODO 判断最早的历史版本是否是iPay
+        return true;
     }
 
     public CheckOrderVo queryPaymentOrderForCheckDetail(String orderNumber) {
