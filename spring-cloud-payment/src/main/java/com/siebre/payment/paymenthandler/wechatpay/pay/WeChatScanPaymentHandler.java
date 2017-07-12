@@ -1,5 +1,6 @@
 package com.siebre.payment.paymenthandler.wechatpay.pay;
 
+import com.siebre.basic.utils.JsonUtil;
 import com.siebre.payment.entity.enums.EncryptionMode;
 import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.entity.enums.SubsequentAction;
@@ -41,8 +42,9 @@ public class WeChatScanPaymentHandler extends AbstractPaymentComponent {
 
 		this.processSign(params, paymentWay.getEncryptionMode(), paymentWay.getSecretKey());
 
-		this.getPaymentUrl(response, paymentWay, params);
+		paymentTransaction.setRequestStr(JsonUtil.mapToJson(params));
 
+		this.getPaymentUrl(response, paymentWay, params);
 
 	}
 
@@ -57,7 +59,11 @@ public class WeChatScanPaymentHandler extends AbstractPaymentComponent {
 		paramMap.put("out_trade_no", paymentTransaction.getInternalTransactionNumber());
 		paramMap.put("total_fee", request.getPaymentOrder().getAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString()); // 金额必须为整数
 		// 单位为分
-		paramMap.put("spbill_create_ip", request.getIp()); // 本机的Ip
+		String ip = request.getIp();
+		if(ip.contains(",")) {
+			ip = ip.split(",")[0];
+		}
+		paramMap.put("spbill_create_ip", ip); // 本机的Ip
 		Date current = new Date();
 		paramMap.put("time_start", DateFormatUtils.format(current, "yyyyMMddHHmmss")); // 交易起始时间
 		paramMap.put("time_expire", DateFormatUtils.format(DateUtils.addMinutes(current,30), "yyyyMMddHHmmss")); // 交易结束时间,设置为起始时间后30分钟

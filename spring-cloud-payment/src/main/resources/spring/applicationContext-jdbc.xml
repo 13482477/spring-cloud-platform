@@ -74,7 +74,11 @@
         </property>
     </bean>
 
-	<bean id="mySqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name = "dataSource" ref="dataSource" />
+    </bean>
+
+    <bean id="mySqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="mapperLocations">
 			<array>

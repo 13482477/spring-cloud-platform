@@ -4,6 +4,9 @@ import com.siebre.agreement.Agreement;
 import com.siebre.agreement.AgreementRole;
 import com.siebre.agreement.dto.ComponentData;
 import com.siebre.agreement.dto.RoleData;
+import org.apache.commons.lang3.time.DateFormatUtils;
+
+import java.util.Date;
 
 /**
  * Created by huangfei on 2017/07/10.
@@ -43,7 +46,14 @@ public class AgreementConverter {
         agreementRole.getPropertyActuals()
                 .forEach(propertyActual -> {
                     try {
-                        role.put(propertyActual.getKind(), agreementRole.getSmfProperty(propertyActual.getKind()));
+                        if (propertyActual.getKind().equals("birthDate") && agreementRole.getSmfProperty(propertyActual.getKind()) != null) {
+                            Date birthDate = (Date)agreementRole.getSmfProperty(propertyActual.getKind());
+                            String dateStrCheck = DateFormatUtils.format(birthDate, "yyyy-MM-dd HH:mm:ss");
+                            role.put(propertyActual.getKind(), dateStrCheck);
+                        }else {
+                            role.put(propertyActual.getKind(), agreementRole.getSmfProperty(propertyActual.getKind()));
+                        }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

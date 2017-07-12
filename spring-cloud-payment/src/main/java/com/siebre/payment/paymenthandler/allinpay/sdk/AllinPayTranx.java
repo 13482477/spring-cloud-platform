@@ -8,9 +8,12 @@ import com.aipg.transquery.QTDetail;
 import com.aipg.transquery.QTransRsp;
 import com.allinpay.XmlTools;
 import com.siebre.basic.exception.SiebreRuntimeException;
+import com.siebre.basic.utils.JsonUtil;
+import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
 import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.entity.enums.RefundApplicationStatus;
 import com.siebre.payment.entity.enums.ReturnCode;
+import com.siebre.payment.paymenthandler.paymentquery.OrderQueryReturnVo;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
@@ -31,7 +34,7 @@ import java.util.Map;
 
 /**
  * Created by meilan on 2017/5/16.
- *通联实时代扣（支付，退款，查询）
+ * 通联实时代扣（支付，退款，查询）
  */
 @Component("allinPayTranx")
 public class AllinPayTranx {
@@ -49,6 +52,10 @@ public class AllinPayTranx {
         AipgRsp aipgrsp = null;
         aipgrsp = XSUtil.parseRsp(retXml);
 
+        String responseStr = JsonUtil.toJson(aipgrsp, true);
+
+        paymentTransaction.setResponseStr(JsonUtil.toJson(aipgrsp, true));
+
         Map<String, String> result = new HashMap<>();
         String internalTransactionNumber = paymentTransaction.getInternalTransactionNumber();
         String externalTransactionNumber = aipgrsp.getINFO().getREQ_SN();
@@ -60,10 +67,14 @@ public class AllinPayTranx {
                 if ("0000".equals(ret.getRET_CODE())) {
                     logger.info("transaction success(last result)");
                     //修改订单交易状态
+                    paymentTransaction.setExternalTransactionNumber(externalTransactionNumber);
+                    paymentTransaction.setPaymentStatus(PaymentTransactionStatus.PAY_SUCCESS);
+                    paymentTransaction.setResponseStr(responseStr);
+
+                    //修改订单交易状态
                     String seller_id = paymentWay.getPaymentChannel().getMerchantCode();
                     BigDecimal total_fee = paymentTransaction.getPaymentAmount();
-                    //TODO
-                    paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee, new Date());
+                    paymentTransactionService.paymentConfirm(internalTransactionNumber, externalTransactionNumber, seller_id, total_fee, new Date(), responseStr);
 
                     result.put("transaction_result", ReturnCode.SUCCESS.getDescription());
                     result.put("orderNumber", internalTransactionNumber);
@@ -89,7 +100,7 @@ public class AllinPayTranx {
             }
         }
 
-        paymentTransactionService.setFailStatus(internalTransactionNumber,externalTransactionNumber);
+        paymentTransactionService.setFailStatus(internalTransactionNumber, externalTransactionNumber);
         result.put("transaction_result", ReturnCode.FAIL.getDescription());
         result.put("orderNumber", internalTransactionNumber);
         result.put("msg", aipgrsp.getINFO().getERR_MSG());
@@ -99,7 +110,7 @@ public class AllinPayTranx {
     /**
      * 退款返回报文处理逻辑
      */
-    public void dealRetForRefund(String retXml, String trxcode, PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse  refundResponse){
+    public void dealRetForRefund(String retXml, String trxcode, PaymentRefundRequest paymentRefundRequest, PaymentRefundResponse refundResponse) {
 
         AipgRsp aipgrsp = null;
         aipgrsp = XSUtil.parseRsp(retXml);
@@ -107,14 +118,14 @@ public class AllinPayTranx {
         String externalTransactionNumber = aipgrsp.getINFO().getREQ_SN();
         refundResponse.setExternalTransactionNumber(externalTransactionNumber);
         //TransRet ret = (TransRet) aipgrsp.getTrxData().get(0);
-       // refundResponse.setReturnMessage(ret.getERR_MSG());
+        // refundResponse.setReturnMessage(ret.getERR_MSG());
 
         PaymentTransaction refundTransaction = paymentRefundRequest.getRefundTransaction();
         RefundApplication refundApplication = paymentRefundRequest.getRefundApplication();
 
         //交易退款返回处理逻辑
-        if("REFUND".equals(trxcode)){
-            if("0000".equals(aipgrsp.getINFO().getRET_CODE())){//退款交易调用成功
+        if ("REFUND".equals(trxcode)) {
+            if ("0000".equals(aipgrsp.getINFO().getRET_CODE())) {//退款交易调用成功
                 refundTransaction.setExternalTransactionNumber(externalTransactionNumber);
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_SUCCESS);
 
@@ -126,8 +137,7 @@ public class AllinPayTranx {
                 refundResponse.setRefundApplicationStatus(RefundApplicationStatus.SUCCESS);
                 logger.info("refund success");
 
-            }
-            else{
+            } else {
                 String faileReason = "退款失败,失败原因:" + aipgrsp.getINFO().getERR_MSG();
                 refundTransaction.setExternalTransactionNumber(externalTransactionNumber);
                 refundTransaction.setPaymentStatus(PaymentTransactionStatus.REFUND_FAILED);
@@ -149,60 +159,75 @@ public class AllinPayTranx {
     /**
      * 查询返回报文处理逻辑
      */
-    public void dealRetForQuery(String retXml, String trxcode, PaymentQueryResponse response){
+    public void dealRetForQuery(String retXml, String trxcode, PaymentQueryResponse response) {
 
         AipgRsp aipgrsp = null;
         aipgrsp = XSUtil.parseRsp(retXml);
+        OrderQueryReturnVo queryResult = new OrderQueryReturnVo();
+        if ("0000".equals(aipgrsp.getINFO().getRET_CODE())) {
+            QTransRsp qrsq = (QTransRsp) aipgrsp.getTrxData().get(0);
+            logger.info("query success !");
+            List<QTDetail> details = qrsq.getDetails();
+            BigDecimal totalAmount = BigDecimal.ZERO;
+            for (QTDetail lobj : details) {
+                logger.info("原支付交易批次号:" + lobj.getBATCHID() + "  ");
+                logger.info("记录序号:" + lobj.getSN() + "  ");
+                logger.info("账号:" + lobj.getACCOUNT_NO() + "  ");
+                logger.info("户名:" + lobj.getACCOUNT_NAME() + "  ");
+                logger.info("金额:" + lobj.getAMOUNT() + "  ");
+                logger.info("返回结果:" + lobj.getRET_CODE() + "  ");
 
-        //交易查询处理逻辑(交易结果查询--200004,交易明细查询--200005)
-        if("200004".equals(trxcode)||"200005".equals(trxcode)){
-            if("0000".equals(aipgrsp.getINFO().getRET_CODE())){
-                QTransRsp qrsq=(QTransRsp) aipgrsp.getTrxData().get(0);
-                logger.info("query success !");
-                List<QTDetail> details=qrsq.getDetails();
-                for(QTDetail lobj:details){
-                    logger.info("原支付交易批次号:"+lobj.getBATCHID()+"  ");
-                    logger.info("记录序号:"+lobj.getSN()+"  ");
-                    logger.info("账号:"+lobj.getACCOUNT_NO()+"  ");
-                    logger.info("户名:"+lobj.getACCOUNT_NAME()+"  ");
-                    logger.info("金额:"+lobj.getAMOUNT()+"  ");
-                    logger.info("返回结果:"+lobj.getRET_CODE()+"  ");
+                totalAmount = totalAmount.add(new BigDecimal(lobj.getAMOUNT()));
 
-                    if("0000".equals(lobj.getRET_CODE())){
-                        logger.info("返回说明:交易成功 ");
-                        logger.info("更新交易库状态（原交易的状态）");
-                    }else{
-                        logger.info("返回说明:"+lobj.getERR_MSG()+"  ");
-                        logger.info("更新交易库状态（原交易的状态）");
-                    }
+                if ("0000".equals(lobj.getRET_CODE())) {
+                    logger.info("返回说明:交易成功 ");
+                    logger.info("更新交易库状态（原交易的状态）");
+                } else {
+                    logger.info("返回说明:" + lobj.getERR_MSG() + "  ");
+                    logger.info("更新交易库状态（原交易的状态）");
                 }
-
-                response.setStatus(PaymentTransactionStatus.REFUND_SUCCESS);//设置状态--交易成功
-
-            }else if("2000".equals(aipgrsp.getINFO().getRET_CODE())
-                    ||"2001".equals(aipgrsp.getINFO().getRET_CODE())
-                    ||"2003".equals(aipgrsp.getINFO().getRET_CODE())
-                    ||"2005".equals(aipgrsp.getINFO().getRET_CODE())
-                    ||"2007".equals(aipgrsp.getINFO().getRET_CODE())
-                    ||"2008".equals(aipgrsp.getINFO().getRET_CODE())){
-                logger.info("返回说明:"+aipgrsp.getINFO().getRET_CODE()+"  ");
-                logger.info("返回说明："+aipgrsp.getINFO().getERR_MSG());
-                logger.info("该状态时，说明整个批次的交易都在处理中");
-            }else if("2004".equals(aipgrsp.getINFO().getRET_CODE())){
-                logger.info("整批交易未受理通过（最终失败）");
-            }else if("1002".equals(aipgrsp.getINFO().getRET_CODE())){
-                logger.info("查询无结果集（表示通联端根据商户请求上送的条件查不到对应的结果集）");
-            }else{
-                logger.info("查询请求失败，请重新发起查询");
             }
+            queryResult.setTradeState(PaymentOrderPayStatus.PAID);
+            queryResult.setRemoteOrderAmount(totalAmount.divide(new BigDecimal(100)));
+            response.setReturnCode(ReturnCode.SUCCESS.getDescription());
+            response.setQueryResult(queryResult);
+        } else if ("2000".equals(aipgrsp.getINFO().getRET_CODE())
+                || "2001".equals(aipgrsp.getINFO().getRET_CODE())
+                || "2003".equals(aipgrsp.getINFO().getRET_CODE())
+                || "2005".equals(aipgrsp.getINFO().getRET_CODE())
+                || "2007".equals(aipgrsp.getINFO().getRET_CODE())
+                || "2008".equals(aipgrsp.getINFO().getRET_CODE())) {
 
-            response.setStatus(PaymentTransactionStatus.REFUND_FAILED);//设置状态--交易失败
+            logger.info("返回说明:" + aipgrsp.getINFO().getRET_CODE() + "  ");
+            logger.info("返回说明：" + aipgrsp.getINFO().getERR_MSG());
+            logger.info("该状态时，说明整个批次的交易都在处理中");
+            queryResult.setTradeState(PaymentOrderPayStatus.PAYING);
+            response.setReturnCode(ReturnCode.SUCCESS.getDescription());
+            response.setQueryResult(queryResult);
+        } else if ("2004".equals(aipgrsp.getINFO().getRET_CODE())) {
 
+            logger.info("整批交易未受理通过（最终失败）");
+            queryResult.setTradeState(PaymentOrderPayStatus.PAYERROR);
+            response.setReturnCode(ReturnCode.SUCCESS.getDescription());
+            response.setReturnMessage("整批交易未受理通过（最终失败）");
+            response.setQueryResult(queryResult);
+        } else if ("1002".equals(aipgrsp.getINFO().getRET_CODE())) {
+
+            logger.info("查询无结果集（表示通联端根据商户请求上送的条件查不到对应的结果集）");
+            response.setReturnCode(ReturnCode.FAIL.getDescription());
+            response.setReturnMessage("查询无结果集（通联端根据商户请求上送的条件查不到对应的结果集）");
+        } else {
+
+            logger.info("查询请求失败，请重新发起查询");
+            response.setReturnCode(ReturnCode.FAIL.getDescription());
+            response.setReturnMessage("查询请求失败，请重新发起查询");
         }
+
     }
 
     /**
      * 组装报文头部
+     *
      * @param trxcod
      * @return
      */
@@ -227,7 +252,7 @@ public class AllinPayTranx {
     public String sendToTlt(String xml, boolean flag, String url, PaymentWay paymentWay) {
         try {
             if (!flag) {
-                xml = this.signMsg(xml,paymentWay);
+                xml = this.signMsg(xml, paymentWay);
             } else {
                 xml = xml.replaceAll("<SIGNED_MSG></SIGNED_MSG>", "");
             }
@@ -242,7 +267,7 @@ public class AllinPayTranx {
     /**
      * 报文签名
      */
-    public String signMsg(String xml,PaymentWay paymentWay) throws Exception {
+    public String signMsg(String xml, PaymentWay paymentWay) throws Exception {
         xml = XmlTools.signMsg(xml, this.getClass().getResource("/").getPath() + "20036800000096104.p12", paymentWay.getSecretKey(), false);
         //xml = XmlTools.signMsg(xml, this.getClass().getResource("/").getPath() + "20060400000044502.p12", "111111", false);
         return xml;
@@ -281,9 +306,6 @@ public class AllinPayTranx {
         logger.info("sign result[" + flag + "]");
         return flag;
     }
-
-
-    
 
 
 }

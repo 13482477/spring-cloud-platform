@@ -48,7 +48,9 @@ public class QuoteController {
 		String requestJsonString = IOUtils.toString(request.getInputStream());
 		Application application = quoteJsonService.toApplication(requestJsonString);
 
-		return applicationService.quote(application);
+		SiebreCloudApplicationResult result = applicationService.quote(application);
+		result.setResultCode(response.getStatus());
+		return result;
 	}
 
 }

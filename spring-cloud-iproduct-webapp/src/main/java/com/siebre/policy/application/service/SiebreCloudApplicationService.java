@@ -7,21 +7,28 @@ import com.siebre.agreement.*;
 import com.siebre.agreement.factory.AgreementFactory;
 import com.siebre.agreement.factory.DtoAgreementFactory;
 import com.siebre.agreement.service.AgreementRequestExecutor;
+import com.siebre.policy.InsurancePolicy;
+import com.siebre.policy.InsurancePolicyImpl;
 import com.siebre.policy.application.Application;
 import com.siebre.policy.application.Exception.SiebreCloudAgreementValidationError;
 import com.siebre.policy.application.SiebreCloudApplicationResult;
+import com.siebre.policy.dao.InsurancePolicyRepository;
 import com.siebre.policy.factory.PolicyFactoryInterceptors;
-import com.siebre.redis.sequence.SequenceGenerator;
+import com.siebre.repository.rdb.hibernate.HibernateUtils;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.omg.PortableServer.POA;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * Created by huangfei on 2017/06/27.
  */
-
 public class SiebreCloudApplicationService {
 
     private AgreementRequestExecutor requestExecutor;
@@ -30,15 +37,11 @@ public class SiebreCloudApplicationService {
 
     private AgreementFactory agreementFactory;
 
-    public SequenceGenerator getApplicationNumberGenerator() {
-        return applicationNumberGenerator;
-    }
+    @Autowired
+    private InsurancePolicyRepository insurancePolicyRepository;
 
-    public void setApplicationNumberGenerator(SequenceGenerator applicationNumberGenerator) {
-        this.applicationNumberGenerator = applicationNumberGenerator;
-    }
-
-    private SequenceGenerator applicationNumberGenerator;
+    @Autowired
+    private SessionFactory sessionFactory;
 
     public SiebreCloudApplicationService(AgreementRequestExecutor requestExecutor) {
         this.requestExecutor = requestExecutor;
@@ -46,16 +49,6 @@ public class SiebreCloudApplicationService {
         agreementFactory = new DtoAgreementFactory(productRegistry).withInterceptors(PolicyFactoryInterceptors
                 .customRegistrar()
                 .buildParentRelation().build());
-    }
-
-    public SiebreCloudApplicationService(AgreementRequestExecutor requestExecutor, SequenceGenerator applicationNumberGenerator) {
-        this.requestExecutor = requestExecutor;
-        productRegistry = new ProductRegistry();
-        agreementFactory = new DtoAgreementFactory(productRegistry).withInterceptors(PolicyFactoryInterceptors
-                .customRegistrar()
-                .buildParentRelation().build());
-
-        this.applicationNumberGenerator = applicationNumberGenerator;
     }
 
     public SiebreCloudApplicationService(AgreementFactory agreementFactory, AgreementRequestExecutor requestExecutor) {
@@ -78,7 +71,6 @@ public class SiebreCloudApplicationService {
 //		}
         try {
             AgreementRequestResult requestResult = requestExecutor.execute(request);
-            requestResult.getAgreement().setSmfProperty("applicationNumber", applicationNumberGenerator.next());
             return new SiebreCloudApplicationResult(requestResult);
         } catch (AgreementException e) {
             //e.printStackTrace();
@@ -86,52 +78,57 @@ public class SiebreCloudApplicationService {
             SiebreCloudAgreementValidationError error = new SiebreCloudAgreementValidationError(null,null,null);
             error.setDescription(e.getCause().getCause().getMessage());
             errors.add(error);
-            return new SiebreCloudApplicationResult(policy, errors);
+            return new SiebreCloudApplicationResult(null, errors);
         }
     }
 
-    public SiebreCloudApplicationResult underwriting(Application application) {
+    public SiebreCloudApplicationResult underwriting(Application application, String applicationNumber) {
         AgreementSpec agreementSpec = application.getAgreementSpec();
         productRegistry.register(agreementSpec);
-        Agreement policy = agreementFactory.create(application.toDto());
+        Agreement agreement = agreementFactory.create(application.toDto());
 
-        //AgreementRole applicantRole = policy.createRole("Applicant");
-        AgreementRequest request = policy.createRequest("underwriting");
+        AgreementRequest request = agreement.createRequest("underwriting");
 
         try {
             AgreementRequestResult requestResult = requestExecutor.execute(request);
-            SiebreCloudApplicationResult result = new SiebreCloudApplicationResult(policy,null);
+
             if (requestResult.getErrorMessages().size() == 0){
-                result.setUnderwritingResult(true);
+
+                InsurancePolicy policy = (InsurancePolicy) agreement;
+                policy.setApplicationNumber(applicationNumber);
+                SiebreCloudApplicationResult result = new SiebreCloudApplicationResult(policy,null);
 
                 //与保险公司核保接口mock
 
-            } else {
-                result.setUnderwritingResult(false);
+                //保存保单操作
+                insurancePolicyRepository.save(policy);
+                return result;
+            }else {
                 Set<String> flag = new HashSet<>();
                 List<SiebreCloudAgreementValidationError> errors = new ArrayList<SiebreCloudAgreementValidationError>();
                 for(String errorMessage: requestResult.getErrorMessages()){
                     if(flag.contains(errorMessage)) {
                         continue;
                     }
-
                     flag.add(errorMessage);
                     SiebreCloudAgreementValidationError error = new SiebreCloudAgreementValidationError(null,null,null);
                     error.setDescription(errorMessage);
                     errors.add(error);
                 }
-                result.setErrors(errors);
+
+                return new SiebreCloudApplicationResult(null,errors);
             }
-            return result;
-        } catch (AgreementException e) {
-            e.printStackTrace();
+            //return null;
+        }catch (AgreementException e) {
+            //e.printStackTrace();
             List<SiebreCloudAgreementValidationError> errors = new ArrayList<SiebreCloudAgreementValidationError>();
             SiebreCloudAgreementValidationError error = new SiebreCloudAgreementValidationError(null,e.getCause().getCause().getMessage(), null);
             error.setDescription(e.getCause().getCause().getMessage());
             errors.add(error);
-            return new SiebreCloudApplicationResult(policy, errors);
+            return new SiebreCloudApplicationResult(null,errors);
         }
     }
+
       /**
      * A temporary product registry to serve products to AgreementFactory.
      *
@@ -150,29 +147,5 @@ public class SiebreCloudApplicationService {
             Preconditions.checkNotNull(agreementSpec.getExternalReference(), "externalReference of supplied AgreementSpec is null");
             cache.put(agreementSpec.getExternalReference(), agreementSpec);
         }
-    }
-
-    public AgreementRequestExecutor getRequestExecutor() {
-        return requestExecutor;
-    }
-
-    public void setRequestExecutor(AgreementRequestExecutor requestExecutor) {
-        this.requestExecutor = requestExecutor;
-    }
-
-    public ProductRegistry getProductRegistry() {
-        return productRegistry;
-    }
-
-    public void setProductRegistry(ProductRegistry productRegistry) {
-        this.productRegistry = productRegistry;
-    }
-
-    public AgreementFactory getAgreementFactory() {
-        return agreementFactory;
-    }
-
-    public void setAgreementFactory(AgreementFactory agreementFactory) {
-        this.agreementFactory = agreementFactory;
     }
 }

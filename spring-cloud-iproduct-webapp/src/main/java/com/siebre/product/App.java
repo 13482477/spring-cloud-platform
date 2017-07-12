@@ -6,6 +6,8 @@ import com.siebre.agreement.dao.AgreementSpecRepositoryImpl;
 import com.siebre.agreement.filter.SmfBehaviorInternalReferenceGenerator;
 import com.siebre.agreement.io.AgreementSpecReaderFactory;
 import com.siebre.agreement.io.support.XmlAgreementSpecReaderFactory;
+import com.siebre.policy.dao.InsurancePolicyRepository;
+import com.siebre.policy.repository.InsurancePolicyRepositoryImpl;
 import com.siebre.product.dao.ProductComponentRepository;
 import com.siebre.product.dao.ProductComponentRepositoryImpl;
 import com.siebre.product.dao.support.InsuranceProductProvider;
@@ -52,6 +54,12 @@ public class App {
 
 	@Autowired
 	private PlatformTransactionManager txManager;
+
+	@Bean
+	InsurancePolicyRepository insurancePolicyRepository() {
+		return new InsurancePolicyRepositoryImpl(generalRepository());
+	}
+
 
 	@Bean
 	DependencyResolver smfBehaviorDependencyResolver() {

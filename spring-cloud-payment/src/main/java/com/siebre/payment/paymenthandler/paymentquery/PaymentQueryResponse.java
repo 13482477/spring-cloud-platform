@@ -1,60 +1,61 @@
 package com.siebre.payment.paymenthandler.paymentquery;
 
-import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.paymentorder.entity.PaymentOrder;
-import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
+import org.codehaus.jackson.JsonNode;
 
-import java.math.BigDecimal;
+import java.util.Map;
 
 public class PaymentQueryResponse {
 
-    private PaymentOrder order;
+    private String returnCode;
 
-    private PaymentTransaction transaction;
+    private String returnMessage;
 
-    private PaymentTransactionStatus status;
+    private PaymentOrder localOrder;
 
-    private BigDecimal orderAmount;
+    //解析返回报文后的得到的订单数据对象
+    private OrderQueryReturnVo queryResult;
 
-    public PaymentOrder getOrder() {
-        return order;
+    //查询订单交易状态的返回报文
+    private String remoteJson;
+
+    public String getReturnCode() {
+        return returnCode;
     }
 
-    public void setOrder(PaymentOrder order) {
-        this.order = order;
+    public void setReturnCode(String returnCode) {
+        this.returnCode = returnCode;
     }
 
-    public PaymentTransaction getTransaction() {
-        return transaction;
+    public String getReturnMessage() {
+        return returnMessage;
     }
 
-    public void setTransaction(PaymentTransaction transaction) {
-        this.transaction = transaction;
+    public void setReturnMessage(String returnMessage) {
+        this.returnMessage = returnMessage;
     }
 
-    public PaymentTransactionStatus getStatus() {
-        return status;
+    public PaymentOrder getLocalOrder() {
+        return localOrder;
     }
 
-    public void setStatus(PaymentTransactionStatus status) {
-        this.status = status;
+    public void setLocalOrder(PaymentOrder localOrder) {
+        this.localOrder = localOrder;
     }
 
-    public BigDecimal getOrderAmount() {
-        return orderAmount;
+    public OrderQueryReturnVo getQueryResult() {
+        return queryResult;
     }
 
-    public void setOrderAmount(BigDecimal orderAmount) {
-        this.orderAmount = orderAmount;
+    public void setQueryResult(OrderQueryReturnVo queryResult) {
+        this.queryResult = queryResult;
     }
 
-    @Override
-    public String toString() {
-        return "PaymentQueryResponse{" +
-                "order=" + order +
-                ", transaction=" + transaction +
-                ", status=" + status +
-                ", orderAmount=" + orderAmount +
-                '}';
+    public String getRemoteJson() {
+        return remoteJson;
+    }
+
+    public void setRemoteJson(String remoteJson) {
+        this.remoteJson = remoteJson;
     }
 }

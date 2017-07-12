@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.billing.mapper.ReconDataSetMapper" >
+  <resultMap id="BaseResultMap" type="com.siebre.payment.billing.entity.ReconDataSet" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <id column="data_source_id" property="dataSourceId" jdbcType="BIGINT" />
+    <result column="json_str" property="jsonStr" jdbcType="VARCHAR" />
+    <result column="line_no" property="lineNo" jdbcType="INTEGER" />
+    <result column="line_content" property="lineContent" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, data_source_id, json_str, line_no, line_content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from recon_data_set
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByDateSourceId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from recon_data_set
+    where data_source_id = #{dataSourceId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteAll" >
+    delete from recon_data_set
+  </delete>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from recon_data_set
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.siebre.payment.billing.entity.ReconDataSet" useGeneratedKeys="true" keyProperty="id">
+    insert into recon_data_set (id, data_source_id, json_str, line_no,
+      line_content)
+    values (#{id,jdbcType=BIGINT}, #{dataSourceId,jdbcType=BIGINT}, #{jsonStr,jdbcType=VARCHAR}, #{lineNo,jdbcType=INTEGER},
+      #{lineContent,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.siebre.payment.billing.entity.ReconDataSet" useGeneratedKeys="true" keyProperty="id">
+    insert into recon_data_set
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="dataSourceId != null" >
+        data_source_id,
+      </if>
+      <if test="jsonStr != null" >
+        json_str,
+      </if>
+      <if test="lineNo != null" >
+        line_no,
+      </if>
+      <if test="lineContent != null" >
+        line_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="dataSourceId != null" >
+        #{dataSourceId,jdbcType=BIGINT},
+      </if>
+      <if test="jsonStr != null" >
+        #{jsonStr,jdbcType=VARCHAR},
+      </if>
+      <if test="lineNo != null" >
+        #{lineNo,jdbcType=INTEGER},
+      </if>
+      <if test="lineContent != null" >
+        #{lineContent,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.billing.entity.ReconDataSet" >
+    update recon_data_set
+    <set >
+      <if test="dataSourceId != null" >
+        data_source_id = #{dataSourceId,jdbcType=BIGINT},
+      </if>
+      <if test="jsonStr != null" >
+        json_str = #{jsonStr,jdbcType=VARCHAR},
+      </if>
+      <if test="lineNo != null" >
+        line_no = #{lineNo,jdbcType=INTEGER},
+      </if>
+      <if test="lineContent != null" >
+        line_content = #{lineContent,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.billing.entity.ReconDataSet" >
+    update recon_data_set
+    set data_source_id = #{dataSourceId,jdbcType=BIGINT},
+      json_str = #{jsonStr,jdbcType=VARCHAR},
+      line_no = #{lineNo,jdbcType=INTEGER},
+      line_content = #{lineContent,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

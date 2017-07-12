@@ -23,6 +23,7 @@
 		<result column="currency" property="currency" jdbcType="VARCHAR" />
 		<result column="payment_account_id" property="paymentAccountId" jdbcType="BIGINT" />
 		<result column="notification_url" property="notificationUrl" jdbcType="VARCHAR" />
+		<result column="return_url" property="returnUrl" jdbcType="VARCHAR" />
 		<result column="external_order_number" property="externalOrderNumber" jdbcType="VARCHAR" />
 		<result column="summary" property="summary" jdbcType="VARCHAR" />
 		<association property="paymentChannel" javaType="com.siebre.payment.paymentchannel.entity.PaymentChannel" columnPrefix="paymentChannel_">
@@ -53,6 +54,7 @@
 		<result column="currency" property="currency" jdbcType="VARCHAR" />
 		<result column="payment_account_id" property="paymentAccountId" jdbcType="BIGINT" />
 		<result column="notification_url" property="notificationUrl" jdbcType="VARCHAR" />
+		<result column="return_url" property="returnUrl" jdbcType="VARCHAR" />
 		<result column="external_order_number" property="externalOrderNumber" jdbcType="VARCHAR" />
 		<result column="summary" property="summary" jdbcType="VARCHAR" />
 		<collection property="items" notNullColumn="id" javaType="com.siebre.payment.paymentorderitem.entity.PaymentOrderItem" columnPrefix="paymentOrderItem_">
@@ -112,6 +114,7 @@
 		pmt_payment_order.currency,
 		pmt_payment_order.payment_account_id,
 		pmt_payment_order.notification_url,
+		pmt_payment_order.return_url,
 		pmt_payment_order.external_order_number,
 		pmt_payment_order.summary,
 		pmt_payment_order_item.id paymentOrderItem_id,
@@ -164,6 +167,7 @@
 		currency,
 		payment_account_id,
 		notification_url,
+		return_url,
 		external_order_number,
 		summary
 	</sql>
@@ -190,6 +194,7 @@
 		pmt_payment_order.currency,
 		pmt_payment_order.payment_account_id,
 		pmt_payment_order.notification_url,
+		pmt_payment_order.return_url,
 		pmt_payment_order.external_order_number,
 		pmt_payment_order.summary,
 		pmt_payment_channel.channel_name paymentChannel_channel_name,
@@ -229,6 +234,7 @@
 		currency,
 		payment_account_id,
 		notification_url,
+		return_url,
 		external_order_number,
 		summary
 		)
@@ -253,6 +259,7 @@
 		#{currency,jdbcType=VARCHAR},
 		#{paymentAccountId,jdbcType=BIGINT},
 		#{notificationUrl,jdbcType=VARCHAR},
+		#{returnUrl,jdbcType=VARCHAR},
 		#{externalOrderNumber,jdbcType=VARCHAR},
 		#{summary,jdbcType=VARCHAR}
 		)
@@ -322,6 +329,9 @@
 			</if>
 			<if test="notificationUrl != null">
 				notification_url,
+			</if>
+			<if test="returnUrl != null">
+				return_url,
 			</if>
 			<if test="externalOrderNumber!=null">
 				external_order_number,
@@ -394,6 +404,9 @@
 			<if test="notificationUrl!=null">
 				#{notificationUrl,jdbcType=VARCHAR},
 			</if>
+			<if test="returnUrl!=null">
+				#{returnUrl,jdbcType=VARCHAR},
+			</if>
 			<if test="externalOrderNumber!=null">
 				#{externalOrderNumber,jdbcType=VARCHAR},
 			</if>
@@ -465,6 +478,9 @@
 			<if test="notificationUrl!=null">
 				notification_url = #{notificationUrl,jdbcType=VARCHAR},
 			</if>
+			<if test="returnUrl!=null">
+				return_url = #{returnUrl,jdbcType=VARCHAR},
+			</if>
 			<if test="externalOrderNumber!=null">
 				external_order_number = #{externalOrderNumber,jdbcType=VARCHAR},
 			</if>
@@ -496,14 +512,15 @@
 		currency = #{currency,jdbcType=VARCHAR},
 		payment_account_id = #{paymentAccountId,jdbcType=BIGINT},
 		notification_url = #{notificationUrl,jdbcType=VARCHAR},
+		return_url = #{returnUrl,jdbcType=VARCHAR},
 		external_order_number = #{externalOrderNumber,jdbcType=VARCHAR},
 		summary = #{summary,jdbcType=VARCHAR}
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 
-	<update id="updateOrderStatusToClose">
+	<update id="updateOrderStatusToInvalid">
 		update pmt_payment_order
-		set status = 4
+		set status = 8
 		where
 		status != 3
 		and
@@ -823,14 +840,14 @@
 				#{checkStatus.value}
 			</foreach>
 		</if>
-		<if test="checkStartDate != null">
-			and pmt_payment_order.check_time &gt; #{checkStartDate,jdbcType=VARCHAR}
+		<if test="startDate != null">
+			and pmt_payment_order.pay_time &gt; #{startDate,jdbcType=VARCHAR}
 		</if>
-		<if test="checkEndDate != null">
-			and pmt_payment_order.check_time &lt; #{checkEndDate,jdbcType=VARCHAR}
+		<if test="endDate != null">
+			and pmt_payment_order.pay_time &lt; #{endDate,jdbcType=VARCHAR}
 		</if>
 		order by
-		pmt_payment_order.check_time desc
+		pmt_payment_order.check_status desc , pmt_payment_order.pay_time desc
 	</select>
 
 </mapper>

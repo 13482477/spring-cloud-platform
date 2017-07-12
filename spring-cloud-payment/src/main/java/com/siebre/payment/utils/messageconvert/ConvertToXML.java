@@ -38,6 +38,10 @@ public class ConvertToXML {
 	}
 
 	public static Map<String, String> toMap(String xml) {
+		return toMap(xml, "UTF-8");
+	}
+
+	public static Map<String, String> toMap(String xml, String charSetName) {
 		Map<String, String> map = new HashMap();
 		if ((xml == null) || (xml.trim().length() == 0)) {
 			return map;
@@ -46,7 +50,7 @@ public class ConvertToXML {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document document = builder.parse(new ByteArrayInputStream(xml.getBytes("UTF-8")));
+			Document document = builder.parse(new ByteArrayInputStream(xml.getBytes(charSetName)));
 			Element root = document.getDocumentElement();
 			NodeList nodeList = root.getChildNodes();
 			int length = nodeList.getLength();

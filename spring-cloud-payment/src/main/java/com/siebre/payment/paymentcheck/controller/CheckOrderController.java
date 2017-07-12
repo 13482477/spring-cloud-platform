@@ -62,8 +62,8 @@ public class CheckOrderController {
             @ApiImplicitParam(paramType = "query", name = "channelCodeList", dataType = "Array", required = false, value = "渠道代码", allowableValues = "ALI_PAY,WECHAT_PAY,UNION_PAY,ALLIN_PAY,BAOFOO_PAY"),
             @ApiImplicitParam(paramType = "query", name = "payStatusList", dataType = "Array", required = false, value = "支付状态", allowableValues = "PAID,PART_REFUND,FULL_REFUND"),
             @ApiImplicitParam(paramType = "query", name = "checkStatusList", dataType = "Array", required = false, value = "对账状态", allowableValues = "NOT_CONFIRM,SUCCESS,FAIL,UNUSUAL"),
-            @ApiImplicitParam(paramType = "query", name = "startDate", dataType = "Date", required = false, value = "对账开始时间"),
-            @ApiImplicitParam(paramType = "query", name = "endDate", dataType = "Date", required = false, value = "对账结束时间"),
+            @ApiImplicitParam(paramType = "query", name = "startDate", dataType = "Date", required = false, value = "开始时间"),
+            @ApiImplicitParam(paramType = "query", name = "endDate", dataType = "Date", required = false, value = "结束时间"),
             @ApiImplicitParam(paramType = "query", name = "showCount", dataType = "Integer", required = false, value = "每页显示数据行数"),
             @ApiImplicitParam(paramType = "query", name = "currentPage", dataType = "Integer", required = false, value = "总页数")
     })

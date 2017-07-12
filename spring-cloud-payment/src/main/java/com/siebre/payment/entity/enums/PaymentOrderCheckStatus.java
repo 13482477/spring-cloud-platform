@@ -8,13 +8,18 @@ import com.siebre.basic.enumutil.BaseEnum;
  * Version:1.0
  */
 public enum PaymentOrderCheckStatus implements BaseEnum {
-    NOT_CONFIRM(1,"未对账"),
+    NOT_CONFIRM(1, "未对账"),
 
-    SUCCESS(2,"对账成功"),
+    SUCCESS(2, "文件对账成功"),
 
-    FAIL(3,"对账失败"),
+    FAIL(3, "文件对账失败"),
 
-    UNUSUAL(4,"对账异常"),;
+    UNUSUAL(4, "对账异常"),
+
+    REAL_TIME_SUCCESS(5, "实时对账成功"),
+
+    REAL_TIME_FAIL(6, "实时对账失败"),
+    ;
 
     private PaymentOrderCheckStatus(int value, String description) {
 

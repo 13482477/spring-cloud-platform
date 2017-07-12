@@ -190,6 +190,7 @@ public class PaymentOrderService {
         PaymentOrder paymentOrder = new PaymentOrder();
         paymentOrder.setMessageId(unifiedPayRequest.getMessageId());
         paymentOrder.setNotificationUrl(unifiedPayRequest.getNotificationUrl());
+        paymentOrder.setReturnUrl(unifiedPayRequest.getReturnUrl());
 
         UnifiedPayOrder unifiedPayOrder = unifiedPayRequest.getPaymentOrder();
         paymentOrder.setPaymentWayCode(unifiedPayOrder.getPaymentWayCode());
@@ -299,7 +300,7 @@ public class PaymentOrderService {
         PaymentChannel paymentChannel = paymentChannelMapper.selectByChannelCode(order.getChannelCode());
         orderVo.setChannelCode(paymentChannel.getChannelCode());
         orderVo.setChannelName(paymentChannel.getChannelName());
-        orderVo.setExternalTransactionNumber(orderNumber);//暂时用订单号
+        orderVo.setExternalTransactionNumber(order.getExternalOrderNumber());//暂时用订单号
         orderVo.setPayTime(dateStrCreate);
         //orderVo.setRealAmount(order.getAmount());
         orderVo.setRealPayStatus(order.getStatus().getDescription());
@@ -331,10 +332,10 @@ public class PaymentOrderService {
 
     public ServiceResult<List<CheckOrderVo>> selectCheckOrderByPage(String orderNumber, List<String> channelCodeList,
                                                                     List<PaymentOrderPayStatus> payStatusList, List<PaymentOrderCheckStatus> checkStatusList,
-                                                                    Date checkStartDate, Date checkEndDate, PageInfo pageInfo) {
+                                                                    Date startDate, Date endDate, PageInfo pageInfo) {
 
         ServiceResult<List<CheckOrderVo>> result = new ServiceResult<>();
-        List<PaymentOrder> orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, payStatusList, checkStatusList, checkStartDate, checkEndDate, pageInfo);
+        List<PaymentOrder> orders = paymentOrderMapper.selectCheckOrderByPage(orderNumber, channelCodeList, payStatusList, checkStatusList, startDate, endDate, pageInfo);
 
         List<CheckOrderVo> checkOrderVos = new ArrayList<>();
         for (PaymentOrder order : orders) {
@@ -358,6 +359,10 @@ public class PaymentOrderService {
             if (order.getCheckTime() != null) {
                 String dateStr = DateFormatUtils.format(order.getCheckTime(), "yyyy-MM-dd HH:mm:ss");
                 checkOrderVo.setCheckTime(dateStr);
+            }
+            if (order.getPayTime() != null) {
+                String dateStr = DateFormatUtils.format(order.getPayTime(), "yyyy-MM-dd HH:mm:ss");
+                checkOrderVo.setPayTime(dateStr);
             }
 
             checkOrderVos.add(checkOrderVo);

@@ -14,6 +14,9 @@ import java.util.List;
  */
 public class UnifiedPayOrder implements Serializable {
 
+    @ApiModelProperty(value = "订单编号", required = false)
+    private String orderNumber;
+
     @ApiModelProperty(value = "支付方式代码", required = true)
     private String paymentWayCode;
 
@@ -34,6 +37,14 @@ public class UnifiedPayOrder implements Serializable {
 
     @ApiModelProperty(value = "提示信息", required = false)
     private String summary;
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
     public String getPaymentWayCode() {
         return paymentWayCode;
