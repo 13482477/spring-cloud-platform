@@ -6,6 +6,8 @@ import com.siebre.agreement.dao.AgreementSpecRepositoryImpl;
 import com.siebre.agreement.filter.SmfBehaviorInternalReferenceGenerator;
 import com.siebre.agreement.io.AgreementSpecReaderFactory;
 import com.siebre.agreement.io.support.XmlAgreementSpecReaderFactory;
+import com.siebre.agreement.service.DefaultAgreementRequestExecutor;
+import com.siebre.policy.application.service.SiebreCloudApplicationService;
 import com.siebre.policy.dao.InsurancePolicyRepository;
 import com.siebre.policy.repository.InsurancePolicyRepositoryImpl;
 import com.siebre.product.dao.ProductComponentRepository;
@@ -14,6 +16,7 @@ import com.siebre.product.dao.support.InsuranceProductProvider;
 import com.siebre.product.repository.InsuranceProductRepository;
 import com.siebre.product.repository.InsuranceProductRepositoryImpl;
 import com.siebre.redis.sequence.RedisBasedSequenceGenerator;
+import com.siebre.redis.sequence.SequenceGenerator;
 import com.siebre.repository.GeneralRepository;
 import com.siebre.repository.entity.SiebreCloudRepositoryInitializer;
 import com.siebre.repository.rdb.hibernate.HibernateGeneralRepository;
@@ -123,6 +126,12 @@ public class App {
 	@Bean("applicationNumberGenerator")
 	RedisBasedSequenceGenerator applicationNumberGenerator() {
 		return new RedisBasedSequenceGenerator(redisTemplate, "application_number");
+	}
+
+
+	@Bean
+	public SiebreCloudApplicationService applicationService(@Autowired SequenceGenerator applicationNumberGenerator) {
+		return new SiebreCloudApplicationService(new DefaultAgreementRequestExecutor(), applicationNumberGenerator);
 	}
 
 }
