@@ -52,7 +52,7 @@ final class ProductComponentController {
 
 	private static String CONTENT_TYPE = "application/json; charset=utf-8";
 
-	@RequestMapping(value = "/marketableProduct", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/api/v1/marketableProduct", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	public void queryMarketableProduct(HttpServletResponse response) throws IOException {
 		Collection<InsuranceProduct> products = productRepository.findAll();
 
@@ -60,7 +60,7 @@ final class ProductComponentController {
 		jsonMapper.writeValue(response.getWriter(), binder.bindFromBusinessObjectCollection(ProductResource.class, products));
 	}
 
-	@RequestMapping(value = "/productComponent/{idOrCode}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/v1/productComponent/{idOrCode}", method = RequestMethod.GET)
 	public void retrieveMarketableProduct(@PathVariable String idOrCode, HttpServletResponse response) throws IOException {
 		ProductComponent component = null;
 		if (StringUtils.isNumeric(idOrCode)) {
