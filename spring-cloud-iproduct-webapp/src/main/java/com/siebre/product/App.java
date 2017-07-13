@@ -36,102 +36,116 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
+import javax.servlet.annotation.MultipartConfig;
 import java.util.Properties;
 
+@MultipartConfig//上传文件
 //@EnableDiscoveryClient
 //@EnableFeignClients
 @SpringBootApplication(exclude = {SessionAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class})
 @ComponentScan("com.siebre.policy.application.service;com.siebre.product")
 //@ImportResource({"classpath:spring/applicationContext-*.xml"})
 public class App {
-	
-	public static void main(String[] args) {
-		Properties systemProperties = System.getProperties();
-		systemProperties.remove("javax.xml.parsers.DocumentBuilderFactory");
-		SpringApplication.run(App.class, args);
-	}
 
-	@Autowired
-	private RedisTemplate redisTemplate;
+    public static void main(String[] args) {
+        Properties systemProperties = System.getProperties();
+        systemProperties.remove("javax.xml.parsers.DocumentBuilderFactory");
+        SpringApplication.run(App.class, args);
+    }
 
-	@Autowired
-	private PlatformTransactionManager txManager;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
-	@Bean
-	InsurancePolicyRepository insurancePolicyRepository() {
-		return new InsurancePolicyRepositoryImpl(generalRepository());
-	}
+    @Autowired
+    private PlatformTransactionManager txManager;
 
+    @Bean
+    InsurancePolicyRepository insurancePolicyRepository() {
+        return new InsurancePolicyRepositoryImpl(generalRepository());
+    }
 
-	@Bean
-	DependencyResolver smfBehaviorDependencyResolver() {
-		return new SpringBeanDependencyResolver();
-	}
+    /**
+     * Spring MVC multipart/form-data上传文件支持
+     *
+     * @return
+     */
+    @Bean
+    MultipartResolver multipartResolver() {
+        StandardServletMultipartResolver resolver = new StandardServletMultipartResolver();
+        return resolver;
+    }
 
-	@Bean
-	GeneralRepository generalRepository() {
-		return new HibernateGeneralRepository();
-	}
+    @Bean
+    DependencyResolver smfBehaviorDependencyResolver() {
+        return new SpringBeanDependencyResolver();
+    }
 
-	@Bean
-	InsuranceProductRepository productRepository() {
-		return new InsuranceProductRepositoryImpl(generalRepository());
-	}
+    @Bean
+    GeneralRepository generalRepository() {
+        return new HibernateGeneralRepository();
+    }
 
-	@Bean
-	ProductComponentRepository productComponentRepository() {
-		return new ProductComponentRepositoryImpl();
-	}
+    @Bean
+    InsuranceProductRepository productRepository() {
+        return new InsuranceProductRepositoryImpl(generalRepository());
+    }
 
-	@Bean
-	AgreementSpecRepository agreementSpecRepository() {
-		return new AgreementSpecRepositoryImpl(generalRepository());
-	}
+    @Bean
+    ProductComponentRepository productComponentRepository() {
+        return new ProductComponentRepositoryImpl();
+    }
 
-	@Bean
+    @Bean
+    AgreementSpecRepository agreementSpecRepository() {
+        return new AgreementSpecRepositoryImpl(generalRepository());
+    }
+
+    @Bean
     SiebreCloudRepositoryInitializer repositoryInitializer() {
-		SiebreCloudRepositoryInitializer result = new SiebreCloudRepositoryInitializer();
-		result.setRepository(generalRepository());
-		result.setTxManager(txManager);
-		result.setAutoInitialize(true);
-		return result;
-	}
+        SiebreCloudRepositoryInitializer result = new SiebreCloudRepositoryInitializer();
+        result.setRepository(generalRepository());
+        result.setTxManager(txManager);
+        result.setAutoInitialize(true);
+        return result;
+    }
 
-	@Bean
-	InsuranceProductProvider productProvider() {
-		InsuranceProductProvider result = new InsuranceProductProvider();
-		result.setReaderFactory(specReaderFactory());
-		return result;
-	}
+    @Bean
+    InsuranceProductProvider productProvider() {
+        InsuranceProductProvider result = new InsuranceProductProvider();
+        result.setReaderFactory(specReaderFactory());
+        return result;
+    }
 
-	@Bean
-	AgreementSpecReaderFactory specReaderFactory() {
-		XmlAgreementSpecReaderFactory result = new XmlAgreementSpecReaderFactory()
-				.addFilter(new SmfBehaviorInternalReferenceGenerator());
-		result.setMappingFile("SmfCastorMapping.xml");
-		return result;
-	}
-	
-	@Bean
-	OpenSessionInViewInterceptor openSessionInViewInterceptor() {
-		return new OpenSessionInViewInterceptor();
-	}
+    @Bean
+    AgreementSpecReaderFactory specReaderFactory() {
+        XmlAgreementSpecReaderFactory result = new XmlAgreementSpecReaderFactory()
+                .addFilter(new SmfBehaviorInternalReferenceGenerator());
+        result.setMappingFile("SmfCastorMapping.xml");
+        return result;
+    }
 
-	public void afterPropertiesSet() throws Exception {
-		//TODO move to WebApplicationInitializer
-		SmfInvokable.setImplClass(GroovySmfInvokable.class);
-	}
+    @Bean
+    OpenSessionInViewInterceptor openSessionInViewInterceptor() {
+        return new OpenSessionInViewInterceptor();
+    }
 
-	@Bean("applicationNumberGenerator")
-	RedisBasedSequenceGenerator applicationNumberGenerator() {
-		return new RedisBasedSequenceGenerator(redisTemplate, "application_number");
-	}
+    public void afterPropertiesSet() throws Exception {
+        //TODO move to WebApplicationInitializer
+        SmfInvokable.setImplClass(GroovySmfInvokable.class);
+    }
+
+    @Bean("applicationNumberGenerator")
+    RedisBasedSequenceGenerator applicationNumberGenerator() {
+        return new RedisBasedSequenceGenerator(redisTemplate, "application_number");
+    }
 
 
-	@Bean
-	public SiebreCloudApplicationService applicationService(@Autowired SequenceGenerator applicationNumberGenerator) {
-		return new SiebreCloudApplicationService(new DefaultAgreementRequestExecutor(), applicationNumberGenerator);
-	}
+    @Bean
+    public SiebreCloudApplicationService applicationService(@Autowired SequenceGenerator applicationNumberGenerator) {
+        return new SiebreCloudApplicationService(new DefaultAgreementRequestExecutor(), applicationNumberGenerator);
+    }
 
 }
