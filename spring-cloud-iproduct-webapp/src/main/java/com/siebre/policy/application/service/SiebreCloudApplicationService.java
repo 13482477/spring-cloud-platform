@@ -7,14 +7,13 @@ import com.siebre.agreement.*;
 import com.siebre.agreement.factory.AgreementFactory;
 import com.siebre.agreement.factory.DtoAgreementFactory;
 import com.siebre.agreement.service.AgreementRequestExecutor;
-import com.siebre.policy.InsurancePolicy;
+import com.siebre.policy.PayableInsurancePolicy;
 import com.siebre.policy.application.Application;
 import com.siebre.policy.application.Exception.SiebreCloudAgreementValidationError;
 import com.siebre.policy.application.SiebreCloudApplicationResult;
 import com.siebre.policy.dao.InsurancePolicyRepository;
 import com.siebre.policy.factory.PolicyFactoryInterceptors;
 import com.siebre.redis.sequence.SequenceGenerator;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -25,6 +24,7 @@ import java.util.Set;
 /**
  * Created by huangfei on 2017/06/27.
  */
+
 public class SiebreCloudApplicationService {
 
     private AgreementRequestExecutor requestExecutor;
@@ -37,9 +37,6 @@ public class SiebreCloudApplicationService {
     private InsurancePolicyRepository insurancePolicyRepository;
 
     private SequenceGenerator applicationNumberGenerator;
-
-    @Autowired
-    private SessionFactory sessionFactory;
 
     public SiebreCloudApplicationService(AgreementRequestExecutor requestExecutor) {
         this.requestExecutor = requestExecutor;
@@ -101,8 +98,7 @@ public class SiebreCloudApplicationService {
             AgreementRequestResult requestResult = requestExecutor.execute(request);
 
             if (requestResult.getErrorMessages().size() == 0){
-
-                InsurancePolicy policy = (InsurancePolicy) agreement;
+                PayableInsurancePolicy policy = (PayableInsurancePolicy) agreement;
                 policy.setApplicationNumber(applicationNumber);
                 SiebreCloudApplicationResult result = new SiebreCloudApplicationResult(policy,null);
 

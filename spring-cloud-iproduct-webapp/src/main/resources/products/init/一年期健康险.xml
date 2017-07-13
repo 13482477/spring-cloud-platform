@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="GBK"?>
-<product kind="Marketable Product" name="一年期健康险" seqIndex="0" externalReference="FJHYXtestjml68" instanceClassName="InsurancePolicy" shortName="一年期健康险" groupType="PERSONAL" sellChannelType="RemoteSell">
+<product kind="Marketable Product" name="一年期健康险" seqIndex="0" externalReference="FJHYXtestjml71" instanceClassName="com.siebre.policy.PayableInsurancePolicyImpl" shortName="一年期健康险" groupType="PERSONAL" sellChannelType="RemoteSell">
 	<description>一年期健康险</description>
 	<baseSpec version="0" />
 	<properties>

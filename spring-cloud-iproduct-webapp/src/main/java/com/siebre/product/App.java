@@ -46,7 +46,7 @@ import java.util.Properties;
 //@EnableDiscoveryClient
 //@EnableFeignClients
 @SpringBootApplication(exclude = {SessionAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class})
-@ComponentScan("com.siebre.policy.application.service;com.siebre.product")
+@ComponentScan("com.siebre.policy.application.service;com.siebre.product;com.siebre.policy.payment")
 //@ImportResource({"classpath:spring/applicationContext-*.xml"})
 public class App {
 

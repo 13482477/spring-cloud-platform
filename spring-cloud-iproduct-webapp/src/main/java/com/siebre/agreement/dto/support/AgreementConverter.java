@@ -43,6 +43,7 @@ public class AgreementConverter {
 
     private RoleData convertRole(AgreementRole agreementRole) {
         RoleData role = new RoleData();
+        role.put("kind",agreementRole.getKind());
         agreementRole.getPropertyActuals()
                 .forEach(propertyActual -> {
                     try {
