@@ -105,7 +105,10 @@ public class HandlerBeanNameConfig {
         //支付宝-即时到账
         REFUND_QUERY_MAPPING.put(AlipayConfig.WAY_WEB_PAY, "alipayPaymentRefundQueryHandler");
         //支付宝-手机网关
-        QUERY_MAPPING.put(AlipayConfig.WAY_TRADE_PAY, "alipayPaymentRefundQueryHandler");
+        REFUND_QUERY_MAPPING.put(AlipayConfig.WAY_TRADE_PAY, "alipayPaymentRefundQueryHandler");
+        //微信
+        REFUND_QUERY_MAPPING.put(WeChatConfig.WAY_SCAN_PAY, "weChatRefundQueryHandler");
+        REFUND_QUERY_MAPPING.put(WeChatConfig.WAY_PUBLIC_PAY, "weChatRefundQueryHandler");
     }
 
 }

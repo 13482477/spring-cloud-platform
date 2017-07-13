@@ -5,6 +5,7 @@ import com.siebre.payment.billing.base.ReconcileManager;
 import com.siebre.payment.billing.service.AllinReconcileFileManager;
 import com.siebre.payment.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,9 +29,14 @@ public class ReconcileController {
     @Autowired
     private RealTimeReconcileProduct realTimeReconcileProduct;
 
-    @RequestMapping(value = "/reconclie/test/realtime", method = RequestMethod.GET)
-    public void testRealTime(HttpServletResponse response) {
-        realTimeReconcileProduct.sendToRealTimeExchange("SO2017070400001104");
+    @RequestMapping(value = "/reconclie/realtime/pay/{orderNumber}", method = RequestMethod.GET)
+    public void testRealTime(@PathVariable String orderNumber) {
+        realTimeReconcileProduct.sendToRealTimeExchange(orderNumber);
+    }
+
+    @RequestMapping(value = "/reconclie/realtime/refund/{orderNumber}", method = RequestMethod.GET)
+    public void testRefundRealTime(@PathVariable String orderNumber) {
+        realTimeReconcileProduct.sendToRefundRealTimeExchange(orderNumber);
     }
 
     @RequestMapping(value = "/reconclie/allin/refundjob", method = RequestMethod.GET)

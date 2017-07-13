@@ -5,6 +5,7 @@ import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymenthandler.paymentquery.PaymentQueryResponse;
 import com.siebre.payment.service.queryapplication.QueryApplicationService;
 import com.siebre.payment.service.queryapplication.RefundQueryApplicationService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -29,6 +30,10 @@ public class RefundRealTimeReconcileListener implements MessageListener {
     public void onMessage(Message message) {
 
         String orderNumber = new String(message.getBody());
+        if(StringUtils.isBlank(orderNumber)) {
+            logger.info("订单编号为空，忽略：{}", orderNumber);
+            return;
+        }
         logger.info("退款实时对账队列接受到新的请求，开始去第三方查询订单退款状态，订单编号：{}", orderNumber);
         PaymentQueryResponse response = refundQueryApplicationService.queryOrderRefundStatusByOrderNumber(orderNumber);
         if(ReturnCode.SUCCESS.getDescription().equals(response.getReturnCode())) {
