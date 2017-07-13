@@ -156,7 +156,7 @@
 					<daemons>
 						<daemon>
 							<id>${project.name}</id>
-							<mainClass>com.siebre.Application</mainClass>
+							<mainClass>com.siebre.product.App</mainClass>
 							<platforms>
 								<platform>jsw</platform>
 							</platforms>

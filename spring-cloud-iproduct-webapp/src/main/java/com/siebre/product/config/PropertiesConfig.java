@@ -7,7 +7,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 
 @Configuration
-@PropertySource("classpath:application.properties")
+@PropertySource({"classpath:application.properties","classpath:system.properties"})
 public class PropertiesConfig {
 
 	@Bean
