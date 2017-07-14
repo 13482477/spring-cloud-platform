@@ -6,6 +6,7 @@ import com.siebre.agreement.AgreementRequestResult;
 import com.siebre.agreement.dto.ComponentData;
 import com.siebre.agreement.dto.support.AgreementConverter;
 import com.siebre.policy.InsurancePolicy;
+import com.siebre.policy.PayableInsurancePolicy;
 import com.siebre.policy.application.Exception.SiebreCloudAgreementValidationError;
 
 import java.math.BigDecimal;
@@ -26,7 +27,17 @@ public class SiebreCloudApplicationResult {
 
     private int resultCode; //This can be replaced with HTTP response status code.
 
+    private String orderNumber;
+
+    private String redirectUrl;
+
+    private String productName;
+
     private List<SiebreCloudAgreementValidationError> message;
+
+    public SiebreCloudApplicationResult() {
+
+    }
 
     public SiebreCloudApplicationResult(Agreement agreement, List<SiebreCloudAgreementValidationError> errors) {
         if (agreement != null){
@@ -37,8 +48,8 @@ public class SiebreCloudApplicationResult {
     }
 
     public SiebreCloudApplicationResult(AgreementRequestResult requestResult) {
-        InsurancePolicy policy = (InsurancePolicy) requestResult.getAgreement();
-        this.applicationNumber = UUID.randomUUID().toString();
+        PayableInsurancePolicy policy = (PayableInsurancePolicy) requestResult.getAgreement();
+        this.applicationNumber = policy.getApplicationNumber();
         this.grossPremium = policy.getGrossPremium();
         //AgreementConverter converter = new AgreementConverter(agreement);
         //policy = converter.covert();
@@ -82,5 +93,29 @@ public class SiebreCloudApplicationResult {
 
     public void setGrossPremium(BigDecimal grossPremium) {
         this.grossPremium = grossPremium;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 }

@@ -4,6 +4,7 @@ import com.siebre.policy.application.Exception.SiebreCloudAgreementValidationErr
 import com.siebre.policy.application.SiebreCloudApplicationResult;
 import com.siebre.policy.dao.InsurancePolicyRepository;
 import com.siebre.policy.PayableInsurancePolicy;
+import com.siebre.policy.enums.PolicyStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,20 +22,35 @@ public class SiebreCloudPaymentService {
     @Autowired
     private InsurancePolicyRepository insurancePolicyRepository;
 
-    public SiebreCloudApplicationResult startPay(Map<String,Object> properties) {
+    public SiebreCloudApplicationResult prePay(Map<String,Object> properties) {
 
         PayableInsurancePolicy policy = (PayableInsurancePolicy)insurancePolicyRepository.findByApplicationNumber((String) properties.get("applicationNumber"));
-        if (properties.get("amount") != policy.getGrossPremium()) {
-            return returnErrorResult("确认保单金额与保费金额不一致");
+        BigDecimal amount = new BigDecimal(properties.get("amount").toString());
+        if ( amount.compareTo(policy.getGrossPremium()) != 0) {
+            return errorResult("投保单确认金额与保费金额不一致");
+        }
+        //根据paymentNumber查ipay保单支付状态
+        String messageId = "";
+        String orderNumber = policy.getPaymentNumber();
+        String channel = "iPay";
+
+        Boolean flag = true;//mock ipay 返回
+        //订单状态为未支付或者支付中时，成功返回orderNumber和redirectUrl
+        SiebreCloudApplicationResult result = new SiebreCloudApplicationResult();
+        if (flag) {
+            result.setResultCode(200);
+            result.setOrderNumber("test01");
+            result.setGrossPremium(policy.getGrossPremium());
+            result.setProductName(policy.getAgreementSpec().getName());
+            result.setRedirectUrl("http://uat.mobile.siebre.com/siebre-cloud/pay");
+        }else {
+            result.setResultCode(400);
         }
 
-        //根据paymentNumber查ipay保单支付状态
-
-
-        return null;
+        return result;
     }
 
-    public SiebreCloudApplicationResult returnErrorResult(String errorMessage) {
+    public SiebreCloudApplicationResult errorResult(String errorMessage) {
         SiebreCloudApplicationResult result = new SiebreCloudApplicationResult(null,null);
         List<SiebreCloudAgreementValidationError> errors = new ArrayList<SiebreCloudAgreementValidationError>();
         SiebreCloudAgreementValidationError error = new SiebreCloudAgreementValidationError(null,null,null);

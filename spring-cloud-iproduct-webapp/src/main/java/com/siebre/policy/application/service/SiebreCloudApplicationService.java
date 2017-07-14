@@ -7,6 +7,7 @@ import com.siebre.agreement.*;
 import com.siebre.agreement.factory.AgreementFactory;
 import com.siebre.agreement.factory.DtoAgreementFactory;
 import com.siebre.agreement.service.AgreementRequestExecutor;
+import com.siebre.policy.InsurancePolicy;
 import com.siebre.policy.PayableInsurancePolicy;
 import com.siebre.policy.application.Application;
 import com.siebre.policy.application.Exception.SiebreCloudAgreementValidationError;
@@ -16,10 +17,7 @@ import com.siebre.policy.factory.PolicyFactoryInterceptors;
 import com.siebre.redis.sequence.SequenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by huangfei on 2017/06/27.
@@ -66,9 +64,9 @@ public class SiebreCloudApplicationService {
 
         AgreementSpec agreementSpec = application.getAgreementSpec();
         productRegistry.register(agreementSpec);
-        Agreement policy = agreementFactory.create(application.toDto());
+        Agreement agreement = agreementFactory.create(application.toDto());
 
-        AgreementRequest request = policy.createRequest("quote");
+        AgreementRequest request = agreement.createRequest("quote");
 //		if (product.hasRequestSpec("quote")) {
 //			request = policy.createRequest("quote");
 //		} else {
@@ -76,6 +74,10 @@ public class SiebreCloudApplicationService {
 //		}
         try {
             AgreementRequestResult requestResult = requestExecutor.execute(request);
+            //保存保单
+            PayableInsurancePolicy policy = (PayableInsurancePolicy) agreement;
+            policy.setApplicationNumber(UUID.randomUUID().toString());
+            insurancePolicyRepository.save(policy);
             return new SiebreCloudApplicationResult(requestResult);
         } catch (AgreementException e) {
             //e.printStackTrace();
@@ -98,13 +100,20 @@ public class SiebreCloudApplicationService {
             AgreementRequestResult requestResult = requestExecutor.execute(request);
 
             if (requestResult.getErrorMessages().size() == 0){
-                PayableInsurancePolicy policy = (PayableInsurancePolicy) agreement;
-                policy.setApplicationNumber(applicationNumber);
-                SiebreCloudApplicationResult result = new SiebreCloudApplicationResult(policy,null);
+//                PayableInsurancePolicy policy = (PayableInsurancePolicy) agreement;
+//                policy.setApplicationNumber(applicationNumber);
+                SiebreCloudApplicationResult result = new SiebreCloudApplicationResult(agreement,null);
 
                 //与保险公司核保接口mock
 
                 //保存保单操作
+                //insurancePolicyRepository.save(policy);
+
+                //更新保单操作
+                PayableInsurancePolicy policy = (PayableInsurancePolicy)insurancePolicyRepository.findByApplicationNumber(applicationNumber);
+                policy.setGrossPremium(((InsurancePolicy) agreement).getGrossPremium());
+                policy.setPremium(((InsurancePolicy) agreement).getPremium());
+                policy.setAgreementSpec(agreement.getAgreementSpec());
                 insurancePolicyRepository.save(policy);
                 return result;
             }else {
@@ -133,7 +142,7 @@ public class SiebreCloudApplicationService {
         }
     }
 
-      /**
+    /**
      * A temporary product registry to serve products to AgreementFactory.
      *
      * @author ZhangChi

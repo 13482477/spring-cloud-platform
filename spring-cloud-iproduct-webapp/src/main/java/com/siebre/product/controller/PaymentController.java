@@ -33,12 +33,12 @@ public class PaymentController {
     @RequestMapping(path = "/api/v1/iproductPayment", method = RequestMethod.POST)
     @ResponseStatus(code = HttpStatus.OK)
     @ApiOperation(value = "发起支付", notes = "发起支付提交的json数据")
-    public SiebreCloudApplicationResult startPay(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public SiebreCloudApplicationResult prePay(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         String requestJsonString = IOUtils.toString(request.getInputStream());
         Map<String, Object> properties = jsonMapper.readValue(requestJsonString, HashMap.class);
 
-        SiebreCloudApplicationResult result = paymentService.startPay(properties);
+        SiebreCloudApplicationResult result = paymentService.prePay(properties);
         return result;
     }
 
