@@ -5,6 +5,7 @@ import com.siebre.payment.entity.enums.PaymentTransactionStatus;
 import com.siebre.payment.paymentchannel.service.PaymentChannelService;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -20,6 +23,9 @@ import java.util.Date;
 public abstract class ReconcileFileManager implements AbstratReconcileFileManager {
 
     private Logger logger = LoggerFactory.getLogger(ReconcileFileManager.class);
+
+    //public static String LOCAL_DIR = "/data/app/reconfile/";
+    public static String LOCAL_DIR = "d:/reconfile/";
 
     @Autowired
     protected PaymentChannelService channelService;
@@ -33,23 +39,9 @@ public abstract class ReconcileFileManager implements AbstratReconcileFileManage
     }
 
     @Override
-    public File downloadReconcileFile(Date startDate, Date endDate) {
-        PaymentTransaction reconcileTransaction = createReconcileTransaction();
+    public abstract File downloadReconcileFile(Date startDate, Date endDate) throws IOException;
 
-        logger.info("generate request message.");
-        String requestMessage = generateRequestMessage(reconcileTransaction, startDate, endDate);
-
-        logger.info("requestMessage: {}", requestMessage);
-
-        byte[] bytes = doRequest(reconcileTransaction, requestMessage);
-        transactionService.updateBySelective(reconcileTransaction);
-        
-        File file  = convertFile(bytes, startDate, endDate);
-
-        return file;
-    }
-
-    private PaymentTransaction createReconcileTransaction() {
+    protected PaymentTransaction createReconcileTransaction() {
         PaymentTransaction reconcileTransaction = new PaymentTransaction();
         reconcileTransaction.setInterfaceType(PaymentInterfaceType.RECONCILIATION);
         reconcileTransaction.setSender("iPay(" + transactionService.getLocalHostInfo() + ")");
@@ -57,11 +49,5 @@ public abstract class ReconcileFileManager implements AbstratReconcileFileManage
         transactionService.createTransaction(reconcileTransaction);
         return reconcileTransaction;
     }
-
-    protected abstract String generateRequestMessage(PaymentTransaction reconcileTransaction, Date startDate, Date endDate);
-
-    protected abstract byte[] doRequest(PaymentTransaction reconcileTransaction, String requestMessage);
-
-    protected abstract File convertFile(byte[] bytes, Date startDate, Date endDate);
 
 }

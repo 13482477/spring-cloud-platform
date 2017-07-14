@@ -196,6 +196,12 @@
 			<artifactId>zt-zip</artifactId>
 			<version>1.7</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.9.7</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>

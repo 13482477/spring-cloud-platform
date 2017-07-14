@@ -17,9 +17,6 @@ public class AllinpayConfig {
     //对账地址
     public static String RECONCILE_URL = "https://113.108.182.3/aipg/ProcessServlet";
 
-    //public static String LOCAL_DIR = "d:/reconcileFile/";
-    public static String LOCAL_DIR = "/data/app/reconfile/";
-
     public static String CONNECT_TIMEOUT = "60000";
 
     public static String READ_TIMEOUT = "60000";

@@ -10,6 +10,7 @@ import com.siebre.payment.paymenthandler.allinpay.sdk.XmlUtils;
 import com.siebre.payment.paymenttransaction.entity.PaymentTransaction;
 import com.siebre.payment.utils.messageconvert.ConvertToXML;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.codehaus.jackson.JsonNode;
 import org.dom4j.Document;
@@ -38,6 +39,25 @@ public class AllinReconcileFileManager extends ReconcileFileManager {
     private Logger logger = LoggerFactory.getLogger(AllinReconcileFileManager.class);
 
     @Override
+    public File downloadReconcileFile(Date startDate, Date endDate) {
+        PaymentTransaction reconcileTransaction = createReconcileTransaction();
+
+        logger.info("generate request message.");
+        String requestMessage = generateRequestMessage(reconcileTransaction, startDate, endDate);
+
+        logger.info("requestMessage: {}", requestMessage);
+        if(StringUtils.isBlank(requestMessage)) {
+            return null;
+        }
+
+        byte[] bytes = doRequest(reconcileTransaction, requestMessage);
+        transactionService.updateBySelective(reconcileTransaction);
+
+        File file  = convertFile(bytes, startDate, endDate);
+
+        return file;
+    }
+
     protected String generateRequestMessage(PaymentTransaction reconcileTransaction, Date startDate, Date endDate) {
         String requestMessage = "";
         PaymentChannel channel = channelService.queryByChannelCode(AllinpayConfig.CHANNEL_CODE).getData();
@@ -51,7 +71,6 @@ public class AllinReconcileFileManager extends ReconcileFileManager {
         return requestMessage;
     }
 
-    @Override
     protected byte[] doRequest(PaymentTransaction reconcileTransaction, String requestMessage) {
         String responseMessage = "";
         String requestUrl = AllinpayConfig.RECONCILE_URL;
@@ -72,9 +91,8 @@ public class AllinReconcileFileManager extends ReconcileFileManager {
         return bytes;
     }
 
-    @Override
     protected File convertFile(byte[] bytes, Date startDate, Date endDate) {
-        String localDir = AllinpayConfig.LOCAL_DIR;
+        String localDir = ReconcileFileManager.LOCAL_DIR;
         PaymentChannel channel = channelService.queryByChannelCode(AllinpayConfig.CHANNEL_CODE).getData();
 
         File outputDir = new File(localDir);

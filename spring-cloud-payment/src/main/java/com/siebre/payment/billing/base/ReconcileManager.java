@@ -158,12 +158,12 @@ public class ReconcileManager {
         logger.info("开始对账");
         Date transDate = new Date();
         transDate = DateUtils.addDays(transDate, -1);
-        Date satrtDate = DateUtil.getDayStart(transDate);
+        Date startDate = DateUtil.getDayStart(transDate);
         Date endDate = DateUtil.getDayEnd(transDate);
 
         Map<String, Object> reconParams = new HashMap<String, Object>();
         reconParams.put("TransDate", transDate);
-        reconParams.put("StartDate", satrtDate);
+        reconParams.put("StartDate", startDate);
         reconParams.put("EndDate", endDate);
 
         try {
@@ -208,20 +208,6 @@ public class ReconcileManager {
     }
 
     /**
-     * 获得指定日期当天的对账文件
-     */
-    public File downloadReconcileFile(Date transDate) {
-        return null;
-    }
-
-    /**
-     * 获得指定时间段的对账文件
-     */
-    public File downloadReconcileFile(Date startDate, Date endDate) {
-        return null;
-    }
-
-    /**
      * 创建对账作业实例
      */
     private ReconJobInstance createNewJobInstance(ReconJob reconJob, Map<String, Object> reconJobParams) {
@@ -246,7 +232,7 @@ public class ReconcileManager {
 
         String dsDefinition = remoteDS.getDsDefinition();
 
-        Date satrtDate = (Date) reconJobParams.get("StartDate");
+        Date startDate = (Date) reconJobParams.get("StartDate");
         Date endDate = (Date) reconJobParams.get("EndDate");
 
         InputStream inputStream = null;
@@ -256,7 +242,7 @@ public class ReconcileManager {
             inputStream = multipartFile.getInputStream();
         } else {
             ReconcileFileManager reconcileFileManager = (ReconcileFileManager) SpringContextUtil.getBean(dsDefinition);//根据支付方式获取不同的对账数据下载类
-            File file = reconcileFileManager.downloadReconcileFile(satrtDate, endDate);
+            File file = reconcileFileManager.downloadReconcileFile(startDate, endDate);
             inputStream = new FileInputStream(file);
         }
 
@@ -264,8 +250,8 @@ public class ReconcileManager {
 
         String type = remoteDS.getType();
         String splitter = remoteDS.getSeperatorChar();
-        int ingoreFirst = remoteDS.getIngoreFirst();
-        int ingoreEnd = remoteDS.getIngoreEnd();
+        int ignoreFirst = remoteDS.getIngoreFirst();
+        int ignoreEnd = remoteDS.getIngoreEnd();
 
         if ("CSVFile".equalsIgnoreCase(type)) {
             CSVReader reader = new CSVReader(new InputStreamReader(inputStream));
@@ -273,7 +259,7 @@ public class ReconcileManager {
             int size = lines.size();
 
             if (size != 0) {
-                List<String[]> effLines = lines.subList(ingoreFirst, size - ingoreEnd);
+                List<String[]> effLines = lines.subList(ignoreFirst, size - ignoreEnd);
                 int lineNo = 1;
                 for (String[] lineParts : effLines) {
                     ReconDataSet reconDataSet = new ReconDataSet();
@@ -291,7 +277,7 @@ public class ReconcileManager {
         } else if ("TXTFile".equalsIgnoreCase(type)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            while (ingoreFirst-- != 0) {
+            while (ignoreFirst-- != 0) {
                 reader.readLine();
             }
 
