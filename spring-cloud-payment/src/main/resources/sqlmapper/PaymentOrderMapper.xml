@@ -10,6 +10,7 @@
 		<result column="status" property="status" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="lock_status" property="lockStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="check_status" property="checkStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="refund_check_status" property="refundCheckStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
 		<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
@@ -19,6 +20,7 @@
 		<result column="message_id" property="messageId" jdbcType="VARCHAR" />
 		<result column="amount" property="amount" jdbcType="DECIMAL" />
 		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="refund_check_time" property="refundCheckTime" jdbcType="TIMESTAMP" />
 		<result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
 		<result column="currency" property="currency" jdbcType="VARCHAR" />
 		<result column="payment_account_id" property="paymentAccountId" jdbcType="BIGINT" />
@@ -42,6 +44,7 @@
 		<result column="lock_status" property="lockStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="payment_terminal_type" property="paymentTerminalType" jdbcType="INTEGER" />
 		<result column="check_status" property="checkStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
+		<result column="refund_check_status" property="refundCheckStatus" typeHandler="com.siebre.basic.enumutil.EnumStatusHandler" />
 		<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
 		<result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
@@ -50,6 +53,7 @@
 		<result column="message_id" property="messageId" jdbcType="VARCHAR" />
 		<result column="amount" property="amount" jdbcType="DECIMAL" />
 		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="refund_check_time" property="refundCheckTime" jdbcType="TIMESTAMP" />
 		<result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
 		<result column="currency" property="currency" jdbcType="VARCHAR" />
 		<result column="payment_account_id" property="paymentAccountId" jdbcType="BIGINT" />
@@ -101,6 +105,7 @@
 		pmt_payment_order.status,
 		pmt_payment_order.lock_status,
 		pmt_payment_order.check_status,
+		pmt_payment_order.refund_check_status,
 		pmt_payment_order.payment_terminal_type,
 		pmt_payment_order.channel_code,
 		pmt_payment_order.create_time,
@@ -110,6 +115,7 @@
 		pmt_payment_order.message_id,
 		pmt_payment_order.amount,
 		pmt_payment_order.check_time,
+		pmt_payment_order.refund_check_time,
 		pmt_payment_order.pay_time,
 		pmt_payment_order.currency,
 		pmt_payment_order.payment_account_id,
@@ -153,6 +159,7 @@
 		status,
 		lock_status,
 		check_status,
+		refund_check_status,
 		payment_terminal_type,
 		channel_code,
 		create_time,
@@ -163,6 +170,7 @@
 		message_id,
 		amount,
 		check_time,
+		refund_check_time,
 		pay_time,
 		currency,
 		payment_account_id,
@@ -181,6 +189,7 @@
 		pmt_payment_order.status,
 		pmt_payment_order.lock_status,
 		pmt_payment_order.check_status,
+		pmt_payment_order.refund_check_status,
 		pmt_payment_order.payment_terminal_type,
 		pmt_payment_order.channel_code,
 		pmt_payment_order.create_time,
@@ -190,6 +199,7 @@
 		pmt_payment_order.message_id,
 		pmt_payment_order.amount,
 		pmt_payment_order.check_time,
+		pmt_payment_order.refund_check_time,
 		pmt_payment_order.pay_time,
 		pmt_payment_order.currency,
 		pmt_payment_order.payment_account_id,
@@ -221,6 +231,7 @@
 		status,
 		lock_status,
 		check_status,
+		refund_check_status,
 		payment_terminal_type,
 		channel_code,
 		create_time,
@@ -230,6 +241,7 @@
 		message_id,
 		amount,
 		check_time,
+		refund_check_time,
 		pay_time,
 		currency,
 		payment_account_id,
@@ -246,6 +258,7 @@
 		#{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{lockStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		#{refundCheckStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		#{paymentTerminalType,jdbcType=INTEGER},
 		#{channelCode,jdbcType=VARCHAR},
 		#{createTime,jdbcType=TIMESTAMP},
@@ -255,6 +268,7 @@
 		#{messageId,jdbcType=VARCHAR},
 		#{amount,jdbcType=DECIMAL},
 		#{checkTime,jdbcType=TIMESTAMP},
+		#{refundCheckTime,jdbcType=TIMESTAMP},
 		#{payTime,jdbcType=TIMESTAMP},
 		#{currency,jdbcType=VARCHAR},
 		#{paymentAccountId,jdbcType=BIGINT},
@@ -291,6 +305,9 @@
 			<if test="checkStatus != null">
 				check_status,
 			</if>
+			<if test="refundCheckStatus != null">
+				refund_check_status,
+			</if>
 			<if test="paymentTerminalType != null">
 				payment_terminal_type,
 			</if>
@@ -317,6 +334,9 @@
 			</if>
 			<if test="checkTime!=null">
 				check_time,
+			</if>
+			<if test="refundCheckTime!=null">
+				refund_check_time,
 			</if>
 			<if test="payTime!=null">
 				pay_time,
@@ -365,6 +385,9 @@
 			<if test="checkStatus != null">
 				#{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
+			<if test="refundCheckStatus != null">
+				#{refundCheckStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
 			<if test="paymentTerminalType != null">
 				#{paymentTerminalType,jdbcType=INTEGER},
 			</if>
@@ -391,6 +414,9 @@
 			</if>
 			<if test="checkTime!=null">
 				#{checkTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="refundCheckTime!=null">
+				#{refundCheckTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="payTime!=null">
 				#{payTime,jdbcType=TIMESTAMP},
@@ -439,6 +465,9 @@
 			<if test="checkStatus != null">
 				check_status = #{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 			</if>
+			<if test="refundCheckStatus != null">
+				refund_check_status = #{refundCheckStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+			</if>
 			<if test="paymentTerminalType != null">
 				payment_terminal_type = #{paymentTerminalType,jdbcType=INTEGER},
 			</if>
@@ -465,6 +494,9 @@
 			</if>
 			<if test="checkTime != null">
 				check_time = #{checkTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="refundCheckTime != null">
+				refund_check_time = #{refundCheckTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="payTime != null">
 				pay_time = #{payTime,jdbcType=TIMESTAMP},
@@ -499,6 +531,7 @@
 		status = #{status,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		lock_status = #{lockStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		check_status = #{checkStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
+		refund_check_status = #{refundCheckStatus,typeHandler=com.siebre.basic.enumutil.EnumStatusHandler},
 		payment_terminal_type = #{paymentTerminalType,jdbcType=INTEGER},
 		channel_code = #{channelCode,jdbcType=VARCHAR},
 		create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -508,6 +541,7 @@
 		message_id = #{messageId,jdbcType=VARCHAR},
 		amount = #{amount,jdbcType=DECIMAL},
 		check_time = #{checkTime,jdbcType=TIMESTAMP},
+		refund_check_time = #{refundCheckTime,jdbcType=TIMESTAMP},
 		pay_time = #{payTime,jdbcType=TIMESTAMP},
 		currency = #{currency,jdbcType=VARCHAR},
 		payment_account_id = #{paymentAccountId,jdbcType=BIGINT},

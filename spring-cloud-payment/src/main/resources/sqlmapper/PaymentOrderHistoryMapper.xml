@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.siebre.payment.paymentorder.mapper.PaymentOrderHistoryMapper" >
+  <resultMap id="BaseResultMap" type="com.siebre.payment.paymentorder.entity.PaymentOrderHistory" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="orderNumber" property="ordernumber" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="paymentChannel" property="paymentchannel" jdbcType="VARCHAR" />
+    <result column="paymentWay" property="paymentway" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.siebre.payment.paymentorder.entity.PaymentOrderHistory" extends="BaseResultMap" >
+    <result column="orderJson" property="orderjson" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, orderNumber, version, paymentChannel, paymentWay
+  </sql>
+  <sql id="Blob_Column_List" >
+    orderJson
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from pmt_payment_order_h
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from pmt_payment_order_h
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.siebre.payment.paymentorder.entity.PaymentOrderHistory" useGeneratedKeys="true" keyProperty="id">
+    insert into pmt_payment_order_h (id, orderNumber, version, 
+      paymentChannel, paymentWay, orderJson
+      )
+    values (#{id,jdbcType=BIGINT}, #{ordernumber,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
+      #{paymentchannel,jdbcType=VARCHAR}, #{paymentway,jdbcType=VARCHAR}, #{orderjson,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.siebre.payment.paymentorder.entity.PaymentOrderHistory" useGeneratedKeys="true" keyProperty="id">
+    insert into pmt_payment_order_h
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ordernumber != null" >
+        orderNumber,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="paymentchannel != null" >
+        paymentChannel,
+      </if>
+      <if test="paymentway != null" >
+        paymentWay,
+      </if>
+      <if test="orderjson != null" >
+        orderJson,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="ordernumber != null" >
+        #{ordernumber,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="paymentchannel != null" >
+        #{paymentchannel,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentway != null" >
+        #{paymentway,jdbcType=VARCHAR},
+      </if>
+      <if test="orderjson != null" >
+        #{orderjson,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.payment.paymentorder.entity.PaymentOrderHistory" >
+    update pmt_payment_order_h
+    <set >
+      <if test="ordernumber != null" >
+        orderNumber = #{ordernumber,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="paymentchannel != null" >
+        paymentChannel = #{paymentchannel,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentway != null" >
+        paymentWay = #{paymentway,jdbcType=VARCHAR},
+      </if>
+      <if test="orderjson != null" >
+        orderJson = #{orderjson,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.siebre.payment.paymentorder.entity.PaymentOrderHistory" >
+    update pmt_payment_order_h
+    set orderNumber = #{ordernumber,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      paymentChannel = #{paymentchannel,jdbcType=VARCHAR},
+      paymentWay = #{paymentway,jdbcType=VARCHAR},
+      orderJson = #{orderjson,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.siebre.payment.paymentorder.entity.PaymentOrderHistory" >
+    update pmt_payment_order_h
+    set orderNumber = #{ordernumber,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      paymentChannel = #{paymentchannel,jdbcType=VARCHAR},
+      paymentWay = #{paymentway,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

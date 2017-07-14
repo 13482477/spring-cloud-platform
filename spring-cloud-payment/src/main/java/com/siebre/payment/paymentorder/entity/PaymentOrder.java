@@ -79,6 +79,10 @@ public class PaymentOrder extends BaseObject {
 
     private Date checkTime;//对账时间
 
+    private PaymentOrderCheckStatus refundCheckStatus;
+
+    private Date refundCheckTime;
+
     private Date payTime;
 
     private List<PaymentOrderItem> items = new ArrayList<PaymentOrderItem>();
@@ -299,5 +303,21 @@ public class PaymentOrder extends BaseObject {
 
     public void setPayTime(Date payTime) {
         this.payTime = payTime;
+    }
+
+    public PaymentOrderCheckStatus getRefundCheckStatus() {
+        return refundCheckStatus;
+    }
+
+    public void setRefundCheckStatus(PaymentOrderCheckStatus refundCheckStatus) {
+        this.refundCheckStatus = refundCheckStatus;
+    }
+
+    public Date getRefundCheckTime() {
+        return refundCheckTime;
+    }
+
+    public void setRefundCheckTime(Date refundCheckTime) {
+        this.refundCheckTime = refundCheckTime;
     }
 }
