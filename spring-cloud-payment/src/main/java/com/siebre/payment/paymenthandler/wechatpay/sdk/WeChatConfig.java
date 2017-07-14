@@ -18,6 +18,9 @@ public class WeChatConfig {
     //统一查询网关地址
     public static final String QUERY_REQUEST_URL = "https://api.mch.weixin.qq.com/pay/orderquery";
 
+    //统一查询退款地址
+    public static final String REFUND_QUERY_REQUEST_URL = "https://api.mch.weixin.qq.com/pay/refundquery";
+
     //扫码支付回调地址
     public static final String SCAN_CALLBACK_URL = PaymentCallbackController.CALL_BACK_URI + WAY_SCAN_PAY;
 

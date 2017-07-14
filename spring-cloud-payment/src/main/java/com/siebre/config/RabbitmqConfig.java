@@ -145,10 +145,28 @@ public class RabbitmqConfig {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory());
         container.setQueueNames(order_out_of_time_queue);
-        container.setQueueNames(order_real_time_recon_queue);
-        container.setQueueNames(order_refund_real_time_recon_queue);
+        /*container.setQueueNames(order_real_time_recon_queue);
+        container.setQueueNames(order_refund_real_time_recon_queue);*/
         container.setMessageListener(paymentOrderOutOfTimeListener());
+        /*container.setMessageListener(realTimeReconcileListener());
+        container.setMessageListener(refundRealTimeReconcileListener());*/
+        return container;
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer messageListenerContainer2() {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory());
+        container.setQueueNames(order_real_time_recon_queue);
         container.setMessageListener(realTimeReconcileListener());
+        return container;
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer messageListenerContainer3() {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory());
+        container.setQueueNames(order_refund_real_time_recon_queue);
         container.setMessageListener(refundRealTimeReconcileListener());
         return container;
     }

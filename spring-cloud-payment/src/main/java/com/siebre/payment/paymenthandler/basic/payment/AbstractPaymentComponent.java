@@ -1,7 +1,9 @@
 package com.siebre.payment.paymenthandler.basic.payment;
 
-import com.siebre.payment.entity.enums.*;
-import com.siebre.payment.paymentchannel.entity.PaymentChannel;
+import com.siebre.payment.entity.enums.PaymentInterfaceType;
+import com.siebre.payment.entity.enums.PaymentOrderLockStatus;
+import com.siebre.payment.entity.enums.PaymentOrderPayStatus;
+import com.siebre.payment.entity.enums.ReturnCode;
 import com.siebre.payment.paymentchannel.service.PaymentChannelService;
 import com.siebre.payment.paymenthandler.payment.PaymentRequest;
 import com.siebre.payment.paymenthandler.payment.PaymentResponse;
@@ -16,7 +18,6 @@ import com.siebre.payment.paymenttransaction.service.PaymentTransactionService;
 import com.siebre.payment.paymentway.entity.PaymentWay;
 import com.siebre.payment.paymentway.service.PaymentWayService;
 import com.siebre.payment.serialnumber.service.SerialNumberService;
-import com.siebre.payment.service.queryapplication.QueryApplicationService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

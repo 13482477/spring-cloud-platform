@@ -111,6 +111,8 @@ public class WeChatConfigTransfer {
         initQueryInterface(paymentWay);
         //微信退款接口
         initRefundInterface(paymentWay);
+        //微信退款订单的查询
+        initRefundQueryInterface(paymentWay);
     }
 
     private void initRefundInterface(PaymentWay paymentWay) {
@@ -157,6 +159,8 @@ public class WeChatConfigTransfer {
         initScanPayCallBackInterface(paymentWay);
         //微信订单查询接口
         initQueryInterface(paymentWay);
+        //初始化退款订单查询接口
+        initRefundQueryInterface(paymentWay);
     }
 
     private void initQueryInterface(PaymentWay paymentWay) {
@@ -165,6 +169,16 @@ public class WeChatConfigTransfer {
         paymentInterface.setInterfaceName("微信订单查询接口");
         paymentInterface.setRequestUrl(WeChatConfig.QUERY_REQUEST_URL);
         paymentInterface.setPaymentInterfaceType(PaymentInterfaceType.QUERY);
+        paymentInterfaceService.createPaymentInterface(paymentInterface);
+        paymentInterface.setPaymentWay(paymentWay);
+    }
+
+    private void initRefundQueryInterface(PaymentWay paymentWay) {
+        PaymentInterface paymentInterface = new PaymentInterface();
+        paymentInterface.setPaymentWayId(paymentWay.getId());
+        paymentInterface.setInterfaceName("微信退款订单查询接口");
+        paymentInterface.setRequestUrl(WeChatConfig.REFUND_QUERY_REQUEST_URL);
+        paymentInterface.setPaymentInterfaceType(PaymentInterfaceType.REFUND_QUERY);
         paymentInterfaceService.createPaymentInterface(paymentInterface);
         paymentInterface.setPaymentWay(paymentWay);
     }
