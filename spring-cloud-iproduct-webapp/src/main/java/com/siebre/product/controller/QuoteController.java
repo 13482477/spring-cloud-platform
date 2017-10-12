@@ -5,7 +5,7 @@ import com.siebre.policy.application.SiebreCloudApplicationResult;
 import com.siebre.policy.application.service.SiebreCloudApplicationService;
 import com.siebre.product.messagedemo.controller.messageobject.QuoteResult;
 import com.siebre.product.utils.QuoteJsonService;
-import com.siebre.redis.sequence.SequenceGenerator;
+import com.siebre.basic.sequence.SequenceGenerator;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;

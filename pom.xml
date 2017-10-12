@@ -151,7 +151,8 @@
     	<module>spring-cloud-uaa</module>
     	<module>spring-cloud-security</module>
     	<module>spring-cloud-tomcat</module>
-	</modules>
+    	<module>spring-cloud-paas</module>
+  </modules>
 
 	<build>
 		<plugins>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.siebre.uaa.openapiapplication.mapper.OpenApiApplicationMapper">
+    <resultMap id="BaseResultMap" type="com.siebre.uaa.openapiapplication.entity.OpenApiApplication">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="developer_account_id" jdbcType="BIGINT" property="developerAccountId"/>
+        <result column="interface_id" jdbcType="BIGINT" property="interfaceId"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+        <result column="app_auth_token" jdbcType="VARCHAR" property="appAuthToken"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, developer_account_id, interface_id, app_id, app_auth_token
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from opn_open_api_application
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from opn_open_api_application
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.siebre.uaa.openapiapplication.entity.OpenApiApplication">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into opn_open_api_application (developer_account_id, interface_id, app_id,
+        app_auth_token)
+        values (#{developerAccountId,jdbcType=BIGINT}, #{interfaceId,jdbcType=BIGINT}, #{appId,jdbcType=VARCHAR},
+        #{appAuthToken,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.siebre.uaa.openapiapplication.entity.OpenApiApplication">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into opn_open_api_application
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="developerAccountId != null">
+                developer_account_id,
+            </if>
+            <if test="interfaceId != null">
+                interface_id,
+            </if>
+            <if test="appId != null">
+                app_id,
+            </if>
+            <if test="appAuthToken != null">
+                app_auth_token,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="developerAccountId != null">
+                #{developerAccountId,jdbcType=BIGINT},
+            </if>
+            <if test="interfaceId != null">
+                #{interfaceId,jdbcType=BIGINT},
+            </if>
+            <if test="appId != null">
+                #{appId,jdbcType=VARCHAR},
+            </if>
+            <if test="appAuthToken != null">
+                #{appAuthToken,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.siebre.uaa.openapiapplication.entity.OpenApiApplication">
+        update opn_open_api_application
+        <set>
+            <if test="developerAccountId != null">
+                developer_account_id = #{developerAccountId,jdbcType=BIGINT},
+            </if>
+            <if test="interfaceId != null">
+                interface_id = #{interfaceId,jdbcType=BIGINT},
+            </if>
+            <if test="appId != null">
+                app_id = #{appId,jdbcType=VARCHAR},
+            </if>
+            <if test="appAuthToken != null">
+                app_auth_token = #{appAuthToken,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.siebre.uaa.openapiapplication.entity.OpenApiApplication">
+    update opn_open_api_application
+      set developer_account_id = #{developerAccountId,jdbcType=BIGINT},
+    interface_id = #{interfaceId,jdbcType=BIGINT},
+      app_id = #{appId,jdbcType=VARCHAR},
+      app_auth_token = #{appAuthToken,jdbcType=VARCHAR}
+    where
+      id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

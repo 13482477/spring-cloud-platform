@@ -11,6 +11,7 @@
 
     <!--更多配置请参考 http://docs.spring.io/spring-amqp/reference/htmlsingle/ -->
 
+    <!--
     <rabbit:connection-factory id="rabbitConnectionFactory"
                                host="${rabbit.host}"
                                port="${rabbit.port}"
@@ -22,6 +23,6 @@
 
 
     <rabbit:admin id="containerAdmin" connection-factory="rabbitConnectionFactory"/>
-
+    -->
 
 </beans>

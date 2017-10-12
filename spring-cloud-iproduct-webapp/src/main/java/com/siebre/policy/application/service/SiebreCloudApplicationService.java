@@ -3,7 +3,6 @@ package com.siebre.policy.application.service;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.siebre.agreement.*;
 import com.siebre.agreement.factory.AgreementFactory;
 import com.siebre.agreement.factory.DtoAgreementFactory;
 import com.siebre.agreement.service.AgreementRequestExecutor;
@@ -14,7 +13,7 @@ import com.siebre.policy.application.Exception.SiebreCloudAgreementValidationErr
 import com.siebre.policy.application.SiebreCloudApplicationResult;
 import com.siebre.policy.dao.InsurancePolicyRepository;
 import com.siebre.policy.factory.PolicyFactoryInterceptors;
-import com.siebre.redis.sequence.SequenceGenerator;
+import com.siebre.basic.sequence.SequenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;

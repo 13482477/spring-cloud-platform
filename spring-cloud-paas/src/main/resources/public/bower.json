@@ -1,0 +1,17 @@
+{
+  "name": "public",
+  "private": true,
+  "dependencies": {
+    "angular": "~1.4.7",
+    "bootstrap": "~4.0.0-alpha.6",
+    "modernizr": "~2.8.1",
+    "requirejs": "^2.3.4",
+    "jquery": "^3.2.1",
+    "domReady": "^2.0.1",
+    "angular-ui-router": "^1.0.5"
+  },
+  "devDependencies": {
+    "chai": "^4.1.0",
+    "mocha": "^3.4.2"
+  }
+}

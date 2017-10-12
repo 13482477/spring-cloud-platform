@@ -3,3 +3,4 @@
 *.iml
 /.idea/
 /spring-cloud-platform.iml
+/spring-cloud-uaa/.settings/

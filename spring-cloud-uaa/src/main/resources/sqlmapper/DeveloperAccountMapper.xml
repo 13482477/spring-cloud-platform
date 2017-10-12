@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.siebre.uaa.developeraccount.mapper.DeveloperAccountMapper">
+    <resultMap id="BaseResultMap" type="com.siebre.uaa.developeraccount.entity.DeveloperAccount">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="account_name" jdbcType="VARCHAR" property="accountName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+      id, user_id, account_name
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from opn_developer_account
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from opn_developer_account
+    where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.siebre.uaa.developeraccount.entity.DeveloperAccount">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into opn_developer_account (user_id, account_name)
+        values (#{userId,jdbcType=BIGINT}, #{accountName,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.siebre.uaa.developeraccount.entity.DeveloperAccount">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into opn_developer_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="accountName != null">
+                account_name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="accountName != null">
+                #{accountName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.siebre.uaa.developeraccount.entity.DeveloperAccount">
+        update opn_developer_account
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="accountName != null">
+                account_name = #{accountName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.siebre.uaa.developeraccount.entity.DeveloperAccount">
+    update opn_developer_account
+    set user_id = #{userId,jdbcType=BIGINT},
+      account_name = #{accountName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

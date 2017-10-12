@@ -49,7 +49,7 @@
 					<daemons>
 						<daemon>
 							<id>${project.name}</id>
-							<mainClass>com.siebre.Application</mainClass>
+							<mainClass>com.siebre.paas.Application</mainClass>
 							<platforms>
 								<platform>jsw</platform>
 							</platforms>

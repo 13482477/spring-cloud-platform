@@ -1,8 +1,12 @@
 package com.siebre.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.siebre.security.filter.rest.RestAuthenticationFailureHandler;
+import com.siebre.security.filter.rest.RestAuthenticationSuccessHandler;
+import com.siebre.security.filter.rest.RestUsernamePasswordAuthenticationFilter;
+import com.siebre.security.interceptor.CustomerFilterSecurityInterceptor;
+import com.siebre.security.metadata.CustomerSecurityMetadata;
+import com.siebre.security.userdetails.CustomerUserDetailsService;
+import com.siebre.security.voter.FullyMatchRoleVoter;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -28,13 +32,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.siebre.security.filter.CustomerFilterSecurityInterceptor;
-import com.siebre.security.filter.RestAuthenticationFailureHandler;
-import com.siebre.security.filter.RestAuthenticationSuccessHandler;
-import com.siebre.security.filter.RestUsernamePasswordAuthenticationFilter;
-import com.siebre.security.metadata.CustomerSecurityMetadata;
-import com.siebre.security.userdetails.CustomerUserDetailsService;
-import com.siebre.security.voter.FullyMatchRoleVoter;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 @Configuration
@@ -47,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.authorizeRequests()
 			.antMatchers("/login").permitAll()
 			.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+			.anyRequest().authenticated()
 			.and()
 		.addFilterAt(this.restUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 		.addFilterBefore(this.filterSecurityInterceptor(), FilterSecurityInterceptor.class)
@@ -78,6 +78,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth
 			.authenticationProvider(authenticationProvider())
+
 			;
 	}
 	
@@ -95,7 +96,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public UserDetailsService userDetailsService() {
 		return new CustomerUserDetailsService();
 	}
-	
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new Md5PasswordEncoder();

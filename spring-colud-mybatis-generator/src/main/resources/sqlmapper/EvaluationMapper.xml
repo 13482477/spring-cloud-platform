@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.siebre.wechat.evaluation.mapper.EvaluationMapper">
+  <resultMap id="BaseResultMap" type="com.siebre.wechat.evaluation.module.Evaluation">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="evaluation_source" jdbcType="VARCHAR" property="evaluationSource" typeHandler="org.apache.ibatis.type.EnumTypeHandler" />
+    <result column="score" jdbcType="INTEGER" property="score" />
+    <result column="openid" jdbcType="VARCHAR" property="openid" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="payment_status" jdbcType="VARCHAR" property="paymentStatus" typeHandler="org.apache.ibatis.type.EnumTypeHandler" />
+    <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+    <result column="pay_success_date" jdbcType="TIMESTAMP" property="paySuccessDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, evaluation_source, score, openid, mobile, username, create_date, payment_status, 
+    order_number, pay_success_date
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from evaluation
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from evaluation
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.siebre.wechat.evaluation.module.Evaluation">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into evaluation (evaluation_source, 
+      score, openid, mobile, 
+      username, create_date, payment_status, 
+      order_number, pay_success_date)
+    values (#{evaluationSource,jdbcType=VARCHAR,typeHandler=org.apache.ibatis.type.EnumTypeHandler}, 
+      #{score,jdbcType=INTEGER}, #{openid,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, 
+      #{username,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{paymentStatus,jdbcType=VARCHAR,typeHandler=org.apache.ibatis.type.EnumTypeHandler}, 
+      #{orderNumber,jdbcType=VARCHAR}, #{paySuccessDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.siebre.wechat.evaluation.module.Evaluation">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into evaluation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="evaluationSource != null">
+        evaluation_source,
+      </if>
+      <if test="score != null">
+        score,
+      </if>
+      <if test="openid != null">
+        openid,
+      </if>
+      <if test="mobile != null">
+        mobile,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="paymentStatus != null">
+        payment_status,
+      </if>
+      <if test="orderNumber != null">
+        order_number,
+      </if>
+      <if test="paySuccessDate != null">
+        pay_success_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="evaluationSource != null">
+        #{evaluationSource,jdbcType=VARCHAR,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+      </if>
+      <if test="score != null">
+        #{score,jdbcType=INTEGER},
+      </if>
+      <if test="openid != null">
+        #{openid,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paymentStatus != null">
+        #{paymentStatus,jdbcType=VARCHAR,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+      </if>
+      <if test="orderNumber != null">
+        #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="paySuccessDate != null">
+        #{paySuccessDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.siebre.wechat.evaluation.module.Evaluation">
+    update evaluation
+    <set>
+      <if test="evaluationSource != null">
+        evaluation_source = #{evaluationSource,jdbcType=VARCHAR,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+      </if>
+      <if test="score != null">
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="openid != null">
+        openid = #{openid,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paymentStatus != null">
+        payment_status = #{paymentStatus,jdbcType=VARCHAR,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+      </if>
+      <if test="orderNumber != null">
+        order_number = #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="paySuccessDate != null">
+        pay_success_date = #{paySuccessDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.siebre.wechat.evaluation.module.Evaluation">
+    update evaluation
+    set evaluation_source = #{evaluationSource,jdbcType=VARCHAR,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+      score = #{score,jdbcType=INTEGER},
+      openid = #{openid,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      payment_status = #{paymentStatus,jdbcType=VARCHAR,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+      order_number = #{orderNumber,jdbcType=VARCHAR},
+      pay_success_date = #{paySuccessDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
