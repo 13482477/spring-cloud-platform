@@ -141,13 +141,10 @@
 		<module>spring-cloud-message-provide</module>
 		 -->
 		<module>spring-cloud-message-consumer</module>
-		<module>spring-cloud-payment</module>
 		<module>spring-cloud-admin</module>
     	<module>spring-cloud-gateway</module>
-    	<module>spring-cloud-iproduct-webapp</module>
     	<module>spring-cloud-hystrix</module>
     	<module>spring-cloud-turbine</module>
-    	<module>spring-cloud-iproduct</module>
     	<module>spring-cloud-uaa</module>
     	<module>spring-cloud-security</module>
     	<module>spring-cloud-tomcat</module>
@@ -201,16 +198,4 @@
 		</plugins>
 	</build>
 
-	<distributionManagement>
-		<repository>
-			<id>releases</id>
-			<name>Siebre Release Repository</name>
-			<url>http://nexus.siebre.com:8888/content/repositories/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>snapshots</id>
-			<name>Siebre Snapshot Repository</name>
-			<url>http://nexus.siebre.com:8888/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
 </project>
